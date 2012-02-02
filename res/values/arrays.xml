@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<string-array name="timeFormatEntries">
+<item>AM/PM</item>
+<item>24 Hour</item>
+</string-array>
+<string-array name="timeFormatValues">
+<item>ampm</item>
+<item>24hr</item>
+</string-array> 
+</resources>

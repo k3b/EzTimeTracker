@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="wrap_content" android:layout_height="wrap_content"
+	android:orientation="vertical">
+	<TextView android:text="File Name:" android:layout_width="wrap_content"
+		android:layout_height="wrap_content" android:textSize="20sp"></TextView>
+	<EditText android:text="EditText01" android:id="@+id/choose_file_name_edit_field"
+		android:capitalize="words" android:layout_width="fill_parent"
+		android:layout_height="wrap_content" ></EditText>
+	<LinearLayout android:layout_width="wrap_content"
+		android:layout_gravity="center" android:layout_height="wrap_content"
+		android:orientation="horizontal">
+		<Button android:text="Save File" android:id="@+id/choose_file_name_save_button"
+			android:layout_width="wrap_content" android:layout_height="wrap_content"
+			android:textSize="20sp"></Button>
+		<Button android:text=" Cancel " android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:textSize="20sp"
+			android:id="@+id/choose_file_name_cancel_button" />
+	</LinearLayout>
+</LinearLayout>

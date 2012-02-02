@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="fill_parent" 
+  	style="@style/GlobalStyle"
+ android:layout_height="fill_parent" android:orientation="vertical"
+ >
+<Button android:text="Punch In" android:id="@+id/btnPunchIn" android:textSize="26sp" android:textColor="#151555"
+android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_gravity="center"></Button>
+ <Spinner 
+        android:id="@+id/MainTimeSliceCategory"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:drawSelectorOnTop="true"
+        android:prompt="@string/category_prompt"
+    android:visibility="gone"/>
+<TextView android:text="Time spent: " android:textSize="20sp" android:textColor="#FFFFFF"
+android:layout_gravity="center" android:id="@+id/tvTimeInActivity" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
+<Chronometer android:text="Chronometer" android:textSize="26sp" android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/chron" android:visibility="gone"></Chronometer>
+<TextView android:text="00:00" android:textSize="26sp" android:layout_gravity="center" android:id="@+id/mainViewChronOutput" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
+<TextView android:text="Start time: " android:textSize="20sp" 
+android:textColor="#FFFFFF" android:layout_gravity="center" android:id="@+id/tvStartTime" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
+<Button android:text="Punch Out" android:id="@+id/btnPunchOut" android:textSize="26sp" android:textColor="#151555"
+android:layout_height="wrap_content" android:layout_width="fill_parent"></Button>
+	<TextView android:text="Notes:" android:layout_width="wrap_content" android:textColor="#FFFFFF"
+		android:textSize="20sp" android:layout_height="wrap_content"></TextView>
+	<EditText android:id="@+id/main_edit_text_notes" android:lines="5"
+		android:layout_width="fill_parent" android:layout_height="wrap_content"></EditText>
+</LinearLayout>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="wrap_content" android:layout_height="wrap_content"
+	android:orientation="vertical">
+	<RadioGroup android:layout_width="fill_parent"
+		android:layout_height="wrap_content" android:orientation="vertical"
+		android:id="@+id/radio_group_data_export">
+		<RadioButton android:checked="true"
+			android:text="@string/radio_button_data_export_all" android:id="@+id/radio_button_data_export_all" />
+		<RadioButton android:checked="false"
+			android:text="@string/radio_button_data_export_range" android:id="@+id/radio_button_data_export_range" />
+	</RadioGroup>
+	<TableLayout android:id="@+id/table_layout_date_range"
+		android:layout_width="fill_parent" android:layout_height="fill_parent"
+		android:layout_gravity="center" android:visibility="gone">
+		<TableRow>
+			<TextView android:text="From Time:" android:layout_width="wrap_content"
+				android:textSize="20sp" android:layout_height="wrap_content"></TextView>
+			<Button android:id="@+id/button_data_export_from"
+				android:layout_width="wrap_content" android:textSize="20sp"
+				android:layout_height="wrap_content" />
+		</TableRow>
+		<TableRow>
+			<TextView android:text="To Date:" android:layout_width="wrap_content"
+				android:textSize="20sp" android:layout_height="wrap_content"></TextView>
+			<Button android:id="@+id/button_data_export_to"
+				android:textSize="20sp" android:layout_width="wrap_content"
+				android:layout_height="wrap_content"></Button>
+		</TableRow>
+	</TableLayout>
+	<CheckBox android:text="@string/checkbox_data_export_email"
+		android:id="@+id/checkbox_data_export_email" android:layout_width="fill_parent"
+		android:layout_height="wrap_content"></CheckBox>
+	<LinearLayout android:layout_width="fill_parent" android:id="@+id/linear_layout_data_export_filename"
+		android:layout_height="wrap_content" android:orientation="horizontal">
+		<TextView android:text="File Name:" android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:textSize="20sp"></TextView>
+		<EditText android:text="@string/default_export_data_name"
+			android:id="@+id/edit_text_data_export_filename"
+			android:layout_width="fill_parent" android:layout_height="wrap_content"></EditText>
+	</LinearLayout>
+	<Button android:text="@string/button_data_export" android:id="@+id/button_data_export"
+		android:textSize="26sp" android:textColor="#151555"
+		android:layout_height="wrap_content" android:layout_width="fill_parent" />
+</LinearLayout>

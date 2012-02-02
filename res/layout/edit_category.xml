@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="wrap_content" 
+ android:layout_height="wrap_content" android:orientation="vertical">
+		<TextView android:text="Category Name:" android:layout_width="wrap_content"
+			 android:layout_height="wrap_content"></TextView>
+		<EditText android:text="EditText01" android:id="@+id/edit_time_category_name_field"
+			android:capitalize="words" android:layout_width="wrap_content" android:layout_height="wrap_content"></EditText>
+		<TextView android:text="Category Description:"
+			android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
+		<EditText android:text="EditText01" android:id="@+id/edit_time_category_desc_field"
+			android:capitalize="sentences" android:layout_width="wrap_content" android:layout_height="wrap_content"></EditText>
+<LinearLayout
+	android:layout_width="wrap_content" 
+ android:layout_height="wrap_content" android:orientation="horizontal">
+	<Button android:text="Save" android:id="@+id/edit_time_category_save_button"
+		android:layout_width="wrap_content" android:layout_height="wrap_content"
+		 android:textSize="20sp"></Button>
+	<Button android:text=" Cancel " android:layout_width="wrap_content"
+		android:layout_height="wrap_content" android:textSize="20sp"
+		android:id="@+id/edit_time_category_cancel_button" android:layout_gravity="left"/>
+</LinearLayout>
+</LinearLayout>

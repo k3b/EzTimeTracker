@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="wrap_content" android:layout_height="wrap_content"
+	android:orientation="vertical">
+	<CheckBox android:text="@string/checkbox_remove_ts_all"
+		android:id="@+id/checkbox_remove_ts_all" android:layout_width="fill_parent"
+		android:layout_height="wrap_content"></CheckBox>
+	<LinearLayout android:id="@+id/LinearLayout_remove_ts_dates"
+		android:layout_width="wrap_content" android:layout_height="wrap_content"
+		android:orientation="vertical">
+		<TextView android:text="Delete From Date (including):"
+			android:layout_width="wrap_content" android:textSize="20sp"
+			android:layout_height="wrap_content"></TextView>
+		<DatePicker android:id="@+id/DatePicker_remove_ts_start"
+			android:layout_width="wrap_content" android:layout_height="wrap_content"></DatePicker>
+		<TextView android:text="Delete Through Date (including):"
+			android:layout_width="wrap_content" android:textSize="20sp"
+			android:layout_height="wrap_content"></TextView>
+		<DatePicker android:id="@+id/DatePicker_remove_ts_end"
+			android:layout_width="wrap_content" android:layout_height="wrap_content"></DatePicker>
+	</LinearLayout>
+	<Button android:text="@string/button_remove_ts" android:id="@+id/button_remove_ts"
+		android:textSize="26sp" android:textColor="#151555"
+		android:layout_height="wrap_content" android:layout_width="fill_parent" />
+	<Button android:text="@string/button_remove_cancel" android:id="@+id/button_remove_ts_cancel"
+		android:textSize="26sp" android:textColor="#151555"
+		android:layout_height="wrap_content" android:layout_width="fill_parent" />
+</LinearLayout>
