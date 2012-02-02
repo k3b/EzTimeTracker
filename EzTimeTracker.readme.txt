@@ -1,0 +1,57 @@
+info see http://zettsetttech.blogspot.com/
+
+
+copy taken on Date: 02.02.2012 18:09:20 from http://eztimetracker.googlecode.com/svn/trunk/ "r10 Updating to version 1.6"
+
+-------------
+Tuesday, July 27, 2010
+EZ Time Tracker 1.5
+EZ Time Tracker 1.5 new features:
+
+    * Notes are now visible from the time sheet screen. They can be hidden via the menu on that screen.
+    * There is a new screen for removing (i.e. permanently deleting) previously recorded time intervals. They can be removed either in a date range or all can be removed at once providing a clean start. Be VERY careful with this feature... time intervals can not be restored. (I hope to add a backup, restore/transfer feature in some later version).
+    * There are also some minor UI tweaks to hopefully give a cleaner feel.
+
+Enjoy.
+
+EZ
+Posted by Eric Z at 7:59 PM 2 comments
+Monday, July 19, 2010
+EZ Time Tracker 1.4
+EZ Time Tracker 1.4 new features:
+
+    * Notes can now be added to time intervals. A notes area is now available in the punch in screen and in the edit screen from the time sheet.
+    * A new data export screen for exporting data to CSV format, either to an SD card file or to an email message. This can be used for loading the file into spreadsheets or databases.
+    * The menu on the punch in screen has been moved to a list on a separate screen. This screen is itself accessed from the punch in screen menu. I hope this doesn't cause any confusion, but it was necessary because the punch in screen menu was getting cluttered and, I believe, hard to navigate.
+
+Posted by Eric Z at 9:43 PM 0 comments
+Tuesday, June 22, 2010
+EZ Time Tracker 1.3
+EZ Time Tracker 1.3 new features:
+
+    * Ability to manually add new activities to the timesheet. A new item is on the menu for the timesheet report: Add New Activity. Choose a date, then enter the activity time interval and category. Alternatively long click a date header row to add an activity for that date.
+    * All items on the timesheet have a context menu. In other words, long click a row to get an appropriate menu like the add activity described above, or delete/edit for any existing activity. Also the date range heading can be long clicked to change the date range of the report.
+
+EZ Time Tracker 1.2 new features:
+
+    * Export both timesheet and summary reports to SD card. This option is available from the menu of both screens.
+    * Email both timesheet and summary reports. This option is available from the menu of both screens.
+
+I hope you enjoy the new features.
+
+Posted by Eric Z at 9:25 PM 0 comments
+Tuesday, June 8, 2010
+Introducing EZ Time Tracker
+EZ Time Tacker for Android is a simple way to track the passage of time. Punch in/punch out for user definable activity categories. The app will keep track of the interval between punch in/out, or between the punch in for a current activity and a new punch in (there is no need to punch out between activities.) The interval is recorded even if the app is terminated for any reason.
+
+EZ Time Tacker currently includes two types of reports: time sheet and summary. Time sheet shows an ordered list of all punch in/out intervals with the category, in and out times and total durations displayed. The summary shows totals either by date or category, grouped (or in the case of category, sub-grouped) by day, week or month. Both reports are filterable by a date range. Both reports are also exportable to the device's SD card.
+
+EZ Time Tacker is available now for free at the Android market. The source code is available under Apache License 2.0 at http://code.google.com/p/eztimetracker/ so... if you don't like it... fix it! (You might do me the favor of sharing any changes you make, although under the Apache license, you are not required to do so.)
+Posted by Eric Z at 7:09 PM 0 comments
+Sunday, May 23, 2010
+Welcome to ZettSett Tech
+ZettSett delivers premium mobile application development for the Android platform. Check back soon for news about our exciting products.
+Posted by Eric Z at 11:15 AM 0 comments
+Home
+Subscribe to: Posts (Atom)
+
