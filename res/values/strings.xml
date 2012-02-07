@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<string name="app_name">EZ Time Tracker</string>
-	<string name="database_name">time_tracker</string>
+	<string name="database_name">time_tracker.db</string>
 	<string name="category_prompt">Choose an activity</string>
 	<string-array name="default_categories">
 		<item>Not Much</item>

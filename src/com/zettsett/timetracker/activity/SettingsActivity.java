@@ -17,7 +17,7 @@ public class SettingsActivity extends PreferenceActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		addPreferencesFromResource(R.xml.preferences);
+		// addPreferencesFromResource(R.xml.preferences);
 		Preference pref = (Preference) findPreference("timeformat");
 		pref.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
 			@Override
