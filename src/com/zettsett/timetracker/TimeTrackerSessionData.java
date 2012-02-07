@@ -5,11 +5,14 @@ import java.io.Serializable;
 import com.zettsett.timetracker.model.TimeSlice;
 import com.zettsett.timetracker.model.TimeSliceCategory;
 
-public class TimeTrackerData implements Serializable {
+/**
+ * Data for Current Time Recording.
+ */
+public class TimeTrackerSessionData implements Serializable {
 	private static final long serialVersionUID = -1223094842172676534L;
 
-	private long punchInBase;
-	private long elapsed = 0;
+	private long punchInTimeStartInMillisecs;
+	private long elapsedTimeInMillisecs = 0;
 	private TimeSlice currentTimeSlice = new TimeSlice();
 	private boolean punchedOut = true;
 
@@ -39,20 +42,20 @@ public class TimeTrackerData implements Serializable {
 		currentTimeSlice.setCategory(category);
 	}
 
-	public long getElapsed() {
-		return elapsed;
+	public long getElapsedTimeInMillisecs() {
+		return elapsedTimeInMillisecs;
 	}
 
-	public void setElapsed(long elapsed) {
-		this.elapsed = elapsed;
+	public void setElapsedTimeInMillisecs(long elapsed) {
+		this.elapsedTimeInMillisecs = elapsed;
 	}
 
-	public long getPunchInBase() {
-		return punchInBase;
+	public long getPunchInTimeStartInMillisecs() {
+		return punchInTimeStartInMillisecs;
 	}
 
-	public void setPunchInBase(long punchInBase) {
-		this.punchInBase = punchInBase;
+	public void setPunchInTimeStartInMillisecs(long punchInBase) {
+		this.punchInTimeStartInMillisecs = punchInBase;
 	}
 
 	public boolean isPunchedOut() {

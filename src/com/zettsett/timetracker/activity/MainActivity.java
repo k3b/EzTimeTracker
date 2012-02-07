@@ -25,10 +25,12 @@ import android.widget.Chronometer.OnChronometerTickListener;
 import com.zetter.androidTime.R;
 import com.zettsett.timetracker.DateTimeFormatter;
 import com.zettsett.timetracker.Settings;
-import com.zettsett.timetracker.TimeTrackerData;
+import com.zettsett.timetracker.TimeTrackerSessionData;
 import com.zettsett.timetracker.database.DatabaseInstance;
 import com.zettsett.timetracker.database.TimeSliceDBAdapter;
 import com.zettsett.timetracker.model.TimeSliceCategory;
+
+import de.k3b.util.SessionDataPersistance;
 
 /**
  * Copyright 2010 Eric Zetterbaum ezetter@gmail.com
@@ -47,16 +49,21 @@ import com.zettsett.timetracker.model.TimeSliceCategory;
  * 
  */
 public class MainActivity extends Activity {
+	private static final String LOG_CONTEXT = "TimeTracker";
+
 	private static final int MENU_MAIN_MENU = Menu.FIRST;
 
 	private Chronometer chronometer;
-	private TimeTrackerData sessionData = new TimeTrackerData();
+	private SessionDataPersistance<TimeTrackerSessionData> timeTrackerSessionDataPersistance = null;
 	private TimeSliceDBAdapter timeSliceDBAdapter;
+	private TimeTrackerSessionData sessionData = new TimeTrackerSessionData();
+
 	public static final String PREFS_NAME = "TimerPrefs";
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		this.timeTrackerSessionDataPersistance = new SessionDataPersistance<TimeTrackerSessionData>(this);
 		Settings.initializeCurrentTimeFormatSetting(getBaseContext());
 		setContentView(R.layout.main);
 		DatabaseInstance.initialize(this);
@@ -64,7 +71,7 @@ public class MainActivity extends Activity {
 		timeSliceDBAdapter = new TimeSliceDBAdapter(this);
 		chronometer = (Chronometer) findViewById(R.id.chron);
 		setupButtons();
-		reloadSession();
+		showData();
 		updateTimeSpentDoingLabel();
 		chronometer.setOnChronometerTickListener(new OnChronometerTickListener() {
 			@Override
@@ -106,21 +113,18 @@ public class MainActivity extends Activity {
 				.hrColMinColSec(elapsed, false));
 	}
 
-	private void reloadSession() {
-		if (getLastNonConfigurationInstance() != null) {
-			sessionData = (TimeTrackerData) getLastNonConfigurationInstance();
-		} else {
-			reloadState();
-		}
+	private void showData() {
+		sessionData = reloadSessionData();
+		
 		if (sessionData.isPunchedOut()) {
 			chronometer.setBase(SystemClock.elapsedRealtime()
 					- sessionData.getCurrentTimeSlice().getDurationInMilliseconds());
 			((TextView) findViewById(R.id.mainViewChronOutput)).setTextColor(Color.RED);
 		} else {
-			if (sessionData.getPunchInBase() > SystemClock.elapsedRealtime()) {
+			if (sessionData.getPunchInTimeStartInMillisecs() > SystemClock.elapsedRealtime()) {
 				resetTimeAfterDeviceRestart();
 			} else {
-				chronometer.setBase(sessionData.getPunchInBase());
+				chronometer.setBase(sessionData.getPunchInTimeStartInMillisecs());
 			}
 			((TextView) findViewById(R.id.mainViewChronOutput)).setTextColor(Color.GREEN);
 		}
@@ -162,7 +166,7 @@ public class MainActivity extends Activity {
 
 	@Override
 	public Object onRetainNonConfigurationInstance() {
-		sessionData.setPunchInBase(chronometer.getBase());
+		sessionData.setPunchInTimeStartInMillisecs(chronometer.getBase());
 		return (sessionData);
 	}
 
@@ -216,7 +220,7 @@ public class MainActivity extends Activity {
 			chronometer.setBase(SystemClock.elapsedRealtime());
 			chronometer.start();
 			sessionData.beginNewSlice(selectedCategory);
-			sessionData.setPunchInBase(chronometer.getBase());
+			sessionData.setPunchInTimeStartInMillisecs(chronometer.getBase());
 			updateTimeSpentDoingLabel();
 			getNotesEditText().setText("");
 			saveState();
@@ -259,33 +263,17 @@ public class MainActivity extends Activity {
 
 	private void saveState() {
 		deleteFile("curr_state");
-		try {
-			ObjectOutputStream out = new ObjectOutputStream(openFileOutput("curr_state", 0));
-			out.writeObject(sessionData);
-			out.close();
-		} catch (IOException e) {
-			Log.e("TimeTracker", "Error Saving State", e);
-		}
-	}
 
-	private void reloadState() {
-		try {
-			String[] fileList = fileList();
-			for (String fileName : fileList) {
-				if (fileName.equals("curr_state")) {
-					ObjectInputStream in = new ObjectInputStream(openFileInput(fileName));
-					sessionData = (TimeTrackerData) in.readObject();
-					in.close();
-				}
-			}
-		} catch (IOException e) {
-			Log.e("TimeTracker", "Error Loading State", e);
-		} catch (ClassNotFoundException e) {
-			Log.e("TimeTracker", "Error Loading State", e);
-		}
-		if (sessionData == null) {
-			sessionData = new TimeTrackerData();
-		}
+		timeTrackerSessionDataPersistance.save(sessionData);
+	}
+	
+	private TimeTrackerSessionData reloadSessionData() {
+		TimeTrackerSessionData sessionData = (TimeTrackerSessionData) getLastNonConfigurationInstance();
+		if (sessionData == null)
+			sessionData = timeTrackerSessionDataPersistance.load();
+		if (sessionData == null)
+			sessionData = new TimeTrackerSessionData();
+		return sessionData;
 	}
 
 }

@@ -1,4 +1,4 @@
-package com.zettsett.timetracker.database;
+package de.k3b.database;
 
 import java.io.File;
 
@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
 import android.util.Log;
 
-class DatabaseContext extends ContextWrapper {
+public class DatabaseContext extends ContextWrapper {
 
 	private static final String DEBUG_CONTEXT = "DatabaseContext";
 
