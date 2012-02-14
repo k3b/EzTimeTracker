@@ -25,6 +25,13 @@
 			android:screenOrientation="portrait"></activity>
 	    <activity android:name="com.zettsett.timetracker.activity.SettingsActivity"
 			android:screenOrientation="portrait"></activity>
+		<receiver android:enabled="true"
+				android:name="com.zettsett.timetracker.receiver.RemoteTimeTrackerReceiver">
+			<intent-filter>
+				<action android:name="com.zettsett.timetracker.action.COMMAND" />
+				<category android:name="android.intent.category.DEFAULT" />
+			</intent-filter>
+		</receiver>
 	</application>
 	<uses-sdk android:minSdkVersion="6" />
 
