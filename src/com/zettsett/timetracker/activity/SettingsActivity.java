@@ -1,15 +1,11 @@
 package com.zettsett.timetracker.activity;
 
-import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
 import android.preference.Preference.OnPreferenceChangeListener;
-import android.preference.Preference.OnPreferenceClickListener;
-import android.util.Log;
 
-import com.zetter.androidTime.R;
 import com.zettsett.timetracker.Settings;
 
 public class SettingsActivity extends PreferenceActivity {

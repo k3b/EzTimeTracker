@@ -5,11 +5,12 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
+import com.zettsett.timetracker.Global;
+
 import android.content.Context;
 import android.util.Log;
 
 public class SessionDataPersistance<T extends Serializable>  {
-	private static final String LOG_CONTEXT = "SessionPersistance";
 	private static final String STATE_COOKY_NAME = "curr_state";
 
 	private Context context;
@@ -26,7 +27,7 @@ public class SessionDataPersistance<T extends Serializable>  {
 			out.writeObject(sessionData);
 			out.close();
 		} catch (IOException e) {
-			Log.e(LOG_CONTEXT, "Error Saving State", e);
+			Log.e(Global.LOG_CONTEXT, "Error Saving State", e);
 		}
 	}
 
@@ -42,16 +43,16 @@ public class SessionDataPersistance<T extends Serializable>  {
 				}
 			}
 		} catch (IOException e) {
-			Log.e(LOG_CONTEXT, "Error Loading State", e);
+			Log.e(Global.LOG_CONTEXT, "Error Loading State", e);
 		} catch (ClassNotFoundException e) {
-			Log.e(LOG_CONTEXT, "Error Loading State", e);
+			Log.e(Global.LOG_CONTEXT, "Error Loading State", e);
 		} finally {
 			if (in != null)
 			{
 				try {
 					in.close();
 				} catch (IOException e) {
-					Log.e(LOG_CONTEXT, "Error Loading State", e);
+					Log.e(Global.LOG_CONTEXT, "Error Loading State", e);
 				}
 			}
 		}

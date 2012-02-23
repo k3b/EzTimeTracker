@@ -40,11 +40,7 @@ public class TimeSlice implements Serializable {
 	}
 
 	public String getStartDateStr() {
-		if (startTime == 0) {
-			return "";
-		} else {
-			return DateFormat.format("E, MMMM dd, yyyy", startTime).toString();
-		}
+		return getDateStr(startTime);
 	}
 
 	public String getStartMonthStr() {
@@ -101,18 +97,38 @@ public class TimeSlice implements Serializable {
 	}
 
 	public String getStartTimeStr() {
-		if (startTime == 0) {
-			return "";
-		} else {
-			return DateTimeFormatter.formatTimePerCurrentSettings(startTime).toString();
-		}
+		return getTimeString(startTime);
 	}
 
 	public String getEndTimeStr() {
 		if (startTime == 0) {
 			return "";
 		} else {
-			return DateTimeFormatter.formatTimePerCurrentSettings(endTime).toString();
+			return getTimeString(endTime);
+		}
+	}
+
+	public static String getTimeString(long dateTime) {
+		if (dateTime == 0) {
+			return "";
+		} else {
+			return DateTimeFormatter.formatTimePerCurrentSettings(dateTime).toString();
+		}
+	}
+
+	public static String getDateStr(long dateTime) {
+		if (dateTime == 0) {
+			return "";
+		} else {
+			return DateFormat.format("E, MMMM dd, yyyy", dateTime).toString();
+		}
+	}
+
+	public static String getDateTimeStr(long dateTime) {
+		if (dateTime == 0) {
+			return "";
+		} else {
+			return getDateStr(dateTime) + " " + getTimeString(dateTime);
 		}
 	}
 
@@ -159,6 +175,10 @@ public class TimeSlice implements Serializable {
 
 	public void setNotes(String notes) {
 		this.notes = notes;
+	}
+	
+	@Override public String toString() {
+		return getTitleWithDuration();
 	}
 
 }

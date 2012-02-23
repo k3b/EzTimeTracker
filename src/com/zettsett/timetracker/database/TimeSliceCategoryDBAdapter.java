@@ -8,8 +8,11 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.SQLException;
+import android.util.Log;
 
 import com.zetter.androidTime.R;
+import com.zettsett.timetracker.Global;
+import com.zettsett.timetracker.model.TimeSlice;
 import com.zettsett.timetracker.model.TimeSliceCategory;
 
 public class TimeSliceCategoryDBAdapter {
@@ -30,6 +33,26 @@ public class TimeSliceCategoryDBAdapter {
 		return values;
 	}
 
+    public TimeSliceCategory getOrCreateTimeSlice(String name) {
+    	Cursor cur = null;
+    	try
+    	{
+	    	cur = DatabaseInstance.getDb().query(
+					DatabaseHelper.TIME_SLICE_CATEGORY_TABLE, columnList(),
+					"category_name = " + name 
+					, null,
+					null, null, null);
+			if (cur.moveToNext()) {
+				 return this.fillTimeSliceCategoryFromCursor(cur);
+			}
+    	} finally {
+    		if (cur != null)
+    			cur.close();
+    	}
+		
+		return this.createTimeSliceCategoryFromName(name);
+    }
+    
 	public long createTimeSliceCategory(final TimeSliceCategory category) {
 
 		return DatabaseInstance.getDb().insert(
@@ -37,10 +60,11 @@ public class TimeSliceCategoryDBAdapter {
 				timeSliceCategoryContentValuesList(category));
 	}
 
-	private void createTimeSliceCategoryFromName(String name) {
+	private TimeSliceCategory createTimeSliceCategoryFromName(String name) {
 		TimeSliceCategory category = new TimeSliceCategory();
 		category.setCategoryName(name);
 		createTimeSliceCategory(category);
+		return category;
 	}
 
 	private String[] columnList() {
@@ -53,12 +77,19 @@ public class TimeSliceCategoryDBAdapter {
 
 	public List<TimeSliceCategory> fetchAllTimeSliceCategories() {
 		List<TimeSliceCategory> result = new ArrayList<TimeSliceCategory>();
-		Cursor cur = DatabaseInstance.getDb().query(
-				DatabaseHelper.TIME_SLICE_CATEGORY_TABLE, columnList(), null,
-				null, null, null, "category_name");
-		while (cur.moveToNext()) {
-			TimeSliceCategory cat = fillTimeSliceCategoryFromCursor(cur);
-			result.add(cat);
+		Cursor cur = null;
+		try
+		{
+			cur = DatabaseInstance.getDb().query(
+					DatabaseHelper.TIME_SLICE_CATEGORY_TABLE, columnList(), null,
+					null, null, null, "category_name");
+			while (cur.moveToNext()) {
+				TimeSliceCategory cat = fillTimeSliceCategoryFromCursor(cur);
+				result.add(cat);
+			}
+		} finally {
+			if (cur != null)
+				cur.close();
 		}
 		if (result.size() == 0) {
 			initialize();
@@ -91,14 +122,22 @@ public class TimeSliceCategoryDBAdapter {
 
 	public TimeSliceCategory fetchByRowID(final long rowId) throws SQLException {
 
-		Cursor cur = DatabaseInstance.getDb().query(true,
+		Cursor cur = null;
+		
+		try
+		{
+			cur = DatabaseInstance.getDb().query(true,
 				DatabaseHelper.TIME_SLICE_CATEGORY_TABLE, columnList(),
 				"_id=" + rowId, null, null, null, null, null);
-		if (cur != null) {
-			cur.moveToFirst();
+			if ((cur != null) && (cur.moveToFirst())) {
+				return fillTimeSliceCategoryFromCursor(cur);
+			}
+		} finally {
+			if (cur != null)
+				cur.close();
 		}
-		return fillTimeSliceCategoryFromCursor(cur);
-
+		Log.e(Global.LOG_CONTEXT, "Not found : TimeSliceCategoryDBAdapter.fetchByRowID(rowId = " + rowId + ")");
+		return null;
 	}
 
 	

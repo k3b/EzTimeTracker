@@ -17,15 +17,20 @@ public class TimeTrackerSessionData implements Serializable {
 	private boolean punchedOut = true;
 
 	public void beginNewSlice(TimeSliceCategory category) {
+		long startDateTime = System.currentTimeMillis();
 		if(currentTimeSlice != null) {
-			endCurrentTimeSlice();
+			endCurrentTimeSlice(startDateTime);
 		}
 		currentTimeSlice = new TimeSlice();
 		currentTimeSlice.setCategory(category);
-		currentTimeSlice.setStartTime(System.currentTimeMillis());
+		currentTimeSlice.setStartTime(startDateTime);
 		punchedOut = false;
 	}
  
+	public void endCurrentTimeSlice(long endDateTime) {
+		currentTimeSlice.setEndTime(endDateTime);
+	}
+	
 	public void endCurrentTimeSlice() {
 		currentTimeSlice.setEndTime(System.currentTimeMillis());
 	}
@@ -64,6 +69,26 @@ public class TimeTrackerSessionData implements Serializable {
 
 	public void setPunchedOut(boolean punchedOut) {
 		this.punchedOut = punchedOut;
+	}
+
+	public void setCurrentNotes(String notes) {
+		getCurrentTimeSlice().setNotes(notes);
+	}
+
+	@Override public String toString() {
+		StringBuilder result = new StringBuilder();
+		
+		TimeSlice slice = this.getCurrentTimeSlice();
+		if (slice != null)
+			result.append(slice.toString()).append(" ");
+		
+		if (this.isPunchedOut())
+			result.append("punched out ");
+		else
+			result.append("punched in ");
+			
+		result.append(TimeSlice.getDateTimeStr(this.getPunchInTimeStartInMillisecs())).append("+").append(this.getElapsedTimeInMillisecs());
+		return result.toString();
 	}
 
 }

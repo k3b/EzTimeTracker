@@ -112,14 +112,12 @@ public class TimeSheetReportActivity extends Activity implements ReportInterface
 
 		List<TimeSlice> timeSlices = mTimeSliceDBAdapter.fetchTimeSlicesByDateRange(
 				mReportFramework.getStartDateRange(), endDate);
-		int count = 0;
 		for (TimeSlice aSlice : timeSlices) {
 			if (!lastStartDate.equals(aSlice.getStartDateStr())) {
 				lastStartDate = aSlice.getStartDateStr();
 				addDateHeaderLine(lastStartDate);
 			}
 			addTimeSliceLine(aSlice);
-			count++;
 		}
 		initialScrollToEnd();
 	}

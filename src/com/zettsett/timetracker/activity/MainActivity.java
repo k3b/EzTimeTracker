@@ -1,9 +1,5 @@
 package com.zettsett.timetracker.activity;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
@@ -11,7 +7,6 @@ import android.os.Bundle;
 import android.os.SystemClock;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -25,12 +20,10 @@ import android.widget.Chronometer.OnChronometerTickListener;
 import com.zetter.androidTime.R;
 import com.zettsett.timetracker.DateTimeFormatter;
 import com.zettsett.timetracker.Settings;
+import com.zettsett.timetracker.TimeTrackerManager;
 import com.zettsett.timetracker.TimeTrackerSessionData;
 import com.zettsett.timetracker.database.DatabaseInstance;
-import com.zettsett.timetracker.database.TimeSliceDBAdapter;
 import com.zettsett.timetracker.model.TimeSliceCategory;
-
-import de.k3b.util.SessionDataPersistance;
 
 /**
  * Copyright 2010 Eric Zetterbaum ezetter@gmail.com
@@ -49,26 +42,22 @@ import de.k3b.util.SessionDataPersistance;
  * 
  */
 public class MainActivity extends Activity {
-	private static final String LOG_CONTEXT = "TimeTracker";
-
 	private static final int MENU_MAIN_MENU = Menu.FIRST;
 
 	private Chronometer chronometer;
-	private SessionDataPersistance<TimeTrackerSessionData> timeTrackerSessionDataPersistance = null;
-	private TimeSliceDBAdapter timeSliceDBAdapter;
 	private TimeTrackerSessionData sessionData = new TimeTrackerSessionData();
+	private TimeTrackerManager tracker = null; 
 
 	public static final String PREFS_NAME = "TimerPrefs";
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		this.timeTrackerSessionDataPersistance = new SessionDataPersistance<TimeTrackerSessionData>(this);
+		tracker = new TimeTrackerManager(this);
 		Settings.initializeCurrentTimeFormatSetting(getBaseContext());
 		setContentView(R.layout.main);
 		DatabaseInstance.initialize(this);
 		DatabaseInstance.open();
-		timeSliceDBAdapter = new TimeSliceDBAdapter(this);
 		chronometer = (Chronometer) findViewById(R.id.chron);
 		setupButtons();
 		showData();
@@ -87,7 +76,8 @@ public class MainActivity extends Activity {
 		notesET.addTextChangedListener(new TextWatcher() {
 			@Override
 			public void afterTextChanged(Editable s) {
-				sessionData.getCurrentTimeSlice().setNotes(notesET.getText().toString());
+				String notes = notesET.getText().toString();
+				sessionData.setCurrentNotes(notes);
 			}
 
 			@Override
@@ -210,32 +200,21 @@ public class MainActivity extends Activity {
 	}
 
 	void punchInClock(TimeSliceCategory selectedCategory) {
-		if ((sessionData.getTimeSliceCategory() != null && !sessionData.getTimeSliceCategory()
-				.equals(selectedCategory))
-				|| sessionData.isPunchedOut()) {
-			if (!sessionData.isPunchedOut()) {
-				sessionData.endCurrentTimeSlice();
-				timeSliceDBAdapter.createTimeSlice(sessionData.getCurrentTimeSlice());
-			}
-			chronometer.setBase(SystemClock.elapsedRealtime());
+		long elapsedRealtime = SystemClock.elapsedRealtime();
+		if (tracker.punchInClock(selectedCategory, elapsedRealtime))
+		{
+			chronometer.setBase(elapsedRealtime);
 			chronometer.start();
-			sessionData.beginNewSlice(selectedCategory);
-			sessionData.setPunchInTimeStartInMillisecs(chronometer.getBase());
 			updateTimeSpentDoingLabel();
 			getNotesEditText().setText("");
-			saveState();
 		}
 		((TextView) findViewById(R.id.mainViewChronOutput)).setTextColor(Color.GREEN);
 	}
 
 	private void punchOutClock() {
-		if (!sessionData.isPunchedOut()) {
-			sessionData.setPunchedOut(true);
-			sessionData.endCurrentTimeSlice();
-			timeSliceDBAdapter.createTimeSlice(sessionData.getCurrentTimeSlice());
+		if (tracker.punchOutClock()) {
 			chronometer.stop();
 			((TextView) findViewById(R.id.mainViewChronOutput)).setTextColor(Color.RED);
-			saveState();
 		}
 	}
 
@@ -262,18 +241,11 @@ public class MainActivity extends Activity {
 	}
 
 	private void saveState() {
-		deleteFile("curr_state");
-
-		timeTrackerSessionDataPersistance.save(sessionData);
+		tracker.saveState();
 	}
 	
 	private TimeTrackerSessionData reloadSessionData() {
-		TimeTrackerSessionData sessionData = (TimeTrackerSessionData) getLastNonConfigurationInstance();
-		if (sessionData == null)
-			sessionData = timeTrackerSessionDataPersistance.load();
-		if (sessionData == null)
-			sessionData = new TimeTrackerSessionData();
-		return sessionData;
+		return tracker.reloadSessionData((TimeTrackerSessionData) getLastNonConfigurationInstance());
 	}
 
 }
