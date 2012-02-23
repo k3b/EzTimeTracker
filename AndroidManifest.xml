@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="k3b.test"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk android:minSdkVersion="8" />
+
+    <application
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name" >
+        <activity
+            android:label="@string/app_name"
+            android:name=".BroadCastTestActivity" >
+            <intent-filter >
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+		<receiver android:enabled="true"
+				android:name="com.zettsett.timetracker.receiver.RemoteTimeTrackerReceiver">
+			<intent-filter>
+				<action android:name="com.zettsett.timetracker.action.COMMAND" />
+		        <data android:scheme="cmd"/>
+		        <!-- 
+		        cmd:start:category
+		        cmd:stop
+		        cmd:pause
+		         -->
+   			</intent-filter>
+		</receiver>
+		</application>
+
+</manifest>
