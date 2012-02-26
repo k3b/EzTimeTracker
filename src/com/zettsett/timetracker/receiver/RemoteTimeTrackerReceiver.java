@@ -8,16 +8,18 @@ import com.zettsett.timetracker.TimeTrackerManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.SystemClock;
 import android.util.Log;
+import android.widget.Button;
 
 public class RemoteTimeTrackerReceiver extends BroadcastReceiver {
 
 	@Override
 	public void onReceive (Context context, Intent intent) {
-		if (Log.isLoggable(Global.LOG_CONTEXT, Log.ERROR))
+		if (Log.isLoggable(Global.LOG_CONTEXT, Log.INFO))
 		{
-			Log.e(Global.LOG_CONTEXT, "onReceive(context='" + context + "', intent='" + intent + "')");
+			Log.i(Global.LOG_CONTEXT, "onReceive(context='" + context + "', intent='" + intent + "')");
 		}
 		
 		String data = intent.getDataString();
@@ -30,15 +32,23 @@ public class RemoteTimeTrackerReceiver extends BroadcastReceiver {
 			
 			TimeTrackerManager mgr = new TimeTrackerManager(context);
 			mgr.reloadSessionData(null);
-			if ("start".equalsIgnoreCase(cmd) && (category != null)) {
+			if (Global.CMD_START.equalsIgnoreCase(cmd) && (category != null)) {
 				long elapsedRealtime = SystemClock.elapsedRealtime();
 				mgr.punchInClock(category, elapsedRealtime);
-			} else 	if ("stop".equalsIgnoreCase(cmd)) {
+			} else 	if (Global.CMD_STOP.equalsIgnoreCase(cmd)) {
 				mgr.punchOutClock();
 			} else {
 				Log.e(Global.LOG_CONTEXT, "unknown cmd='" + cmd + "', catrory='" + category + "' in intend='" + intent + "'");
 			}
 			mgr.saveState();
+			
+			Intent intentRefreshGui = new Intent();
+			intentRefreshGui
+				.setAction(Global.REFRESH_GUI)
+				;
+			
+			context.sendBroadcast(intentRefreshGui);
+
 		}		
 	}
 

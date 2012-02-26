@@ -40,42 +40,42 @@ public class DateTimeFormatter {
 		}
 	}
 
-	public static String formatTimePerCurrentSettings(long time) {
+	public static String formatTimePerCurrentSettings(long timeMilliSecs) {
 			
-		return DateFormat.format(timeFormatString, time).toString();
+		return DateFormat.format(timeFormatString, timeMilliSecs).toString();
 	}
 	
-	public static StringBuilder hrColMinColSec(long time, boolean alwaysIncludeHours) {
-		long seconds = (time/1000) % 60;
-
-		StringBuilder asText = hrColMin(time, alwaysIncludeHours);
-		asText.append(":");
-		if (seconds < 10) {
-			asText.append(0);
+	public static StringBuilder hrColMin(long timeMilliSecs, boolean alwaysIncludeHours, boolean includeSeconds) {
+		if (timeMilliSecs >= 0)
+		{
+			long seconds = timeMilliSecs/1000;
+			long minutes = (seconds / 60) % 60;
+			long hours = seconds / (60 * 60);
+			seconds = seconds % 60;
+			
+			StringBuilder asText = new StringBuilder();
+	
+			if (alwaysIncludeHours || hours > 0) {
+				append2Digits(asText, hours);
+				asText.append(":");
+			}
+			append2Digits(asText, minutes);
+			if (includeSeconds)
+			{
+				asText.append(":");
+				append2Digits(asText, seconds);				
+			}
+			return asText;
 		}
-		asText.append(seconds);
-		return asText;
+		return new StringBuilder();
 	}
 
-	public static StringBuilder hrColMin(long time, boolean alwaysIncludeHours) {
-		long seconds = time/1000;
-		long minutes = (seconds / 60) % 60;
-		long hours = seconds / (60 * 60);
-
-		StringBuilder asText = new StringBuilder();
-
-		if (alwaysIncludeHours || hours > 0) {
-			if (hours < 10) {
+	private static StringBuilder append2Digits(StringBuilder asText, long value) {
+		if (value > 0) {
+			if (value < 10) {
 				asText.append(0);
 			}
-			asText.append(hours);
-			asText.append(":");
-		}
-		if (minutes > 0) {
-			if (minutes < 10) {
-				asText.append(0);
-			}
-			asText.append(minutes);
+			asText.append(value);
 		} else {
 			asText.append("00");
 		}

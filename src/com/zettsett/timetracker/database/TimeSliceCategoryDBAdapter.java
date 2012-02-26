@@ -39,8 +39,7 @@ public class TimeSliceCategoryDBAdapter {
     	{
 	    	cur = DatabaseInstance.getDb().query(
 					DatabaseHelper.TIME_SLICE_CATEGORY_TABLE, columnList(),
-					"category_name = " + name 
-					, null,
+					"category_name = ?" , new String[] {name},
 					null, null, null);
 			if (cur.moveToNext()) {
 				 return this.fillTimeSliceCategoryFromCursor(cur);
@@ -128,7 +127,8 @@ public class TimeSliceCategoryDBAdapter {
 		{
 			cur = DatabaseInstance.getDb().query(true,
 				DatabaseHelper.TIME_SLICE_CATEGORY_TABLE, columnList(),
-				"_id=" + rowId, null, null, null, null, null);
+				"_id = ?", new String[] {Long.toString(rowId)},  
+				null, null, null, null);
 			if ((cur != null) && (cur.moveToFirst())) {
 				return fillTimeSliceCategoryFromCursor(cur);
 			}

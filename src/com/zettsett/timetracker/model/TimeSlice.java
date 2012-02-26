@@ -47,10 +47,11 @@ public class TimeSlice implements Serializable {
 		if (startTime == 0) {
 			return "";
 		} else {
-			return DateFormat.format("MMMM, yyyy", startTime).toString();
+			return DateFormat.format("MMMM yyyy", startTime).toString();
 		}
 	}
 
+	// TODO make getStartWeekStr() work with non american locale
 	public String getStartWeekStr() {
 		if (startTime == 0) {
 			return "";
@@ -70,7 +71,7 @@ public class TimeSlice implements Serializable {
 			} else if (dayOfWeek.equals("Sat")) {
 				firstDayOfWeekDate -= MILLIS_IN_A_DAY * 6;
 			}
-			return "Week of " + DateFormat.format("MMMM dd, yyyy", firstDayOfWeekDate).toString();
+			return "Week of " + DateFormat.format("dd MMMM yyyy", firstDayOfWeekDate).toString();
 		}
 	}
 
@@ -120,7 +121,7 @@ public class TimeSlice implements Serializable {
 		if (dateTime == 0) {
 			return "";
 		} else {
-			return DateFormat.format("E, MMMM dd, yyyy", dateTime).toString();
+			return DateFormat.format("E dd.MM.yyyy", dateTime).toString();
 		}
 	}
 
@@ -157,8 +158,9 @@ public class TimeSlice implements Serializable {
 	}
 
 	public String getTitleWithDuration() {
-		return getCategory().getCategoryName() + ": " + getStartTimeStr() + " - " + getEndTimeStr()
-				+ " (" + DateTimeFormatter.hrColMinColSec(getDurationInMilliseconds(), true) + ")";
+		return ((getCategory() != null) ? getCategory().getCategoryName() : "???") + ": " 
+				+ getStartTimeStr() + " - " + getEndTimeStr()
+				+ " (" + DateTimeFormatter.hrColMin(getDurationInMilliseconds(), true,true) + ")";
 	}
 
 	public String getTitle() {

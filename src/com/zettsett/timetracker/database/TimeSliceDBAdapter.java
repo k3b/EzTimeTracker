@@ -62,7 +62,7 @@ public class TimeSliceDBAdapter {
 		try {
 			cur = DatabaseInstance.getDb().query(true,
 					DatabaseHelper.TIME_SLICE_TABLE, columnList(),
-					"_id=" + rowId, null, null, null, null, null);
+					"_id=?", new String[] {Long.toString(rowId)}, null, null, null, null);
 			if ((cur != null) && (cur.moveToFirst())) {
 				return fillTimeSliceFromCursor(cur);
 			}
@@ -79,7 +79,7 @@ public class TimeSliceDBAdapter {
 		try {
 			cur = DatabaseInstance.getDb().query(true,
 				DatabaseHelper.TIME_SLICE_TABLE, columnList(),
-				"category_id=" + category.getRowId(), null, null, null, null, null);
+				"category_id=?", new String[] {Long.toString(category.getRowId())}, null, null, null, null);
 			if (cur.moveToNext()) {
 				return true;
 			}
@@ -116,8 +116,8 @@ public class TimeSliceDBAdapter {
 		try {
 			cur = DatabaseInstance.getDb().query(
 				DatabaseHelper.TIME_SLICE_TABLE, columnList(), 
-				"start_time >= " + startDate + " and end_time <= " + endDate 
-				, null,
+				"start_time >= ? and end_time <= ?" 
+				, new String[] {Long.toString(startDate),Long.toString(endDate)},
 				null, null, "start_time");
 			while (cur.moveToNext()) {
 				TimeSlice ts = this.fillTimeSliceFromCursor(cur);

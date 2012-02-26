@@ -1,6 +1,7 @@
 package de.k3b.util;
 
 import java.io.IOException;
+import java.io.InvalidClassException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
@@ -42,6 +43,9 @@ public class SessionDataPersistance<T extends Serializable>  {
 					sessionData  = (T) in.readObject();
 				}
 			}
+		} catch (InvalidClassException e) {
+			Log.w(Global.LOG_CONTEXT, "cannot load old session format. Creating new", e);
+			sessionData = null;
 		} catch (IOException e) {
 			Log.e(Global.LOG_CONTEXT, "Error Loading State", e);
 		} catch (ClassNotFoundException e) {

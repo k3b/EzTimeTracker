@@ -9,12 +9,14 @@ import com.zettsett.timetracker.model.TimeSliceCategory;
  * Data for Current Time Recording.
  */
 public class TimeTrackerSessionData implements Serializable {
-	private static final long serialVersionUID = -1223094842172676534L;
+	// todo geht serialisieren auch mit zusatzfeld?
+	private static final long serialVersionUID = -1223094842173676534L;
 
 	private long punchInTimeStartInMillisecs;
 	private long elapsedTimeInMillisecs = 0;
 	private TimeSlice currentTimeSlice = new TimeSlice();
 	private boolean punchedOut = true;
+	public long updateCount = 0; // for diagnostics purpuses. will be inceremented on every save
 
 	public void beginNewSlice(TimeSliceCategory category) {
 		long startDateTime = System.currentTimeMillis();
@@ -24,15 +26,12 @@ public class TimeTrackerSessionData implements Serializable {
 		currentTimeSlice = new TimeSlice();
 		currentTimeSlice.setCategory(category);
 		currentTimeSlice.setStartTime(startDateTime);
-		punchedOut = false;
+		setPunchedOut(false);
 	}
  
 	public void endCurrentTimeSlice(long endDateTime) {
 		currentTimeSlice.setEndTime(endDateTime);
-	}
-	
-	public void endCurrentTimeSlice() {
-		currentTimeSlice.setEndTime(System.currentTimeMillis());
+		setPunchedOut(true);
 	}
 	
 	public TimeSlice getCurrentTimeSlice() {
@@ -61,13 +60,14 @@ public class TimeTrackerSessionData implements Serializable {
 
 	public void setPunchInTimeStartInMillisecs(long punchInBase) {
 		this.punchInTimeStartInMillisecs = punchInBase;
+		this.setPunchedOut(false);
 	}
 
 	public boolean isPunchedOut() {
 		return punchedOut;
 	}
 
-	public void setPunchedOut(boolean punchedOut) {
+	private void setPunchedOut(boolean punchedOut) {
 		this.punchedOut = punchedOut;
 	}
 
@@ -77,6 +77,9 @@ public class TimeTrackerSessionData implements Serializable {
 
 	@Override public String toString() {
 		StringBuilder result = new StringBuilder();
+		
+		if (this.updateCount != 0)
+			result.append("#").append(this.updateCount).append(":");
 		
 		TimeSlice slice = this.getCurrentTimeSlice();
 		if (slice != null)

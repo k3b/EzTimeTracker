@@ -25,7 +25,12 @@ public class TimeTrackerManager {
 		this.timeSlicecategoryDBAdapter = new TimeSliceCategoryDBAdapter(context);
 	}
 	
-	public void saveState() {
+	public void saveState() {		
+		if (Global.isDebugEnabled())
+		{
+			sessionData.updateCount++;
+			Log.d(Global.LOG_CONTEXT, "saveState('" + sessionData + "')");
+		}
 		context.deleteFile("curr_state");
 
 		timeTrackerSessionDataPersistance.save(sessionData);
@@ -38,6 +43,10 @@ public class TimeTrackerManager {
 			sessionData = new TimeTrackerSessionData();
 		
 		this.sessionData = sessionData;
+		if (Global.isDebugEnabled())
+		{
+			Log.d(Global.LOG_CONTEXT, "reloadSessionData('" + sessionData + "')");
+		}
 		return sessionData;
 	}
 
@@ -48,7 +57,7 @@ public class TimeTrackerManager {
 	}
 	
 	public Boolean punchInClock(TimeSliceCategory selectedCategory, long startDateTime) {
-		if (Log.isLoggable(Global.LOG_CONTEXT, Log.INFO))
+		if (Global.isInfoEnabled())
 		{
 			Log.i(Global.LOG_CONTEXT, "punchInClock(category='" + selectedCategory.getCategoryName() 
 					+ "', time='" + TimeSlice.getDateTimeStr(startDateTime)
@@ -87,7 +96,6 @@ public class TimeTrackerManager {
 		if (!sessionData.isPunchedOut()) {
 			long startDateTime = System.currentTimeMillis();
 
-			sessionData.setPunchedOut(true);
 			sessionData.endCurrentTimeSlice(startDateTime);
 			timeSliceDBAdapter.createTimeSlice(sessionData.getCurrentTimeSlice());
 			saveState();
@@ -95,6 +103,14 @@ public class TimeTrackerManager {
 		}
 		Log.e(Global.LOG_CONTEXT, "punchOutClock(" + sessionData + ") : not punched in");
 		return false;
+	}
+
+	public long getElapsedTime() {
+		return (sessionData != null) ? sessionData.getElapsedTimeInMillisecs() : 0;
+	}
+
+	public boolean isPunchedOut() {
+		return (sessionData != null) ? sessionData.isPunchedOut() : true;
 	}
 
 

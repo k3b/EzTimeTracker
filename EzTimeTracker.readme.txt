@@ -1,5 +1,13 @@
 info see http://zettsetttech.blogspot.com/
 
+todo
+> neuer session parameter auch ohne changed classid? else Fehlerbehandlung umbauen
+	gui ohne menü-button
+	settings-preferences wieder lauffähig machen
+?	receiver updates gui via internal broadcast
+	fix activity memory leak
+	
+	
 
 copy taken on Date: 02.02.2012 18:09:20 from http://eztimetracker.googlecode.com/svn/trunk/ "r10 Updating to version 1.6"
 
