@@ -5,17 +5,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import com.zettsett.timetracker.Global;
+
 public class RemoteTimeTrackerReceiver extends BroadcastReceiver {
 
 	public static StringBuffer message = new StringBuffer();
 	
-	private static final String LOG_CONTEXT = "TimeTrackerReceiver";
-
 	@Override
 	public void onReceive (Context context, Intent intent) {
-		if (Log.isLoggable(LOG_CONTEXT, Log.ERROR))
+		if (Log.isLoggable(Global.LOG_CONTEXT, Log.INFO))
 		{
-			Log.e(LOG_CONTEXT, "onReceive(intent='" + intent + "')");
+			Log.i(Global.LOG_CONTEXT, "onReceive(intent='" + intent + "')");
 		}
 //		message
 //			.append("onReceive(context='").append(context)

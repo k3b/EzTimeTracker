@@ -49,6 +49,18 @@ public class BroadCastTestActivity extends Activity implements View.OnClickListe
     }
 
 	@Override
+    public void onPause()
+    {
+		
+		if (myReceiver != null)
+		{
+			unregisterReceiver(myReceiver);
+			myReceiver = null;
+		}
+    	super.onPause();
+    }
+    
+	@Override
     public void onResume() {
 		super.onResume();
 		
@@ -60,18 +72,6 @@ public class BroadCastTestActivity extends Activity implements View.OnClickListe
 			registerReceiver(myReceiver, filter);
 		}
 	}
-    
-	@Override
-    public void onPause()
-    {
-		
-		if (myReceiver != null)
-		{
-			unregisterReceiver(myReceiver);
-			myReceiver = null;
-		}
-    	super.onPause();
-    }
     
 	@Override
 	public void onClick(View paramView) {

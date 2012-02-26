@@ -7,13 +7,13 @@
         android:id="@+id/button1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="cmd:start:getit" />
+        android:text="cmd:start:getit:some remote start notes" />
 
     <Button
         android:id="@+id/button2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="cmd:stop:getit" />
+        android:text="cmd:stop:some remote stop notes" />
 
     <Button
         android:id="@+id/button3"
