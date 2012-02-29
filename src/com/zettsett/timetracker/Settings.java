@@ -14,13 +14,7 @@ public class Settings {
 	
 	public static void initializeCurrentTimeFormatSetting(Context context) {
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-		String pref = prefs.getString("timeformat", "unset");
-		if ("unset".equals(pref)) {
-			SharedPreferences.Editor editor = prefs.edit();
-			pref = "ampm";
-			editor.putString("timeformat", pref);
-			editor.commit();
-		}
+		String pref = prefs.getString("timeFormat", null);
 		currentTimeFormat = pref;
 		DateTimeFormatter.initializeCurrentTimeFormat();
 	}

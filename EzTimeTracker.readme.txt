@@ -2,7 +2,6 @@ info see http://zettsetttech.blogspot.com/
 
 todo
 	gui: menü mit images
-	settings-preferences wieder lauffähig machen
 ?	receiver updates gui via internal broadcast
 	fix activity memory leak
 	punchout: nur speichern, wenn periode > x millisec (global-settings). else discard
