@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item android:id="@+id/details"
+          android:title="Details Report"
+          android:titleCondensed="Details"
+           />
+    <item android:id="@+id/summary"
+          android:title="Summary Report"
+          android:titleCondensed="Summery"
+           />
+    <item android:id="@+id/categories"
+          android:title="Categories"
+          android:titleCondensed="Categories"
+           />
+    <item android:id="@+id/export"
+          android:title="Export Data"
+          android:titleCondensed="Export"
+           />
+    <item android:id="@+id/remove"
+          android:title="Remove Data"
+          android:titleCondensed="Remove"
+           />
+    <item android:id="@+id/settings"
+          android:title="Preferences and Settings"
+          android:titleCondensed="Settings"
+           >
+           <!-- submenue if there are more than 6
+		        <menu>
+		            <group android:id="@+id/dogsGroup">
+		                <item android:titleCondensed="Awesome Dog" android:title="Awesome Dog" android:id="@+id/pan"></item>
+		                <item android:titleCondensed="Under Dog" android:title="Under Dog" android:id="@+id/zoom"></item>
+		                <item android:titleCondensed="Snoopy" android:title="Snoopy" android:id="@+id/contrast"></item>
+		                <item android:titleCondensed="Scooby Doo" android:title="Scooby Doo" android:id="@+id/page"></item>
+		                <item android:titleCondensed="Pluto" android:title="Pluto" android:id="@+id/rotate"></item>
+		            </group>
+		        </menu>
+         -->
+    </item>
+</menu>    

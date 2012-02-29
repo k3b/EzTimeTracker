@@ -19,8 +19,6 @@
 		<activity android:name="com.zettsett.timetracker.activity.SummaryReportActivity"></activity>
 		<activity android:name="com.zettsett.timetracker.activity.TimeSliceEditActivity"
 			android:screenOrientation="portrait"></activity>
-		<activity android:name="com.zettsett.timetracker.activity.MainMenuActivity"
-			android:screenOrientation="portrait"></activity>
 		<activity android:name="com.zettsett.timetracker.activity.DataExportActivity"
 			android:screenOrientation="portrait"></activity>
 		<activity android:name="com.zettsett.timetracker.activity.RemoveTimeSliceActivity"

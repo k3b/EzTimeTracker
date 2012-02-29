@@ -1,11 +1,12 @@
 info see http://zettsetttech.blogspot.com/
 
 todo
-> neuer session parameter auch ohne changed classid? else Fehlerbehandlung umbauen
-	gui ohne menü-button
+	gui: menü mit images
 	settings-preferences wieder lauffähig machen
 ?	receiver updates gui via internal broadcast
 	fix activity memory leak
+	punchout: nur speichern, wenn periode > x millisec (global-settings). else discard
+	punchin: ggf alte timeslice verlängern, falls punchout(mit selber category) vor kurzem war (global-settings x millisecs)
 	
 	
 

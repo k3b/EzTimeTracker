@@ -12,6 +12,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -112,12 +113,6 @@ public class MainActivity extends Activity implements OnChronometerTickListener 
 		this.setChronometer(this.tracker.isPunchedOut(), this.tracker.getElapsedTime());
 	}
 
-//	@Override
-//	public Object onRetainNonConfigurationInstance() {		
-//		sessionData.setPunchInTimeStartInMillisecs(chronometer.getBase());
-//		return (sessionData);
-//	}
-//
 	@Override
 	public void onPause() {
 
@@ -168,8 +163,6 @@ public class MainActivity extends Activity implements OnChronometerTickListener 
 
 	void refreshGui()
 	{
-//		sessionData = this.tracker.reloadSessionData(null);
-//		this.saveState();
 		Log.d(Global.LOG_CONTEXT, "MainActivity.refreshGui()");
 
 		updateClock(this.tracker.isPunchedOut(), tracker.getElapsedTime());
@@ -208,19 +201,43 @@ public class MainActivity extends Activity implements OnChronometerTickListener 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
-		menu.add(0, MENU_MAIN_MENU, 0, "Main Menu");
-		return true;
+
+	    MenuInflater inflater = getMenuInflater();
+	    inflater.inflate(R.menu.main, menu);
+		return true;	
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		loadMainMenu();
-		return super.onOptionsItemSelected(item);
-	}
 
-	private void loadMainMenu() {
-		Intent i = new Intent(this, MainMenuActivity.class);
-		startActivity(i);
+		Class<? extends Activity> itemHandler = getMenuIntentHandler(item);
+		if (itemHandler != null)
+		{
+			Intent intent = new Intent().setClass(this, itemHandler);
+			startActivity(intent);
+			return true;
+		} else {
+	        return super.onOptionsItemSelected(item);
+	    }
+	}
+	
+	private Class<? extends Activity> getMenuIntentHandler(MenuItem item) {
+	    switch (item.getItemId()) {
+	    case R.id.details:
+	        return TimeSheetReportActivity.class;
+	    case R.id.summary:
+	        return SummaryReportActivity.class;
+	    case R.id.categories:
+	        return CategoryActivity.class;
+	    case R.id.export:
+	        return DataExportActivity.class;
+	    case R.id.remove:
+	        return RemoveTimeSliceActivity.class;
+	    case R.id.settings:
+	        return SettingsActivity.class;
+	    default:
+	    	return null;
+	    }
 	}
 
 	private void showPunchInDialog() {
@@ -311,7 +328,7 @@ public class MainActivity extends Activity implements OnChronometerTickListener 
 	}
 	
 	private TimeTrackerSessionData reloadSessionData() {
-		return tracker.reloadSessionData(null); // (TimeTrackerSessionData) getLastNonConfigurationInstance());
+		return tracker.reloadSessionData(null); // ((TimeTrackerSessionData) getLastNonConfigurationInstance());
 	}
 
 }

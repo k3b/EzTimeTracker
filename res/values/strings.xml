@@ -27,6 +27,7 @@
 	<string name="export_header">Start Date, Start Time, End Time, Category Name, Category Description, Notes</string>	
 	<string name="export_email_subject">EZ Time Tracker Data Export</string>	
 	<string name="delete_interval_confirmation">Are you sure you want to delete this time interval?</string>	
+	<!-- obsolete 
 	<string name="main_menu_TimeSheetReportActivity_name">Time Sheet</string>	
 	<string name="main_menu_TimeSheetReportActivity_desc">View/Add/Modify Activity Time Intervals</string>	
 	<string name="main_menu_SummaryReportActivity_name">Summary Report</string>	
@@ -41,6 +42,7 @@
 	<string name="main_menu_MainActivity_desc">Punch in/out to record time intervals</string>	
 	<string name="main_menu_SettingsActivity_name">Preferences and Settings</string>	
 	<string name="main_menu_SettingsActivity_desc">General settings and customization</string>	
+	 -->
 	<string name="button_remove_ts">Delete</string>	
 	<string name="button_remove_cancel">Cancel</string>	
 	<string name="checkbox_remove_ts_all">Delete All Time Intervals</string>	
