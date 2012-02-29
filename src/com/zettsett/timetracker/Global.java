@@ -1,7 +1,5 @@
 package com.zettsett.timetracker;
 
-import android.util.Log;
-
 public class Global {
 	public static final String LOG_CONTEXT = "TimeTracker";
 	public static final String CMD_STOP = "stop";

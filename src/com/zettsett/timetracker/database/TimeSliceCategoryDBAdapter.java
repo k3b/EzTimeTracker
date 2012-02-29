@@ -12,7 +12,6 @@ import android.util.Log;
 
 import com.zetter.androidTime.R;
 import com.zettsett.timetracker.Global;
-import com.zettsett.timetracker.model.TimeSlice;
 import com.zettsett.timetracker.model.TimeSliceCategory;
 
 public class TimeSliceCategoryDBAdapter {

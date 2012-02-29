@@ -69,7 +69,7 @@ public class TimeTrackerManager {
 				sessionData.endCurrentTimeSlice(startDateTime);
 				timeSliceDBAdapter.createTimeSlice(sessionData.getCurrentTimeSlice());
 			}
-			sessionData.beginNewSlice(selectedCategory);
+			sessionData.beginNewSlice(selectedCategory, startDateTime);
 			sessionData.setPunchInTimeStartInMillisecs(startDateTime);
 			saveState();
 
@@ -87,15 +87,13 @@ public class TimeTrackerManager {
 	}
 
 
-	public Boolean punchOutClock() {
+	public Boolean punchOutClock(long startDateTime) {
 		if (Log.isLoggable(Global.LOG_CONTEXT, Log.INFO))
 		{
 			Log.i(Global.LOG_CONTEXT, "punchOutClock(" + sessionData + ")");
 		}
 
 		if (!sessionData.isPunchedOut()) {
-			long startDateTime = System.currentTimeMillis();
-
 			sessionData.endCurrentTimeSlice(startDateTime);
 			timeSliceDBAdapter.createTimeSlice(sessionData.getCurrentTimeSlice());
 			saveState();
@@ -111,6 +109,10 @@ public class TimeTrackerManager {
 
 	public boolean isPunchedOut() {
 		return (sessionData != null) ? sessionData.isPunchedOut() : true;
+	}
+
+	public long currentTimeMillis() {
+		return System.currentTimeMillis(); // SystemClock.elapsedRealtime();
 	}
 
 

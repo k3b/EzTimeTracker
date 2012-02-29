@@ -9,7 +9,6 @@ import com.zettsett.timetracker.model.TimeSliceCategory;
  * Data for Current Time Recording.
  */
 public class TimeTrackerSessionData implements Serializable {
-	// todo geht serialisieren auch mit zusatzfeld?
 	private static final long serialVersionUID = -1223094842173676534L;
 
 	private long punchInTimeStartInMillisecs;
@@ -18,8 +17,7 @@ public class TimeTrackerSessionData implements Serializable {
 	private boolean punchedOut = true;
 	public long updateCount = 0; // for diagnostics purpuses. will be inceremented on every save
 
-	public void beginNewSlice(TimeSliceCategory category) {
-		long startDateTime = System.currentTimeMillis();
+	public void beginNewSlice(TimeSliceCategory category, long startDateTime) {
 		if(currentTimeSlice != null) {
 			endCurrentTimeSlice(startDateTime);
 		}

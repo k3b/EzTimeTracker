@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -48,8 +47,6 @@ import com.zettsett.timetracker.model.TimeSliceCategory;
  * 
  */
 public class MainActivity extends Activity implements OnChronometerTickListener {
-	private static final int MENU_MAIN_MENU = Menu.FIRST;
-
 	private Chronometer chronometer;
 	private TimeTrackerSessionData sessionData = new TimeTrackerSessionData();
 	private TimeTrackerManager tracker = null; 
@@ -156,7 +153,7 @@ public class MainActivity extends Activity implements OnChronometerTickListener 
 	}
 
 	private void updateChronOutputTextView() {
-		long elapsed = (SystemClock.elapsedRealtime() - chronometer.getBase());
+		long elapsed = (tracker.currentTimeMillis() - chronometer.getBase());
 		((TextView) findViewById(R.id.mainViewChronOutput)).setText(DateTimeFormatter
 				.hrColMin(elapsed, false,true));
 	}
@@ -174,11 +171,11 @@ public class MainActivity extends Activity implements OnChronometerTickListener 
 		sessionData = reloadSessionData();
 		
 		if (sessionData.isPunchedOut()) {
-			chronometer.setBase(SystemClock.elapsedRealtime()
+			chronometer.setBase(tracker.currentTimeMillis()
 					- sessionData.getCurrentTimeSlice().getDurationInMilliseconds());
 			((TextView) findViewById(R.id.mainViewChronOutput)).setTextColor(Color.RED);
 		} else {
-			if (sessionData.getPunchInTimeStartInMillisecs() > SystemClock.elapsedRealtime()) {
+			if (sessionData.getPunchInTimeStartInMillisecs() > tracker.currentTimeMillis()) {
 				resetTimeAfterDeviceRestart();
 			} else {
 				chronometer.setBase(sessionData.getPunchInTimeStartInMillisecs());
@@ -194,8 +191,8 @@ public class MainActivity extends Activity implements OnChronometerTickListener 
 		return (EditText) findViewById(R.id.main_edit_text_notes);
 	}
 	private void resetTimeAfterDeviceRestart() {
-		chronometer.setBase(SystemClock.elapsedRealtime()
-				- (System.currentTimeMillis() - sessionData.getCurrentTimeSlice().getStartTime()));
+		chronometer.setBase(tracker.currentTimeMillis()
+				- (tracker.currentTimeMillis() - sessionData.getCurrentTimeSlice().getStartTime()));
 	}
 
 	@Override
@@ -262,13 +259,13 @@ public class MainActivity extends Activity implements OnChronometerTickListener 
 	}
 
 	void punchInClock(TimeSliceCategory selectedCategory) {
-		long elapsedRealtime = SystemClock.elapsedRealtime();
+		long elapsedRealtime = tracker.currentTimeMillis();
 		tracker.punchInClock(selectedCategory, elapsedRealtime);
 		updateClock(false, elapsedRealtime);
 	}
 
 	private void punchOutClock() {
-		if (tracker.punchOutClock()) {
+		if (tracker.punchOutClock(tracker.currentTimeMillis())) {
 			updateClock(true, tracker.getElapsedTime());
 		}
 	}

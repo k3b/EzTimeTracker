@@ -1,17 +1,12 @@
 package com.zettsett.timetracker.receiver;
 
-import java.util.EnumSet;
-
 import com.zettsett.timetracker.Global;
 import com.zettsett.timetracker.TimeTrackerManager;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
-import android.os.SystemClock;
 import android.util.Log;
-import android.widget.Button;
 
 public class RemoteTimeTrackerReceiver extends BroadcastReceiver {
 
@@ -33,10 +28,11 @@ public class RemoteTimeTrackerReceiver extends BroadcastReceiver {
 			TimeTrackerManager mgr = new TimeTrackerManager(context);
 			mgr.reloadSessionData(null);
 			if (Global.CMD_START.equalsIgnoreCase(cmd) && (category != null)) {
-				long elapsedRealtime = SystemClock.elapsedRealtime();
+				long elapsedRealtime = mgr.currentTimeMillis();
 				mgr.punchInClock(category, elapsedRealtime);
 			} else 	if (Global.CMD_STOP.equalsIgnoreCase(cmd)) {
-				mgr.punchOutClock();
+				long elapsedRealtime = mgr.currentTimeMillis();
+				mgr.punchOutClock(elapsedRealtime);
 			} else {
 				Log.e(Global.LOG_CONTEXT, "unknown cmd='" + cmd + "', catrory='" + category + "' in intend='" + intent + "'");
 			}
