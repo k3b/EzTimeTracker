@@ -87,19 +87,25 @@ public class TimeTrackerManager {
 	}
 
 
-	public Boolean punchOutClock(long startDateTime) {
+	public Boolean punchOutClock(long endDateTime) {
 		if (Log.isLoggable(Global.LOG_CONTEXT, Log.INFO))
 		{
 			Log.i(Global.LOG_CONTEXT, "punchOutClock(" + sessionData + ")");
 		}
 
 		if (!sessionData.isPunchedOut()) {
-			sessionData.endCurrentTimeSlice(startDateTime);
-			timeSliceDBAdapter.createTimeSlice(sessionData.getCurrentTimeSlice());
-			saveState();
-			return true;
+			sessionData.endCurrentTimeSlice(endDateTime);
+			if (true) // TODO sessionData.getElapsedTimeInMillisecs() >  Settings.getMinminTrashholdInMilliSecs())
+			{
+				timeSliceDBAdapter.createTimeSlice(sessionData.getCurrentTimeSlice());
+				saveState();
+				return true;
+			} else {
+				Log.i(Global.LOG_CONTEXT, "punchOutClock(" + sessionData + ") : elapsed time smaller than trashhold " + Settings.getMinminTrashholdInMilliSecs());
+			}
+		} else {
+			Log.i(Global.LOG_CONTEXT, "punchOutClock(" + sessionData + ") : not punched in");
 		}
-		Log.e(Global.LOG_CONTEXT, "punchOutClock(" + sessionData + ") : not punched in");
 		return false;
 	}
 

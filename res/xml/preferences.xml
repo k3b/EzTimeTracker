@@ -15,11 +15,11 @@
 			android:entryValues="@array/timeFormatValues"
 		/>	
 			
-	    <CheckBoxPreference 
-			android:key="perform_updates"
-			android:summary="Enable or disable data updates"
-			android:title="Enable updates" 
-			android:defaultValue="true"
+		<EditTextPreference
+			android:key="minTrashholdInSecs"
+			android:summary="Tracking only if longer than this (in seconds)"
+			android:title="Minimum treshhold" 
+			android:defaultValue="1"
 		/>
 		
 	</PreferenceCategory>
