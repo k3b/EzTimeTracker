@@ -36,13 +36,8 @@ public class TimeTrackerManager {
 		timeTrackerSessionDataPersistance.save(sessionData);
 	}
 	
-	public TimeTrackerSessionData reloadSessionData(TimeTrackerSessionData sessionData) {
-		if (sessionData == null)
-			sessionData = timeTrackerSessionDataPersistance.load();
-		if (sessionData == null)
-			sessionData = new TimeTrackerSessionData();
-		
-		this.sessionData = sessionData;
+	public TimeTrackerSessionData reloadSessionData() {
+		sessionData.load(timeTrackerSessionDataPersistance.load());
 		if (Global.isDebugEnabled())
 		{
 			Log.d(Global.LOG_CONTEXT, "reloadSessionData('" + sessionData + "')");
@@ -66,11 +61,10 @@ public class TimeTrackerManager {
 		
 		if (hasCategoryChanged(selectedCategory)) {
 			if (!sessionData.isPunchedOut()) {
-				sessionData.endCurrentTimeSlice(startDateTime);
-				timeSliceDBAdapter.createTimeSlice(sessionData.getCurrentTimeSlice());
+				sessionData.setEndTime(startDateTime);
+				timeSliceDBAdapter.createTimeSlice(sessionData);
 			}
 			sessionData.beginNewSlice(selectedCategory, startDateTime);
-			sessionData.setPunchInTimeStartInMillisecs(startDateTime);
 			saveState();
 
 			return true;
@@ -81,7 +75,7 @@ public class TimeTrackerManager {
 	}
 
 	private boolean hasCategoryChanged(TimeSliceCategory newCategory) {
-		return (sessionData.getTimeSliceCategory() != null && !sessionData.getTimeSliceCategory()
+		return (sessionData.getCategory() != null && !sessionData.getCategory()
 				.equals(newCategory))
 				|| sessionData.isPunchedOut();
 	}
@@ -94,10 +88,10 @@ public class TimeTrackerManager {
 		}
 
 		if (!sessionData.isPunchedOut()) {
-			sessionData.endCurrentTimeSlice(endDateTime);
-			if (true) // TODO sessionData.getElapsedTimeInMillisecs() >  Settings.getMinminTrashholdInMilliSecs())
+			sessionData.setEndTime(endDateTime);
+			if (true && sessionData.getCategory() != null) // TODO sessionData.getElapsedTimeInMillisecs() >  Settings.getMinminTrashholdInMilliSecs())
 			{
-				timeSliceDBAdapter.createTimeSlice(sessionData.getCurrentTimeSlice());
+				timeSliceDBAdapter.createTimeSlice(sessionData);
 				saveState();
 				return true;
 			} else {
@@ -109,12 +103,12 @@ public class TimeTrackerManager {
 		return false;
 	}
 
-	public long getElapsedTime() {
-		return (sessionData != null) ? sessionData.getElapsedTimeInMillisecs() : 0;
+	public long getElapsedTimeInMillisecs() {
+		return sessionData.getElapsedTimeInMillisecs();
 	}
 
 	public boolean isPunchedOut() {
-		return (sessionData != null) ? sessionData.isPunchedOut() : true;
+		return sessionData.isPunchedOut();
 	}
 
 	public long currentTimeMillis() {

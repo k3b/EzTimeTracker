@@ -178,7 +178,23 @@ public class TimeSlice implements Serializable {
 	public void setNotes(String notes) {
 		this.notes = notes;
 	}
-	
+
+	public boolean isPunchedOut() {
+		return this.getEndTime() != 0;
+	}
+
+	public void load(TimeSlice source)
+	{
+		if (source != null)
+		{
+			this.setRowId(source.getRowId());
+			this.setCategory(source.getCategory());
+			this.setStartTime(source.getStartTime());
+			this.setEndTime(source.getEndTime());
+			this.setNotes(source.getNotes());
+		}
+	}
+
 	@Override public String toString() {
 		return getTitleWithDuration();
 	}
