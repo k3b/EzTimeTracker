@@ -65,6 +65,7 @@ public class TimeTrackerManager {
 				timeSliceDBAdapter.createTimeSlice(sessionData);
 			}
 			sessionData.beginNewSlice(selectedCategory, startDateTime);
+			sessionData.setNotes("");
 			saveState();
 
 			return true;
@@ -81,12 +82,17 @@ public class TimeTrackerManager {
 	}
 
 
-	public Boolean punchOutClock(long endDateTime) {
+	public Boolean punchOutClock(long endDateTime, String notes) {
 		if (Log.isLoggable(Global.LOG_CONTEXT, Log.INFO))
 		{
 			Log.i(Global.LOG_CONTEXT, "punchOutClock(" + sessionData + ")");
 		}
 
+		if ((notes != null) && (notes.length() > 0))
+		{
+			sessionData.setNotes(notes);
+		}
+		
 		if (!sessionData.isPunchedOut()) {
 			sessionData.setEndTime(endDateTime);
 			if (true && sessionData.getCategory() != null) // TODO sessionData.getElapsedTimeInMillisecs() >  Settings.getMinminTrashholdInMilliSecs())

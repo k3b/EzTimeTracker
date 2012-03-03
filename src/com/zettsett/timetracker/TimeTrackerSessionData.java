@@ -20,6 +20,7 @@ public class TimeTrackerSessionData extends TimeSlice implements Serializable {
 		this.setCategory(category);
 		this.setStartTime(startDateTime);
 		this.setEndTime(0);
+		this.setNotes("");
 	}
  
 	public long getElapsedTimeInMillisecs() {

@@ -32,7 +32,7 @@ public class RemoteTimeTrackerReceiver extends BroadcastReceiver {
 				mgr.punchInClock(category, elapsedRealtime);
 			} else 	if (Global.CMD_STOP.equalsIgnoreCase(cmd)) {
 				long elapsedRealtime = mgr.currentTimeMillis();
-				mgr.punchOutClock(elapsedRealtime);
+				mgr.punchOutClock(elapsedRealtime, "");
 			} else {
 				Log.e(Global.LOG_CONTEXT, "unknown cmd='" + cmd + "', catrory='" + category + "' in intend='" + intent + "'");
 			}

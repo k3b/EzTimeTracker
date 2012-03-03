@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
+import android.opengl.Visibility;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -37,6 +38,8 @@ import com.zettsett.timetracker.model.TimeSliceCategory;
  */
 public class MainActivity extends Activity implements OnChronometerTickListener {
 	private TextView elapsedTimeDisplay;
+	private EditText notesEditor;
+
 	private TimeTrackerSessionData sessionData = new TimeTrackerSessionData();
 	private TimeTrackerManager tracker = null; 
 
@@ -66,6 +69,8 @@ public class MainActivity extends Activity implements OnChronometerTickListener 
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 		this.elapsedTimeDisplay = (TextView) findViewById(R.id.mainViewChronOutput);
+		this.notesEditor = (EditText) findViewById(R.id.main_edit_text_notes);
+
 		setupButtons();
 
 		this.tracker = new TimeTrackerManager(this);
@@ -74,8 +79,6 @@ public class MainActivity extends Activity implements OnChronometerTickListener 
 		DatabaseInstance.open();
 
 		reloadGui();
-
-		setupNotesChangeListener();
 	}
 
 	@Override
@@ -104,37 +107,11 @@ public class MainActivity extends Activity implements OnChronometerTickListener 
 			myReceiver = null;
 		}
 	
+		this.sessionData.setNotes(this.notesEditor.getText().toString());
 		super.onPause();
 		
 		startStopTimer(true);
 		saveState();
-	}
-
-	
-	private void setupNotesChangeListener() {
-		final EditText notesET = getNotesEditText();
-		notesET.addTextChangedListener(new TextWatcher() {
-			@Override
-			public void afterTextChanged(Editable s) {
-				String notes = notesET.getText().toString();
-				sessionData.setNotes(notes);
-			}
-
-			@Override
-			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-			}
-
-			@Override
-			public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-			}
-
-		});
-	}
-
-	private EditText getNotesEditText() {
-		return (EditText) findViewById(R.id.main_edit_text_notes);
 	}
 
 	/**
@@ -157,7 +134,9 @@ public class MainActivity extends Activity implements OnChronometerTickListener 
 	}
 	
 	private void showData() {
-		if (sessionData.isPunchedOut()) {
+		boolean punchedOut = sessionData.isPunchedOut();
+		notesEditor.setEnabled(!punchedOut);
+		if (punchedOut) {
 			elapsedTimeDisplay.setTextColor(Color.RED);
 		} else {
 			elapsedTimeDisplay.setTextColor(Color.GREEN);
@@ -169,10 +148,6 @@ public class MainActivity extends Activity implements OnChronometerTickListener 
 
 	private EditText getNotesView() {
 		return (EditText) findViewById(R.id.main_edit_text_notes);
-	}
-
-	private long getTestTimeBase() {
-		return sessionData.getStartTime(); // .getElapsedTimeInMillisecs(); // 42;
 	}
 
 	@Override
@@ -241,13 +216,12 @@ public class MainActivity extends Activity implements OnChronometerTickListener 
 	void punchInClock(TimeSliceCategory selectedCategory) {
 		long elapsedRealtime = tracker.currentTimeMillis();
 		tracker.punchInClock(selectedCategory, elapsedRealtime);
-		updateClock(false);
+		reloadGui();
 	}
 
 	private void punchOutClock() {
-		if (tracker.punchOutClock(tracker.currentTimeMillis())) {
-			updateClock(true);
-		}
+		tracker.punchOutClock(tracker.currentTimeMillis(), this.notesEditor.getText().toString());
+		reloadGui();
 	}
 
 	private void updateElapsedTimeLabel(long elapsed) {
@@ -284,7 +258,6 @@ public class MainActivity extends Activity implements OnChronometerTickListener 
 		if (!isPunchedOut)
 		{
 			updateCategoryAndStartLabel();
-			getNotesEditText().setText("");
 		}
 	}
 	
