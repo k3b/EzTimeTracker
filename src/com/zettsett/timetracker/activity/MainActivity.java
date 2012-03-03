@@ -36,7 +36,6 @@ import com.zettsett.timetracker.model.TimeSliceCategory;
  * 
  */
 public class MainActivity extends Activity implements OnChronometerTickListener {
-	private Chronometer chronometer;
 	private TextView elapsedTimeDisplay;
 	private TimeTrackerSessionData sessionData = new TimeTrackerSessionData();
 	private TimeTrackerManager tracker = null; 
@@ -53,7 +52,7 @@ public class MainActivity extends Activity implements OnChronometerTickListener 
 				Log.i(Global.LOG_CONTEXT, "MainActivity.onReceive(intent='" + intent + "')");
 			}
 			
-			refreshGui();
+			reloadGui();
 		}
 	}
 
@@ -67,7 +66,6 @@ public class MainActivity extends Activity implements OnChronometerTickListener 
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 		this.elapsedTimeDisplay = (TextView) findViewById(R.id.mainViewChronOutput);
-		this.chronometer = (Chronometer) findViewById(R.id.chron);
 		setupButtons();
 
 		this.tracker = new TimeTrackerManager(this);
@@ -75,7 +73,7 @@ public class MainActivity extends Activity implements OnChronometerTickListener 
 		DatabaseInstance.initialize(this);
 		DatabaseInstance.open();
 
-		refreshGui();
+		reloadGui();
 
 		setupNotesChangeListener();
 	}
@@ -93,7 +91,7 @@ public class MainActivity extends Activity implements OnChronometerTickListener 
 			registerReceiver(myReceiver, filter);
 		}
 				
-		refreshGui();
+		reloadGui();
 
 	}
 
@@ -108,7 +106,7 @@ public class MainActivity extends Activity implements OnChronometerTickListener 
 	
 		super.onPause();
 		
-		setChronometer(true);
+		startStopTimer(true);
 		saveState();
 	}
 
@@ -139,7 +137,10 @@ public class MainActivity extends Activity implements OnChronometerTickListener 
 		return (EditText) findViewById(R.id.main_edit_text_notes);
 	}
 
-	void refreshGui()
+	/**
+	 * displays current session-data, start/stop elapsedTimer if necessary
+	 */
+	void reloadGui()
 	{
 		Log.d(Global.LOG_CONTEXT, "MainActivity.refreshGui()");
 
@@ -148,25 +149,17 @@ public class MainActivity extends Activity implements OnChronometerTickListener 
 		if (this.tracker.isPunchedOut())
 		{
 			updateElapsedTimeLabel(tracker.getElapsedTimeInMillisecs());
-		} else {
-			chronometer.setBase(sessionData.getStartTime()); // .getElapsedTimeInMillisecs());
-		 // this.setChronometer(this.tracker.getElapsedTimeInMillisecs());
 		}
 
 		updateClock(this.tracker.isPunchedOut());
 		showData();
-		updateTimeSpentDoingLabel();
+		updateCategoryAndStartLabel();
 	}
 	
 	private void showData() {
 		if (sessionData.isPunchedOut()) {
-			chronometer.setBase(getTestTimeBase());
 			elapsedTimeDisplay.setTextColor(Color.RED);
 		} else {
-			if (sessionData.getStartTime() > tracker.currentTimeMillis()) {
-			} else {
-				chronometer.setBase(getTestTimeBase()); // sessionData.getPunchInTimeStartInMillisecs());
-			}
 			elapsedTimeDisplay.setTextColor(Color.GREEN);
 		}
 		updateChronOutputTextView();
@@ -264,14 +257,9 @@ public class MainActivity extends Activity implements OnChronometerTickListener 
 		}
 	}
 
-	@Override
-	public void onChronometerTick(Chronometer chron) {
-		updateChronOutputTextView();
-	}
-
-	private void setChronometer(boolean punchedOut) {
-		chronometer.setBase(sessionData.getStartTime()); //    tracker.currentTimeMillis() - tracker.getElapsedTimeInMillisecs()); //  .getStartTime());
-		
+	private void startStopTimer(boolean punchedOut) {
+		Chronometer chronometer = (Chronometer) findViewById(R.id.chron);
+	
 		if (!punchedOut)
 		{
 			chronometer.start();
@@ -282,14 +270,20 @@ public class MainActivity extends Activity implements OnChronometerTickListener 
 			chronometer.setOnChronometerTickListener(null);
 			elapsedTimeDisplay.setTextColor(Color.RED);		
 		}
+		updateChronOutputTextView();
+	}
+
+	@Override
+	public void onChronometerTick(Chronometer chron) {
+		updateChronOutputTextView();
 	}
 
 	private void updateClock(boolean isPunchedOut)
 	{
-		setChronometer(isPunchedOut);
+		startStopTimer(isPunchedOut);
 		if (!isPunchedOut)
 		{
-			updateTimeSpentDoingLabel();
+			updateCategoryAndStartLabel();
 			getNotesEditText().setText("");
 		}
 	}
@@ -299,7 +293,7 @@ public class MainActivity extends Activity implements OnChronometerTickListener 
 		updateElapsedTimeLabel(elapsed);
 	}
 
-	private void updateTimeSpentDoingLabel() {
+	private void updateCategoryAndStartLabel() {
 		TextView labelTv = (TextView) findViewById(R.id.tvTimeInActivity);
 		if (sessionData != null
 				&& sessionData.getCategory() != null) {
