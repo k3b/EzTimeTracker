@@ -179,8 +179,8 @@ public class TimeSlice implements Serializable {
 		this.notes = notes;
 	}
 
-	public boolean isPunchedOut() {
-		return this.getEndTime() != 0;
+	public boolean isPunchedIn() {
+		return (this.getStartTime() != 0) && (this.getEndTime() == 0);
 	}
 
 	public void load(TimeSlice source)

@@ -27,11 +27,15 @@ public class RemoteTimeTrackerReceiver extends BroadcastReceiver {
 			
 			TimeTrackerManager mgr = new TimeTrackerManager(context);
 			mgr.reloadSessionData();
-			if (Global.CMD_START.equalsIgnoreCase(cmd) && (category != null)) {
+			if (Global.CMD_START.equalsIgnoreCase(cmd) && (category != null)) 
+			{
 				long elapsedRealtime = mgr.currentTimeMillis();
 				mgr.punchInClock(category, elapsedRealtime);
-			} else 	if (Global.CMD_STOP.equalsIgnoreCase(cmd)) {
+				addNotes(mgr, 3, parts);
+			} else 	if (Global.CMD_STOP.equalsIgnoreCase(cmd)) 
+			{
 				long elapsedRealtime = mgr.currentTimeMillis();
+				addNotes(mgr, 2, parts);
 				mgr.punchOutClock(elapsedRealtime, "");
 			} else {
 				Log.e(Global.LOG_CONTEXT, "unknown cmd='" + cmd + "', catrory='" + category + "' in intend='" + intent + "'");
@@ -46,6 +50,14 @@ public class RemoteTimeTrackerReceiver extends BroadcastReceiver {
 			context.sendBroadcast(intentRefreshGui);
 
 		}		
+	}
+
+	private void addNotes(TimeTrackerManager mgr, int offset, String[] parts) {
+		while (offset > parts.length)
+		{
+			mgr.addNotes(parts[offset]);
+			offset++;
+		}
 	}
 
 }

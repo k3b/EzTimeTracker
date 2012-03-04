@@ -123,20 +123,20 @@ public class MainActivity extends Activity implements OnChronometerTickListener 
 
 		sessionData = reloadSessionData();
 		
-		if (this.tracker.isPunchedOut())
+		if (!this.tracker.isPunchedIn())
 		{
 			updateElapsedTimeLabel(tracker.getElapsedTimeInMillisecs());
 		}
 
-		updateClock(this.tracker.isPunchedOut());
+		updateClock(this.tracker.isPunchedIn());
 		showData();
 		updateCategoryAndStartLabel();
 	}
 	
 	private void showData() {
-		boolean punchedOut = sessionData.isPunchedOut();
-		notesEditor.setEnabled(!punchedOut);
-		if (punchedOut) {
+		boolean punchedIn = sessionData.isPunchedIn();
+		notesEditor.setEnabled(punchedIn);
+		if (!punchedIn) {
 			elapsedTimeDisplay.setTextColor(Color.RED);
 		} else {
 			elapsedTimeDisplay.setTextColor(Color.GREEN);
@@ -231,10 +231,10 @@ public class MainActivity extends Activity implements OnChronometerTickListener 
 		}
 	}
 
-	private void startStopTimer(boolean punchedOut) {
+	private void startStopTimer(boolean punchedIn) {
 		Chronometer chronometer = (Chronometer) findViewById(R.id.chron);
 	
-		if (!punchedOut)
+		if (punchedIn)
 		{
 			chronometer.start();
 			chronometer.setOnChronometerTickListener(this);
@@ -252,17 +252,17 @@ public class MainActivity extends Activity implements OnChronometerTickListener 
 		updateChronOutputTextView();
 	}
 
-	private void updateClock(boolean isPunchedOut)
+	private void updateClock(boolean isPunchedIn)
 	{
-		startStopTimer(isPunchedOut);
-		if (!isPunchedOut)
+		startStopTimer(isPunchedIn);
+		if (isPunchedIn)
 		{
 			updateCategoryAndStartLabel();
 		}
 	}
 	
 	private void updateChronOutputTextView() {
-		long elapsed = (tracker.isPunchedOut()) ? tracker.getElapsedTimeInMillisecs() : (tracker.currentTimeMillis() - sessionData.getStartTime());
+		long elapsed = (!tracker.isPunchedIn()) ? tracker.getElapsedTimeInMillisecs() : (tracker.currentTimeMillis() - sessionData.getStartTime());
 		updateElapsedTimeLabel(elapsed);
 	}
 

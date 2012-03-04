@@ -60,7 +60,7 @@ public class TimeTrackerManager {
 		}
 		
 		if (hasCategoryChanged(selectedCategory)) {
-			if (!sessionData.isPunchedOut()) {
+			if (sessionData.isPunchedIn()) {
 				sessionData.setEndTime(startDateTime);
 				timeSliceDBAdapter.createTimeSlice(sessionData);
 			}
@@ -78,7 +78,7 @@ public class TimeTrackerManager {
 	private boolean hasCategoryChanged(TimeSliceCategory newCategory) {
 		return (sessionData.getCategory() != null && !sessionData.getCategory()
 				.equals(newCategory))
-				|| sessionData.isPunchedOut();
+				|| !sessionData.isPunchedIn();
 	}
 
 
@@ -93,7 +93,7 @@ public class TimeTrackerManager {
 			sessionData.setNotes(notes);
 		}
 		
-		if (!sessionData.isPunchedOut()) {
+		if (sessionData.isPunchedIn()) {
 			sessionData.setEndTime(endDateTime);
 			if (true && sessionData.getCategory() != null) // TODO sessionData.getElapsedTimeInMillisecs() >  Settings.getMinminTrashholdInMilliSecs())
 			{
@@ -113,12 +113,19 @@ public class TimeTrackerManager {
 		return sessionData.getElapsedTimeInMillisecs();
 	}
 
-	public boolean isPunchedOut() {
-		return sessionData.isPunchedOut();
+	public boolean isPunchedIn() {
+		return sessionData.isPunchedIn();
 	}
 
 	public long currentTimeMillis() {
 		return System.currentTimeMillis(); // SystemClock.elapsedRealtime();
+	}
+
+	public void addNotes(String note) {
+		if ((note != null) && (note.length() != 0)) {
+			sessionData.setNotes(sessionData.getNotes() + " " + note);
+		}
+		
 	}
 
 
