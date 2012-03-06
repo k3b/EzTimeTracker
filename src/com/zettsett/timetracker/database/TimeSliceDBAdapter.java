@@ -33,7 +33,7 @@ public class TimeSliceDBAdapter {
 	}
 	
 	public long createTimeSlice(final TimeSlice timeSlice) {
-		TimeSlice oldTimeSlice = findTimesliceByCategoryAndEndTimeBiggerThan(timeSlice.getCategory(), timeSlice.getEndTime() - Settings.getMinminTrashholdInMilliSecs());
+		TimeSlice oldTimeSlice = findTimesliceByCategoryAndEndTimeBiggerThan(timeSlice.getCategory(), timeSlice.getStartTime() - Settings.getMinminTrashholdInMilliSecs());
 		
 		if (oldTimeSlice != null)
 		{
@@ -41,7 +41,9 @@ public class TimeSliceDBAdapter {
 			oldTimeSlice.setNotes(oldTimeSlice.getNotes() + " " + timeSlice.getNotes());
 			
 			Log.d(Global.LOG_CONTEXT, "db-updating exising timeslice '"+ oldTimeSlice +"' from '" + timeSlice +"'.");
-			DatabaseInstance.getDb().update(DatabaseHelper.TIME_SLICE_TABLE, timeSliceContentValuesList(oldTimeSlice), null, null);
+			DatabaseInstance.getDb().update(
+					DatabaseHelper.TIME_SLICE_TABLE, timeSliceContentValuesList(oldTimeSlice), "_id=?",
+					new String[] {Long.toString(oldTimeSlice.getRowId())});
 			return oldTimeSlice.getRowId();
 		} else {
 			Log.d(Global.LOG_CONTEXT, "db-inserting new timeslice '"+ timeSlice +"'.");
@@ -135,7 +137,10 @@ public class TimeSliceDBAdapter {
 				null, null, null);
 			while (cur.moveToNext()) {
 				TimeSlice ts = this.fillTimeSliceFromCursor(cur);
-				result.add(ts);
+				
+				if (ts != null) {
+					result.add(ts);
+				}
 			}
     	} finally {
     		if (cur != null)
@@ -167,15 +172,22 @@ public class TimeSliceDBAdapter {
 	}
 
 	private TimeSlice fillTimeSliceFromCursor(Cursor cur) {
-		TimeSlice ts = new TimeSlice();
-		ts.setRowId(cur.getInt(cur.getColumnIndexOrThrow("_id")));
-		ts.setStartTime(cur
-				.getLong(cur.getColumnIndexOrThrow("start_time")));
-		ts.setEndTime(cur.getLong(cur.getColumnIndexOrThrow("end_time")));
-		ts.setCategory(categoryDBAdapter.fetchByRowID(cur.getInt(cur
-				.getColumnIndexOrThrow("category_id"))));
-		ts.setNotes(cur.getString(cur.getColumnIndexOrThrow("notes")));
-		return ts;
+		int categoryID = cur.getInt(cur
+				.getColumnIndexOrThrow("category_id"));
+		
+		if (categoryID != 0) {
+			TimeSlice ts = new TimeSlice();
+			ts.setRowId(cur.getInt(cur.getColumnIndexOrThrow("_id")));
+			ts.setStartTime(cur
+					.getLong(cur.getColumnIndexOrThrow("start_time")));
+			ts.setEndTime(cur.getLong(cur.getColumnIndexOrThrow("end_time")));
+			ts.setCategory(categoryDBAdapter.fetchByRowID(categoryID));
+			ts.setNotes(cur.getString(cur.getColumnIndexOrThrow("notes")));
+			return ts;
+		}
+		
+		Log.w(Global.LOG_CONTEXT, "Ignoring timeslice with categoryID=0");
+		return null;
 	}
 
 	private String[] columnList() {
