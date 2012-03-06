@@ -1,6 +1,7 @@
 package com.zettsett.timetracker.activity;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -193,11 +194,16 @@ public class MainActivity extends Activity implements OnChronometerTickListener 
 	}
 
 	private void showPunchInDialog() {
-		PunchInDialog dialog = new PunchInDialog(this, R.style.PunchDialog);
-		dialog.setCallback(this);
-		dialog.show();
+		showDialog(0);
 	}
 
+	protected Dialog onCreateDialog(int id) {
+		PunchInDialog dialog = new PunchInDialog(this, R.style.PunchDialog);
+		dialog.setCallback(this);
+
+	    return dialog;
+	}
+	
 	private void setupButtons() {
 		Button punchInButton = (Button) findViewById(R.id.btnPunchIn);
 		punchInButton.setOnClickListener(new View.OnClickListener() {

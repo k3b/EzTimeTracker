@@ -5,9 +5,12 @@ todo
 ?	receiver updates gui via internal broadcast
 	fix activity memory leak
 v	punchout: nur speichern, wenn periode > x millisec (global-settings). else discard
->?	punchin: ggf alte timeslice verlängern, falls punchout(mit selber category) vor kurzem war (global-settings x millisecs)
+v	punchin: ggf alte timeslice verlängern, falls punchout(mit selber category) vor kurzem war (global-settings x millisecs)
 	remoteapi : punchin-3d-parameter: Notes
 	config select if private or public database	
+	crash wenn summary-report
+	db-save slice only if category != 0
+	
 
 copy taken on Date: 02.02.2012 18:09:20 from http://eztimetracker.googlecode.com/svn/trunk/ "r10 Updating to version 1.6"
 

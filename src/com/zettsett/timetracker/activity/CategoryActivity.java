@@ -1,20 +1,14 @@
 package com.zettsett.timetracker.activity;
 
-import android.app.AlertDialog;
-import android.app.ListActivity;
+import android.app.*;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.view.ContextMenu;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
+import android.view.*;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 
 import com.zetter.androidTime.R;
-import com.zettsett.timetracker.database.DatabaseInstance;
-import com.zettsett.timetracker.database.TimeSliceCategoryDBAdapter;
-import com.zettsett.timetracker.database.TimeSliceDBAdapter;
+import com.zettsett.timetracker.database.*;
 import com.zettsett.timetracker.model.TimeSliceCategory;
 import com.zettsett.timetracker.model.TimeSliceCategoryAdapter;
 
@@ -66,12 +60,12 @@ public class CategoryActivity extends ListActivity {
 		switch (item.getItemId()) {
 		case EDIT_MENU_ID:
 			updating = true;
-			new CategoryEditDialog(this).buildEditDialog(categoryClicked, this).show();
+			showDialog(EDIT_MENU_ID);
 			return true;
 		case DELETE_MENU_ID:
 			TimeSliceDBAdapter timeSliceDBAdapter = new TimeSliceDBAdapter(this);
 			if (timeSliceDBAdapter.categoryHasTimeSlices(categoryClicked)) {
-				showDeleteWarningDialog();
+				showDialog(DELETE_MENU_ID);
 			} else {
 				timeSliceCategoryDBAdapter.delete(categoryClicked.getRowId());
 			}
@@ -82,7 +76,22 @@ public class CategoryActivity extends ListActivity {
 		}
 	}
 
-	private void showDeleteWarningDialog() {
+	protected Dialog onCreateDialog(int id) {
+		switch (id) {
+			case EDIT_MENU_ID:
+				return new CategoryEditDialog(this).buildEditDialog(categoryClicked, this);
+			case MENU_ADD_CATEGORY:
+				return new CategoryEditDialog(this).buildEditDialog(null, this);
+			case DELETE_MENU_ID:
+				return createDeleteWarningDialog();
+		}
+
+	    return null;
+	}
+	
+
+	
+	private Dialog createDeleteWarningDialog() {
 		final CharSequence[] items = { "Go ahead and delete it.", "Don't delete it." };
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle("Warning: time is already assigned to " + categoryClicked + ":");
@@ -94,7 +103,7 @@ public class CategoryActivity extends ListActivity {
 				}
 			}
 		});
-		builder.create().show();
+		return builder.create();
 	}
 
 	@Override
@@ -109,7 +118,7 @@ public class CategoryActivity extends ListActivity {
 		switch (item.getItemId()) {
 		case MENU_ADD_CATEGORY:
 			updating = false;
-			new CategoryEditDialog(this).buildEditDialog(null, this).show();
+			showDialog(MENU_ADD_CATEGORY);
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
