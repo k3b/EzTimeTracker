@@ -53,7 +53,7 @@ public class RemoteTimeTrackerReceiver extends BroadcastReceiver {
 	}
 
 	private void addNotes(TimeTrackerManager mgr, int offset, String[] parts) {
-		while (offset > parts.length)
+		while (offset < parts.length)
 		{
 			mgr.addNotes(parts[offset]);
 			offset++;

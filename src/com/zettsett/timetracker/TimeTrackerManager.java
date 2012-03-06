@@ -59,8 +59,9 @@ public class TimeTrackerManager {
 					+ "', session='" + this.sessionData + "')");
 		}
 		
-		if (hasCategoryChanged(selectedCategory)) {
-			if (sessionData.isPunchedIn()) {
+		boolean isPunchedIn = sessionData.isPunchedIn();
+		if (!isPunchedIn || hasCategoryChanged(selectedCategory)) {
+			if (isPunchedIn) {
 				sessionData.setEndTime(startDateTime);
 				timeSliceDBAdapter.createTimeSlice(sessionData);
 			}
