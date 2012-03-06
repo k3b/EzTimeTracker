@@ -60,11 +60,12 @@ public class TimeTrackerManager {
 		}
 		
 		boolean isPunchedIn = sessionData.isPunchedIn();
-		if (!isPunchedIn || hasCategoryChanged(selectedCategory)) {
-			if (isPunchedIn) {
+		boolean hasCategoryChanged = hasCategoryChanged(selectedCategory);
+		if (!isPunchedIn || hasCategoryChanged) {
+			if (isPunchedIn && hasCategoryChanged) {
 				sessionData.setEndTime(startDateTime);
 				timeSliceDBAdapter.createTimeSlice(sessionData);
-			}
+			} 
 			sessionData.beginNewSlice(selectedCategory, startDateTime);
 			sessionData.setNotes("");
 			saveState();
@@ -92,18 +93,19 @@ public class TimeTrackerManager {
 			sessionData.setNotes(notes);
 		}
 		
-		if (sessionData.isPunchedIn()) {
+		if ((sessionData.getCategory() != null) && (sessionData.isPunchedIn())) {
 			sessionData.setEndTime(endDateTime);
-			if (true && sessionData.getCategory() != null) // TODO sessionData.getElapsedTimeInMillisecs() >  Settings.getMinminTrashholdInMilliSecs())
+			if (sessionData.getElapsedTimeInMillisecs() >  Settings.getMinminTrashholdInMilliSecs())
 			{
 				timeSliceDBAdapter.createTimeSlice(sessionData);
 				saveState();
 				return true;
 			} else {
-				Log.i(Global.LOG_CONTEXT, "punchOutClock(" + sessionData + ") : elapsed time smaller than trashhold " + Settings.getMinminTrashholdInMilliSecs());
+				Log.w(Global.LOG_CONTEXT, "Discarding timeslice in punchOutClock(" + sessionData + ") : elapsed " + sessionData.getElapsedTimeInMillisecs() + " time smaller than trashhold " + Settings.getMinminTrashholdInMilliSecs());
+				saveState();
 			}
 		} else {
-			Log.i(Global.LOG_CONTEXT, "punchOutClock(" + sessionData + ") : not punched in");
+			Log.i(Global.LOG_CONTEXT, "punchOutClock(" + sessionData + ") : not punched in or category not set.");
 		}
 		return false;
 	}

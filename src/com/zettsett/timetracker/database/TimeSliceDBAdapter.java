@@ -10,6 +10,7 @@ import android.database.SQLException;
 import android.util.Log;
 
 import com.zettsett.timetracker.Global;
+import com.zettsett.timetracker.Settings;
 import com.zettsett.timetracker.model.TimeSlice;
 import com.zettsett.timetracker.model.TimeSliceCategory;
 
@@ -32,10 +33,44 @@ public class TimeSliceDBAdapter {
 	}
 	
 	public long createTimeSlice(final TimeSlice timeSlice) {
-		return DatabaseInstance.getDb().insert(DatabaseHelper.TIME_SLICE_TABLE,
-				null, timeSliceContentValuesList(timeSlice));
+		TimeSlice oldTimeSlice = findTimesliceByCategoryAndEndTimeBiggerThan(timeSlice.getCategory(), timeSlice.getEndTime() - Settings.getMinminTrashholdInMilliSecs());
+		
+		if (oldTimeSlice != null)
+		{
+			oldTimeSlice.setEndTime(timeSlice.getEndTime());
+			oldTimeSlice.setNotes(oldTimeSlice.getNotes() + " " + timeSlice.getNotes());
+			
+			Log.d(Global.LOG_CONTEXT, "db-updating exising timeslice '"+ oldTimeSlice +"' from '" + timeSlice +"'.");
+			DatabaseInstance.getDb().update(DatabaseHelper.TIME_SLICE_TABLE, timeSliceContentValuesList(oldTimeSlice), null, null);
+			return oldTimeSlice.getRowId();
+		} else {
+			Log.d(Global.LOG_CONTEXT, "db-inserting new timeslice '"+ timeSlice +"'.");
+			return DatabaseInstance.getDb().insert(DatabaseHelper.TIME_SLICE_TABLE,
+					null, timeSliceContentValuesList(timeSlice));
+		}
 	}
 	
+	private TimeSlice findTimesliceByCategoryAndEndTimeBiggerThan(
+			TimeSliceCategory category, long minimumEndDate) {
+		if (!DatabaseInstance.getDb().isOpen()) {
+			DatabaseInstance.open();
+		}
+		Cursor cur = null;
+		try {
+			cur = DatabaseInstance.getDb().query(true,
+					DatabaseHelper.TIME_SLICE_TABLE, columnList(),
+					"category_id=? AND end_time>?", new String[] {Long.toString(category.getRowId()), Long.toString(minimumEndDate)}, null, null, null, null);
+			if ((cur != null) && (cur.moveToFirst())) {
+				return fillTimeSliceFromCursor(cur);
+			}
+    	} finally {
+    		if (cur != null)
+    			cur.close();
+    	}
+		Log.d(Global.LOG_CONTEXT, "Not found : TimeSliceDBAdapter.findTimesliceByCategoryAndEndTimeBiggerThan(...)");
+		return null;
+	}
+
 	public long updateTimeSlice(final TimeSlice timeSlice) {
 		return DatabaseInstance.getDb().update(DatabaseHelper.TIME_SLICE_TABLE,
 				timeSliceContentValuesList(timeSlice),"_id = " + timeSlice.getRowId(), null);

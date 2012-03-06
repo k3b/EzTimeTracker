@@ -176,7 +176,7 @@ public class TimeSlice implements Serializable {
 	}
 
 	public void setNotes(String notes) {
-		this.notes = notes;
+		this.notes = (notes != null) ? notes.trim() : "";
 	}
 
 	public boolean isPunchedIn() {

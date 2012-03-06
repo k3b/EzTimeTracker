@@ -4,10 +4,9 @@ todo
 	gui: menü mit images
 ?	receiver updates gui via internal broadcast
 	fix activity memory leak
-	punchout: nur speichern, wenn periode > x millisec (global-settings). else discard
-	punchin: ggf alte timeslice verlängern, falls punchout(mit selber category) vor kurzem war (global-settings x millisecs)
-v?	remoteapi : punchin-3d-parameter: Notes
-v	bug category=0?
+v	punchout: nur speichern, wenn periode > x millisec (global-settings). else discard
+>?	punchin: ggf alte timeslice verlängern, falls punchout(mit selber category) vor kurzem war (global-settings x millisecs)
+	remoteapi : punchin-3d-parameter: Notes
 	config select if private or public database	
 
 copy taken on Date: 02.02.2012 18:09:20 from http://eztimetracker.googlecode.com/svn/trunk/ "r10 Updating to version 1.6"
