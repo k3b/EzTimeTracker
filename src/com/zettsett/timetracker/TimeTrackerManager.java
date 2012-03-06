@@ -76,11 +76,9 @@ public class TimeTrackerManager {
 	}
 
 	private boolean hasCategoryChanged(TimeSliceCategory newCategory) {
-		return (sessionData.getCategory() != null && !sessionData.getCategory()
-				.equals(newCategory))
-				|| !sessionData.isPunchedIn();
+		return (sessionData.getCategory() == null || !sessionData.getCategory()
+				.equals(newCategory));
 	}
-
 
 	public Boolean punchOutClock(long endDateTime, String notes) {
 		if (Log.isLoggable(Global.LOG_CONTEXT, Log.INFO))

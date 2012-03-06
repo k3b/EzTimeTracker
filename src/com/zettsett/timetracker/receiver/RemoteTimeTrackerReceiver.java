@@ -27,7 +27,7 @@ public class RemoteTimeTrackerReceiver extends BroadcastReceiver {
 			
 			TimeTrackerManager mgr = new TimeTrackerManager(context);
 			mgr.reloadSessionData();
-			if (Global.CMD_START.equalsIgnoreCase(cmd) && (category != null)) 
+			if (Global.CMD_START.equalsIgnoreCase(cmd) && (category != null) && (category.length() > 0)) 
 			{
 				long elapsedRealtime = mgr.currentTimeMillis();
 				mgr.punchInClock(category, elapsedRealtime);
