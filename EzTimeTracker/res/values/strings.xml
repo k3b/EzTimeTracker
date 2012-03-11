@@ -24,7 +24,6 @@
 	<string name="checkbox_data_export_email">Export to Email</string>	
 	<string name="button_data_export">Export Data</string>	
 	<string name="choose_date">Choose the Date</string>	
-	<string name="export_header">Start Date, Start Time, End Time, Category Name, Category Description, Notes</string>	
 	<string name="export_email_subject">EZ Time Tracker Data Export</string>	
 	<string name="delete_interval_confirmation">Are you sure you want to delete this time interval?</string>	
 	<!-- obsolete 

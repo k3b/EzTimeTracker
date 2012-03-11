@@ -102,7 +102,7 @@ public class RemoveTimeSliceActivity extends Activity {
 		DatePicker fromPicker = (DatePicker) findViewById(datPickerId);
 		Calendar startCalendar = DateTimeFormatter.getCalendar(fromPicker.getYear(), fromPicker
 				.getMonth(), fromPicker.getDayOfMonth());
-		return DateFormat.format("E, MMMM dd, yyyy", startCalendar.getTimeInMillis());
+		return DateTimeFormatter.getLongDateStr(startCalendar.getTimeInMillis());
 	}
 
 	public void confirmRemoval() {

@@ -23,8 +23,6 @@ public class TimeSlice implements Serializable {
 
 	private static Calendar calendar = new GregorianCalendar();
 
-	public static final long MILLIS_IN_A_DAY = 24 * 60 * 60 * 1000;
-
 	public static final int IS_NEW_TIMESLICE = -1;
 
 	public int getRowId() {
@@ -40,39 +38,17 @@ public class TimeSlice implements Serializable {
 	}
 
 	public String getStartDateStr() {
-		return getDateStr(startTime);
+		return DateTimeFormatter.getLongDateStr(startTime);
 	}
 
 	public String getStartMonthStr() {
-		if (startTime == 0) {
-			return "";
-		} else {
-			return DateFormat.format("MMMM yyyy", startTime).toString();
-		}
+		return DateTimeFormatter.getMonthStr(startTime);
 	}
 
 	// TODO make getStartWeekStr() work with non american locale
 	public String getStartWeekStr() {
-		if (startTime == 0) {
-			return "";
-		} else {
-			long firstDayOfWeekDate = startTime;
-			CharSequence dayOfWeek = DateFormat.format("E", startTime);
-			if (dayOfWeek.equals("Mon")) {
-				firstDayOfWeekDate -= MILLIS_IN_A_DAY;
-			} else if (dayOfWeek.equals("Tue")) {
-				firstDayOfWeekDate -= MILLIS_IN_A_DAY * 2;
-			} else if (dayOfWeek.equals("Wed")) {
-				firstDayOfWeekDate -= MILLIS_IN_A_DAY * 3;
-			} else if (dayOfWeek.equals("Thu")) {
-				firstDayOfWeekDate -= MILLIS_IN_A_DAY * 4;
-			} else if (dayOfWeek.equals("Fri")) {
-				firstDayOfWeekDate -= MILLIS_IN_A_DAY * 5;
-			} else if (dayOfWeek.equals("Sat")) {
-				firstDayOfWeekDate -= MILLIS_IN_A_DAY * 6;
-			}
-			return "Week of " + DateFormat.format("dd MMMM yyyy", firstDayOfWeekDate).toString();
-		}
+		long startTime = this.startTime;
+		return DateTimeFormatter.getWeekStr(startTime);
 	}
 
 	public int getStartTimeComponent(int componentId) {
@@ -98,38 +74,14 @@ public class TimeSlice implements Serializable {
 	}
 
 	public String getStartTimeStr() {
-		return getTimeString(startTime);
+		return DateTimeFormatter.getTimeString(startTime);
 	}
 
 	public String getEndTimeStr() {
 		if (startTime == 0) {
 			return "";
 		} else {
-			return getTimeString(endTime);
-		}
-	}
-
-	public static String getTimeString(long dateTime) {
-		if (dateTime == 0) {
-			return "";
-		} else {
-			return DateTimeFormatter.formatTimePerCurrentSettings(dateTime).toString();
-		}
-	}
-
-	public static String getDateStr(long dateTime) {
-		if (dateTime == 0) {
-			return "";
-		} else {
-			return DateFormat.format("E dd.MM.yyyy", dateTime).toString();
-		}
-	}
-
-	public static String getDateTimeStr(long dateTime) {
-		if (dateTime == 0) {
-			return "";
-		} else {
-			return getDateStr(dateTime) + " " + getTimeString(dateTime);
+			return DateTimeFormatter.getTimeString(endTime);
 		}
 	}
 

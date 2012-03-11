@@ -28,6 +28,9 @@ import com.zettsett.timetracker.model.TimeSlice;
 
 public class DataExportActivity extends Activity implements RadioGroup.OnCheckedChangeListener {
 
+	private static final String CSV_LINE_SEPERATOR = "\n";
+	private static final String CSV_FIELD_SEPERATOR = ",";
+	
 	private RadioGroup mRadioGroup;
 	private boolean mExportAll = true;
 	private long mFromDate, mToDate;
@@ -100,11 +103,11 @@ public class DataExportActivity extends Activity implements RadioGroup.OnChecked
 	}
 
 	private void assignFromToDateLabels() {
-		String formatString = "MMMM dd, yyyy";
 		Button fromButton = (Button) findViewById(R.id.button_data_export_from);
-		fromButton.setText(DateFormat.format(formatString, mFromDate));
+		fromButton.setText(DateTimeFormatter.getShortDateStr(mFromDate));
+
 		Button toButton = (Button) findViewById(R.id.button_data_export_to);
-		toButton.setText(DateFormat.format(formatString, mToDate));
+		toButton.setText(DateTimeFormatter.getShortDateStr(mToDate));
 	}
 
 	private void showDatePickerDialog(long dateToShow) {
@@ -155,16 +158,16 @@ public class DataExportActivity extends Activity implements RadioGroup.OnChecked
 			timeSlices = mTimeSliceDBAdapter.fetchTimeSlicesByDateRange(mFromDate, mToDate);
 		}
 		StringBuilder output = new StringBuilder();
-		output.append(getString(R.string.export_header)).append("\n");
+		output.append("Start, End, Category Name, Category Description, Notes").append(CSV_LINE_SEPERATOR);
 		for (TimeSlice aTimeSlice : timeSlices) {
-			String dateStr = DateFormat.format("MM/dd/yyyy", aTimeSlice.getStartTime()).toString();
-			output.append(dateStr).append(",");
-			output.append(aTimeSlice.getStartTimeStr()).append(",");
-			output.append(aTimeSlice.getEndTimeStr()).append(",");
-			output.append(aTimeSlice.getCategory().getCategoryName()).append(",");
-			output.append(aTimeSlice.getCategory().getDescription()).append(",");
-			output.append(aTimeSlice.getNotes().replace('\n', ' '));
-			output.append("\n");
+			String dateStr = DateTimeFormatter.getRfcDateTimeStr(aTimeSlice.getStartTime());
+			output.append(dateStr).append(CSV_FIELD_SEPERATOR);
+			output.append(aTimeSlice.getStartTimeStr()).append(CSV_FIELD_SEPERATOR);
+			output.append(DateTimeFormatter.getRfcDateTimeStr(aTimeSlice.getEndTime())).append(CSV_FIELD_SEPERATOR);
+			output.append(aTimeSlice.getCategory().getCategoryName()).append(CSV_FIELD_SEPERATOR);
+			output.append(aTimeSlice.getCategory().getDescription()).append(CSV_FIELD_SEPERATOR);
+			output.append(aTimeSlice.getNotes().replace(CSV_LINE_SEPERATOR, " "));
+			output.append(CSV_LINE_SEPERATOR);
 		}
 		if (mEmailData) {
 			EmailUtilities.send("", getString(R.string.export_email_subject), this, output

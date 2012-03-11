@@ -116,9 +116,9 @@ public class ReportFramework implements Serializable {
 		exportMenu.add(Menu.NONE, MENU_ITEM_EXPORT_EMAIL, 2, "Email Report");
 		SubMenu dateRangeMenu = menu.addSubMenu(Menu.NONE, Menu.NONE, 3, "Select Date Range");
 		dateRangeMenu.add(Menu.NONE, MENU_ITEM_START_DATE, 0, "Start: "
-				+ DateFormat.format("E, MMMM dd, yyyy", getStartDateRange()).toString());
+				+ DateTimeFormatter.getLongDateStr(getStartDateRange()).toString());
 		dateRangeMenu.add(Menu.NONE, MENU_ITEM_END_DATE, 1, "End: "
-				+ DateFormat.format("E, MMMM dd, yyyy", getEndDateRange()).toString());
+				+ DateTimeFormatter.getLongDateStr(getEndDateRange()).toString());
 
 		return result;
 	}
@@ -262,14 +262,14 @@ public class ReportFramework implements Serializable {
 		contentView.setOrientation(LinearLayout.VERTICAL);
 		scrollView = new LinearScroller(activity);
 		startDateTV.setPadding(20, 0, 0, 0);
-		startDateTV.setText("From date: " + DateFormat.format("E, MMMM dd, yyyy", startDateRange),
+		startDateTV.setText("From date: " + DateTimeFormatter.getLongDateStr(startDateRange),
 				TextView.BufferType.SPANNABLE);
 		Spannable str = (Spannable) startDateTV.getText();
 		str.setSpan(new StyleSpan(android.graphics.Typeface.ITALIC), 0, 11, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 		str.setSpan(new StyleSpan(android.graphics.Typeface.BOLD), 0, 11, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 		contentView.addView(startDateTV);
 		endDateTV.setPadding(49, 0, 0, 0);
-		endDateTV.setText("To date: " + DateFormat.format("E, MMMM dd, yyyy", endDateRange),
+		endDateTV.setText("To date: " + DateTimeFormatter.getLongDateStr(endDateRange),
 				TextView.BufferType.SPANNABLE);
 		str = (Spannable) endDateTV.getText();
 		str.setSpan(new StyleSpan(android.graphics.Typeface.ITALIC), 0, 9, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);

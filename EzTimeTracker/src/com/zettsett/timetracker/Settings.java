@@ -17,7 +17,7 @@ public class Settings {
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
 		String pref = prefs.getString("timeFormat", null);
 		currentTimeFormat = pref;
-		DateTimeFormatter.initializeCurrentTimeFormat();
+		DateTimeFormatter.initializeCurrentTimeFormat(Settings.getCurrentTimeFormat());
 		
 		minTrashholdInSecs = Integer.parseInt(prefs.getString("minTrashholdInSecs", Integer.toString(minTrashholdInSecs)));
 	}

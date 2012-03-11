@@ -2,15 +2,12 @@ info see http://zettsetttech.blogspot.com/
 
 todo
 	gui: menü mit images
-?	receiver updates gui via internal broadcast
 	fix activity memory leak
-v	punchout: nur speichern, wenn periode > x millisec (global-settings). else discard
-v	punchin: ggf alte timeslice verlängern, falls punchout(mit selber category) vor kurzem war (global-settings x millisecs)
-	remoteapi : punchin-3d-parameter: Notes
 	config select if private or public database	
-	crash wenn summary-report
-	db-save slice only if category != 0
-	
+
+>	Move all date formatting to calls DateTimeFormatter
+		make manual timezone obsolete by using international functions
+		getInstance() instead of static methods	
 
 copy taken on Date: 02.02.2012 18:09:20 from http://eztimetracker.googlecode.com/svn/trunk/ "r10 Updating to version 1.6"
 

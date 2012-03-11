@@ -55,7 +55,7 @@ public class TimeTrackerManager {
 		if (Global.isInfoEnabled())
 		{
 			Log.i(Global.LOG_CONTEXT, "punchInClock(category='" + selectedCategory.getCategoryName() 
-					+ "', time='" + TimeSlice.getDateTimeStr(startDateTime)
+					+ "', time='" + DateTimeFormatter.getDateTimeStr(startDateTime)
 					+ "', session='" + this.sessionData + "')");
 		}
 		
