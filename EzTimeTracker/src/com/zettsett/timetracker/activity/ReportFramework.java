@@ -12,7 +12,6 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.graphics.Color;
 import android.text.Spannable;
-import android.text.format.DateFormat;
 import android.text.style.StyleSpan;
 import android.view.HapticFeedbackConstants;
 import android.view.Menu;
@@ -111,13 +110,13 @@ public class ReportFramework implements Serializable {
 
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		boolean result = true;
-		SubMenu exportMenu = menu.addSubMenu(Menu.NONE, Menu.NONE, 2, "Export Report");
-		exportMenu.add(Menu.NONE, MENU_ITEM_EXPORT_SD, 1, "Export Report to SD Card");
-		exportMenu.add(Menu.NONE, MENU_ITEM_EXPORT_EMAIL, 2, "Email Report");
-		SubMenu dateRangeMenu = menu.addSubMenu(Menu.NONE, Menu.NONE, 3, "Select Date Range");
-		dateRangeMenu.add(Menu.NONE, MENU_ITEM_START_DATE, 0, "Start: "
+		SubMenu exportMenu = menu.addSubMenu(Menu.NONE, Menu.NONE, 2, R.string.menu_export_report);
+		exportMenu.add(Menu.NONE, MENU_ITEM_EXPORT_SD, 1, R.string.menu_export_report_to_sd_card);
+		exportMenu.add(Menu.NONE, MENU_ITEM_EXPORT_EMAIL, 2, R.string.menu_email_report);
+		SubMenu dateRangeMenu = menu.addSubMenu(Menu.NONE, Menu.NONE, 3, R.string.menu_select_date_range);
+		dateRangeMenu.add(Menu.NONE, MENU_ITEM_START_DATE, 0, activity.getString(R.string.menu_start)
 				+ DateTimeFormatter.getLongDateStr(getStartDateRange()).toString());
-		dateRangeMenu.add(Menu.NONE, MENU_ITEM_END_DATE, 1, "End: "
+		dateRangeMenu.add(Menu.NONE, MENU_ITEM_END_DATE, 1, activity.getString(R.string.menu_end)
 				+ DateTimeFormatter.getLongDateStr(getEndDateRange()).toString());
 
 		return result;
@@ -262,14 +261,14 @@ public class ReportFramework implements Serializable {
 		contentView.setOrientation(LinearLayout.VERTICAL);
 		scrollView = new LinearScroller(activity);
 		startDateTV.setPadding(20, 0, 0, 0);
-		startDateTV.setText("From date: " + DateTimeFormatter.getLongDateStr(startDateRange),
+		startDateTV.setText(this.activity.getString(R.string.label_from_date_) + DateTimeFormatter.getLongDateStr(startDateRange),
 				TextView.BufferType.SPANNABLE);
 		Spannable str = (Spannable) startDateTV.getText();
 		str.setSpan(new StyleSpan(android.graphics.Typeface.ITALIC), 0, 11, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 		str.setSpan(new StyleSpan(android.graphics.Typeface.BOLD), 0, 11, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 		contentView.addView(startDateTV);
 		endDateTV.setPadding(49, 0, 0, 0);
-		endDateTV.setText("To date: " + DateTimeFormatter.getLongDateStr(endDateRange),
+		endDateTV.setText(this.activity.getString(R.string.label_to_date_) + DateTimeFormatter.getLongDateStr(endDateRange),
 				TextView.BufferType.SPANNABLE);
 		str = (Spannable) endDateTV.getText();
 		str.setSpan(new StyleSpan(android.graphics.Typeface.ITALIC), 0, 9, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);

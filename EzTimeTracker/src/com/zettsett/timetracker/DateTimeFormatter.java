@@ -1,8 +1,13 @@
 package com.zettsett.timetracker;
 
 import java.util.Calendar;
+import java.util.Date;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 import android.text.format.DateFormat;
+import android.util.Log;
 
 /**
  * Copyright 2010 Eric Zetterbaum ezetter@gmail.com
@@ -24,7 +29,9 @@ public class DateTimeFormatter {
 
 	public static final long MILLIS_IN_A_DAY = 24 * 60 * 60 * 1000;
 
-	private static String timeFormatString = "h:mmaa";
+	final private static java.text.DateFormat shortDateformatter = java.text.DateFormat.getDateInstance(java.text.DateFormat.MEDIUM);
+	final private static java.text.DateFormat shortTimeformatter = java.text.DateFormat.getTimeInstance(java.text.DateFormat.SHORT);
+	final private static java.text.DateFormat dowFormatter = new SimpleDateFormat("E ");
 	/*
 	private static DateTimeFormatter instance = null;
 	
@@ -44,19 +51,6 @@ public class DateTimeFormatter {
 		return c;
 	}
 
-	public static void initializeCurrentTimeFormat(String formatType) {
-		if("ampm".equals(formatType)) {
-			timeFormatString = "h:mmaa";
-		} else {
-			timeFormatString = "kk:mm";
-		}
-	}
-
-	public static String formatTimePerCurrentSettings(long timeMilliSecs) {
-			
-		return DateFormat.format(timeFormatString, timeMilliSecs).toString();
-	}
-	
 	public static StringBuilder hrColMin(long timeMilliSecs, boolean alwaysIncludeHours, boolean includeSeconds) {
 		if (timeMilliSecs >= 0)
 		{
@@ -98,9 +92,7 @@ public class DateTimeFormatter {
 		if (dateTime == 0) {
 			return "";
 		} else {
-			// german "E dd.MM.yyyy" : mo 23.12.2009
-			// us "E, MMMM dd, yyyy" : mo, december 23, 2009
-			return DateFormat.format("E dd.MM.yyyy", dateTime).toString();
+			return dowFormatter.format(new Date(dateTime)) + getShortDateStr(dateTime);
 		}
 	}
 
@@ -108,8 +100,7 @@ public class DateTimeFormatter {
 		if (dateTime == 0) {
 			return "";
 		} else {
-			// US "MMMM dd, yyyy" : December 23, 2009
-			return DateFormat.format("MMMM dd, yyyy", dateTime).toString();
+			return shortDateformatter.format(new Date(dateTime));
 		}
 	}
 
@@ -117,7 +108,7 @@ public class DateTimeFormatter {
 		if (dateTime == 0) {
 			return "";
 		} else {
-			return formatTimePerCurrentSettings(dateTime).toString();
+			return shortTimeformatter.format(new Date(dateTime)); // DateFormat.format(timeFormatString, timeMilliSecs).toString();
 		}
 	}
 
@@ -146,22 +137,26 @@ public class DateTimeFormatter {
 		if (dateTime == 0) {
 			return "";
 		} else {
-			long firstDayOfWeekDate = dateTime;
-			CharSequence dayOfWeek = DateFormat.format("E", dateTime);
-			if (dayOfWeek.equals("Mon")) {
-				firstDayOfWeekDate -= MILLIS_IN_A_DAY;
-			} else if (dayOfWeek.equals("Tue")) {
-				firstDayOfWeekDate -= MILLIS_IN_A_DAY * 2;
-			} else if (dayOfWeek.equals("Wed")) {
-				firstDayOfWeekDate -= MILLIS_IN_A_DAY * 3;
-			} else if (dayOfWeek.equals("Thu")) {
-				firstDayOfWeekDate -= MILLIS_IN_A_DAY * 4;
-			} else if (dayOfWeek.equals("Fri")) {
-				firstDayOfWeekDate -= MILLIS_IN_A_DAY * 5;
-			} else if (dayOfWeek.equals("Sat")) {
-				firstDayOfWeekDate -= MILLIS_IN_A_DAY * 6;
+			Calendar cal = Calendar.getInstance();
+			cal.setTimeInMillis(dateTime);
+			int dow = cal.get(Calendar.DAY_OF_WEEK);
+			
+			if (dow > 0)
+			{
+				cal.add(Calendar.DAY_OF_MONTH, - dow);
 			}
-			return "Week of " + DateFormat.format("dd MMMM yyyy", firstDayOfWeekDate).toString();
+			
+			return getShortDateStr(cal.getTimeInMillis());
+		}
+	}
+
+	public static long parseDate(String mDateSelectedForAdd) {
+		try {
+			return shortDateformatter.parse(
+					mDateSelectedForAdd).getTime();
+		} catch (ParseException e) {
+			Log.w(Global.LOG_CONTEXT,"cannot reconvert " + mDateSelectedForAdd + " to dateTime using " + shortDateformatter,e);
+			return 0;
 		}
 	}
 }

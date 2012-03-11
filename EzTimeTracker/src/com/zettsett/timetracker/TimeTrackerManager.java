@@ -2,7 +2,6 @@ package com.zettsett.timetracker;
 
 import com.zettsett.timetracker.database.TimeSliceCategoryDBAdapter;
 import com.zettsett.timetracker.database.TimeSliceDBAdapter;
-import com.zettsett.timetracker.model.TimeSlice;
 import com.zettsett.timetracker.model.TimeSliceCategory;
 
 import de.k3b.util.SessionDataPersistance;

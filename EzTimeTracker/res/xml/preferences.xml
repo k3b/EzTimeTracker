@@ -6,15 +6,6 @@
 		android:title="First Category"
 		android:key="first_category">
 		
-		<ListPreference 
-			android:key="timeFormat"
-			android:title="Time Format"
-			android:summary="Define how often updates will be performed"
-			android:defaultValue="24hr" 
-			android:entries="@array/timeFormatEntries"
-			android:entryValues="@array/timeFormatValues"
-		/>	
-			
 		<EditTextPreference
 			android:key="minTrashholdInSecs"
 			android:summary="Tracking only if longer than this (in seconds)"

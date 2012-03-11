@@ -234,13 +234,7 @@ public class TimeSheetReportActivity extends Activity implements ReportInterface
 			buildDeleteDialog();
 			return true;
 		case ADD_MENU_ID:
-			DateFormat format = new SimpleDateFormat("E, MMMM dd, yyyy");
-			try {
-				showTimeSliceEditDialog(TimeSlice.IS_NEW_TIMESLICE, format.parse(
-						mDateSelectedForAdd).getTime());
-			} catch (ParseException e) {
-				// This WILL parse.
-			}
+			showTimeSliceEditDialog(TimeSlice.IS_NEW_TIMESLICE, DateTimeFormatter.parseDate(mDateSelectedForAdd));
 			return true;
 		default:
 			return super.onContextItemSelected(item);

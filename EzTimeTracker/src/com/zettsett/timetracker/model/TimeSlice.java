@@ -4,8 +4,6 @@ import java.io.Serializable;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-import android.text.format.DateFormat;
-
 import com.zettsett.timetracker.DateTimeFormatter;
 
 public class TimeSlice implements Serializable {

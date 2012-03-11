@@ -6,7 +6,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.text.format.DateFormat;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -27,7 +26,7 @@ public class RemoveTimeSliceActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.remove_ts);
-		setTitle("Delete Time Interval Data");
+		setTitle(R.string.label_delete_time_interval_data);
 		DatabaseInstance.initialize(this);
 		mTimeSliceDBAdapter = new TimeSliceDBAdapter(this);
 		Button removalButton = (Button) findViewById(R.id.button_remove_ts);
@@ -65,7 +64,7 @@ public class RemoveTimeSliceActivity extends Activity {
 		if (mRemoveAll) {
 			mTimeSliceDBAdapter.deleteAll();
 			Toast.makeText(getApplicationContext(),
-					"All time intervals have been removed from the system.", Toast.LENGTH_LONG)
+					R.string.msg_all_time_intervals_have_been_removed_from_the_system_, Toast.LENGTH_LONG)
 					.show();
 		} else {
 			DatePicker fromPicker = (DatePicker) findViewById(R.id.DatePicker_remove_ts_start);
@@ -75,11 +74,6 @@ public class RemoveTimeSliceActivity extends Activity {
 			startCalendar.set(Calendar.MINUTE, 0);
 			startCalendar.set(Calendar.SECOND, 1);
 			long startDate = startCalendar.getTimeInMillis();
-			// Toast.makeText(getApplicationContext(),
-			// "Time intervals from " + DateFormat.format("hh:mm:ssaa",
-			// startDate),
-			// Toast.LENGTH_LONG)
-			// .show();
 
 			DatePicker toPicker = (DatePicker) findViewById(R.id.DatePicker_remove_ts_end);
 			Calendar endCalendar = DateTimeFormatter.getCalendar(toPicker.getYear(), toPicker
@@ -91,9 +85,10 @@ public class RemoveTimeSliceActivity extends Activity {
 			mTimeSliceDBAdapter.deleteForDateRange(startDate, endDate);
 			Toast.makeText(
 					getApplicationContext(),
-					"Time intervals from " + getFormattedDate(R.id.DatePicker_remove_ts_start)
-							+ " through " + getFormattedDate(R.id.DatePicker_remove_ts_end)
-							+ " removed.", Toast.LENGTH_LONG).show();
+					getString(R.string.msg_time_intervals_from_ )
+							+ getFormattedDate(R.id.DatePicker_remove_ts_start)
+							+ getString(R.string.msg_time_intervals_through_ ) + getFormattedDate(R.id.DatePicker_remove_ts_end)
+							+ getString(R.string.msg_time_intervals_removed_ ), Toast.LENGTH_LONG).show();
 		}
 		finish();
 	}
@@ -108,21 +103,21 @@ public class RemoveTimeSliceActivity extends Activity {
 	public void confirmRemoval() {
 		String message;
 		if (mRemoveAll) {
-			message = "Are you sure you want to permanently delete all time intervals?";
+			message = getString(R.string.question_delete_all_time_intervals_);
 		} else {
-			message = "Are you sure you want to permanently delete time intervals from "
-					+ getFormattedDate(R.id.DatePicker_remove_ts_start) + " through "
+			message = getString(R.string.question_delete_time_intervals_from_)
+					+ getFormattedDate(R.id.DatePicker_remove_ts_start) + getString(R.string.msg_time_intervals_through_)
 					+ getFormattedDate(R.id.DatePicker_remove_ts_end)
-					+ "? This operation cannot be reversed.";
+					+ getString(R.string.question_delete_time_intervals_operation_cannot_be_reversed_);
 		}
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle("Confirm Removal");
-		builder.setMessage(message).setCancelable(false).setPositiveButton("Yes",
+		builder.setTitle(R.string.title_confirm_removal);
+		builder.setMessage(message).setCancelable(false).setPositiveButton(R.string.btn_yes,
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int id) {
 						doRemove();
 					}
-				}).setNegativeButton("No", new DialogInterface.OnClickListener() {
+				}).setNegativeButton(R.string.btn_no, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int id) {
 				dialog.cancel();
 			}

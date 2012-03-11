@@ -7,10 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
-import android.opengl.Visibility;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.*;
 import android.widget.*;
@@ -68,6 +65,7 @@ public class MainActivity extends Activity implements OnChronometerTickListener 
 		}
 		
 		super.onCreate(savedInstanceState);
+		//DateTimeFormatter.SetFormat(DateFormat.get DateInstance(DateFormat.S));
 		setContentView(R.layout.main);
 		this.elapsedTimeDisplay = (TextView) findViewById(R.id.mainViewChronOutput);
 		this.notesEditor = (EditText) findViewById(R.id.main_edit_text_notes);
@@ -276,13 +274,13 @@ public class MainActivity extends Activity implements OnChronometerTickListener 
 		TextView labelTv = (TextView) findViewById(R.id.tvTimeInActivity);
 		if (sessionData != null
 				&& sessionData.getCategory() != null) {
-			labelTv.setText("Time spent "
+			labelTv.setText(getText(R.string.label_time_spent_)
 					+ sessionData.getCategory().getCategoryName() + ": ");
 		} else {
-			labelTv.setText("No current activity");
+			labelTv.setText(R.string.label_no_current_activity);
 		}
 		TextView tvStartTime = (TextView) findViewById(R.id.tvStartTime);
-		tvStartTime.setText("Start time: " + sessionData.getStartTimeStr());
+		tvStartTime.setText(getText(R.string.label_start_time_) + sessionData.getStartTimeStr());
 	}
 
 	private void setSelectedTimeSliceCategory(TimeSliceCategory category) {

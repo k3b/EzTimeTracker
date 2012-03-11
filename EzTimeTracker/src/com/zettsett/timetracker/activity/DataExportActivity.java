@@ -8,7 +8,6 @@ import java.util.List;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.os.Bundle;
-import android.text.format.DateFormat;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -40,7 +39,7 @@ public class DataExportActivity extends Activity implements RadioGroup.OnChecked
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setTitle("Export Data to CSV File");
+		setTitle(R.string.export_data_to_csv_file);
 		setContentView(R.layout.data_export);
 		initializeDateRanges();
 		mRadioGroup = (RadioGroup) findViewById(R.id.radio_group_data_export);

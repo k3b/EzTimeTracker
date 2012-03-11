@@ -17,6 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.LinearLayout.LayoutParams;
 
+import com.zetter.androidTime.R;
 import com.zettsett.timetracker.database.DatabaseInstance;
 import com.zettsett.timetracker.database.TimeSliceDBAdapter;
 import com.zettsett.timetracker.model.TimeSlice;
@@ -89,15 +90,15 @@ public class SummaryReportActivity extends Activity implements ReportInterface {
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		boolean result = super.onCreateOptionsMenu(menu);
 		menu.clear();
-		SubMenu groupDateMenu = menu.addSubMenu(0, Menu.NONE, 0, "Select Date Grouping");
-		groupDateMenu.add(0, MENU_ITEM_GROUP_DAILY, 0, "Daily");
-		groupDateMenu.add(0, MENU_ITEM_GROUP_WEEKLY, 1, "Weekly");
-		groupDateMenu.add(0, MENU_ITEM_GROUP_MONTHLY, 2, "Monthly");
+		SubMenu groupDateMenu = menu.addSubMenu(0, Menu.NONE, 0, R.string.menu_select_date_grouping);
+		groupDateMenu.add(0, MENU_ITEM_GROUP_DAILY, 0, R.string.menu_select_date_grouping_daily);
+		groupDateMenu.add(0, MENU_ITEM_GROUP_WEEKLY, 1, R.string.menu_select_date_grouping_weekly);
+		groupDateMenu.add(0, MENU_ITEM_GROUP_MONTHLY, 2, R.string.menu_select_date_grouping_monthly);
 		reportFramework.onPrepareOptionsMenu(menu);
 		if (reportMode == ReportModes.BY_DATE) {
-			menu.add(0, MENU_ITEM_GROUP_CATEGORY, 1, "Switch to Category Headers");
+			menu.add(0, MENU_ITEM_GROUP_CATEGORY, 1, R.string.menu_switch_to_category_headers);
 		} else {
-			menu.add(0, MENU_ITEM_GROUP_CATEGORY, 1, "Switch to Date Headers");
+			menu.add(0, MENU_ITEM_GROUP_CATEGORY, 1, R.string.menu_switch_to_date_headers);
 		}
 		return result;
 	}
@@ -183,7 +184,7 @@ public class SummaryReportActivity extends Activity implements ReportInterface {
 			String header;
 			if (reportMode == ReportModes.BY_DATE) {
 				if (reportDateGrouping == ReportDateGrouping.WEEKLY) {
-					header = aSlice.getStartWeekStr();
+					header = getString(R.string.label_week_of_) + aSlice.getStartWeekStr();
 				} else if (reportDateGrouping == ReportDateGrouping.MONTHLY) {
 					header = aSlice.getStartMonthStr();
 				} else {
@@ -228,15 +229,15 @@ public class SummaryReportActivity extends Activity implements ReportInterface {
 		long hours = totalTimeInMillis / (1000 * 60 * 60);
 		String hoursWord;
 		if (hours == 1) {
-			hoursWord = "hour";
+			hoursWord = getString(R.string.hoursWord1);
 		} else {
-			hoursWord = "hours";
+			hoursWord = getString(R.string.hoursWordN);
 		}
 		String minutesWord;
 		if (minutes == 1) {
-			minutesWord = "minute";
+			minutesWord = getString(R.string.minutesWord1);
 		} else {
-			minutesWord = "minutes";
+			minutesWord = getString(R.string.minutesWordN);
 		}
 		String timeString = hours + " " + hoursWord + ", " + minutes + " " + minutesWord;
 		return timeString;

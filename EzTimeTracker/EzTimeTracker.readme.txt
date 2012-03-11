@@ -5,10 +5,6 @@ todo
 	fix activity memory leak
 	config select if private or public database	
 
->	Move all date formatting to calls DateTimeFormatter
-		make manual timezone obsolete by using international functions
-		getInstance() instead of static methods	
-
 copy taken on Date: 02.02.2012 18:09:20 from http://eztimetracker.googlecode.com/svn/trunk/ "r10 Updating to version 1.6"
 
 -------------
