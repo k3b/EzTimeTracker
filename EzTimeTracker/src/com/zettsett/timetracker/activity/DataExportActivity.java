@@ -51,6 +51,7 @@ public class DataExportActivity extends Activity implements RadioGroup.OnChecked
 				writeData();
 			}
 		});
+		
 		Button fromButton = (Button) findViewById(R.id.button_data_export_from);
 		fromButton.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -103,10 +104,14 @@ public class DataExportActivity extends Activity implements RadioGroup.OnChecked
 
 	private void assignFromToDateLabels() {
 		Button fromButton = (Button) findViewById(R.id.button_data_export_from);
-		fromButton.setText(DateTimeFormatter.getShortDateStr(mFromDate));
+		String label = String.format(this.getText(R.string.formatStartDate).toString(), 
+				DateTimeFormatter.getShortDateStr(mFromDate));
+		fromButton.setText(label);
 
 		Button toButton = (Button) findViewById(R.id.button_data_export_to);
-		toButton.setText(DateTimeFormatter.getShortDateStr(mToDate));
+		label = String.format(this.getText(R.string.formatEndDate).toString(), 
+				DateTimeFormatter.getShortDateStr(mToDate));
+		toButton.setText(label);
 	}
 
 	private void showDatePickerDialog(long dateToShow) {
@@ -159,17 +164,20 @@ public class DataExportActivity extends Activity implements RadioGroup.OnChecked
 		StringBuilder output = new StringBuilder();
 		output.append("Start, End, Category Name, Category Description, Notes").append(CSV_LINE_SEPERATOR);
 		for (TimeSlice aTimeSlice : timeSlices) {
-			String dateStr = DateTimeFormatter.getRfcDateTimeStr(aTimeSlice.getStartTime());
+			String dateStr = DateTimeFormatter.getIsoDateTimeStr(aTimeSlice.getStartTime());
 			output.append(dateStr).append(CSV_FIELD_SEPERATOR);
 			output.append(aTimeSlice.getStartTimeStr()).append(CSV_FIELD_SEPERATOR);
-			output.append(DateTimeFormatter.getRfcDateTimeStr(aTimeSlice.getEndTime())).append(CSV_FIELD_SEPERATOR);
+			output.append(DateTimeFormatter.getIsoDateTimeStr(aTimeSlice.getEndTime())).append(CSV_FIELD_SEPERATOR);
 			output.append(aTimeSlice.getCategory().getCategoryName()).append(CSV_FIELD_SEPERATOR);
 			output.append(aTimeSlice.getCategory().getDescription()).append(CSV_FIELD_SEPERATOR);
 			output.append(aTimeSlice.getNotes().replace(CSV_LINE_SEPERATOR, " "));
 			output.append(CSV_LINE_SEPERATOR);
 		}
 		if (mEmailData) {
-			EmailUtilities.send("", getString(R.string.export_email_subject), this, output
+			String appName = getString(R.string.app_name);
+			String subject = String.format(getString(R.string.export_email_subject), appName);
+
+			EmailUtilities.send("", subject, this, output
 					.toString());
 		} else {
 			FileUtilities fileUtil = new FileUtilities(this);

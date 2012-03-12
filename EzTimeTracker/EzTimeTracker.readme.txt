@@ -2,8 +2,10 @@ info see http://zettsetttech.blogspot.com/
 
 todo
 	gui: menü mit images
-	fix activity memory leak
 	config select if private or public database	
+	internationalisation
+		xml for non-translatable resources
+		consolidate resources
 
 copy taken on Date: 02.02.2012 18:09:20 from http://eztimetracker.googlecode.com/svn/trunk/ "r10 Updating to version 1.6"
 

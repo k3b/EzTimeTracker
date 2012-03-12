@@ -8,21 +8,21 @@
 	<LinearLayout android:id="@+id/LinearLayout_remove_ts_dates"
 		android:layout_width="wrap_content" android:layout_height="wrap_content"
 		android:orientation="vertical">
-		<TextView android:text="Delete From Date (including):"
+		<TextView android:text="@string/delete_from_date"
 			android:layout_width="wrap_content" android:textSize="20sp"
 			android:layout_height="wrap_content"></TextView>
 		<DatePicker android:id="@+id/DatePicker_remove_ts_start"
 			android:layout_width="wrap_content" android:layout_height="wrap_content"></DatePicker>
-		<TextView android:text="Delete Through Date (including):"
+		<TextView android:text="@string/delete_to_date"
 			android:layout_width="wrap_content" android:textSize="20sp"
 			android:layout_height="wrap_content"></TextView>
 		<DatePicker android:id="@+id/DatePicker_remove_ts_end"
 			android:layout_width="wrap_content" android:layout_height="wrap_content"></DatePicker>
 	</LinearLayout>
-	<Button android:text="@string/button_remove_ts" android:id="@+id/button_remove_ts"
+	<Button android:text="@string/cmd_delete" android:id="@+id/cmd_delete"
 		android:textSize="26sp" android:textColor="#151555"
 		android:layout_height="wrap_content" android:layout_width="fill_parent" />
-	<Button android:text="@string/button_remove_cancel" android:id="@+id/button_remove_ts_cancel"
+	<Button android:text="@string/cmd_cancel" android:id="@+id/button_remove_ts_cancel"
 		android:textSize="26sp" android:textColor="#151555"
 		android:layout_height="wrap_content" android:layout_width="fill_parent" />
 </LinearLayout>

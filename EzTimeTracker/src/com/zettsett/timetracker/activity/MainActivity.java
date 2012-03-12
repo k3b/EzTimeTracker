@@ -274,13 +274,15 @@ public class MainActivity extends Activity implements OnChronometerTickListener 
 		TextView labelTv = (TextView) findViewById(R.id.tvTimeInActivity);
 		if (sessionData != null
 				&& sessionData.getCategory() != null) {
-			labelTv.setText(getText(R.string.label_time_spent_)
-					+ sessionData.getCategory().getCategoryName() + ": ");
+			String labelCategory = String.format(getText(R.string.format_category).toString(),
+							sessionData.getCategory().getCategoryName());
+			labelTv.setText(labelCategory);
 		} else {
-			labelTv.setText(R.string.label_no_current_activity);
+			labelTv.setText(R.string.label_no_current_activity); 
 		}
 		TextView tvStartTime = (TextView) findViewById(R.id.tvStartTime);
-		tvStartTime.setText(getText(R.string.label_start_time_) + sessionData.getStartTimeStr());
+		String labelStartTime = String.format(getText(R.string.format_start_time_).toString() , sessionData.getStartTimeStr());
+		tvStartTime.setText(labelStartTime);
 	}
 
 	private void setSelectedTimeSliceCategory(TimeSliceCategory category) {

@@ -31,7 +31,7 @@ public class SDDataExporter {
 	private void buildSaveFileDialog() {
 		final Dialog dialog = new Dialog(context);
 		dialog.setContentView(R.layout.choose_file_name);
-		dialog.setTitle("Choose a File Name:");
+		dialog.setTitle(R.string.choose_filename);
 		final Button saveButton = (Button) dialog.findViewById(R.id.choose_file_name_save_button);
 		final Button cancelButton = (Button) dialog
 				.findViewById(R.id.choose_file_name_cancel_button);
@@ -63,27 +63,31 @@ public class SDDataExporter {
 	}
 
 	void export(String fileName) {
+		String outputPath = fileName;
 		try {
-			String outputPath = open(fileName);
+			outputPath = open(fileName);
 			saveData();
+			String message = String.format(context.getString(R.string.format_message_successfully_saved_file) , outputPath);
 			Toast.makeText(context.getApplicationContext(),
-					"Report successfully saved to: " + outputPath, Toast.LENGTH_LONG).show();
+					message, Toast.LENGTH_LONG).show();
 		} catch (IOException e) {
 			Log.w("eztt", e.getMessage(), e);
+			String message = String.format(context.getString(R.string.format_error_saved_file), outputPath, e.getMessage());
 			Toast.makeText(context.getApplicationContext(),
-					e.getMessage() + " Unable to export to SD.", Toast.LENGTH_LONG).show();
+					e.getMessage() + message, Toast.LENGTH_LONG).show();
 		}
 	}
 
 	private String open(String fileName) throws IOException {
 		File root = Environment.getExternalStorageDirectory();
-		File outDir = new File(root.getAbsolutePath() + File.separator + "EZ_time_tracker");
+		File outDir = new File(root.getAbsolutePath(), "EZ_time_tracker");
 		if (!outDir.isDirectory()) {
 			outDir.mkdir();
 		}
 		if (!outDir.isDirectory()) {
+			String message = String.format(context.getString(R.string.format_error_create_directory), outDir.getAbsolutePath());
 			throw new IOException(
-					"Unable to create directory EZ_time_tracker. Maybe the SD card is mounted?");
+					message);
 		}
 		File outputFile = new File(outDir, fileName);
 		writer = new BufferedWriter(new FileWriter(outputFile));

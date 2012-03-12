@@ -6,5 +6,5 @@
 		android:layout_height="fill_parent" />
 	<TextView android:id="@+id/android:empty"
 		android:layout_width="fill_parent" android:layout_height="fill_parent"
-		android:text="There are no categories defined yet." />
+		android:text="@string/no_categories" />
 </LinearLayout>

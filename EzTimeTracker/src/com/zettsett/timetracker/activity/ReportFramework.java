@@ -114,10 +114,13 @@ public class ReportFramework implements Serializable {
 		exportMenu.add(Menu.NONE, MENU_ITEM_EXPORT_SD, 1, R.string.menu_export_report_to_sd_card);
 		exportMenu.add(Menu.NONE, MENU_ITEM_EXPORT_EMAIL, 2, R.string.menu_email_report);
 		SubMenu dateRangeMenu = menu.addSubMenu(Menu.NONE, Menu.NONE, 3, R.string.menu_select_date_range);
-		dateRangeMenu.add(Menu.NONE, MENU_ITEM_START_DATE, 0, activity.getString(R.string.menu_start)
-				+ DateTimeFormatter.getLongDateStr(getStartDateRange()).toString());
-		dateRangeMenu.add(Menu.NONE, MENU_ITEM_END_DATE, 1, activity.getString(R.string.menu_end)
-				+ DateTimeFormatter.getLongDateStr(getEndDateRange()).toString());
+		String labelStartDate = String.format(activity.getString(R.string.formatStartDate)
+				, DateTimeFormatter.getLongDateStr(getStartDateRange()));
+		dateRangeMenu.add(Menu.NONE, MENU_ITEM_START_DATE, 0, labelStartDate);
+		
+		String labelEndDate = String.format(activity.getString(R.string.formatEndDate), 
+				DateTimeFormatter.getLongDateStr(getEndDateRange()));
+		dateRangeMenu.add(Menu.NONE, MENU_ITEM_END_DATE, 1, labelEndDate);
 
 		return result;
 	}
@@ -160,11 +163,12 @@ public class ReportFramework implements Serializable {
 	}
 
 	private String getEMailSummaryLine() {
+		String appName = activity.getString(R.string.app_name);
 		String summary;
 		if (reportType == ReportTypes.TIMESHEET) {
-			summary = activity.getString(R.string.default_mail_ts_subject);
+			summary = String.format(activity.getString(R.string.default_mail_ts_subject), appName);
 		} else {
-			summary = activity.getString(R.string.default_mail_sum_subject);
+			summary = String.format(activity.getString(R.string.default_mail_sum_subject), appName);
 		}
 		return summary;
 
@@ -261,14 +265,17 @@ public class ReportFramework implements Serializable {
 		contentView.setOrientation(LinearLayout.VERTICAL);
 		scrollView = new LinearScroller(activity);
 		startDateTV.setPadding(20, 0, 0, 0);
-		startDateTV.setText(this.activity.getString(R.string.label_from_date_) + DateTimeFormatter.getLongDateStr(startDateRange),
-				TextView.BufferType.SPANNABLE);
+		String labelStartDate = String.format(this.activity.getString(R.string.formatStartDate).toString(), 
+				DateTimeFormatter.getLongDateStr(startDateRange));
+		startDateTV.setText(labelStartDate, TextView.BufferType.SPANNABLE);
 		Spannable str = (Spannable) startDateTV.getText();
 		str.setSpan(new StyleSpan(android.graphics.Typeface.ITALIC), 0, 11, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 		str.setSpan(new StyleSpan(android.graphics.Typeface.BOLD), 0, 11, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 		contentView.addView(startDateTV);
 		endDateTV.setPadding(49, 0, 0, 0);
-		endDateTV.setText(this.activity.getString(R.string.label_to_date_) + DateTimeFormatter.getLongDateStr(endDateRange),
+		String labelEndDate = String.format(this.activity.getString(R.string.formatEndDate).toString(), 
+				DateTimeFormatter.getLongDateStr(endDateRange));
+		endDateTV.setText(labelEndDate,
 				TextView.BufferType.SPANNABLE);
 		str = (Spannable) endDateTV.getText();
 		str.setSpan(new StyleSpan(android.graphics.Typeface.ITALIC), 0, 9, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);

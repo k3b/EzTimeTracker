@@ -51,8 +51,8 @@ public class CategoryActivity extends ListActivity {
 		categoryClicked = (TimeSliceCategory) getListView().getItemAtPosition(
 				((AdapterContextMenuInfo) menuInfo).position);
 		menu.setHeaderTitle("" + categoryClicked.getCategoryName());
-		menu.add(0, EDIT_MENU_ID, 0, "Edit");
-		menu.add(0, DELETE_MENU_ID, 0, "Delete");
+		menu.add(0, EDIT_MENU_ID, 0, R.string.cmd_edit);
+		menu.add(0, DELETE_MENU_ID, 0, R.string.cmd_delete);
 	}
 
 	@Override
@@ -88,8 +88,6 @@ public class CategoryActivity extends ListActivity {
 
 	    return null;
 	}
-	
-
 	
 	private Dialog createDeleteWarningDialog() {
 		final CharSequence[] items = { "Go ahead and delete it.", "Don't delete it." };

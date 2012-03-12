@@ -1,63 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<string name="category_prompt">Auaswahl der Tätigkeit</string>
+	<!-- these are the german strings in de -->
+    	<string name="category_prompt">Auswahl der Tätigkeit</string>
 	<string-array name="default_categories">
 		<item>relaxen</item>
 		<item>essen</item>
 		<item>arbeiten</item>
 		<item>schlafen</item>
 	</string-array>
-	<string name="default_mail_ts_subject">EZ Time Tracker Details</string>
-	<string name="default_mail_sum_subject">EZ Time Tracker Auswertung</string>	
-	<string name="menu_text_delete">Löschen</string>	
+	<string name="default_mail_ts_subject">%1$s Details</string>
+	<string name="default_mail_sum_subject">%1$s Auswertung</string>	
+	<string name="export_email_subject">%1$s Buchungsexport</string>	
 	<string name="menu_text_edit">Detail Ansicht/Bearbeiten</string>	
-	<string name="menu_text_add_new_activity">Neu Buchung hinzufügen</string>	
-	<string name="menu_text_show_notes">Notizen einblenden</string>	
-	<string name="menu_text_hide_notes">Notizen ausblenden</string>	
+	<string name="menu_report_add_new_time_interval">Neu Buchung hinzufügen</string>	
+	<string name="menu_report_include_notes">Bemerkungen einblenden</string>	
+	<string name="menu_report_exclude_notes">Bemerkungen ausblenden</string>	
 	<string name="radio_button_data_export_all">Exportiere alle Buchungen</string>	
 	<string name="radio_button_data_export_range">Exportiere Buchungen von .. bis</string>	
 	<string name="checkbox_data_export_email">Exportiere in Email</string>	
 	<string name="button_data_export">Exportiere Buchungen</string>	
 	<string name="choose_date">Datumsauswahl</string>	
-	<string name="export_email_subject">EZ Time Tracker Buchungsexport</string>	
 	<string name="delete_interval_confirmation">Wollen Sie wirklich Daten aus dem Zeitintervall löschen?</string>	
-	<string name="button_remove_ts">Löscheen</string>	
-	<string name="button_remove_cancel">Abbrechen</string>	
+	<string name="cmd_delete">Löschen</string>	
+	<string name="cmd_cancel"> Abbrechen </string>	
 	<string name="checkbox_remove_ts_all">Alle Buchungen löschen?</string>	
-	<string name="export_data_to_csv_file">Buchungen in CSV File exportieren</string>	
+	<string name="export_data_to_csv_file">Buchungen in CSV Datei exportieren</string>	
 	<string name="menu_export_report">Export Report</string>	
-	<string name="menu_export_report_to_sd_card">Export Report auf SD Card</string>	
-	<string name="menu_email_report">Email Report</string>	
+	<string name="menu_export_report_to_sd_card">... auf Speicherkarte</string>	
+	<string name="menu_email_report">... in Email</string>	
 	<string name="menu_select_date_range">Eingabe Datum von/bis</string>	
-	<string name="menu_start">"Start: "</string>	
-	<string name="menu_end">"Ende: "</string>	
-	<string name="label_from_date_">"Datum von: "</string>	
-	<string name="label_to_date_">"Datum bis: "</string>	
-	<string name="label_delete_time_interval_data">Lösche Time Interval Data</string>	
+	<string name="formatStartDate">"Start: %1$s"</string>	
+	<string name="formatEndDate">"Ende: %1$s"</string>	
+	<string name="label_delete_time_interval_data">Lösche Buchung</string>	
 	<string name="msg_all_time_intervals_have_been_removed_from_the_system_">Alle Buchungen wurden gelöscht.</string>	
-	<string name="msg_time_intervals_from_">"Datum von "</string>	
-	<string name="msg_time_intervals_through_">" bis "</string>	
-	<string name="msg_time_intervals_removed_">" gelöscht."</string>	
-	<string name="question_delete_all_time_intervals_">Wollen Sie wirklich alle Buchungen endgültig löschen?</string>	
+	<string name="format_message_interval_deleted">"Buchungen von %1$s bis %2$s gelöscht."</string>	
+   	<string name="question_delete_all_time_intervals_">Wollen Sie wirklich alle Buchungen endgültig löschen?</string>	
 	<string name="question_delete_time_intervals_from_">"Wollen Sie wirklich die Buchungen löschen ab "</string>	
 	<string name="question_delete_time_intervals_operation_cannot_be_reversed_">\? Diese aktion kann nicht rückgängig gemacht werden.</string>	
 	<string name="title_confirm_removal">Löschen bestätigen</string>	
 	<string name="btn_yes">Ja</string>	
 	<string name="btn_no">Nein</string>	
 	<string name="label_time_spent_">"Dauer "</string>	
-	<string name="label_no_current_activity">Keine aktuelle Tätigkeit</string>	
-	<string name="label_start_time_">"Start zeit: "</string>	
-	<string name="label_week_of_">"Woche "</string>	
+	<string name="label_no_current_activity">Keine aktuelle Kategorie</string>	
+	<string name="format_start_time_">"Start Zeit: %1$s"</string>	
+   	<string name="format_week_of_">"Woche label_week_of_"</string>	
 	<string name="hoursWord1">Stunde</string>	
 	<string name="hoursWordN">Stunden</string>	
 	<string name="minutesWord1">Minute</string>	
 	<string name="minutesWordN">Minuten</string>	
-	<string name="menu_select_date_grouping">Gruppierung Datum nach ...</string>	
-	<string name="menu_select_date_grouping_daily">Tag</string>	
-	<string name="menu_select_date_grouping_weekly">Woche</string>	
-	<string name="menu_select_date_grouping_monthly">Monat</string>	
-	<string name="menu_switch_to_category_headers">Gruppierung nach Tätigkeit</string>	
+	<string name="menu_select_date_grouping">Gruppierung Datum</string>	
+	<string name="menu_select_date_grouping_daily">... nach Tag</string>	
+	<string name="menu_select_date_grouping_weekly">... nach Woche</string>	
+	<string name="menu_select_date_grouping_monthly">... nach Monat</string>	
+	<string name="menu_switch_to_category_headers">Gruppierung nach Kategorie</string>	
 	<string name="menu_switch_to_date_headers">Gruppierung nach Datum</string>
-	<string name="time_spent">Tätigkeit: </string>
-	    	
+	
+	<string name="format_category">"Kategorie: %1$s"</string>
+	<string name="delete_from_date">"Löschen von:"</string>
+	<string name="delete_to_date">"Löschen bis:"</string>
+	<string name="punch_in">"Start"</string>
+	<string name="punch_out">"Stop"</string>
+	<string name="notes">Bemerkungen:</string>
+	<string name="category_name">Kategorie Name:</string>
+	<string name="category_description">Kategorie Beschreibung:</string>
+	<string name="cmd_save">Speichern</string>
+	<string name="file_name">Datei Name:</string>
+	<string name="cmd_save_file">Datei speichern</string>
+	<string name="no_categories">Zur Zeit sind noch keine Kategorien definiert.</string>
+	    	    	
+	<string name="cmd_edit">Bearbeiten</string>	
+	<string name="report_title_summary">Auswertung</string>
+	<string name="report_title_condensed_summary">Auswertung</string>
+	<string name="report_title_details">Detailansicht</string>
+	<string name="report_title_condensed_details">Details</string>
+	<string name="report_title_categories">Kategorien</string>
+	<string name="report_title_condensed_categories">Kategorien</string>
+	<string name="report_title_export">Daten exportieren</string>
+	<string name="report_title_condensed_export">Export</string>
+	<string name="report_title_remove">Daten löschen</string>
+	<string name="report_title_condensed_remove">Löschen</string>
+	<string name="report_title_settings">Einstellungen</string>
+	<string name="report_title_condensed_settings">Einstellungen</string>
+	
+	<string name="choose_filename">Eingabe Dateiname:</string>
+	<string name="format_message_successfully_saved_file">Erfolgreich gespeichert unter \'%1$s\'</string>
+	<string name="format_error_saved_file">Speichern unter \'%1$s\' auf SD gescheitert: %2$s</string>
+	<string name="format_error_create_directory">Ich kann das Verzeichnis \'%1$s\' nicht erstellen. Ist die SD Speicherkarte verfügbar?</string>
+	    	    
 </resources>

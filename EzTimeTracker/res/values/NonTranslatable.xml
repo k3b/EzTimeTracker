@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- string resources that are not localized -->
+	<string name="app_name">EZ Time Tracker</string>
+	<string name="database_name">time_tracker.db</string>
+
+	<string name="default_export_ts_name">time_sheet.txt</string>
+	<string name="default_export_sum_name">summary_report.txt</string>
+	<string name="default_export_data_name">data_export.csv</string>
+	    
+</resources>

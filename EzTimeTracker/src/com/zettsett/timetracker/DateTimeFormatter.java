@@ -31,7 +31,9 @@ public class DateTimeFormatter {
 
 	final private static java.text.DateFormat shortDateformatter = java.text.DateFormat.getDateInstance(java.text.DateFormat.MEDIUM);
 	final private static java.text.DateFormat shortTimeformatter = java.text.DateFormat.getTimeInstance(java.text.DateFormat.SHORT);
-	final private static java.text.DateFormat dowFormatter = new SimpleDateFormat("E ");
+	final private static java.text.DateFormat longDateformatter = new SimpleDateFormat("E " 
+			+ ((SimpleDateFormat)shortDateformatter).toPattern());
+	final private static java.text.DateFormat isoDateTimeformatter = new SimpleDateFormat("yyyy-MM-dd'T'h:m:ssZ");
 	/*
 	private static DateTimeFormatter instance = null;
 	
@@ -92,7 +94,7 @@ public class DateTimeFormatter {
 		if (dateTime == 0) {
 			return "";
 		} else {
-			return dowFormatter.format(new Date(dateTime)) + getShortDateStr(dateTime);
+			return longDateformatter.format(new Date(dateTime)); //  + getShortDateStr(dateTime);
 		}
 	}
 
@@ -120,9 +122,8 @@ public class DateTimeFormatter {
 		}
 	}
 
-	public static String getRfcDateTimeStr(long dateTime) {
-		// todo
-		return getDateTimeStr(dateTime);
+	public static String getIsoDateTimeStr(long dateTime) {
+		return isoDateTimeformatter.format(new Date(dateTime));
 	}
 
 	public static String getMonthStr(long startTime) {
@@ -152,7 +153,7 @@ public class DateTimeFormatter {
 
 	public static long parseDate(String mDateSelectedForAdd) {
 		try {
-			return shortDateformatter.parse(
+			return longDateformatter.parse(
 					mDateSelectedForAdd).getTime();
 		} catch (ParseException e) {
 			Log.w(Global.LOG_CONTEXT,"cannot reconvert " + mDateSelectedForAdd + " to dateTime using " + shortDateformatter,e);

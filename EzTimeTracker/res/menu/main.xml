@@ -1,39 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
     <item android:id="@+id/details"
-          android:title="Details Report"
-          android:titleCondensed="Details"
+          android:title="@string/report_title_details"
+          android:titleCondensed="@string/report_title_condensed_details"
            />
     <item android:id="@+id/summary"
-          android:title="Summary Report"
-          android:titleCondensed="Summery"
+          android:title="@string/report_title_summary"
+          android:titleCondensed="@string/report_title_condensed_summary"
            />
     <item android:id="@+id/categories"
-          android:title="Categories"
-          android:titleCondensed="Categories"
+          android:title="@string/report_title_categories"
+          android:titleCondensed="@string/report_title_condensed_categories"
            />
     <item android:id="@+id/export"
-          android:title="Export Data"
-          android:titleCondensed="Export"
+          android:title="@string/report_title_export"
+          android:titleCondensed="@string/report_title_condensed_export"
            />
     <item android:id="@+id/remove"
-          android:title="Remove Data"
-          android:titleCondensed="Remove"
+          android:title="@string/report_title_remove"
+          android:titleCondensed="@string/report_title_condensed_remove"
            />
     <item android:id="@+id/settings"
-          android:title="Preferences and Settings"
-          android:titleCondensed="Settings"
-           >
-           <!-- submenue if there are more than 6
-		        <menu>
-		            <group android:id="@+id/dogsGroup">
-		                <item android:titleCondensed="Awesome Dog" android:title="Awesome Dog" android:id="@+id/pan"></item>
-		                <item android:titleCondensed="Under Dog" android:title="Under Dog" android:id="@+id/zoom"></item>
-		                <item android:titleCondensed="Snoopy" android:title="Snoopy" android:id="@+id/contrast"></item>
-		                <item android:titleCondensed="Scooby Doo" android:title="Scooby Doo" android:id="@+id/page"></item>
-		                <item android:titleCondensed="Pluto" android:title="Pluto" android:id="@+id/rotate"></item>
-		            </group>
-		        </menu>
-         -->
-    </item>
+          android:title="@string/report_title_settings"
+          android:titleCondensed="@string/report_title_condensed_settings"
+           />
 </menu>    

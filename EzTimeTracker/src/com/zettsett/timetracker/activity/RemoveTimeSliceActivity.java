@@ -29,7 +29,7 @@ public class RemoveTimeSliceActivity extends Activity {
 		setTitle(R.string.label_delete_time_interval_data);
 		DatabaseInstance.initialize(this);
 		mTimeSliceDBAdapter = new TimeSliceDBAdapter(this);
-		Button removalButton = (Button) findViewById(R.id.button_remove_ts);
+		Button removalButton = (Button) findViewById(R.id.cmd_delete);
 		removalButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -83,12 +83,12 @@ public class RemoveTimeSliceActivity extends Activity {
 			endCalendar.set(Calendar.SECOND, 59);
 			long endDate = endCalendar.getTimeInMillis();
 			mTimeSliceDBAdapter.deleteForDateRange(startDate, endDate);
+			String message = String.format(getString(R.string.format_message_interval_deleted).toString(),
+					getFormattedDate(R.id.DatePicker_remove_ts_start),
+					getFormattedDate(R.id.DatePicker_remove_ts_end));
 			Toast.makeText(
 					getApplicationContext(),
-					getString(R.string.msg_time_intervals_from_ )
-							+ getFormattedDate(R.id.DatePicker_remove_ts_start)
-							+ getString(R.string.msg_time_intervals_through_ ) + getFormattedDate(R.id.DatePicker_remove_ts_end)
-							+ getString(R.string.msg_time_intervals_removed_ ), Toast.LENGTH_LONG).show();
+					message, Toast.LENGTH_LONG).show();
 		}
 		finish();
 	}
@@ -105,10 +105,9 @@ public class RemoveTimeSliceActivity extends Activity {
 		if (mRemoveAll) {
 			message = getString(R.string.question_delete_all_time_intervals_);
 		} else {
-			message = getString(R.string.question_delete_time_intervals_from_)
-					+ getFormattedDate(R.id.DatePicker_remove_ts_start) + getString(R.string.msg_time_intervals_through_)
-					+ getFormattedDate(R.id.DatePicker_remove_ts_end)
-					+ getString(R.string.question_delete_time_intervals_operation_cannot_be_reversed_);
+			message = String.format(getString(R.string.format_question_delete_time_intervals).toString(),
+					getFormattedDate(R.id.DatePicker_remove_ts_start),
+					getFormattedDate(R.id.DatePicker_remove_ts_end));
 		}
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle(R.string.title_confirm_removal);

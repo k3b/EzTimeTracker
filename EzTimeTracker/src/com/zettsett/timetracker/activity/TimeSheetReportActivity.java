@@ -196,10 +196,10 @@ public class TimeSheetReportActivity extends Activity implements ReportInterface
 		super.onCreateContextMenu(menu, v, menuInfo);
 		if (v.getTag().equals("Detail")) {
 			menu.add(0, EDIT_MENU_ID, 0, getString(R.string.menu_text_edit));
-			menu.add(0, DELETE_MENU_ID, 0, getString(R.string.menu_text_delete));
+			menu.add(0, DELETE_MENU_ID, 0, getString(R.string.cmd_delete));
 			mChosenRowId = mRowToSliceRowIdMap.get(v);
 		} else if (v.getTag().equals("Header")) {
-			menu.add(0, ADD_MENU_ID, 0, getString(R.string.menu_text_add_new_activity));
+			menu.add(0, ADD_MENU_ID, 0, getString(R.string.menu_report_add_new_time_interval));
 			mDateSelectedForAdd = (String) ((TextView) v).getText();
 		}
 	}
@@ -261,11 +261,11 @@ public class TimeSheetReportActivity extends Activity implements ReportInterface
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		boolean result = super.onCreateOptionsMenu(menu);
 		menu.clear();
-		menu.add(0, ADD_MENU_ID, 0, getString(R.string.menu_text_add_new_activity));
+		menu.add(0, ADD_MENU_ID, 0, getString(R.string.menu_report_add_new_time_interval));
 		if (mShowNotes) {
-			menu.add(0, SHOW_DESC_MENU_ID, 0, getString(R.string.menu_text_hide_notes));
+			menu.add(0, SHOW_DESC_MENU_ID, 0, getString(R.string.menu_report_exclude_notes));
 		} else {
-			menu.add(0, SHOW_DESC_MENU_ID, 0, getString(R.string.menu_text_show_notes));
+			menu.add(0, SHOW_DESC_MENU_ID, 0, getString(R.string.menu_report_include_notes));
 		}
 		mReportFramework.onPrepareOptionsMenu(menu);
 

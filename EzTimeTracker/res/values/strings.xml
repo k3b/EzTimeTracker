@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<string name="app_name">EZ Time Tracker</string>
-	<string name="database_name">time_tracker.db</string>
+	<!-- these are default strings in en_US -->
+    <!-- Non localized string come from res/values/NonTranslatable.xml -->
 	<string name="category_prompt">Choose an activity</string>
 	<string-array name="default_categories">
 		<item>Not Much</item>
@@ -9,50 +9,43 @@
 		<item>Working</item>
 		<item>Sleeping</item>
 	</string-array>
-	<string name="default_export_ts_name">time_sheet.txt</string>
-	<string name="default_export_sum_name">summary_report.txt</string>
-	<string name="default_export_data_name">data_export.csv</string>
-	<string name="default_mail_ts_subject">EZ Time Tracker Time Sheet Report</string>
-	<string name="default_mail_sum_subject">EZ Time Tracker Summary Report</string>	
-	<string name="menu_text_delete">Delete</string>	
+	
+	<string name="default_mail_ts_subject">%1$s Time Sheet Report</string>
+	<string name="default_mail_sum_subject">%1$s Summary Report</string>	
+	<string name="export_email_subject">%1$s Data Export</string>
+		
 	<string name="menu_text_edit">View/Edit Details</string>	
-	<string name="menu_text_add_new_activity">Add New Time Interval</string>	
-	<string name="menu_text_show_notes">Show Notes</string>	
-	<string name="menu_text_hide_notes">Hide Notes</string>	
+	<string name="menu_report_add_new_time_interval">Add New Time Interval</string>	
+	<string name="menu_report_include_notes">Show Notes</string>	
+	<string name="menu_report_exclude_notes">Hide Notes</string>	
 	<string name="radio_button_data_export_all">Export All Data</string>	
 	<string name="radio_button_data_export_range">Export Data for Date Range</string>	
 	<string name="checkbox_data_export_email">Export to Email</string>	
 	<string name="button_data_export">Export Data</string>	
 	<string name="choose_date">Choose the Date</string>	
-	<string name="export_email_subject">EZ Time Tracker Data Export</string>	
 	<string name="delete_interval_confirmation">Are you sure you want to delete this time interval?</string>	
-	<string name="button_remove_ts">Delete</string>	
-	<string name="button_remove_cancel">Cancel</string>	
+	<string name="cmd_delete">Delete</string>	
+	<string name="cmd_cancel"> Cancel </string>	
 	<string name="checkbox_remove_ts_all">Delete All Time Intervals</string>	
 	<string name="export_data_to_csv_file">Export Data to CSV File</string>	
 	<string name="menu_export_report">Export Report</string>	
 	<string name="menu_export_report_to_sd_card">Export Report to SD Card</string>	
 	<string name="menu_email_report">Email Report</string>	
 	<string name="menu_select_date_range">Select Date Range</string>	
-	<string name="menu_start">"Start: "</string>	
-	<string name="menu_end">"End: "</string>	
-	<string name="label_from_date_">"From date: "</string>	
-	<string name="label_to_date_">"To date: "</string>	
+	<string name="formatStartDate">"Start: %1$s"</string>	
+	<string name="formatEndDate">"End: %1$s"</string>	
 	<string name="label_delete_time_interval_data">Delete Time Interval Data</string>	
 	<string name="msg_all_time_intervals_have_been_removed_from_the_system_">All time intervals have been removed from the system.</string>	
-	<string name="msg_time_intervals_from_">"Time intervals from "</string>	
-	<string name="msg_time_intervals_through_">" through "</string>	
-	<string name="msg_time_intervals_removed_">" removed."</string>	
+	<string name="format_message_interval_deleted">"Time intervals from %1$s through %2$s removed."</string>	
 	<string name="question_delete_all_time_intervals_">Are you sure you want to permanently delete all time intervals?</string>	
-	<string name="question_delete_time_intervals_from_">"Are you sure you want to permanently delete time intervals from "</string>	
-	<string name="question_delete_time_intervals_operation_cannot_be_reversed_">\? This operation cannot be reversed.</string>	
+	<string name="format_question_delete_time_intervals">"Are you sure you want to permanently delete time intervals from %1$s through %2$s\? This operation cannot be reversed.</string>	
 	<string name="title_confirm_removal">Confirm Removal</string>	
 	<string name="btn_yes">Yes</string>	
 	<string name="btn_no">No</string>	
 	<string name="label_time_spent_">"Time spent "</string>	
 	<string name="label_no_current_activity">No current activity</string>	
-	<string name="label_start_time_">"Start time: "</string>	
-	<string name="label_week_of_">"Week of "</string>	
+	<string name="format_start_time_">"Start time: %1$s"</string>	
+	<string name="format_week_of_">"Week of %1$s"</string>	
 	<string name="hoursWord1">hour</string>	
 	<string name="hoursWordN">hours</string>	
 	<string name="minutesWord1">minute</string>	
@@ -63,5 +56,38 @@
 	<string name="menu_select_date_grouping_monthly">Monthly</string>	
 	<string name="menu_switch_to_category_headers">Switch to Category Headers</string>	
 	<string name="menu_switch_to_date_headers">Switch to Date Headers</string>	
-	<string name="time_spent">Time spent: </string>
+	
+	<string name="format_category">"Category: %1$s"</string>
+	<string name="delete_from_date">"Delete From Date (including):"</string>
+	<string name="delete_to_date">"Delete To Date (including):"</string>
+	<string name="punch_in">"Punch In"</string>
+	<string name="punch_out">"Punch Out"</string>
+	<string name="notes">Notes:</string>
+	<string name="category_name">Category Name:</string>
+	<string name="category_description">Category Description:</string>
+	<string name="cmd_save">Save</string>
+	<string name="file_name">File Name:</string>
+	<string name="cmd_save_file">Save File</string>
+	<string name="no_categories">There are no categories defined yet.</string>
+
+	<string name="cmd_edit">Edit</string>	
+		
+	<string name="report_title_summary">Summary Report</string>
+	<string name="report_title_condensed_summary">Summary</string>
+	<string name="report_title_details">Details Report</string>
+	<string name="report_title_condensed_details">Details</string>
+	<string name="report_title_categories">Categories</string>
+	<string name="report_title_condensed_categories">Categories</string>
+	<string name="report_title_export">Export Data</string>
+	<string name="report_title_condensed_export">Export</string>
+	<string name="report_title_remove">Remove Data</string>
+	<string name="report_title_condensed_remove">Remove</string>
+	<string name="report_title_settings">Preferences and Settings</string>
+	<string name="report_title_condensed_settings">Settings</string>
+	
+	<string name="choose_filename">Enter File Name:</string>
+	<string name="format_message_successfully_saved_file">Report successfully saved to \'%1$s\'</string>
+	<string name="format_error_saved_file">Unable to export to \'%1$s\' on SD: %2$s</string>
+	<string name="format_error_create_directory">Unable to create directory \'%1$s\'. Is the SD card mounted?</string>
+	
 </resources>

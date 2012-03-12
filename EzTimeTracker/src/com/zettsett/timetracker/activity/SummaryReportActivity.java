@@ -184,7 +184,7 @@ public class SummaryReportActivity extends Activity implements ReportInterface {
 			String header;
 			if (reportMode == ReportModes.BY_DATE) {
 				if (reportDateGrouping == ReportDateGrouping.WEEKLY) {
-					header = getString(R.string.label_week_of_) + aSlice.getStartWeekStr();
+					header = String.format(getString(R.string.format_week_of_).toString(),aSlice.getStartWeekStr());
 				} else if (reportDateGrouping == ReportDateGrouping.MONTHLY) {
 					header = aSlice.getStartMonthStr();
 				} else {

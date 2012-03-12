@@ -6,13 +6,8 @@ import android.preference.PreferenceManager;
 
 public class Settings {
 
-	private static String currentTimeFormat = "ampm";
 	private static int minTrashholdInSecs = 1;
 
-	public static String getCurrentTimeFormat() {
-		return currentTimeFormat;
-	}
-	
 	public static void initializeCurrentTimeFormatSetting(Context context) {
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);		
 		minTrashholdInSecs = Integer.parseInt(prefs.getString("minTrashholdInSecs", Integer.toString(minTrashholdInSecs)));
