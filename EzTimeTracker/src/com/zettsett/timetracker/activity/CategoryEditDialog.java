@@ -27,9 +27,10 @@ public class CategoryEditDialog extends Dialog {
 		final Button cancelButton = (Button) findViewById(R.id.edit_time_category_cancel_button);
 		if (category == null) {
 			mCategory = new TimeSliceCategory();
-			setTitle("Creating a New Category");
+			setTitle(R.string.title_creating_a_new_category);
 		} else {
-			setTitle("Editing " + mCategory.getCategoryName());
+			String caption = String.format(owner.getString(R.string.format_title_edit_category).toString(), mCategory.getCategoryName());
+			setTitle(caption);
 		}
 		catNameField.setWidth(200);
 		catDescField.setWidth(404);

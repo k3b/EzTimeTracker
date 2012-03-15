@@ -2,7 +2,7 @@
 <resources>
 	<!-- these are default strings in en_US -->
     <!-- Non localized string come from res/values/NonTranslatable.xml -->
-	<string name="category_prompt">Choose an activity</string>
+	<string name="category_prompt">Choose a category</string>
 	<string-array name="default_categories">
 		<item>Not Much</item>
 		<item>Eating</item>
@@ -14,7 +14,7 @@
 	<string name="default_mail_sum_subject">%1$s Summary Report</string>	
 	<string name="export_email_subject">%1$s Data Export</string>
 		
-	<string name="menu_text_edit">View/Edit Details</string>	
+	<string name="menu_text_edit">View/Edit</string>	
 	<string name="menu_report_add_new_time_interval">Add New Time Interval</string>	
 	<string name="menu_report_include_notes">Show Notes</string>	
 	<string name="menu_report_exclude_notes">Hide Notes</string>	
@@ -42,7 +42,6 @@
 	<string name="title_confirm_removal">Confirm Removal</string>	
 	<string name="btn_yes">Yes</string>	
 	<string name="btn_no">No</string>	
-	<string name="label_time_spent_">"Time spent "</string>	
 	<string name="label_no_current_activity">No current activity</string>	
 	<string name="format_start_time_">"Start time: %1$s"</string>	
 	<string name="format_week_of_">"Week of %1$s"</string>	
@@ -63,9 +62,9 @@
 	<string name="punch_in">"Punch In"</string>
 	<string name="punch_out">"Punch Out"</string>
 	<string name="notes">Notes:</string>
-	<string name="category_name">Category Name:</string>
-	<string name="category_description">Category Description:</string>
-	<string name="cmd_save">Save</string>
+	<string name="category_name">Category:</string>
+	<string name="category_description">Description:</string>
+	<string name="cmd_save"> Save </string>
 	<string name="file_name">File Name:</string>
 	<string name="cmd_save_file">Save File</string>
 	<string name="no_categories">There are no categories defined yet.</string>
@@ -89,5 +88,9 @@
 	<string name="format_message_successfully_saved_file">Report successfully saved to \'%1$s\'</string>
 	<string name="format_error_saved_file">Unable to export to \'%1$s\' on SD: %2$s</string>
 	<string name="format_error_create_directory">Unable to create directory \'%1$s\'. Is the SD card mounted?</string>
-	
+	<string name="click_the_button_to_select_a_date">Click the button to select a date</string>
+	<string name="select_defaultdate">Select DefaultDate</string>
+	<string name="title_creating_a_new_category">Creating a New Category</string>
+	<string name="format_title_edit_category">"Editing %1$s"</string>
+	<string name="export_directory">EZ_time_tracker</string>
 </resources>

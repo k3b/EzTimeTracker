@@ -3,6 +3,8 @@
 
     <string name="hello">Hello World, BroadCastTestActivity!</string>
     <string name="app_name">BroadCastTest</string>
-    <string name="send">Send</string>
+    <string name="cmd_start_example">cmd:start:getit:some remote start notes</string>
+    <string name="cmd_stop_example">cmd:stop:some remote stop notes</string>
+    <string name="cmd_pause_example">cmd:pause</string>
 
 </resources>

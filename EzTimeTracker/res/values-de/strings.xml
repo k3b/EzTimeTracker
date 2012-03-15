@@ -11,7 +11,7 @@
 	<string name="default_mail_ts_subject">%1$s Details</string>
 	<string name="default_mail_sum_subject">%1$s Auswertung</string>	
 	<string name="export_email_subject">%1$s Buchungsexport</string>	
-	<string name="menu_text_edit">Detail Ansicht/Bearbeiten</string>	
+	<string name="menu_text_edit">Ansicht/Bearbeiten</string>	
 	<string name="menu_report_add_new_time_interval">Neu Buchung hinzufügen</string>	
 	<string name="menu_report_include_notes">Bemerkungen einblenden</string>	
 	<string name="menu_report_exclude_notes">Bemerkungen ausblenden</string>	
@@ -26,8 +26,8 @@
 	<string name="checkbox_remove_ts_all">Alle Buchungen löschen?</string>	
 	<string name="export_data_to_csv_file">Buchungen in CSV Datei exportieren</string>	
 	<string name="menu_export_report">Export Report</string>	
-	<string name="menu_export_report_to_sd_card">... auf Speicherkarte</string>	
-	<string name="menu_email_report">... in Email</string>	
+	<string name="menu_export_report_to_sd_card">&#8230; auf Speicherkarte</string>	
+	<string name="menu_email_report">&#8230; in Email</string>	
 	<string name="menu_select_date_range">Eingabe Datum von/bis</string>	
 	<string name="formatStartDate">"Start: %1$s"</string>	
 	<string name="formatEndDate">"Ende: %1$s"</string>	
@@ -35,23 +35,20 @@
 	<string name="msg_all_time_intervals_have_been_removed_from_the_system_">Alle Buchungen wurden gelöscht.</string>	
 	<string name="format_message_interval_deleted">"Buchungen von %1$s bis %2$s gelöscht."</string>	
    	<string name="question_delete_all_time_intervals_">Wollen Sie wirklich alle Buchungen endgültig löschen?</string>	
-	<string name="question_delete_time_intervals_from_">"Wollen Sie wirklich die Buchungen löschen ab "</string>	
-	<string name="question_delete_time_intervals_operation_cannot_be_reversed_">\? Diese aktion kann nicht rückgängig gemacht werden.</string>	
 	<string name="title_confirm_removal">Löschen bestätigen</string>	
 	<string name="btn_yes">Ja</string>	
 	<string name="btn_no">Nein</string>	
-	<string name="label_time_spent_">"Dauer "</string>	
 	<string name="label_no_current_activity">Keine aktuelle Kategorie</string>	
 	<string name="format_start_time_">"Start Zeit: %1$s"</string>	
-   	<string name="format_week_of_">"Woche label_week_of_"</string>	
+   	<string name="format_week_of_">"Woche %1$s"</string>	
 	<string name="hoursWord1">Stunde</string>	
 	<string name="hoursWordN">Stunden</string>	
 	<string name="minutesWord1">Minute</string>	
 	<string name="minutesWordN">Minuten</string>	
 	<string name="menu_select_date_grouping">Gruppierung Datum</string>	
-	<string name="menu_select_date_grouping_daily">... nach Tag</string>	
-	<string name="menu_select_date_grouping_weekly">... nach Woche</string>	
-	<string name="menu_select_date_grouping_monthly">... nach Monat</string>	
+	<string name="menu_select_date_grouping_daily">&#8230; nach Tag</string>	
+	<string name="menu_select_date_grouping_weekly">&#8230; nach Woche</string>	
+	<string name="menu_select_date_grouping_monthly">&#8230; nach Monat</string>	
 	<string name="menu_switch_to_category_headers">Gruppierung nach Kategorie</string>	
 	<string name="menu_switch_to_date_headers">Gruppierung nach Datum</string>
 	
@@ -61,8 +58,8 @@
 	<string name="punch_in">"Start"</string>
 	<string name="punch_out">"Stop"</string>
 	<string name="notes">Bemerkungen:</string>
-	<string name="category_name">Kategorie Name:</string>
-	<string name="category_description">Kategorie Beschreibung:</string>
+	<string name="category_name">Kategorie:</string>
+	<string name="category_description">Beschreibung:</string>
 	<string name="cmd_save">Speichern</string>
 	<string name="file_name">Datei Name:</string>
 	<string name="cmd_save_file">Datei speichern</string>
@@ -86,5 +83,9 @@
 	<string name="format_message_successfully_saved_file">Erfolgreich gespeichert unter \'%1$s\'</string>
 	<string name="format_error_saved_file">Speichern unter \'%1$s\' auf SD gescheitert: %2$s</string>
 	<string name="format_error_create_directory">Ich kann das Verzeichnis \'%1$s\' nicht erstellen. Ist die SD Speicherkarte verfügbar?</string>
-	    	    
+
+	<string name="click_the_button_to_select_a_date">Wählen sie ein Datum mit Hilfe der Schaltfläche</string>
+	<string name="select_defaultdate">Wählen sie das Standarddatum</string>			    	    
+	<string name="title_creating_a_new_category">Neue Kategory anlegen</string>
+	<string name="format_title_edit_category">"Bearbeite %1$s"</string>
 </resources>

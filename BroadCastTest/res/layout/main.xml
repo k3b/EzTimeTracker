@@ -7,19 +7,19 @@
         android:id="@+id/button1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="cmd:start:getit:some remote start notes" />
+        android:text="@string/cmd_start_example" />
 
     <Button
         android:id="@+id/button2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="cmd:stop:some remote stop notes" />
+        android:text="@string/cmd_stop_example" />
 
     <Button
         android:id="@+id/button3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="cmd:pause" />
+        android:text="@string/cmd_pause_example" />
 
     
     <TextView

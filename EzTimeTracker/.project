@@ -30,4 +30,10 @@
 		<nature>com.android.ide.eclipse.adt.AndroidNature</nature>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
+	<variableList>
+		<variable>
+			<name>DateSlider</name>
+			<value>file:/D:/prj/android/Andorid-Workspace/EzTimeTracker.wrk/DateSlider</value>
+		</variable>
+	</variableList>
 </projectDescription>

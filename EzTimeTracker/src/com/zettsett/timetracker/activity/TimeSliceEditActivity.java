@@ -15,6 +15,7 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.zetter.androidTime.R;
+import com.zettsett.timetracker.DateTimeFormatter;
 import com.zettsett.timetracker.database.TimeSliceDBAdapter;
 import com.zettsett.timetracker.model.TimeSlice;
 import com.zettsett.timetracker.model.TimeSliceCategory;
@@ -122,9 +123,15 @@ public class TimeSliceEditActivity extends Activity implements TimePickerDialog.
 	}
 
 	private void setTimeTexts() {
+		String label = String.format(this.getText(R.string.formatStartDate).toString(), 
+				DateTimeFormatter.getDateTimeStr(mTimeSlice.getStartTime()));
+		mTimeInButton.setText(label);
+
+		label = String.format(this.getText(R.string.formatEndDate).toString(), 
+				DateTimeFormatter.getDateTimeStr(mTimeSlice.getEndTime()));
+		mTimeOutButton.setText(label);
+		
 		setTitle(mTimeSlice.getStartDateStr());
-		mTimeOutButton.setText(mTimeSlice.getEndTimeStr());
-		mTimeInButton.setText(mTimeSlice.getStartTimeStr());
 		getNotesEditText().setText(mTimeSlice.getNotes());
 	}
 

@@ -16,14 +16,14 @@ android:layout_width="fill_parent" android:layout_height="wrap_content" android:
     android:visibility="gone"/>
 <TextView android:text="@string/format_category" android:textSize="20sp" android:textColor="#FFFFFF"
 android:layout_gravity="center" android:id="@+id/tvTimeInActivity" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
-<Chronometer android:text="Chronometer" android:textSize="26sp" android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/chron" android:visibility="gone"></Chronometer>
-<TextView android:text="00:00" android:textSize="26sp" android:layout_gravity="center" android:id="@+id/mainViewChronOutput" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
+<Chronometer android:textSize="26sp" android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/chron" android:visibility="gone"></Chronometer>
+<TextView android:textSize="26sp" android:layout_gravity="center" android:id="@+id/mainViewChronOutput" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
 <TextView android:text="@string/format_start_time_" android:textSize="20sp" 
 android:textColor="#FFFFFF" android:layout_gravity="center" android:id="@+id/tvStartTime" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
 <Button android:text="@string/punch_out" android:id="@+id/btnPunchOut" android:textSize="26sp" android:textColor="#151555"
 android:layout_height="wrap_content" android:layout_width="fill_parent"></Button>
 	<TextView android:text="@string/notes" android:layout_width="wrap_content" android:textColor="#FFFFFF"
 		android:textSize="20sp" android:layout_height="wrap_content"></TextView>
-	<EditText android:id="@+id/main_edit_text_notes" android:lines="5"
-		android:layout_width="fill_parent" android:layout_height="wrap_content"></EditText>
+	<EditText android:id="@+id/main_edit_text_notes" android:lines="5" android:inputType="textMultiLine"
+		android:layout_width="fill_parent" android:layout_height="wrap_content" />
 </LinearLayout>

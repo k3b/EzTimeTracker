@@ -4,11 +4,11 @@
  android:layout_height="wrap_content" android:orientation="vertical">
 		<TextView android:text="@string/category_name" android:layout_width="wrap_content"
 			 android:layout_height="wrap_content"></TextView>
-		<EditText android:text="" android:id="@+id/edit_time_category_name_field"
+		<EditText android:text="" android:id="@+id/edit_time_category_name_field" android:inputType="text"
 			android:capitalize="words" android:layout_width="wrap_content" android:layout_height="wrap_content"></EditText>
 		<TextView android:text="@string/category_description"
-			android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
-		<EditText android:text="" android:id="@+id/edit_time_category_desc_field"
+			android:layout_width="wrap_content" android:layout_height="wrap_content" android:inputType="text" />
+		<EditText android:text="" android:id="@+id/edit_time_category_desc_field" android:inputType="text"
 			android:capitalize="sentences" android:layout_width="wrap_content" android:layout_height="wrap_content"></EditText>
 <LinearLayout
 	android:layout_width="wrap_content" 

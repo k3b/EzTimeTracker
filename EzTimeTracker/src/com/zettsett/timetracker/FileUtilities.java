@@ -6,6 +6,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 
+import com.zetter.androidTime.R;
+
 import android.content.Context;
 import android.os.Environment;
 import android.util.Log;
@@ -23,25 +25,29 @@ public class FileUtilities {
 
 	public void write(String fileName, String data) {
 		File root = Environment.getExternalStorageDirectory();
-		File outDir = new File(root.getAbsolutePath() + File.separator + "EZ_time_tracker");
-		if (!outDir.isDirectory()) {
-			outDir.mkdir();
-		}
+		File outDir = new File(root.getAbsolutePath(), context.getString(R.string.export_directory));
+		File outputFile = new File(outDir, fileName);
 		try {
 			if (!outDir.isDirectory()) {
-				throw new IOException(
-						"Unable to create directory EZ_time_tracker. Maybe the SD card is mounted?");
+				outDir.mkdir();
 			}
-			File outputFile = new File(outDir, fileName);
+			
+			if (!outDir.isDirectory()) {
+				throw new IOException(
+						context.getString(R.string.format_error_create_directory, outDir.getAbsolutePath()));
+			}
 			writer = new BufferedWriter(new FileWriter(outputFile));
 			writer.write(data);
+			String message = String.format(this.context.getText(R.string.format_message_successfully_saved_file).toString() , outputFile.getAbsolutePath());
 			Toast.makeText(context.getApplicationContext(),
-					"Report successfully saved to: " + outputFile.getAbsolutePath(),
+					message,
 					Toast.LENGTH_LONG).show();
 			writer.close();
 		} catch (IOException e) {
 			Log.w("eztt", e.getMessage(), e);
-			Toast.makeText(context, e.getMessage() + " Unable to write to external storage.",
+			String message = String.format(this.context.getText(R.string.format_error_saved_file).toString() , outputFile.getAbsolutePath(), e.getMessage());
+			
+			Toast.makeText(context, message,
 					Toast.LENGTH_LONG).show();
 		}
 
