@@ -9,14 +9,14 @@
 	<application android:icon="@drawable/icon" android:label="@string/app_name"
 		android:debuggable="false">
 
-	    <!-- todo try again with adt v18 or newer 		
+	    <!-- todo try again with adt v18 or newer
         <activity android:name="test.MinimalDemo" android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-	    	    -->
+	   -->
 	    	    
 		<activity android:label="@string/app_name"
 			android:name="com.zettsett.timetracker.activity.MainActivity"
