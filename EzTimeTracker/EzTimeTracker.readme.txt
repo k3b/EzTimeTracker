@@ -7,6 +7,10 @@ todo
 		xml for non-translatable resources
 		consolidate resources
 
+	Propertie-dialog with value preview
+
+	find out if country has 24h or am/pm display for is24HourView()
+
 copy taken on Date: 02.02.2012 18:09:20 from http://eztimetracker.googlecode.com/svn/trunk/ "r10 Updating to version 1.6"
 
 -------------

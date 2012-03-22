@@ -70,7 +70,7 @@ public class TimeSliceEditActivity extends Activity implements TimePickerDialog.
 				mTimeFieldSelected = TimeFieldSelected.IN;
 				new TimePickerDialog(context, listener, mTimeSlice
 						.getStartTimeComponent(Calendar.HOUR_OF_DAY), mTimeSlice
-						.getStartTimeComponent(Calendar.MINUTE), false).show();
+						.getStartTimeComponent(Calendar.MINUTE), DateTimeFormatter.is24HourView()).show();
 			}
 		});
 		mTimeOutButton = (Button) findViewById(R.id.EditTimeOut);
@@ -80,7 +80,7 @@ public class TimeSliceEditActivity extends Activity implements TimePickerDialog.
 				mTimeFieldSelected = TimeFieldSelected.OUT;
 				new TimePickerDialog(context, listener, mTimeSlice
 						.getEndTimeComponent(Calendar.HOUR_OF_DAY), mTimeSlice
-						.getEndTimeComponent(Calendar.MINUTE), false).show();
+						.getEndTimeComponent(Calendar.MINUTE), DateTimeFormatter.is24HourView()).show();
 			}
 		});
 		Button saveButton = (Button) findViewById(R.id.ButtonSaveTimeSlice);

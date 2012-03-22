@@ -2,6 +2,7 @@ package com.zettsett.timetracker;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -159,5 +160,12 @@ public class DateTimeFormatter {
 			Log.w(Global.LOG_CONTEXT,"cannot reconvert " + mDateSelectedForAdd + " to dateTime using " + shortDateformatter,e);
 			return 0;
 		}
+	}
+	
+	public static boolean is24HourView()
+	{
+		// TODO find out if country has 24h or am/pm display
+		Locale locale = Locale.getDefault();
+		return locale != Locale.US;
 	}
 }

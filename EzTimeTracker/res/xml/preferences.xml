@@ -13,8 +13,21 @@
 			android:defaultValue="1"
 		/>
 		
-	</PreferenceCategory>
+		<CheckBoxPreference android:key="publicDatabase" 
+			android:defaultValue="false"
+			android:title="Public Database" 
+			android:summary="Should the Database be accessable for other apps" />
 
+		<!-- 		
+		<de.k3b.widgets.EditTextPreferenceWithSummary
+			android:key="test"
+			android:title="Test Message" 
+			android:dialogTitle="Test Message"
+			android:dialogMessage="Provide a message"	
+			android:defaultValue="Default welcome message" />
+		 -->
+	</PreferenceCategory>
+<!--
 	<PreferenceCategory 
 		android:title="Second Category"
 		android:key="second_category">
@@ -28,5 +41,6 @@
 			android:defaultValue="Default welcome message" />
 
 	</PreferenceCategory>
+		 -->
 	
 </PreferenceScreen>

@@ -15,8 +15,8 @@ public class DatabaseInstance {
 		if(currentInstance == null) {
 			DatabaseInstance instance = new DatabaseInstance();
 			currentInstance = instance; 
-			instance.mCtx = ctx;			
 		}
+		currentInstance.mCtx = ctx;			
 	}
 	
 	private void openInstance() {
@@ -31,8 +31,15 @@ public class DatabaseInstance {
 	}
 	
 	public static void close() {
-		currentInstance.mDb.close();
-		currentInstance.mDbHelper.close();
+		try {
+			if (currentInstance.mDb != null) {
+				currentInstance.mDb.close();
+				currentInstance.mDbHelper.close();
+			}
+		} finally {
+			currentInstance.mDb = null;
+			currentInstance.mDbHelper = null;
+		}
 	}
 
 	public static SQLiteDatabase getDb() {
