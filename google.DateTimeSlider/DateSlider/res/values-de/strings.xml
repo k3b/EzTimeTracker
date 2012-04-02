@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="dateSliderTitle">Auswahl Datum</string>
+    <string name="set">OK</string>
+    <string name="cancel">Abbrechen</string>
+</resources>

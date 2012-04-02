@@ -7,5 +7,6 @@
 	<string name="default_export_ts_name">time_sheet.txt</string>
 	<string name="default_export_sum_name">summary_report.txt</string>
 	<string name="default_export_data_name">data_export.csv</string>
-	    
+	<string name="export_directory">EZ_time_tracker</string>
+		    
 </resources>

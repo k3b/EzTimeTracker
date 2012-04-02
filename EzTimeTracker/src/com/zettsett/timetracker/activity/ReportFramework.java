@@ -8,7 +8,6 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import android.app.Activity;
-import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.graphics.Color;
 import android.text.Spannable;
@@ -21,9 +20,11 @@ import android.view.SubMenu;
 import android.view.View;
 import android.view.View.OnLongClickListener;
 import android.view.View.OnTouchListener;
-import android.widget.DatePicker;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.googlecode.android.widgets.DateSlider.DateSlider;
+import com.googlecode.android.widgets.DateSlider.DefaultDateSlider;
 
 import com.zetter.androidTime.R;
 import com.zettsett.timetracker.DateTimeFormatter;
@@ -51,17 +52,20 @@ import com.zettsett.timetracker.report.SDDataExporter;
  */
 public class ReportFramework implements Serializable {
 	private static final long serialVersionUID = 394933866214361393L;
-	private final Activity activity;
-	private final ReportInterface report;
-	private LinearScroller scrollView;
-	private long startDateRange = 0;
-	private long endDateRange = 0;
+	
+	protected static final int GET_START_DATETIME = 0;
+	protected static final int GET_END_DATETIME = 1;
+
 	private static final int MENU_ITEM_START_DATE = Menu.FIRST + 10;
 	private static final int MENU_ITEM_END_DATE = Menu.FIRST + 11;
 	private static final int MENU_ITEM_EXPORT_SD = Menu.FIRST + 12;
 	private static final int MENU_ITEM_EXPORT_EMAIL = Menu.FIRST + 13;
-	private boolean doingSetStartDateRange = false;
-	private static final int DATE_DIALOG_ID = 0;
+
+	private final Activity activity;
+	private final ReportInterface report;
+	private LinearScroller scrollView;
+	private long mFromDate = 0;
+	private long mToDate = 0;
 	private TextView startDateTV;
 	private TextView endDateTV;
 	private List<TextView> reportViewList;
@@ -84,27 +88,27 @@ public class ReportFramework implements Serializable {
 	}
 
 	public long getStartDateRange() {
-		return startDateRange;
+		return mFromDate;
 	}
 
 	private void initializeDateRanges() {
 		Date currDate = new Date();
-		if (startDateRange == 0) {
+		if (mFromDate == 0) {
 			Calendar calendar = new GregorianCalendar();
 			calendar.setTime(currDate);
 			calendar.set(Calendar.HOUR, 0);
 			calendar.set(Calendar.MINUTE, 0);
 			calendar.roll(Calendar.MONTH, false);
-			startDateRange = calendar.getTimeInMillis();
-			if (startDateRange > currDate.getTime()) {
+			mFromDate = calendar.getTimeInMillis();
+			if (mFromDate > currDate.getTime()) {
 				calendar.roll(Calendar.YEAR, false);
-				startDateRange = calendar.getTimeInMillis();
+				mFromDate = calendar.getTimeInMillis();
 			}
 		}
-		if (endDateRange == 0) {
+		if (mToDate == 0) {
 			Calendar calendar = new GregorianCalendar();
 			calendar.setTime(currDate);
-			endDateRange = calendar.getTimeInMillis();
+			mToDate = calendar.getTimeInMillis();
 		}
 	}
 
@@ -128,10 +132,10 @@ public class ReportFramework implements Serializable {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case MENU_ITEM_START_DATE:
-			showDateRangeDialog(true);
+			showDateRangeDialog(GET_START_DATETIME);
 			break;
 		case MENU_ITEM_END_DATE:
-			showDateRangeDialog(false);
+			showDateRangeDialog(GET_END_DATETIME);
 			break;
 		case MENU_ITEM_EXPORT_SD:
 			SDDataExporter.exportToSD(getDefaultReportName(), activity, ReportOutput.makeFormatter(reportViewList));
@@ -146,10 +150,8 @@ public class ReportFramework implements Serializable {
 		return true;
 	}
 
-	private void showDateRangeDialog(boolean doingSetStartDateRange) {
-		this.doingSetStartDateRange = doingSetStartDateRange;
-		activity.showDialog(DATE_DIALOG_ID);
-
+	private void showDateRangeDialog(int doingSetStartDateRange) {
+		activity.showDialog(doingSetStartDateRange);
 	}
 
 	private String getDefaultReportName() {
@@ -174,67 +176,63 @@ public class ReportFramework implements Serializable {
 
 	}
 
-	void onPrepareDialog(int id, Dialog dialog) {
-		switch (id) {
-		case DATE_DIALOG_ID:
-			final Calendar c = Calendar.getInstance();
-			if (doingSetStartDateRange) {
-				c.setTimeInMillis(getStartDateRange());
-			} else {
-				c.setTimeInMillis(getEndDateRange());
-			}
-			((DatePickerDialog) dialog).updateDate(c.get(Calendar.YEAR), c.get(Calendar.MONTH), c
-					.get(Calendar.DAY_OF_MONTH));
-		}
-	}
+    // define the listener which is called once a user selected the date.
+    private DateSlider.OnDateSetListener mDateTimeSetListenerStart =
+        new DateSlider.OnDateSetListener() {
+            public void onDateSet(DateSlider view, Calendar selectedDate) {
+                // update the dateText view with the corresponding date
+            	mFromDate = selectedDate.getTimeInMillis();
+    			report.loadDataIntoReport();
+            }
+    };
 
-	protected Dialog onCreateDialog(int id) {
-		switch (id) {
-		case DATE_DIALOG_ID:
-			final Calendar c = Calendar.getInstance();
-			return new DatePickerDialog(activity, mDateSetListener, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c
-					.get(Calendar.DAY_OF_MONTH));
-		}
-		return null;
-	}
+    // define the listener which is called once a user selected the date.
+    private DateSlider.OnDateSetListener mDateTimeSetListenerEnd =
+        new DateSlider.OnDateSetListener() {
+            public void onDateSet(DateSlider view, Calendar selectedDate) {
+                // update the dateText view with the corresponding date
+            	mToDate = selectedDate.getTimeInMillis();
+    			report.loadDataIntoReport();
+            }
+    };
 
-	private final DatePickerDialog.OnDateSetListener mDateSetListener = new DatePickerDialog.OnDateSetListener() {
-
-		public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-			setDateRange(year, monthOfYear, dayOfMonth, doingSetStartDateRange);
-			report.loadDataIntoReport();
-		}
-	};
-
-	void setDateRange(int year, int monthOfYear, int dayOfMonth, boolean doingSetStartDateRange) {
-		final Calendar c = DateTimeFormatter.getCalendar(year, monthOfYear, dayOfMonth);
-		if (doingSetStartDateRange) {
-			c.set(Calendar.HOUR_OF_DAY, 0);
-			c.set(Calendar.MINUTE, 0);
-			startDateRange = c.getTimeInMillis();
-		} else {
-			endDateRange = c.getTimeInMillis();
-		}
-	}
-
-	public void setStartDateRange(long startDateRange) {
-		this.startDateRange = startDateRange;
+//    @Override
+    public Dialog onCreateDialog(int id) {
+        // this method is called after invoking 'showDialog' for the first time
+        // here we initiate the corresponding DateSlideSelector and return the dialog to its caller
+    	
+    	// get today's date and time
+        final Calendar c = Calendar.getInstance();
+        
+        switch (id) {
+        case GET_START_DATETIME:
+        	c.setTimeInMillis(getStartDateRange());
+            return new DefaultDateSlider(this.activity,mDateTimeSetListenerStart,c);
+        case GET_END_DATETIME:
+        	c.setTimeInMillis(getEndDateRange());
+            return new DefaultDateSlider(this.activity,mDateTimeSetListenerEnd,c);
+        }
+        return null;
+    }
+	
+	public void setStartDateRange(long mFromDate) {
+		this.mFromDate = mFromDate;
 	}
 
 	public long getEndDateRange() {
 
-		return endDateRange;
+		return mToDate;
 	}
 
-	public void setEndDateRange(long endDateRange) {
-		this.endDateRange = endDateRange;
+	public void setEndDateRange(long mToDate) {
+		this.mToDate = mToDate;
 	}
 
 	LinearScroller getLinearScroller() {
 		return scrollView;
 	}
 
-	private void configureDateRangeView(final TextView view, final boolean isForStartDate) {
+	private void configureDateRangeView(final TextView view, final int isForStartDate) {
 		view.setTextColor(Color.CYAN);
 		view.setOnTouchListener(new OnTouchListener() {
 			@Override
@@ -266,7 +264,7 @@ public class ReportFramework implements Serializable {
 		scrollView = new LinearScroller(activity);
 		startDateTV.setPadding(20, 0, 0, 0);
 		String labelStartDate = String.format(this.activity.getString(R.string.formatStartDate).toString(), 
-				DateTimeFormatter.getLongDateStr(startDateRange));
+				DateTimeFormatter.getLongDateStr(mFromDate));
 		startDateTV.setText(labelStartDate, TextView.BufferType.SPANNABLE);
 		Spannable str = (Spannable) startDateTV.getText();
 		str.setSpan(new StyleSpan(android.graphics.Typeface.ITALIC), 0, 11, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -274,7 +272,7 @@ public class ReportFramework implements Serializable {
 		contentView.addView(startDateTV);
 		endDateTV.setPadding(49, 0, 0, 0);
 		String labelEndDate = String.format(this.activity.getString(R.string.formatEndDate).toString(), 
-				DateTimeFormatter.getLongDateStr(endDateRange));
+				DateTimeFormatter.getLongDateStr(mToDate));
 		endDateTV.setText(labelEndDate,
 				TextView.BufferType.SPANNABLE);
 		str = (Spannable) endDateTV.getText();
@@ -282,8 +280,8 @@ public class ReportFramework implements Serializable {
 		str.setSpan(new StyleSpan(android.graphics.Typeface.BOLD), 0, 9, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 		contentView.addView(endDateTV);
 		contentView.addView(scrollView.getScrollView());
-		configureDateRangeView(startDateTV, true);
-		configureDateRangeView(endDateTV, false);
+		configureDateRangeView(startDateTV, GET_START_DATETIME);
+		configureDateRangeView(endDateTV, GET_END_DATETIME);
 		return contentView;
 	}
 

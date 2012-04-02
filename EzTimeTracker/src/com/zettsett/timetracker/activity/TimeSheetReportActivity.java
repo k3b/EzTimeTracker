@@ -8,7 +8,6 @@ import java.util.Map;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -24,7 +23,6 @@ import android.view.View;
 import android.view.Window;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.OnTouchListener;
-import android.widget.DatePicker;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -272,24 +270,13 @@ public class TimeSheetReportActivity extends Activity implements ReportInterface
 		return result;
 	}
 
-	private final DatePickerDialog.OnDateSetListener mDateSetListener = new DatePickerDialog.OnDateSetListener() {
-
-		public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-			final Calendar c = DateTimeFormatter.getCalendar(year, monthOfYear, dayOfMonth);
-
-			showTimeSliceEditDialog(TimeSlice.IS_NEW_TIMESLICE, c.getTimeInMillis());
-		}
-	};
-
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case ADD_MENU_ID:
 			Calendar c = Calendar.getInstance();
-			DatePickerDialog dialog = new DatePickerDialog(this, mDateSetListener, c
-					.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
-			dialog.setTitle(getString(R.string.choose_date));
-			dialog.show();
+			showTimeSliceEditDialog(TimeSlice.IS_NEW_TIMESLICE, c.getTimeInMillis());
+
 			break;
 		case SHOW_DESC_MENU_ID:
 			if (mShowNotes) {
@@ -305,11 +292,6 @@ public class TimeSheetReportActivity extends Activity implements ReportInterface
 		}
 
 		return true;
-	}
-
-	@Override
-	protected void onPrepareDialog(int id, Dialog dialog) {
-		mReportFramework.onPrepareDialog(id, dialog);
 	}
 
 	@Override

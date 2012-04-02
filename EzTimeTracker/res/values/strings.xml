@@ -22,7 +22,6 @@
 	<string name="radio_button_data_export_range">Export Data for Date Range</string>	
 	<string name="checkbox_data_export_email">Export to Email</string>	
 	<string name="button_data_export">Export Data</string>	
-	<string name="choose_date">Choose the Date</string>	
 	<string name="delete_interval_confirmation">Are you sure you want to delete this time interval?</string>	
 	<string name="cmd_delete">Delete</string>	
 	<string name="cmd_cancel"> Cancel </string>	
@@ -88,9 +87,6 @@
 	<string name="format_message_successfully_saved_file">Report successfully saved to \'%1$s\'</string>
 	<string name="format_error_saved_file">Unable to export to \'%1$s\' on SD: %2$s</string>
 	<string name="format_error_create_directory">Unable to create directory \'%1$s\'. Is the SD card mounted?</string>
-	<string name="click_the_button_to_select_a_date">Click the button to select a date</string>
-	<string name="select_defaultdate">Select DefaultDate</string>
 	<string name="title_creating_a_new_category">Creating a New Category</string>
 	<string name="format_title_edit_category">"Editing %1$s"</string>
-	<string name="export_directory">EZ_time_tracker</string>
 </resources>

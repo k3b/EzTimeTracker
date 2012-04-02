@@ -134,11 +134,6 @@ public class SummaryReportActivity extends Activity implements ReportInterface {
 	}
 
 	@Override
-	protected void onPrepareDialog(int id, Dialog dialog) {
-		reportFramework.onPrepareDialog(id, dialog);
-	}
-
-	@Override
 	protected Dialog onCreateDialog(int id) {
 		return reportFramework.onCreateDialog(id);
 	}

@@ -3,30 +3,27 @@ package com.zettsett.timetracker.activity;
 import java.util.Calendar;
 
 import android.app.Activity;
-import android.app.TimePickerDialog;
-import android.content.Context;
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.googlecode.android.widgets.DateSlider.DateSlider;
+import com.googlecode.android.widgets.DateSlider.DateTimeMinuteSlider;
 import com.zetter.androidTime.R;
 import com.zettsett.timetracker.DateTimeFormatter;
 import com.zettsett.timetracker.database.TimeSliceDBAdapter;
 import com.zettsett.timetracker.model.TimeSlice;
 import com.zettsett.timetracker.model.TimeSliceCategory;
 
-public class TimeSliceEditActivity extends Activity implements TimePickerDialog.OnTimeSetListener {
-
-	private enum TimeFieldSelected {
-		IN, OUT
-	}
-
-	private TimeFieldSelected mTimeFieldSelected;
+public class TimeSliceEditActivity extends Activity {
+	protected static final int GET_END_DATETIME = 0;
+	protected static final int GET_START_DATETIME = 1;
+	
 	private TimeSlice mTimeSlice;
 	private Button mTimeInButton;
 	private Button mTimeOutButton;
@@ -41,7 +38,6 @@ public class TimeSliceEditActivity extends Activity implements TimePickerDialog.
 	}
 
 	private void initialize(int rowId, long date) {
-		final Context context = this;
 		setContentView(R.layout.edit_time_slice);
 		final Spinner catSpinner = (Spinner) findViewById(R.id.spinnerEditTimeSliceCategory);
 		catSpinner.setAdapter(TimeSliceCategory.getCategoryAdapter(this));
@@ -63,24 +59,17 @@ public class TimeSliceEditActivity extends Activity implements TimePickerDialog.
 			mTimeSlice.setRowId(TimeSlice.IS_NEW_TIMESLICE);
 		}
 		mTimeInButton = (Button) findViewById(R.id.EditTimeIn);
-		final TimePickerDialog.OnTimeSetListener listener = this;
 		mTimeInButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				mTimeFieldSelected = TimeFieldSelected.IN;
-				new TimePickerDialog(context, listener, mTimeSlice
-						.getStartTimeComponent(Calendar.HOUR_OF_DAY), mTimeSlice
-						.getStartTimeComponent(Calendar.MINUTE), DateTimeFormatter.is24HourView()).show();
+				showDialog(GET_START_DATETIME);
 			}
 		});
 		mTimeOutButton = (Button) findViewById(R.id.EditTimeOut);
 		mTimeOutButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				mTimeFieldSelected = TimeFieldSelected.OUT;
-				new TimePickerDialog(context, listener, mTimeSlice
-						.getEndTimeComponent(Calendar.HOUR_OF_DAY), mTimeSlice
-						.getEndTimeComponent(Calendar.MINUTE), DateTimeFormatter.is24HourView()).show();
+				showDialog(GET_END_DATETIME);
 			}
 		});
 		Button saveButton = (Button) findViewById(R.id.ButtonSaveTimeSlice);
@@ -109,6 +98,45 @@ public class TimeSliceEditActivity extends Activity implements TimePickerDialog.
 		setTimeTexts();
 	}
 
+    // define the listener which is called once a user selected the date.
+    private DateSlider.OnDateSetListener mDateTimeSetListenerStart =
+        new DateSlider.OnDateSetListener() {
+            public void onDateSet(DateSlider view, Calendar selectedDate) {
+                // update the dateText view with the corresponding date
+            	mTimeSlice.setStartTime(selectedDate.getTimeInMillis());
+        		setTimeTexts();
+            }
+    };
+
+    // define the listener which is called once a user selected the date.
+    private DateSlider.OnDateSetListener mDateTimeSetListenerEnd =
+        new DateSlider.OnDateSetListener() {
+            public void onDateSet(DateSlider view, Calendar selectedDate) {
+                // update the dateText view with the corresponding date
+            	mTimeSlice.setEndTime(selectedDate.getTimeInMillis());
+        		setTimeTexts();
+            }
+    };
+
+    @Override
+    protected Dialog onCreateDialog(int id) {
+        // this method is called after invoking 'showDialog' for the first time
+        // here we initiate the corresponding DateSlideSelector and return the dialog to its caller
+    	
+    	// get today's date and time
+        final Calendar c = Calendar.getInstance();
+        
+        switch (id) {
+        case GET_START_DATETIME:
+        	c.setTimeInMillis(mTimeSlice.getStartTime());
+            return new DateTimeMinuteSlider(this,mDateTimeSetListenerStart,c);
+        case GET_END_DATETIME:
+        	c.setTimeInMillis(mTimeSlice.getEndTime());
+            return new DateTimeMinuteSlider(this,mDateTimeSetListenerEnd,c);
+        }
+        return null;
+    }
+
 	private EditText getNotesEditText() {
 		return (EditText) findViewById(R.id.edit_text_ts_notes);
 	}
@@ -134,17 +162,4 @@ public class TimeSliceEditActivity extends Activity implements TimePickerDialog.
 		setTitle(mTimeSlice.getStartDateStr());
 		getNotesEditText().setText(mTimeSlice.getNotes());
 	}
-
-	@Override
-	public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-		if (mTimeFieldSelected == TimeFieldSelected.IN) {
-			mTimeSlice.setStartTimeComponent(Calendar.HOUR_OF_DAY, hourOfDay);
-			mTimeSlice.setStartTimeComponent(Calendar.MINUTE, minute);
-		} else if (mTimeFieldSelected == TimeFieldSelected.OUT) {
-			mTimeSlice.setEndTimeComponent(Calendar.HOUR_OF_DAY, hourOfDay);
-			mTimeSlice.setEndTimeComponent(Calendar.MINUTE, minute);
-		}
-		setTimeTexts();
-	}
-
 }

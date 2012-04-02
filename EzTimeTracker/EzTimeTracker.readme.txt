@@ -11,6 +11,12 @@ todo
 
 	find out if country has 24h or am/pm display for is24HourView()
 
+	bug: new Category is available in select list.
+	create category from select dialog
+	
+	integrate dateslider.jar
+	
+	use 
 copy taken on Date: 02.02.2012 18:09:20 from http://eztimetracker.googlecode.com/svn/trunk/ "r10 Updating to version 1.6"
 
 -------------

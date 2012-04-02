@@ -167,5 +167,24 @@ public class DateTimeFormatter {
 		// TODO find out if country has 24h or am/pm display
 		Locale locale = Locale.getDefault();
 		return locale != Locale.US;
+
+//		// http://stackoverflow.com/questions/4466657/detect-am-pm-vs-24-hr-clock-preference-from-java-locale-information
+//        DateFormat stdFormat = DateFormat.getTimeInstance(DateFormat.SHORT,
+//                Locale.US);
+//        DateFormat localeFormat = DateFormat.getTimeInstance(DateFormat.LONG,
+//                locale);
+//        String midnight = "";
+//        try {
+//            midnight = localeFormat.format(stdFormat.parse("12:00 AM"));
+//        } catch (ParseException ignore) {
+//        }
+//        return midnight.contains("12");
+//
+//		  Calendar c = Calendar.getInstance();
+//		  c.set(Calendar.HOUR_OF_DAY, 23);
+//		  return 23 == c.get(Calendar.HOUR);
+		  // Calendar.HOUR_OF_DAY
+
+		
 	}
 }

@@ -1,5 +1,7 @@
 .svn
+.settings
 bin
 gen
+pkg
 
 /AndroidQuickPreferencesProject

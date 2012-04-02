@@ -6,18 +6,19 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import android.app.Activity;
-import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.TableLayout;
 
+import com.googlecode.android.widgets.DateSlider.DateSlider;
+import com.googlecode.android.widgets.DateSlider.DefaultDateSlider;
 import com.zetter.androidTime.R;
 import com.zettsett.timetracker.DateTimeFormatter;
 import com.zettsett.timetracker.EmailUtilities;
@@ -26,6 +27,8 @@ import com.zettsett.timetracker.database.TimeSliceDBAdapter;
 import com.zettsett.timetracker.model.TimeSlice;
 
 public class DataExportActivity extends Activity implements RadioGroup.OnCheckedChangeListener {
+	private static final int GET_START_DATETIME = 0;
+	private static final int GET_END_DATETIME = 1;
 
 	private static final String CSV_LINE_SEPERATOR = "\n";
 	private static final String CSV_FIELD_SEPERATOR = ",";
@@ -33,7 +36,6 @@ public class DataExportActivity extends Activity implements RadioGroup.OnChecked
 	private RadioGroup mRadioGroup;
 	private boolean mExportAll = true;
 	private long mFromDate, mToDate;
-	private boolean mSettingFrom;
 	private boolean mEmailData = false;
 
 	@Override
@@ -56,17 +58,14 @@ public class DataExportActivity extends Activity implements RadioGroup.OnChecked
 		fromButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				mSettingFrom = true;
-				showDatePickerDialog(mFromDate);
+				showDialog(GET_START_DATETIME);
 			}
 		});
 		Button toButton = (Button) findViewById(R.id.button_data_export_to);
 		toButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				mSettingFrom = false;
-				showDatePickerDialog(mToDate);
-
+				showDialog(GET_END_DATETIME);
 			}
 		});
 		final CheckBox emailCheckBox = (CheckBox) findViewById(R.id.checkbox_data_export_email);
@@ -114,31 +113,44 @@ public class DataExportActivity extends Activity implements RadioGroup.OnChecked
 		toButton.setText(label);
 	}
 
-	private void showDatePickerDialog(long dateToShow) {
-		final Calendar c = Calendar.getInstance();
-		c.setTime(new Date(dateToShow));
-		DatePickerDialog d = new DatePickerDialog(this, mDateSetListener, c.get(Calendar.YEAR), c
-				.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
-		d.show();
-	}
+    // define the listener which is called once a user selected the date.
+    private DateSlider.OnDateSetListener mDateTimeSetListenerStart =
+        new DateSlider.OnDateSetListener() {
+            public void onDateSet(DateSlider view, Calendar selectedDate) {
+                // update the dateText view with the corresponding date
+            	mFromDate = selectedDate.getTimeInMillis();
+    			assignFromToDateLabels();
+            }
+    };
 
-	private final DatePickerDialog.OnDateSetListener mDateSetListener = new DatePickerDialog.OnDateSetListener() {
+    // define the listener which is called once a user selected the date.
+    private DateSlider.OnDateSetListener mDateTimeSetListenerEnd =
+        new DateSlider.OnDateSetListener() {
+            public void onDateSet(DateSlider view, Calendar selectedDate) {
+                // update the dateText view with the corresponding date
+            	mToDate = selectedDate.getTimeInMillis();
+    			assignFromToDateLabels();
+            }
+    };
 
-		@Override
-		public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-			final Calendar c = DateTimeFormatter.getCalendar(year, monthOfYear, dayOfMonth);
-			if (mSettingFrom) {
-				c.set(Calendar.HOUR_OF_DAY, 0);
-				c.set(Calendar.MINUTE, 0);
-				mFromDate = c.getTimeInMillis();
-			} else {
-				c.set(Calendar.HOUR_OF_DAY, 23);
-				c.set(Calendar.MINUTE, 59);
-				mToDate = c.getTimeInMillis();
-			}
-			assignFromToDateLabels();
-		}
-	};
+    @Override
+    public Dialog onCreateDialog(int id) {
+        // this method is called after invoking 'showDialog' for the first time
+        // here we initiate the corresponding DateSlideSelector and return the dialog to its caller
+    	
+    	// get today's date and time
+        final Calendar c = Calendar.getInstance();
+        
+        switch (id) {
+        case GET_START_DATETIME:
+        	c.setTimeInMillis(mFromDate);
+            return new DefaultDateSlider(this,mDateTimeSetListenerStart,c);
+        case GET_END_DATETIME:
+        	c.setTimeInMillis(mToDate);
+            return new DefaultDateSlider(this,mDateTimeSetListenerEnd,c);
+        }
+        return null;
+    }
 
 	@Override
 	public void onCheckedChanged(RadioGroup group, int checkedId) {
