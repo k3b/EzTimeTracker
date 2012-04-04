@@ -156,7 +156,7 @@ public class TimeSliceDBAdapter {
 		try {
 			cur = DatabaseInstance.getDb().query(
 				DatabaseHelper.TIME_SLICE_TABLE, columnList(), 
-				"start_time >= ? and end_time <= ?" 
+				"start_time >= ? and start_time <= ?" 
 				, new String[] {Long.toString(startDate),Long.toString(endDate)},
 				null, null, "start_time");
 			while (cur.moveToNext()) {
