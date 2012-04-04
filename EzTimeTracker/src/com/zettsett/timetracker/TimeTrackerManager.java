@@ -51,7 +51,7 @@ public class TimeTrackerManager {
 	}
 	
 	public Boolean punchInClock(TimeSliceCategory selectedCategory, long startDateTime) {
-		if (Global.isInfoEnabled())
+		if (Global.isInfoEnabled() && selectedCategory != null)
 		{
 			Log.i(Global.LOG_CONTEXT, "punchInClock(category='" + selectedCategory.getCategoryName() 
 					+ "', time='" + DateTimeFormatter.getDateTimeStr(startDateTime)

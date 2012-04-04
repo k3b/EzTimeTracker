@@ -15,17 +15,16 @@ import com.zettsett.timetracker.model.TimeSlice;
 import com.zettsett.timetracker.model.TimeSliceCategory;
 
 public class TimeSliceDBAdapter {
+	private static final DatabaseInstance CURRENT_DB_INSTANCE = DatabaseInstance.getCurrentInstance();
 	private static TimeSliceDBAdapter timeSliceDBAdapterSingleton;
 	private final TimeSliceCategoryDBAdapter categoryDBAdapter;
 	
 	public TimeSliceDBAdapter(Context context) {
-		DatabaseInstance.initialize(context);
-		DatabaseInstance.open();
+		CURRENT_DB_INSTANCE.initialize(context);
 		categoryDBAdapter = new TimeSliceCategoryDBAdapter(context);	
 	}
 	
 	public static TimeSliceDBAdapter getTimeSliceDBAdapter(Context context) {
-		DatabaseInstance.open();
 		if(timeSliceDBAdapterSingleton == null) {
 			timeSliceDBAdapterSingleton = new TimeSliceDBAdapter(context);
 		}		
@@ -41,25 +40,22 @@ public class TimeSliceDBAdapter {
 			oldTimeSlice.setNotes(oldTimeSlice.getNotes() + " " + timeSlice.getNotes());
 			
 			Log.d(Global.LOG_CONTEXT, "db-updating exising timeslice '"+ oldTimeSlice +"' from '" + timeSlice +"'.");
-			DatabaseInstance.getDb().update(
+			CURRENT_DB_INSTANCE.getDb().update(
 					DatabaseHelper.TIME_SLICE_TABLE, timeSliceContentValuesList(oldTimeSlice), "_id=?",
 					new String[] {Long.toString(oldTimeSlice.getRowId())});
 			return oldTimeSlice.getRowId();
 		} else {
 			Log.d(Global.LOG_CONTEXT, "db-inserting new timeslice '"+ timeSlice +"'.");
-			return DatabaseInstance.getDb().insert(DatabaseHelper.TIME_SLICE_TABLE,
+			return CURRENT_DB_INSTANCE.getDb().insert(DatabaseHelper.TIME_SLICE_TABLE,
 					null, timeSliceContentValuesList(timeSlice));
 		}
 	}
 	
 	private TimeSlice findTimesliceByCategoryAndEndTimeBiggerThan(
 			TimeSliceCategory category, long minimumEndDate) {
-		if (!DatabaseInstance.getDb().isOpen()) {
-			DatabaseInstance.open();
-		}
 		Cursor cur = null;
 		try {
-			cur = DatabaseInstance.getDb().query(true,
+			cur = CURRENT_DB_INSTANCE.getDb().query(true,
 					DatabaseHelper.TIME_SLICE_TABLE, columnList(),
 					"category_id=? AND end_time>?", new String[] {Long.toString(category.getRowId()), Long.toString(minimumEndDate)}, null, null, null, null);
 			if ((cur != null) && (cur.moveToFirst())) {
@@ -74,30 +70,27 @@ public class TimeSliceDBAdapter {
 	}
 
 	public long updateTimeSlice(final TimeSlice timeSlice) {
-		return DatabaseInstance.getDb().update(DatabaseHelper.TIME_SLICE_TABLE,
+		return CURRENT_DB_INSTANCE.getDb().update(DatabaseHelper.TIME_SLICE_TABLE,
 				timeSliceContentValuesList(timeSlice),"_id = " + timeSlice.getRowId(), null);
 	}
 
 	public boolean delete(final long rowId) {
-        return DatabaseInstance.getDb().delete(DatabaseHelper.TIME_SLICE_TABLE,  "_id=" + rowId, null) > 0;
+        return CURRENT_DB_INSTANCE.getDb().delete(DatabaseHelper.TIME_SLICE_TABLE,  "_id=" + rowId, null) > 0;
     }
 
 	public boolean deleteForDateRange(long startDate, long endDate) {
-		return DatabaseInstance.getDb().delete(DatabaseHelper.TIME_SLICE_TABLE,
+		return CURRENT_DB_INSTANCE.getDb().delete(DatabaseHelper.TIME_SLICE_TABLE,
 				"start_time>=" + startDate + " and start_time <=" + endDate, null) > 0;
 	}
 
 	public boolean deleteAll() {
-		return DatabaseInstance.getDb().delete(DatabaseHelper.TIME_SLICE_TABLE, null, null) > 0;
+		return CURRENT_DB_INSTANCE.getDb().delete(DatabaseHelper.TIME_SLICE_TABLE, null, null) > 0;
 	}
 
     public TimeSlice fetchByRowID(final long rowId) throws SQLException {
-		if (!DatabaseInstance.getDb().isOpen()) {
-			DatabaseInstance.open();
-		}
 		Cursor cur = null;
 		try {
-			cur = DatabaseInstance.getDb().query(true,
+			cur = CURRENT_DB_INSTANCE.getDb().query(true,
 					DatabaseHelper.TIME_SLICE_TABLE, columnList(),
 					"_id=?", new String[] {Long.toString(rowId)}, null, null, null, null);
 			if ((cur != null) && (cur.moveToFirst())) {
@@ -114,7 +107,7 @@ public class TimeSliceDBAdapter {
     public boolean categoryHasTimeSlices(final TimeSliceCategory category) throws SQLException {
 		Cursor cur = null;
 		try {
-			cur = DatabaseInstance.getDb().query(true,
+			cur = CURRENT_DB_INSTANCE.getDb().query(true,
 				DatabaseHelper.TIME_SLICE_TABLE, columnList(),
 				"category_id=?", new String[] {Long.toString(category.getRowId())}, null, null, null, null);
 			if (cur.moveToNext()) {
@@ -132,7 +125,7 @@ public class TimeSliceDBAdapter {
 		List<TimeSlice> result = new ArrayList<TimeSlice>(); 
 		Cursor cur = null;
 		try {
-			cur = DatabaseInstance.getDb().query(
+			cur = CURRENT_DB_INSTANCE.getDb().query(
 				DatabaseHelper.TIME_SLICE_TABLE, columnList(), null, null,
 				null, null, null);
 			while (cur.moveToNext()) {
@@ -154,7 +147,7 @@ public class TimeSliceDBAdapter {
 		List<TimeSlice> result = new ArrayList<TimeSlice>(); 
 		Cursor cur = null;
 		try {
-			cur = DatabaseInstance.getDb().query(
+			cur = CURRENT_DB_INSTANCE.getDb().query(
 				DatabaseHelper.TIME_SLICE_TABLE, columnList(), 
 				"start_time >= ? and start_time <= ?" 
 				, new String[] {Long.toString(startDate),Long.toString(endDate)},

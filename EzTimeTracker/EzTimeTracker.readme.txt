@@ -3,20 +3,21 @@ info see http://zettsetttech.blogspot.com/
 todo
 	gui: menü mit images
 	config select if private or public database	
-	internationalisation
-		xml for non-translatable resources
-		consolidate resources
 
 	Propertie-dialog with value preview
 
 	find out if country has 24h or am/pm display for is24HourView()
 
-	bug: new Category is available in select list.
-	create category from select dialog
+v	bug: new Category is available in select list.
+v	create category from select dialog
 	
-	integrate dateslider.jar
-	
-	use 
+	bug? delete items with old datepacker	
+
+multi-selection display for report with actions: change category, delete, merge, sort by date/category for detailreport
+multi-selection display for category with actions: delete,merge
+
+add versionnumber to main header, create about-box
+
 copy taken on Date: 02.02.2012 18:09:20 from http://eztimetracker.googlecode.com/svn/trunk/ "r10 Updating to version 1.6"
 
 -------------

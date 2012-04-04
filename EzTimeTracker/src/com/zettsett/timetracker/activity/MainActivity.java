@@ -15,7 +15,7 @@ import android.widget.Chronometer.OnChronometerTickListener;
 
 import com.zetter.androidTime.R;
 import com.zettsett.timetracker.*;
-import com.zettsett.timetracker.database.DatabaseInstance;
+import com.zettsett.timetracker.database.TimeSliceCategoryDBAdapter;
 import com.zettsett.timetracker.model.TimeSliceCategory;
 
 /**
@@ -34,14 +34,20 @@ import com.zettsett.timetracker.model.TimeSliceCategory;
  * the License.
  * 
  */
-public class MainActivity extends Activity implements OnChronometerTickListener {
+public class MainActivity extends Activity implements OnChronometerTickListener, CategorySetter {
+	public static final String PREFS_NAME = "TimerPrefs";
+
+	private static final int SELECT = 0;
+	private static final int CREATE = 1;
+
 	private TextView elapsedTimeDisplay;
 	private EditText notesEditor;
 
+	private final TimeSliceCategoryDBAdapter timeSliceCategoryDBAdapter = new TimeSliceCategoryDBAdapter(
+			this);
+
 	private TimeTrackerSessionData sessionData = new TimeTrackerSessionData();
 	private TimeTrackerManager tracker = null; 
-
-	public static final String PREFS_NAME = "TimerPrefs";
 
 	private BroadcastReceiver myReceiver = null;
 	
@@ -73,9 +79,7 @@ public class MainActivity extends Activity implements OnChronometerTickListener 
 		setupButtons();
 
 		this.tracker = new TimeTrackerManager(this);
-		Settings.initializeCurrentTimeFormatSetting(getBaseContext());
-		DatabaseInstance.initialize(this);
-		DatabaseInstance.open();
+		Settings.init(getBaseContext());
 
 		reloadGui();
 	}
@@ -83,9 +87,8 @@ public class MainActivity extends Activity implements OnChronometerTickListener 
 	@Override
 	public void onResume() {
 		super.onResume();
+		Settings.init(getBaseContext());
 		
-		DatabaseInstance.open();
-
 		if (myReceiver == null)
 		{
 			myReceiver = new _RemoteTimeTrackerReceiver();
@@ -179,7 +182,7 @@ public class MainActivity extends Activity implements OnChronometerTickListener 
 	    case R.id.summary:
 	        return SummaryReportActivity.class;
 	    case R.id.categories:
-	        return CategoryActivity.class;
+	        return CategoryListActivity.class;
 	    case R.id.export:
 	        return DataExportActivity.class;
 	    case R.id.remove:
@@ -192,14 +195,29 @@ public class MainActivity extends Activity implements OnChronometerTickListener 
 	}
 
 	private void showPunchInDialog() {
-		showDialog(0);
+		showDialog(SELECT);
 	}
 
+	private CategoryEditDialog edit = null;
+	public void showCategoryEditDialog(TimeSliceCategory category)
+	{
+		if (this.edit == null)
+		{
+			this.edit = new CategoryEditDialog(this, this);
+		}
+		this.edit.setCategory(category);
+		showDialog(CREATE);
+	}
+	
 	protected Dialog onCreateDialog(int id) {
-		PunchInDialog dialog = new PunchInDialog(this, R.style.PunchDialog);
-		dialog.setCallback(this);
-
-	    return dialog;
+		switch (id) {
+			case SELECT:
+				return new SelectCategoryDialog(this, R.style.PunchDialog, TimeSliceCategory.NO_CATEGORY)
+							.setCategoryCallback(this);
+			case CREATE:
+				return this.edit;
+		}
+		return null;
 	}
 	
 	private void setupButtons() {
@@ -217,10 +235,22 @@ public class MainActivity extends Activity implements OnChronometerTickListener 
 		});
 	}
 
-	void punchInClock(TimeSliceCategory selectedCategory) {
-		long elapsedRealtime = tracker.currentTimeMillis();
-		tracker.punchInClock(selectedCategory, elapsedRealtime);
-		reloadGui();
+	/**
+	 * Called by SelectCategoryDialog
+	 */
+	@Override
+	public void setCategory(TimeSliceCategory selectedCategory) {
+		if (selectedCategory == TimeSliceCategory.NO_CATEGORY)
+		{
+			showCategoryEditDialog(null);
+		} else {
+			if (selectedCategory.getRowId() == TimeSliceCategory.NOT_SAVED) {
+				timeSliceCategoryDBAdapter.createTimeSliceCategory(selectedCategory);
+			} 
+			long elapsedRealtime = tracker.currentTimeMillis();
+			tracker.punchInClock(selectedCategory, elapsedRealtime);
+			reloadGui();
+		}
 	}
 
 	private void punchOutClock() {
@@ -275,7 +305,7 @@ public class MainActivity extends Activity implements OnChronometerTickListener 
 		if (sessionData != null
 				&& sessionData.getCategory() != null) {
 			String labelCategory = String.format(getText(R.string.format_category).toString(),
-							sessionData.getCategory().getCategoryName());
+							sessionData.getCategoryName());
 			labelTv.setText(labelCategory);
 		} else {
 			labelTv.setText(R.string.label_no_current_activity); 

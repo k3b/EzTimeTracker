@@ -32,6 +32,7 @@ public class SessionDataPersistance<T extends Serializable>  {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public T load() {
 		ObjectInputStream in = null;
 		T sessionData = null;

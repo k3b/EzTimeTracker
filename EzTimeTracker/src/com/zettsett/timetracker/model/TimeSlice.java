@@ -108,13 +108,21 @@ public class TimeSlice implements Serializable {
 	}
 
 	public String getTitleWithDuration() {
-		return ((getCategory() != null) ? getCategory().getCategoryName() : "???") + ": " 
+		return getCategoryName() + ": " 
 				+ getStartTimeStr() + " - " + getEndTimeStr()
 				+ " (" + DateTimeFormatter.hrColMin(getDurationInMilliseconds(), true,true) + ")";
 	}
 
+	public String getCategoryName() {
+		return (getCategory() != null) ? getCategory().getCategoryName() : "???";
+	}
+
+	public Object getCategoryDescription() {
+		return (getCategory() != null) ? getCategory().getDescription() : "???";
+	}
+
 	public String getTitle() {
-		return getCategory().getCategoryName() + ": " + getStartTimeStr() + " - " + getEndTimeStr();
+		return getCategoryName() + ": " + getStartTimeStr() + " - " + getEndTimeStr();
 	}
 
 	public String getNotes() {
@@ -148,5 +156,4 @@ public class TimeSlice implements Serializable {
 	@Override public String toString() {
 		return getTitleWithDuration();
 	}
-
 }

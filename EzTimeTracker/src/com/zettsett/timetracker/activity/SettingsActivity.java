@@ -15,9 +15,9 @@ public class SettingsActivity extends PreferenceActivity {
 	}
 
 	@Override
-	public void onPause() {
-		super.onPause();
-		Settings.initializeCurrentTimeFormatSetting(this);
+	public void onResume() {
+		super.onResume();
+		Settings.init(this);
 	}
 
 }

@@ -29,7 +29,6 @@ import android.widget.TextView;
 
 import com.zetter.androidTime.R;
 import com.zettsett.timetracker.DateTimeFormatter;
-import com.zettsett.timetracker.database.DatabaseInstance;
 import com.zettsett.timetracker.database.TimeSliceDBAdapter;
 import com.zettsett.timetracker.model.TimeSlice;
 import com.zettsett.timetracker.report.ReportInterface;
@@ -68,8 +67,6 @@ public class TimeSheetReportActivity extends Activity implements ReportInterface
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		DatabaseInstance.initialize(this);
-		DatabaseInstance.open();
 		mTimeSliceDBAdapter = new TimeSliceDBAdapter(this);
 		mReportFramework = new ReportFramework(this, this);
 		if (savedInstanceState != null) {
@@ -87,7 +84,6 @@ public class TimeSheetReportActivity extends Activity implements ReportInterface
 	@Override
 	public void onResume() {
 		super.onResume();
-		DatabaseInstance.open();
 	}
 
 	@Override

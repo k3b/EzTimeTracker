@@ -19,6 +19,7 @@ import com.zettsett.timetracker.database.DatabaseInstance;
 import com.zettsett.timetracker.database.TimeSliceDBAdapter;
 
 public class RemoveTimeSliceActivity extends Activity {
+	private static final DatabaseInstance CURRENT_DB_INSTANCE = DatabaseInstance.getCurrentInstance();
 	private TimeSliceDBAdapter mTimeSliceDBAdapter;
 	private boolean mRemoveAll = false;
 
@@ -27,7 +28,7 @@ public class RemoveTimeSliceActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.remove_ts);
 		setTitle(R.string.label_delete_time_interval_data);
-		DatabaseInstance.initialize(this);
+		CURRENT_DB_INSTANCE.initialize(this);
 		mTimeSliceDBAdapter = new TimeSliceDBAdapter(this);
 		Button removalButton = (Button) findViewById(R.id.cmd_delete);
 		removalButton.setOnClickListener(new View.OnClickListener() {

@@ -10,13 +10,25 @@ import com.zettsett.timetracker.database.TimeSliceCategoryDBAdapter;
 public class TimeSliceCategory implements Serializable, Comparable<TimeSliceCategory>{
 	private static final long serialVersionUID = 4899523432240132519L;
 
-	private int rowId;
+	public static final int NOT_SAVED = -1;
+	public static final TimeSliceCategory NO_CATEGORY = new TimeSliceCategory(NOT_SAVED, "?");
+
+	private int rowId = NOT_SAVED;
 	
 	private String categoryName;
 	
 	private String description;
 
+	public TimeSliceCategory()
+	{
+		this(NOT_SAVED, null);
+	}
 	
+	public TimeSliceCategory(int id, String name) {
+		setRowId(id);
+		setCategoryName(name);
+	}
+
 	public int getRowId() {
 		return rowId;
 	}

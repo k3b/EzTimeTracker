@@ -18,7 +18,6 @@ import android.widget.TextView;
 import android.widget.LinearLayout.LayoutParams;
 
 import com.zetter.androidTime.R;
-import com.zettsett.timetracker.database.DatabaseInstance;
 import com.zettsett.timetracker.database.TimeSliceDBAdapter;
 import com.zettsett.timetracker.model.TimeSlice;
 import com.zettsett.timetracker.report.ReportInterface;
@@ -64,8 +63,6 @@ public class SummaryReportActivity extends Activity implements ReportInterface {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		DatabaseInstance.initialize(this);
-		DatabaseInstance.open();
 		timeSliceDBAdapter = new TimeSliceDBAdapter(this);
 		reportFramework = new ReportFramework(this, this);
 		if (savedInstanceState != null) {
@@ -186,7 +183,7 @@ public class SummaryReportActivity extends Activity implements ReportInterface {
 					header = aSlice.getStartDateStr();
 				}
 			} else {
-				header = aSlice.getCategory().getCategoryName();
+				header = aSlice.getCategoryName();
 			}
 			Map<String, Long> group = summaries.get(header);
 			if (group == null) {
@@ -237,17 +234,4 @@ public class SummaryReportActivity extends Activity implements ReportInterface {
 		String timeString = hours + " " + hoursWord + ", " + minutes + " " + minutesWord;
 		return timeString;
 	}
-
-	@Override
-	public void onPause() {
-		super.onPause();
-		// DatabaseInstance.close();
-	}
-
-	@Override
-	public void onResume() {
-		super.onResume();
-		DatabaseInstance.open();
-	}
-
 }

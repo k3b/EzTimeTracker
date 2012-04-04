@@ -180,8 +180,8 @@ public class DataExportActivity extends Activity implements RadioGroup.OnChecked
 			output.append(dateStr).append(CSV_FIELD_SEPERATOR);
 			output.append(aTimeSlice.getStartTimeStr()).append(CSV_FIELD_SEPERATOR);
 			output.append(DateTimeFormatter.getIsoDateTimeStr(aTimeSlice.getEndTime())).append(CSV_FIELD_SEPERATOR);
-			output.append(aTimeSlice.getCategory().getCategoryName()).append(CSV_FIELD_SEPERATOR);
-			output.append(aTimeSlice.getCategory().getDescription()).append(CSV_FIELD_SEPERATOR);
+			output.append(aTimeSlice.getCategoryName()).append(CSV_FIELD_SEPERATOR);
+			output.append(aTimeSlice.getCategoryDescription()).append(CSV_FIELD_SEPERATOR);
 			output.append(aTimeSlice.getNotes().replace(CSV_LINE_SEPERATOR, " "));
 			output.append(CSV_LINE_SEPERATOR);
 		}

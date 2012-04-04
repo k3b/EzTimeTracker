@@ -5,32 +5,30 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.zetter.androidTime.R;
 
+/**
+ * Singleton database instance.
+ * Database is automatically opend on first access
+ */
 public class DatabaseInstance {
 	private DatabaseHelper mDbHelper;
 	private SQLiteDatabase mDb;
 	private Context mCtx;
 	private static DatabaseInstance currentInstance;
-		
-	public static void initialize(Context ctx) {
+			
+	public static DatabaseInstance getCurrentInstance() {
 		if(currentInstance == null) {
 			DatabaseInstance instance = new DatabaseInstance();
 			currentInstance = instance; 
 		}
-		currentInstance.mCtx = ctx;			
+		return currentInstance;
+	}
+
+	public DatabaseInstance initialize(Context ctx) {
+		currentInstance.mCtx = ctx;
+		return this;
 	}
 	
-	private void openInstance() {
-		mDbHelper = new DatabaseHelper(mCtx, mCtx.getString(R.string.database_name));
-		mDb = mDbHelper.getWritableDatabase();
-	}
-	
-	public static void open() {
-		if(DatabaseInstance.getDb() == null || !DatabaseInstance.getDb().isOpen()) {
-			DatabaseInstance.currentInstance.openInstance();
-		}
-	}
-	
-	public static void close() {
+	public DatabaseInstance close() {
 		try {
 			if (currentInstance.mDb != null) {
 				currentInstance.mDb.close();
@@ -40,14 +38,14 @@ public class DatabaseInstance {
 			currentInstance.mDb = null;
 			currentInstance.mDbHelper = null;
 		}
+		return this;
 	}
 
-	public static SQLiteDatabase getDb() {
-		if(currentInstance.mDb != null && !currentInstance.mDb.isOpen()) {
-			currentInstance.openInstance();
+	public SQLiteDatabase getDb() {
+		if(currentInstance.mDb == null || !currentInstance.mDb.isOpen()) {
+			mDbHelper = new DatabaseHelper(mCtx, mCtx.getString(R.string.database_name));
+			mDb = mDbHelper.getWritableDatabase();
 		}
 		return currentInstance.mDb;
 	}
-	
-	
 }

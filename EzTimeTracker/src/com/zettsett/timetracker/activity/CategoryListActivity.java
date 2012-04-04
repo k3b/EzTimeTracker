@@ -12,19 +12,17 @@ import com.zettsett.timetracker.database.*;
 import com.zettsett.timetracker.model.TimeSliceCategory;
 import com.zettsett.timetracker.model.TimeSliceCategoryAdapter;
 
-public class CategoryActivity extends ListActivity {
+public class CategoryListActivity extends ListActivity implements CategorySetter {
 	private static final int MENU_ADD_CATEGORY = Menu.FIRST;
 	private static final int EDIT_MENU_ID = Menu.FIRST + 1;
 	private static final int DELETE_MENU_ID = Menu.FIRST + 2;
 	private TimeSliceCategory categoryClicked;
 	private final TimeSliceCategoryDBAdapter timeSliceCategoryDBAdapter = new TimeSliceCategoryDBAdapter(
 			this);
-	private boolean updating;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		DatabaseInstance.open();
 		setContentView(R.layout.category_list);
 		registerForContextMenu(getListView());
 		refreshCategoryList();
@@ -32,15 +30,18 @@ public class CategoryActivity extends ListActivity {
 
 	private void refreshCategoryList() {
 		setListAdapter(TimeSliceCategoryAdapter.getTimeSliceCategoryAdapterFromDB(this,
-				R.layout.category_list_view_row, true));
+				R.layout.category_list_view_row, true, TimeSliceCategory.NO_CATEGORY));
 
 	}
 
-	void onEditDialogSave(TimeSliceCategory category) {
-		if (updating) {
-			timeSliceCategoryDBAdapter.update(category);
-		} else {
+	public void setCategory(TimeSliceCategory category) {
+		if (category == TimeSliceCategory.NO_CATEGORY) {
+			showCategoryEditDialog(null);
+			return;
+		} else if (category.getRowId() == TimeSliceCategory.NOT_SAVED) {
 			timeSliceCategoryDBAdapter.createTimeSliceCategory(category);
+		} else {
+			timeSliceCategoryDBAdapter.update(category);
 		}
 		refreshCategoryList();
 	}
@@ -50,7 +51,9 @@ public class CategoryActivity extends ListActivity {
 		super.onCreateContextMenu(menu, v, menuInfo);
 		categoryClicked = (TimeSliceCategory) getListView().getItemAtPosition(
 				((AdapterContextMenuInfo) menuInfo).position);
-		menu.setHeaderTitle("" + categoryClicked.getCategoryName());
+		
+		if (categoryClicked != null)
+			menu.setHeaderTitle("" + categoryClicked.getCategoryName());
 		menu.add(0, EDIT_MENU_ID, 0, R.string.cmd_edit);
 		menu.add(0, DELETE_MENU_ID, 0, R.string.cmd_delete);
 	}
@@ -59,8 +62,11 @@ public class CategoryActivity extends ListActivity {
 	public boolean onContextItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case EDIT_MENU_ID:
-			updating = true;
-			showDialog(EDIT_MENU_ID);
+			if (categoryClicked == TimeSliceCategory.NO_CATEGORY) {
+				showCategoryEditDialog(null);
+			} else {
+				showCategoryEditDialog(categoryClicked);
+			}
 			return true;
 		case DELETE_MENU_ID:
 			TimeSliceDBAdapter timeSliceDBAdapter = new TimeSliceDBAdapter(this);
@@ -76,12 +82,22 @@ public class CategoryActivity extends ListActivity {
 		}
 	}
 
+	private CategoryEditDialog edit = null;
+	public void showCategoryEditDialog(TimeSliceCategory category)
+	{
+		if (this.edit == null)
+		{
+			this.edit = new CategoryEditDialog(this, this);
+		}
+		this.edit.setCategory(category);
+		showDialog(EDIT_MENU_ID);
+	}
+	
 	protected Dialog onCreateDialog(int id) {
 		switch (id) {
 			case EDIT_MENU_ID:
-				return new CategoryEditDialog(this).buildEditDialog(categoryClicked, this);
 			case MENU_ADD_CATEGORY:
-				return new CategoryEditDialog(this).buildEditDialog(null, this);
+				return this.edit;
 			case DELETE_MENU_ID:
 				return createDeleteWarningDialog();
 		}
@@ -115,8 +131,7 @@ public class CategoryActivity extends ListActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case MENU_ADD_CATEGORY:
-			updating = false;
-			showDialog(MENU_ADD_CATEGORY);
+			showCategoryEditDialog(null);
 			return true;
 		}
 		return super.onOptionsItemSelected(item);

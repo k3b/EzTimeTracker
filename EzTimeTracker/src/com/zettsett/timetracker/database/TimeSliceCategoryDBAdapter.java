@@ -16,6 +16,7 @@ import com.zettsett.timetracker.model.TimeSliceCategory;
 
 public class TimeSliceCategoryDBAdapter {
 
+	private static final DatabaseInstance CURRENT_DB_INSTANCE = DatabaseInstance.getCurrentInstance();
 	private final Context context;
 	
 	public TimeSliceCategoryDBAdapter(Context context) {
@@ -36,7 +37,7 @@ public class TimeSliceCategoryDBAdapter {
     	Cursor cur = null;
     	try
     	{
-	    	cur = DatabaseInstance.getDb().query(
+	    	cur = CURRENT_DB_INSTANCE.getDb().query(
 					DatabaseHelper.TIME_SLICE_CATEGORY_TABLE, columnList(),
 					"category_name = ?" , new String[] {name},
 					null, null, null);
@@ -53,9 +54,11 @@ public class TimeSliceCategoryDBAdapter {
     
 	public long createTimeSliceCategory(final TimeSliceCategory category) {
 
-		return DatabaseInstance.getDb().insert(
+		long newID = CURRENT_DB_INSTANCE.getDb().insert(
 				DatabaseHelper.TIME_SLICE_CATEGORY_TABLE, null,
 				timeSliceCategoryContentValuesList(category));
+		category.setRowId((int)newID);
+		return newID;
 	}
 
 	private TimeSliceCategory createTimeSliceCategoryFromName(String name) {
@@ -78,7 +81,7 @@ public class TimeSliceCategoryDBAdapter {
 		Cursor cur = null;
 		try
 		{
-			cur = DatabaseInstance.getDb().query(
+			cur = CURRENT_DB_INSTANCE.getDb().query(
 					DatabaseHelper.TIME_SLICE_CATEGORY_TABLE, columnList(), null,
 					null, null, null, "category_name");
 			while (cur.moveToNext()) {
@@ -107,12 +110,12 @@ public class TimeSliceCategoryDBAdapter {
 	}
 
 	public boolean delete(final long rowId) {
-		return DatabaseInstance.getDb().delete(
+		return CURRENT_DB_INSTANCE.getDb().delete(
 				DatabaseHelper.TIME_SLICE_CATEGORY_TABLE, "_id=" + rowId, null) > 0;
 	}
 
 	public long update(final TimeSliceCategory timeSliceCategory) {
-		return DatabaseInstance.getDb().update(
+		return CURRENT_DB_INSTANCE.getDb().update(
 				DatabaseHelper.TIME_SLICE_CATEGORY_TABLE,
 				this.timeSliceCategoryContentValuesList(timeSliceCategory),
 				"_id = " + timeSliceCategory.getRowId(), null);
@@ -124,7 +127,7 @@ public class TimeSliceCategoryDBAdapter {
 		
 		try
 		{
-			cur = DatabaseInstance.getDb().query(true,
+			cur = CURRENT_DB_INSTANCE.getDb().query(true,
 				DatabaseHelper.TIME_SLICE_CATEGORY_TABLE, columnList(),
 				"_id = ?", new String[] {Long.toString(rowId)},  
 				null, null, null, null);

@@ -26,7 +26,7 @@
 			</intent-filter>
 		</activity>
 		<activity android:name="com.zettsett.timetracker.activity.TimeSheetReportActivity"></activity>
-		<activity android:name="com.zettsett.timetracker.activity.CategoryActivity"></activity>
+		<activity android:name="com.zettsett.timetracker.activity.CategoryListActivity"></activity>
 		<activity android:name="com.zettsett.timetracker.activity.SummaryReportActivity"></activity>
 		<activity android:name="com.zettsett.timetracker.activity.TimeSliceEditActivity"
 			android:screenOrientation="portrait"></activity>

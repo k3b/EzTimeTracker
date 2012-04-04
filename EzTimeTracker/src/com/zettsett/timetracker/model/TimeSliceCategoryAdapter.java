@@ -14,6 +14,7 @@ import com.zettsett.timetracker.database.TimeSliceCategoryDBAdapter;
 
 public class TimeSliceCategoryAdapter extends ArrayAdapter<TimeSliceCategory> {
 
+	public static final int NO_CATEGORY = -1;
 	private final Context context;
 	private final boolean withDescription;
 	private final int viewId;
@@ -30,14 +31,18 @@ public class TimeSliceCategoryAdapter extends ArrayAdapter<TimeSliceCategory> {
 	private final List<TimeSliceCategory> items;
 
 	public static TimeSliceCategoryAdapter getTimeSliceCategoryAdapterFromDB(
-			Context context, int viewId, boolean withDescription) {
+			Context context, int viewId, boolean withDescription, TimeSliceCategory firstElement) {
 		TimeSliceCategoryDBAdapter timeSliceCategoryDBAdapter = new TimeSliceCategoryDBAdapter(context);
 
 		List<TimeSliceCategory> categories = timeSliceCategoryDBAdapter
 				.fetchAllTimeSliceCategories();
+		
+		if(firstElement != null)
+		{
+			categories.add(0, firstElement);
+		}
 		return new TimeSliceCategoryAdapter(context,
 				viewId, categories, withDescription);
-
 	}
 
 	@Override
