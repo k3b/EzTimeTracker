@@ -33,7 +33,7 @@ import com.zettsett.timetracker.database.TimeSliceDBAdapter;
 import com.zettsett.timetracker.model.TimeSlice;
 import com.zettsett.timetracker.report.ReportInterface;
 
-/**
+/*
  * Copyright 2010 Eric Zetterbaum ezetter@gmail.com
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -48,6 +48,10 @@ import com.zettsett.timetracker.report.ReportInterface;
  * License for the specific language governing permissions and limitations under
  * the License.
  * 
+ */
+
+/**
+ * Detail report grouped by date with optional date-filter
  */
 public class TimeSheetReportActivity extends Activity implements ReportInterface {
 	private static final int EDIT_MENU_ID = Menu.FIRST;

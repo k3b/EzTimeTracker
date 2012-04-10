@@ -34,7 +34,7 @@ import com.zettsett.timetracker.report.ReportInterface;
 import com.zettsett.timetracker.report.ReportOutput;
 import com.zettsett.timetracker.report.SDDataExporter;
 
-/**
+/*
  * Copyright 2010 Eric Zetterbaum ezetter@gmail.com
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -49,6 +49,10 @@ import com.zettsett.timetracker.report.SDDataExporter;
  * License for the specific language governing permissions and limitations under
  * the License.
  * 
+ */
+
+/**
+ * Common Handling for Report-Generation and display
  */
 public class ReportFramework implements Serializable {
 	private static final long serialVersionUID = 394933866214361393L;
