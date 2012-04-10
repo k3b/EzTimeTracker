@@ -25,7 +25,7 @@
 			     <item android:id="@+id/category_month"
 			          android:title="@string/report_title_category_month"
 			           />	 		    
-			     	 		</menu>       
+   	 		</menu>       
 	    </item>
     
     <item android:id="@+id/categories"
@@ -43,5 +43,9 @@
     <item android:id="@+id/settings"
           android:title="@string/report_title_settings"
           android:titleCondensed="@string/report_title_condensed_settings"
+           />
+    <item android:id="@+id/about"
+          android:title="@string/about_title"
+          android:titleCondensed="@string/about_title_condensed"
            />
 </menu>    

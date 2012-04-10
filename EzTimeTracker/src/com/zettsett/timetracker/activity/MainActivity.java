@@ -1,15 +1,18 @@
 package com.zettsett.timetracker.activity;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.*;
+import android.webkit.WebView;
 import android.widget.*;
 import android.widget.Chronometer.OnChronometerTickListener;
 
@@ -172,10 +175,37 @@ public class MainActivity extends Activity implements OnChronometerTickListener,
 			startActivity(intent);
 			return true;
 		} else {
+			switch (item.getItemId()) {
+				case R.id.about:
+					showDialog(item.getItemId());
+					return true;
+			}
 	        return super.onOptionsItemSelected(item);
 	    }
 	}
 	
+	private Dialog getAboutDialog() {
+		Context mContext = this;
+		  AlertDialog.Builder alert = new AlertDialog.Builder(mContext);
+	        alert.setTitle(R.string.about_title);
+	        alert.setIcon(R.drawable.icon);
+	        alert.setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface paramDialogInterface, int paramInt) {
+					paramDialogInterface.cancel();
+					
+				}
+			});
+		  WebView wv = new WebView(mContext);
+		  String html = "<html><body>some <b>html</b> here</body></html>";
+
+		  wv.loadData(html, "text/html", "UTF-8");
+		  alert.setView(wv);
+		
+      return alert.create();	
+    }
+
 	private Class<? extends Activity> getMenuIntentHandler(MenuItem item) {
 	    switch (item.getItemId()) {
 	    case R.id.details:
@@ -222,6 +252,8 @@ public class MainActivity extends Activity implements OnChronometerTickListener,
 							.setCategoryCallback(this);
 			case CREATE:
 				return this.edit;
+			case R.id.about:
+				return this.getAboutDialog();
 		}
 		return null;
 	}

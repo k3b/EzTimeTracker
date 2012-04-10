@@ -9,4 +9,15 @@
 	<string name="default_export_data_name">data_export.csv</string>
 	<string name="export_directory">EZ_time_tracker</string>
 		    
+	<string name="about_title">About EZ Time Tracker</string>
+	<string name="about_title_condensed">About</string>
+	<string name="about_content">&#169; 2010 by Eric Z\n
+&#169; 2012 by k3b\n\n
+DateSlider &#169; 2011 Daniel Berndt - Codeus Ltd\n
+Licensed under the Apache License, Version 2.0.\n
+You may obtain a copy of the License at\n
+http://www.apache.org/licenses/LICENSE-2.0\n
+<html><body>some <b>html</b> here</body></html>
+\n</string>
+				
 </resources>
