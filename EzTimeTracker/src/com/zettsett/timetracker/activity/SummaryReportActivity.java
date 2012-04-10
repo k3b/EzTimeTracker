@@ -43,6 +43,7 @@ public class SummaryReportActivity extends Activity implements ReportInterface {
 	private static final int MENU_ITEM_GROUP_WEEKLY = Menu.FIRST + 1;
 	private static final int MENU_ITEM_GROUP_MONTHLY = Menu.FIRST + 2;
 	private static final int MENU_ITEM_GROUP_CATEGORY = Menu.FIRST + 3;
+	public static final String MENU_ID = "MENU_ID";
 	private ReportFramework reportFramework;
 
 	private TimeSliceDBAdapter timeSliceDBAdapter;
@@ -72,7 +73,7 @@ public class SummaryReportActivity extends Activity implements ReportInterface {
 					.getSerializable("reportDateGrouping");
 			reportMode = (ReportModes) savedInstanceState.getSerializable("reportMode");
 		}
-		loadDataIntoReport();
+		loadDataIntoReport(this.getIntent().getIntExtra(SummaryReportActivity.MENU_ID, 0));
 	}
 
 	@Override
@@ -105,15 +106,15 @@ public class SummaryReportActivity extends Activity implements ReportInterface {
 		switch (item.getItemId()) {
 		case MENU_ITEM_GROUP_DAILY:
 			reportDateGrouping = ReportDateGrouping.DAILY;
-			loadDataIntoReport();
+			loadDataIntoReport(0);
 			break;
 		case MENU_ITEM_GROUP_WEEKLY:
 			reportDateGrouping = ReportDateGrouping.WEEKLY;
-			loadDataIntoReport();
+			loadDataIntoReport(0);
 			break;
 		case MENU_ITEM_GROUP_MONTHLY:
 			reportDateGrouping = ReportDateGrouping.MONTHLY;
-			loadDataIntoReport();
+			loadDataIntoReport(0);
 			break;
 		case MENU_ITEM_GROUP_CATEGORY:
 			if (reportMode == ReportModes.BY_CATEGORY) {
@@ -121,7 +122,7 @@ public class SummaryReportActivity extends Activity implements ReportInterface {
 			} else {
 				reportMode = ReportModes.BY_CATEGORY;
 			}
-			loadDataIntoReport();
+			loadDataIntoReport(0);
 			break;
 		default:
 			reportFramework.setReportType(ReportFramework.ReportTypes.SUMMARY);
@@ -135,7 +136,34 @@ public class SummaryReportActivity extends Activity implements ReportInterface {
 		return reportFramework.onCreateDialog(id);
 	}
 
-	public void loadDataIntoReport() {
+	public void loadDataIntoReport(int reportType) {
+		switch (reportType)
+		{
+		    case R.id.summary_day:
+				reportDateGrouping = ReportDateGrouping.DAILY;
+				reportMode = ReportModes.BY_DATE;
+				break;
+		    case R.id.summary_month:
+				reportDateGrouping = ReportDateGrouping.MONTHLY;
+				reportMode = ReportModes.BY_DATE;
+				break;
+		    case R.id.summary_week:
+				reportDateGrouping = ReportDateGrouping.WEEKLY;
+				reportMode = ReportModes.BY_DATE;
+				break;
+		    case R.id.category_day:
+				reportDateGrouping = ReportDateGrouping.DAILY;
+				reportMode = ReportModes.BY_CATEGORY;
+				break;
+		    case R.id.category_month:
+				reportDateGrouping = ReportDateGrouping.MONTHLY;
+				reportMode = ReportModes.BY_CATEGORY;
+				break;
+		    case R.id.category_week:			
+				reportDateGrouping = ReportDateGrouping.WEEKLY;
+				reportMode = ReportModes.BY_CATEGORY;
+				break;
+		}
 		setContentView(reportFramework.buildViews());
 		reportViewList = reportFramework.initializeTextViewsForExportList();
 		Map<String, Map<String, Long>> reportDataStructure = loadReportDataStructures();
@@ -196,7 +224,7 @@ public class SummaryReportActivity extends Activity implements ReportInterface {
 			}
 			String reportLine = null;
 			if (reportMode == ReportModes.BY_DATE) {
-				reportLine = aSlice.getCategory().getCategoryName();
+				reportLine = aSlice.getCategoryName();
 			} else {
 				if (reportDateGrouping == ReportDateGrouping.WEEKLY) {
 					reportLine = aSlice.getStartWeekStr();

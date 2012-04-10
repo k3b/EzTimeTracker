@@ -77,7 +77,7 @@ public class TimeSheetReportActivity extends Activity implements ReportInterface
 			mReportFramework.setStartDateRange(savedInstanceState.getLong("StartDateRange"));
 			mReportFramework.setEndDateRange(savedInstanceState.getLong("EndDateRange"));
 		}
-		loadDataIntoReport();
+		loadDataIntoReport(0);
 	}
 
 	@Override
@@ -96,7 +96,7 @@ public class TimeSheetReportActivity extends Activity implements ReportInterface
 		outState.putLong("EndDateRange", mReportFramework.getEndDateRange());
 	}
 
-	public void loadDataIntoReport() {
+	public void loadDataIntoReport(int id) {
 		initScrollview();
 		String lastStartDate = "";
 		final Calendar c = Calendar.getInstance();
@@ -214,7 +214,7 @@ public class TimeSheetReportActivity extends Activity implements ReportInterface
 				} else {
 					mTimeSliceDBAdapter.updateTimeSlice(updatedTimeSlice);
 				}
-				loadDataIntoReport();
+				loadDataIntoReport(0);
 			}
 		}
 	}
@@ -244,7 +244,7 @@ public class TimeSheetReportActivity extends Activity implements ReportInterface
 				.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int id) {
 						mTimeSliceDBAdapter.delete(mChosenRowId);
-						loadDataIntoReport();
+						loadDataIntoReport(0);
 					}
 				}).setNegativeButton("No", new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int id) {
@@ -284,7 +284,7 @@ public class TimeSheetReportActivity extends Activity implements ReportInterface
 			} else {
 				mShowNotes = true;
 			}
-			loadDataIntoReport();
+			loadDataIntoReport(0);
 			break;
 		default:
 			mReportFramework.setReportType(ReportFramework.ReportTypes.TIMESHEET);

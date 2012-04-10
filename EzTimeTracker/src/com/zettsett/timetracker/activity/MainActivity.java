@@ -168,6 +168,7 @@ public class MainActivity extends Activity implements OnChronometerTickListener,
 		if (itemHandler != null)
 		{
 			Intent intent = new Intent().setClass(this, itemHandler);
+			intent.putExtra(SummaryReportActivity.MENU_ID, item.getItemId());
 			startActivity(intent);
 			return true;
 		} else {
@@ -179,7 +180,12 @@ public class MainActivity extends Activity implements OnChronometerTickListener,
 	    switch (item.getItemId()) {
 	    case R.id.details:
 	        return TimeSheetReportActivity.class;
-	    case R.id.summary:
+	    case R.id.summary_day:
+	    case R.id.summary_month:
+	    case R.id.summary_week:
+	    case R.id.category_day:
+	    case R.id.category_month:
+	    case R.id.category_week:
 	        return SummaryReportActivity.class;
 	    case R.id.categories:
 	        return CategoryListActivity.class;

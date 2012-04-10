@@ -70,10 +70,6 @@
 
 	<string name="cmd_edit">Edit</string>	
 		
-	<string name="report_title_summary">Summary Report</string>
-	<string name="report_title_condensed_summary">Summary</string>
-	<string name="report_title_details">Details Report</string>
-	<string name="report_title_condensed_details">Details</string>
 	<string name="report_title_categories">Categories</string>
 	<string name="report_title_condensed_categories">Categories</string>
 	<string name="report_title_export">Export Data</string>
@@ -89,4 +85,14 @@
 	<string name="format_error_create_directory">Unable to create directory \'%1$s\'. Is the SD card mounted?</string>
 	<string name="title_creating_a_new_category">Creating a New Category</string>
 	<string name="format_title_edit_category">"Editing %1$s"</string>
+
+	<string name="report">Report</string>	
+	<string name="report_title_details">Details Report</string>
+	<string name="report_title_summary_day">Summary by Day</string>
+	<string name="report_title_summary_week">Summary by Week</string>
+	<string name="report_title_summary_month">Summary by Month</string>
+	
+	<string name="report_title_category_day">Category by Day</string>
+	<string name="report_title_category_week">Category by Week</string>
+	<string name="report_title_category_month">Category by Month</string>
 </resources>

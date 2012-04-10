@@ -67,10 +67,15 @@
 	<string name="no_categories">Zur Zeit sind noch keine Kategorien definiert.</string>
 	    	    	
 	<string name="cmd_edit">Bearbeiten</string>	
-	<string name="report_title_summary">Auswertung</string>
-	<string name="report_title_condensed_summary">Auswertung</string>
+	<string name="choose_filename">Eingabe Dateiname:</string>
+	<string name="format_message_successfully_saved_file">Erfolgreich gespeichert unter \'%1$s\'</string>
+	<string name="format_error_saved_file">Speichern unter \'%1$s\' auf SD gescheitert: %2$s</string>
+	<string name="format_error_create_directory">Ich kann das Verzeichnis \'%1$s\' nicht erstellen. Ist die SD Speicherkarte verfügbar?</string>
+
+	<string name="title_creating_a_new_category">Neue Kategory anlegen</string>
+	<string name="format_title_edit_category">"Bearbeite %1$s"</string>
+
 	<string name="report_title_details">Detailansicht</string>
-	<string name="report_title_condensed_details">Details</string>
 	<string name="report_title_categories">Kategorien</string>
 	<string name="report_title_condensed_categories">Kategorien</string>
 	<string name="report_title_export">Daten exportieren</string>
@@ -80,11 +85,14 @@
 	<string name="report_title_settings">Einstellungen</string>
 	<string name="report_title_condensed_settings">Einstellungen</string>
 	
-	<string name="choose_filename">Eingabe Dateiname:</string>
-	<string name="format_message_successfully_saved_file">Erfolgreich gespeichert unter \'%1$s\'</string>
-	<string name="format_error_saved_file">Speichern unter \'%1$s\' auf SD gescheitert: %2$s</string>
-	<string name="format_error_create_directory">Ich kann das Verzeichnis \'%1$s\' nicht erstellen. Ist die SD Speicherkarte verfügbar?</string>
-
-	<string name="title_creating_a_new_category">Neue Kategory anlegen</string>
-	<string name="format_title_edit_category">"Bearbeite %1$s"</string>
+	
+	<string name="report">Report</string>	
+	<string name="report_title_details">Detail Report</string>
+	<string name="report_title_summary_day">Summierte Tage</string>
+	<string name="report_title_summary_week">Summierte Wochen</string>
+	<string name="report_title_summary_month">Summierte Monate</string>
+	
+	<string name="report_title_category_day">Kategory täglich</string>
+	<string name="report_title_category_week">Kategory wöchentlich</string>
+	<string name="report_title_category_month">Kategory monatlich</string>
 </resources>

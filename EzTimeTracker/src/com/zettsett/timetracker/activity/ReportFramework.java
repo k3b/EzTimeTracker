@@ -186,7 +186,7 @@ public class ReportFramework implements Serializable {
             public void onDateSet(DateSlider view, Calendar selectedDate) {
                 // update the dateText view with the corresponding date
             	mFromDate = selectedDate.getTimeInMillis();
-    			report.loadDataIntoReport();
+    			report.loadDataIntoReport(0);
             }
     };
 
@@ -196,7 +196,7 @@ public class ReportFramework implements Serializable {
             public void onDateSet(DateSlider view, Calendar selectedDate) {
                 // update the dateText view with the corresponding date
             	mToDate = selectedDate.getTimeInMillis();
-    			report.loadDataIntoReport();
+    			report.loadDataIntoReport(0);
             }
     };
 
