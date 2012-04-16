@@ -11,13 +11,118 @@
 		    
 	<string name="about_title">About EZ Time Tracker</string>
 	<string name="about_title_condensed">About</string>
-	<string name="about_content">&#169; 2010 by Eric Z\n
-&#169; 2012 by k3b\n\n
-DateSlider &#169; 2011 Daniel Berndt - Codeus Ltd\n
-Licensed under the Apache License, Version 2.0.\n
-You may obtain a copy of the License at\n
-http://www.apache.org/licenses/LICENSE-2.0\n
-<html><body>some <b>html</b> here</body></html>
-\n</string>
+	<string name="about_content"><![CDATA[ <html><body>
+<a href="https://github.com/k3b/EzTimeTracker/wiki"><b>EZ
+Time Tracker</b></a> Version $versionName$
+<br />
+<hr />
+
+<h2>About</h2>
+<a href="https://github.com/k3b/EzTimeTracker/wiki">EZ
+Time Tracker</a>&nbsp;is an Android app to record time
+spend&nbsp;on&nbsp;user definable activities/categories. <br />
+<br />
+It records the time between "punch in" and "punch out" even if the
+app&nbsp;is not running.<br />
+<br />
+There are reports for details or totals by day, week, month and/or
+category that can be viewed or exported to textfile/email.<br />
+<br />
+Raw data can be exported to csv file on sd-card. <br />
+<br />
+<a href="http://kebabapps.blogspot.com/search/label/Llama">Android
+Llama</a> + <a
+ href="https://github.com/k3b/EzTimeTracker/wiki">EZ Time
+Tracker</a> =&nbsp;location based timetracking: i.e.
+aoutmatic recording when entering/leaving job/buro.<br />
+<br />
+<hr />
+<h2>History</h2>
+EZ Time Tracker up to Version
+1.6 was developed in 2010 by <a
+ href="http://zettsetttech.blogspot.com/">Eric
+Z</a>, <br />
+the sources are hosted in <a
+ href="http://eztimetracker.googlecode.com/svn/trunk/">svn
+repository@googlecode.com</a>.<br />
+<br />
+Since 2012&nbsp;<a
+ href="https://github.com/k3b/EzTimeTracker/wiki">EZ Time
+Tracker</a> is developed by k3b,<br />
+the sources are hosted in <a
+ href="https://github.com/k3b/EzTimeTracker">git
+repository@github.com</a>.<br />
+<br />
+Recent Improvements<br />
+<ul>
+  <li>A remote brodcast api allow other android apps to trigger
+EZ Time Tracker events.<br />
+This way <a href="http://kebabapps.blogspot.com/search/label/Llama">Android
+Llama</a> can be used to do Location based time tracking:
+Recording when entering/leaving job/buro.</li>
+  <li>German/English localisations, <br />
+Support for culture specific Date/Time formats</li>
+  <li>Improved CSV export</li>
+  <li>Date/Time entry with new <a
+ href="http://code.google.com/p/android-dateslider/">Dateslider.</a></li>
+  <li>sqLite Database can be made public so that other android
+apps like <a href="http://aaa.andsen.dk/aSQLiteManager.html">aSQLiteManager</a>
+can access it.</li>
+</ul>
+<hr />
+<h2>Links</h2>
+<ul>
+  <li>Source
+code in svn repository@googlecode.com of original EZ Time Tracker
+Version 1.6 <br />
+    <a href="http://eztimetracker.googlecode.com/svn/trunk/">http://eztimetracker.googlecode.com/svn/trunk/</a></li>
+  <li>Eric
+Z-s Homepage of EZ Time Tracker<br />
+    <a href="http://zettsetttech.blogspot.com/">http://zettsetttech.blogspot.com/</a></li>
+  <li>source
+code of current version of EZ Time Tracker in git repository@github.com<br />
+    <a href="https://github.com/k3b/EzTimeTracker">https://github.com/k3b/EzTimeTracker</a></li>
+  <li>Homepage of new EzTimeTracker<br />
+    <a href="https://github.com/k3b/EzTimeTracker/wiki">https://github.com/k3b/EzTimeTracker/wiki</a>
+  </li>
+  <li>Dateslider for Android
+    <br />
+    <a href="http://code.google.com/p/android-dateslider/">http://code.google.com/p/android-dateslider/</a></li>
+  <li>Licence for Ez Time Tracker and Dateslider<br />
+Apache License, Version 2.0.<br />
+    <a href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a></li>
+  <li>Kebab-s android app&nbsp;Llama can be used to create
+location based event that can trigger EZ Time Tracker punch in/out<br />
+    <a href="http://kebabapps.blogspot.com/search/label/Llama">http://kebabapps.blogspot.com/search/label/Llama</a></li>
+  <li>aSQLiteManager a generic database app that can be used to
+access EZ Time Tracker database<br />
+    <a href="http://aaa.andsen.dk/aSQLiteManager.html">http://aaa.andsen.dk/aSQLiteManager.html</a></li>
+</ul>
+<br />
+<hr />
+<h2>Legal stuff</h2>
+<b>EZ Time Tracker</b>&nbsp;<br />
+&nbsp;<br />
+Copyright © 2010 by <a href="http://zettsetttech.blogspot.com/">Eric
+Z</a><br />
+Copyright © 2012 by k3b<br />
+Licensed under the Apache License, Version 2.0.<br />
+<br />
+<a href="#%20http://code.google.com/p/android-dateslider/">DateSlider</a>
+© 2011 Daniel Berndt - Codeus Ltd<br />
+Licensed under the Apache License, Version 2.0.<br />
+<br />
+You may obtain a copy of the License at<br />
+<a href="http://www.apache.org/licenses/LICENSE-2.0">http://www.apache.org/licenses/LICENSE-2.0</a><br />
+<br />
+<br />
+Android is a trademark of Google Inc. Use of this trademark is subject
+to Google Permissions.
+<br />
+<hr /><br />
+
+</body></html>
+]]>
+</string>
 				
 </resources>

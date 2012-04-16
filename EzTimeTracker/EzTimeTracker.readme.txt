@@ -1,15 +1,15 @@
 info see http://zettsetttech.blogspot.com/
 
 todo
+    aboutbox with versionnumber
+    gui: edit-timeslice-category-select with "?" entry to create new category similar to start activity
+
 	gui: menü mit images
 	config select if private or public database	
 
 	Propertie-dialog with value preview
 
-	find out if country has 24h or am/pm display for is24HourView()
-
-v	bug: new Category is available in select list.
-v	create category from select dialog
+?	find out if country has 24h or am/pm display for is24HourView()
 	
 	bug? delete items with old datepacker	
 

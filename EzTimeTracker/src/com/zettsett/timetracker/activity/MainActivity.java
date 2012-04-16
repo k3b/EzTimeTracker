@@ -8,10 +8,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.*;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.*;
 import android.widget.Chronometer.OnChronometerTickListener;
@@ -198,9 +200,23 @@ public class MainActivity extends Activity implements OnChronometerTickListener,
 				}
 			});
 		  WebView wv = new WebView(mContext);
-		  String html = "<html><body>some <b>html</b> here</body></html>";
+		  String html = getResources().getString(R.string.about_content); // "<html><body>some <b>html</b> here</body></html>";
 
+		  Context context = this;
+		  try {
+			String versionName = context.getPackageManager().getPackageInfo (context.getPackageName(), 0).versionName;
+			html = html.replace("$versionName$", versionName);
+		} catch (NameNotFoundException e) {
+		}
 		  wv.loadData(html, "text/html", "UTF-8");
+		  wv.setVerticalScrollBarEnabled(true);
+		  
+		  WebSettings mWebSettings = wv.getSettings();
+	        mWebSettings.setBuiltInZoomControls(true);
+	        wv.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
+	        wv.setScrollbarFadingEnabled(false);
+		  
+		  
 		  alert.setView(wv);
 		
       return alert.create();	
