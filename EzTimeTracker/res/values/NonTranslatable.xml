@@ -13,7 +13,7 @@
 	<string name="about_title_condensed">About</string>
 	<string name="about_content"><![CDATA[ <html><body>
 <a href="https://github.com/k3b/EzTimeTracker/wiki"><b>EZ
-Time Tracker</b></a> Version $versionName$
+Time Tracker</b></a><br/>Version $versionName$
 <br />
 <hr />
 

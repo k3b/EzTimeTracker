@@ -1,6 +1,7 @@
 package com.zettsett.timetracker.model;
 
 import java.io.Serializable;
+import java.util.List;
 
 import android.content.Context;
 import android.widget.ArrayAdapter;
@@ -90,11 +91,17 @@ public class TimeSliceCategory implements Serializable, Comparable<TimeSliceCate
 		return true;
 	}
 
-	public static ArrayAdapter<TimeSliceCategory> getCategoryAdapter(Context context) {
+	public static ArrayAdapter<TimeSliceCategory> getCategoryAdapter(Context context, TimeSliceCategory firstElement) {
 		TimeSliceCategoryDBAdapter timeSliceCategoryDBAdapter = new TimeSliceCategoryDBAdapter(context);
 		
-		TimeSliceCategory[] durationCategories = timeSliceCategoryDBAdapter
-				.fetchAllTimeSliceCategories()
+		List<TimeSliceCategory> categories = timeSliceCategoryDBAdapter
+				.fetchAllTimeSliceCategories();
+		if(firstElement != null)
+		{
+			categories.add(0, firstElement);
+		}
+
+		TimeSliceCategory[] durationCategories = categories
 				.toArray(new TimeSliceCategory[0]);
 		return new ArrayAdapter<TimeSliceCategory>(
 				context, android.R.layout.simple_spinner_item, durationCategories);
