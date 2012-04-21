@@ -15,6 +15,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Spannable;
 import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -29,6 +30,7 @@ import android.widget.TextView;
 
 import com.zetter.androidTime.R;
 import com.zettsett.timetracker.DateTimeFormatter;
+import com.zettsett.timetracker.Global;
 import com.zettsett.timetracker.database.TimeSliceDBAdapter;
 import com.zettsett.timetracker.model.TimeSlice;
 import com.zettsett.timetracker.report.ReportInterface;
@@ -97,6 +99,8 @@ public class TimeSheetReportActivity extends Activity implements ReportInterface
 	}
 
 	public void loadDataIntoReport(int id) {
+		long performanceMeasureStart = System.currentTimeMillis();
+
 		initScrollview();
 		String lastStartDate = "";
 		final Calendar c = Calendar.getInstance();
@@ -107,13 +111,22 @@ public class TimeSheetReportActivity extends Activity implements ReportInterface
 
 		List<TimeSlice> timeSlices = mTimeSliceDBAdapter.fetchTimeSlicesByDateRange(
 				mReportFramework.getStartDateRange(), endDate);
+		Log.i(Global.LOG_CONTEXT, "fetchTimeSlicesByDateRange:"  + (System.currentTimeMillis() - performanceMeasureStart) );
+		performanceMeasureStart = System.currentTimeMillis();
 		for (TimeSlice aSlice : timeSlices) {
+//			try {
+//				Thread.sleep(1000);
+//			} catch (InterruptedException e1) {
+//				// TODO Auto-generated catch block
+//				e1.printStackTrace();
+//			}
 			if (!lastStartDate.equals(aSlice.getStartDateStr())) {
 				lastStartDate = aSlice.getStartDateStr();
 				addDateHeaderLine(lastStartDate);
 			}
 			addTimeSliceLine(aSlice);
 		}
+		Log.i(Global.LOG_CONTEXT, "addTimeSliceLine:"  + (System.currentTimeMillis() - performanceMeasureStart) );
 		initialScrollToEnd();
 	}
 
@@ -296,7 +309,11 @@ public class TimeSheetReportActivity extends Activity implements ReportInterface
 
 	@Override
 	protected Dialog onCreateDialog(int id) {
-		return mReportFramework.onCreateDialog(id);
+		Dialog dialog = mReportFramework.onCreateDialog(id);
+		if (dialog == null)
+		{
+			dialog = super.onCreateDialog(id);
+		}
+		return dialog;
 	}
-
 }

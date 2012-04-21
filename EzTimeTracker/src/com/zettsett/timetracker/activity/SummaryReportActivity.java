@@ -9,6 +9,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
@@ -18,6 +19,7 @@ import android.widget.TextView;
 import android.widget.LinearLayout.LayoutParams;
 
 import com.zetter.androidTime.R;
+import com.zettsett.timetracker.Global;
 import com.zettsett.timetracker.database.TimeSliceDBAdapter;
 import com.zettsett.timetracker.model.TimeSlice;
 import com.zettsett.timetracker.report.ReportInterface;
@@ -137,6 +139,8 @@ public class SummaryReportActivity extends Activity implements ReportInterface {
 	}
 
 	public void loadDataIntoReport(int reportType) {
+		long performanceMeasureStart = System.currentTimeMillis();
+
 		switch (reportType)
 		{
 		    case R.id.summary_day:
@@ -167,6 +171,10 @@ public class SummaryReportActivity extends Activity implements ReportInterface {
 		setContentView(reportFramework.buildViews());
 		reportViewList = reportFramework.initializeTextViewsForExportList();
 		Map<String, Map<String, Long>> reportDataStructure = loadReportDataStructures();
+
+		Log.i(Global.LOG_CONTEXT, "loadReportDataStructures:"  + (System.currentTimeMillis() - performanceMeasureStart) );
+		performanceMeasureStart = System.currentTimeMillis();
+
 		for (String header : reportDataStructure.keySet()) {
 			Map<String, Long> reportRows = reportDataStructure.get(header);
 			TextView headerTextView = new TextView(this);
@@ -189,6 +197,8 @@ public class SummaryReportActivity extends Activity implements ReportInterface {
 				rowsView.addView(rowTextView);
 			}
 		}
+		Log.i(Global.LOG_CONTEXT, "generated report:"  + (System.currentTimeMillis() - performanceMeasureStart) );
+		performanceMeasureStart = System.currentTimeMillis();
 	}
 
 	private Map<String, Map<String, Long>> loadReportDataStructures() {

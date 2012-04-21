@@ -1,9 +1,6 @@
 info see http://zettsetttech.blogspot.com/
 
 todo
-    aboutbox with versionnumber
-    gui: edit-timeslice-category-select with "?" entry to create new category similar to start activity
-
 	gui: menü mit images
 	config select if private or public database	
 
