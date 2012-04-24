@@ -89,6 +89,7 @@ public class TimeSliceEditActivity extends Activity  implements CategorySetter {
 		mTimeInButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				mTimeSlice.setNotes((getNotesEditText()).getText().toString());
 				showDialog(GET_START_DATETIME);
 			}
 		});
@@ -96,6 +97,7 @@ public class TimeSliceEditActivity extends Activity  implements CategorySetter {
 		mTimeOutButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				mTimeSlice.setNotes((getNotesEditText()).getText().toString());
 				showDialog(GET_END_DATETIME);
 			}
 		});

@@ -1,6 +1,9 @@
 info see http://zettsetttech.blogspot.com/
 
 todo
+	
+	merge small on/off
+
 	gui: menü mit images
 	config select if private or public database	
 
@@ -8,7 +11,8 @@ todo
 
 ?	find out if country has 24h or am/pm display for is24HourView()
 	
-	bug? delete items with old datepacker	
+	bug? delete items with old datepicker	
+		+ ggf category-filter
 
 multi-selection display for report with actions: change category, delete, merge, sort by date/category for detailreport
 multi-selection display for category with actions: delete,merge
