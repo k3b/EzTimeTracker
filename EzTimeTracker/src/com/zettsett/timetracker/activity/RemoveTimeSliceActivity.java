@@ -1,27 +1,62 @@
 package com.zettsett.timetracker.activity;
 
 import java.util.Calendar;
+import java.util.Date;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.DatePicker;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.googlecode.android.widgets.DateSlider.DateSlider;
+import com.googlecode.android.widgets.DateSlider.DateTimeMinuteSlider;
 import com.zetter.androidTime.R;
 import com.zettsett.timetracker.DateTimeFormatter;
 import com.zettsett.timetracker.database.DatabaseInstance;
 import com.zettsett.timetracker.database.TimeSliceDBAdapter;
+import com.zettsett.timetracker.model.TimeSlice;
+import com.zettsett.timetracker.model.TimeSliceCategory;
 
 public class RemoveTimeSliceActivity extends Activity {
+	protected static final int GET_END_DATETIME = 0;
+	protected static final int GET_START_DATETIME = 1;
+	
 	private static final DatabaseInstance CURRENT_DB_INSTANCE = DatabaseInstance.getCurrentInstance();
 	private TimeSliceDBAdapter mTimeSliceDBAdapter;
 	private boolean mRemoveAll = false;
+	private Button mTimeInButton;
+	private Button mTimeOutButton;
+	private Spinner catSpinner;
+
+    static private long mStartTime = new Date().getTime();
+    static private long mEndTime = new Date().getTime();
+	
+    // define the listener which is called once a user selected the date.
+    private DateSlider.OnDateSetListener mDateTimeSetListenerStart =
+        new DateSlider.OnDateSetListener() {
+			public void onDateSet(DateSlider view, Calendar selectedDate) {
+                // update the dateText view with the corresponding date
+            	mStartTime = selectedDate.getTimeInMillis();
+        		mTimeInButton.setText(getFormattedStartTime());
+            }
+    };
+
+    // define the listener which is called once a user selected the date.
+    private DateSlider.OnDateSetListener mDateTimeSetListenerEnd =
+        new DateSlider.OnDateSetListener() {
+			public void onDateSet(DateSlider view, Calendar selectedDate) {
+                // update the dateText view with the corresponding date
+            	mEndTime = selectedDate.getTimeInMillis();
+        		mTimeOutButton.setText(getFormattedEndTime());
+            }
+    };
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -44,12 +79,12 @@ public class RemoveTimeSliceActivity extends Activity {
 				finish();
 			}
 		});
-		final CheckBox emailCheckBox = (CheckBox) findViewById(R.id.checkbox_remove_ts_all);
-		emailCheckBox.setOnClickListener(new View.OnClickListener() {
+		final CheckBox allDatesCheckBox = (CheckBox) findViewById(R.id.checkbox_remove_ts_all);
+		allDatesCheckBox.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				LinearLayout ll = (LinearLayout) findViewById(R.id.LinearLayout_remove_ts_dates);
-				if (emailCheckBox.isChecked()) {
+				if (allDatesCheckBox.isChecked()) {
 					ll.setVisibility(View.GONE);
 					mRemoveAll = true;
 				} else {
@@ -59,57 +94,101 @@ public class RemoveTimeSliceActivity extends Activity {
 			}
 		});
 
+		catSpinner = (Spinner) findViewById(R.id.spinnerEditTimeSliceCategory);
+		catSpinner.setAdapter( TimeSliceCategory.getCategoryAdapter(this, TimeSliceCategory.NO_CATEGORY));
+
+		mTimeInButton = (Button) findViewById(R.id.EditTimeIn);
+		mTimeInButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				showDialog(GET_START_DATETIME);
+			}
+		});
+		mTimeOutButton = (Button) findViewById(R.id.EditTimeOut);
+		mTimeOutButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				showDialog(GET_END_DATETIME);
+			}
+		});
+		
+		mTimeInButton.setText(getFormattedStartTime());
+		mTimeOutButton.setText(getFormattedEndTime());
 	}
 
 	private void doRemove() {
-		if (mRemoveAll) {
-			mTimeSliceDBAdapter.deleteAll();
-			Toast.makeText(getApplicationContext(),
-					R.string.msg_all_time_intervals_have_been_removed_from_the_system_, Toast.LENGTH_LONG)
-					.show();
-		} else {
-			DatePicker fromPicker = (DatePicker) findViewById(R.id.DatePicker_remove_ts_start);
-			Calendar startCalendar = DateTimeFormatter.getCalendar(fromPicker.getYear(), fromPicker
-					.getMonth(), fromPicker.getDayOfMonth());
-			startCalendar.set(Calendar.HOUR_OF_DAY, 0);
-			startCalendar.set(Calendar.MINUTE, 0);
-			startCalendar.set(Calendar.SECOND, 1);
-			long startDate = startCalendar.getTimeInMillis();
+		TimeSliceCategory selectedCategory = (TimeSliceCategory) catSpinner.getSelectedItem();
+		
+		long selectedCategoryID = (selectedCategory != null) ? selectedCategory.getRowId() : TimeSliceCategory.NOT_SAVED;
 
-			DatePicker toPicker = (DatePicker) findViewById(R.id.DatePicker_remove_ts_end);
-			Calendar endCalendar = DateTimeFormatter.getCalendar(toPicker.getYear(), toPicker
-					.getMonth(), toPicker.getDayOfMonth());
-			endCalendar.set(Calendar.HOUR_OF_DAY, 23);
-			endCalendar.set(Calendar.MINUTE, 59);
-			endCalendar.set(Calendar.SECOND, 59);
-			long endDate = endCalendar.getTimeInMillis();
-			mTimeSliceDBAdapter.deleteForDateRange(startDate, endDate);
-			String message = String.format(getString(R.string.format_message_interval_deleted).toString(),
-					getFormattedDate(R.id.DatePicker_remove_ts_start),
-					getFormattedDate(R.id.DatePicker_remove_ts_end));
-			Toast.makeText(
-					getApplicationContext(),
-					message, Toast.LENGTH_LONG).show();
-		}
+		mTimeSliceDBAdapter.deleteForDateRange(
+				(mRemoveAll) ? TimeSlice.NO_TIME_VALUE : mStartTime, 
+				(mRemoveAll) ? TimeSlice.NO_TIME_VALUE : mEndTime,
+				selectedCategoryID);
+		String message = getStatusMessage(R.string.format_message_interval_deleted);
+		Toast.makeText(
+				getApplicationContext(),
+				message, Toast.LENGTH_LONG).show();
 		finish();
 	}
 
-	private CharSequence getFormattedDate(int datPickerId) {
-		DatePicker fromPicker = (DatePicker) findViewById(datPickerId);
-		Calendar startCalendar = DateTimeFormatter.getCalendar(fromPicker.getYear(), fromPicker
-				.getMonth(), fromPicker.getDayOfMonth());
-		return DateTimeFormatter.getLongDateStr(startCalendar.getTimeInMillis());
+	private String getStatusMessage(int idFormatMessage) {
+		String ignoreText = getText(R.string.filter_ignore).toString();
+		String categoryName =ignoreText;
+
+		TimeSliceCategory selectedCategory = (TimeSliceCategory)catSpinner.getSelectedItem();
+		
+		if ((selectedCategory != null) && (selectedCategory != TimeSliceCategory.NO_CATEGORY))
+		{
+			categoryName = selectedCategory.getCategoryName();
+		}
+		
+		String startTime = getFormattedTime(R.string.formatStartDate, (mRemoveAll) ? TimeSlice.NO_TIME_VALUE : mStartTime, ignoreText);
+		String endTime = getFormattedTime(R.string.formatEndDate, (mRemoveAll) ? TimeSlice.NO_TIME_VALUE : mEndTime, ignoreText);
+		return String.format(getString(idFormatMessage).toString(),
+				startTime,
+				endTime,
+				categoryName
+				);
 	}
 
+    @Override
+    protected Dialog onCreateDialog(int id) {
+        // this method is called after invoking 'showDialog' for the first time
+        // here we initiate the corresponding DateSlideSelector and return the dialog to its caller
+    	
+    	// get today's date and time
+        final Calendar c = Calendar.getInstance();
+        
+        switch (id) {
+        case GET_START_DATETIME:
+        	c.setTimeInMillis(mStartTime);
+            return new DateTimeMinuteSlider(this,mDateTimeSetListenerStart,c);
+        case GET_END_DATETIME:
+        	c.setTimeInMillis(mEndTime);
+            return new DateTimeMinuteSlider(this,mDateTimeSetListenerEnd,c);
+        }
+        return null;
+    }
+
+	private String getFormattedEndTime() {
+		return getFormattedTime(R.string.formatEndDate, mEndTime, "");
+	}
+
+	private String getFormattedStartTime() {
+		return getFormattedTime(R.string.formatStartDate, 
+				mStartTime, "");
+	}
+
+	private String getFormattedTime(int idFormat, long dateTimeValue, String emptyReplacement) {
+		String dateTimeStr = DateTimeFormatter.getDateTimeStr(dateTimeValue, emptyReplacement);
+		return String.format(this.getText(idFormat).toString(), 
+				dateTimeStr);
+	}
+	
 	public void confirmRemoval() {
-		String message;
-		if (mRemoveAll) {
-			message = getString(R.string.question_delete_all_time_intervals_);
-		} else {
-			message = String.format(getString(R.string.format_question_delete_time_intervals).toString(),
-					getFormattedDate(R.id.DatePicker_remove_ts_start),
-					getFormattedDate(R.id.DatePicker_remove_ts_end));
-		}
+		String message = getStatusMessage(R.string.format_question_delete_time_intervals);
+
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setTitle(R.string.title_confirm_removal);
 		builder.setMessage(message).setCancelable(false).setPositiveButton(R.string.btn_yes,

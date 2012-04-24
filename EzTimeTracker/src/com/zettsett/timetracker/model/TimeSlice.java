@@ -8,12 +8,14 @@ import com.zettsett.timetracker.DateTimeFormatter;
 
 public class TimeSlice implements Serializable {
 	private static final long serialVersionUID = 6586305797483181442L;
+	
+	public static long NO_TIME_VALUE = 0;
 
 	private int rowId;
 
-	private long startTime = 0;
+	private long startTime = NO_TIME_VALUE;
 
-	private long endTime = 0;
+	private long endTime = NO_TIME_VALUE;
 
 	private TimeSliceCategory category;
 
@@ -76,7 +78,7 @@ public class TimeSlice implements Serializable {
 	}
 
 	public String getEndTimeStr() {
-		if (startTime == 0) {
+		if (startTime == NO_TIME_VALUE) {
 			return "";
 		} else {
 			return DateTimeFormatter.getTimeString(endTime);
@@ -138,7 +140,7 @@ public class TimeSlice implements Serializable {
 	}
 
 	public boolean isPunchedIn() {
-		return (this.getStartTime() != 0) && (this.getEndTime() == 0);
+		return (this.getStartTime() != NO_TIME_VALUE) && (this.getEndTime() == NO_TIME_VALUE);
 	}
 
 	public void load(TimeSlice source)

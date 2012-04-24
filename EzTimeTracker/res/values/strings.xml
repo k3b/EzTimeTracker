@@ -34,10 +34,13 @@
 	<string name="formatStartDate">"Start: %1$s"</string>	
 	<string name="formatEndDate">"End: %1$s"</string>	
 	<string name="label_delete_time_interval_data">Delete Time Interval Data</string>	
-	<string name="msg_all_time_intervals_have_been_removed_from_the_system_">All time intervals have been removed from the system.</string>	
-	<string name="format_message_interval_deleted">"Time intervals from %1$s through %2$s removed."</string>	
-	<string name="question_delete_all_time_intervals_">Are you sure you want to permanently delete all time intervals?</string>	
-	<string name="format_question_delete_time_intervals">"Are you sure you want to permanently delete time intervals from %1$s through %2$s\? This operation cannot be reversed.</string>	
+	<string name="format_message_interval_deleted">"Time intervals removed: : %1$s %2$s Category %3$s."</string>	
+	<string name="format_question_delete_time_intervals">"Are you sure you want to permanently delete time intervals?\n
+						%1$s \n
+						%2$s \n
+						Category: %3$s \n\n 						 
+	    This operation cannot be reversed.</string>	
+	<string name="filter_ignore">{all}</string>	
 	<string name="title_confirm_removal">Confirm Removal</string>	
 	<string name="btn_yes">Yes</string>	
 	<string name="btn_no">No</string>	
@@ -79,12 +82,14 @@
 	<string name="report_title_settings">Preferences and Settings</string>
 	<string name="report_title_condensed_settings">Settings</string>
 	
+	
 	<string name="choose_filename">Enter File Name:</string>
 	<string name="format_message_successfully_saved_file">Report successfully saved to \'%1$s\'</string>
 	<string name="format_error_saved_file">Unable to export to \'%1$s\' on SD: %2$s</string>
 	<string name="format_error_create_directory">Unable to create directory \'%1$s\'. Is the SD card mounted?</string>
 	<string name="title_creating_a_new_category">Creating a New Category</string>
-	<string name="format_title_edit_category">"Editing %1$s"</string>
+	
+	<string name="format_title_edit_category2">Editing %1$s %2$s</string>
 
 	<string name="report">Report</string>	
 	<string name="report_title_details">Details Report</string>

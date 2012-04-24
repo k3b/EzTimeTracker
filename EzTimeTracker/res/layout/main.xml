@@ -2,8 +2,8 @@
 <LinearLayout
   xmlns:android="http://schemas.android.com/apk/res/android"
   android:layout_width="fill_parent" 
-  	style="@style/GlobalStyle"
- android:layout_height="fill_parent" android:orientation="vertical"
+  style="@style/GlobalStyle"
+  android:layout_height="fill_parent" android:orientation="vertical"
  >
 <Button android:text="@string/punch_in" android:id="@+id/btnPunchIn" android:textSize="26sp" android:textColor="#151555"
 android:layout_width="fill_parent" android:layout_height="wrap_content" android:layout_gravity="center"></Button>
@@ -17,7 +17,8 @@ android:layout_width="fill_parent" android:layout_height="wrap_content" android:
 <TextView android:text="@string/format_category" android:textSize="20sp" android:textColor="#FFFFFF"
 android:layout_gravity="center" android:id="@+id/tvTimeInActivity" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
 <Chronometer android:textSize="26sp" android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/chron" android:visibility="gone"></Chronometer>
-<TextView android:textSize="26sp" android:layout_gravity="center" android:id="@+id/mainViewChronOutput" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
+<TextView android:textSize="26sp" android:layout_gravity="center" android:id="@+id/mainViewChronOutput" 
+    android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
 <TextView android:text="@string/format_start_time_" android:textSize="20sp" 
 android:textColor="#FFFFFF" android:layout_gravity="center" android:id="@+id/tvStartTime" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
 <Button android:text="@string/punch_out" android:id="@+id/btnPunchOut" android:textSize="26sp" android:textColor="#151555"

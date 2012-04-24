@@ -31,12 +31,14 @@
 	<string name="formatStartDate">"Start: %1$s"</string>	
 	<string name="formatEndDate">"Ende: %1$s"</string>	
 	<string name="label_delete_time_interval_data">Lösche Buchung</string>	
-	<string name="msg_all_time_intervals_have_been_removed_from_the_system_">Alle Buchungen wurden gelöscht.</string>	
-	<string name="format_message_interval_deleted">"Buchungen von %1$s bis %2$s gelöscht."</string>	
-   	<string name="question_delete_all_time_intervals_">Wollen Sie wirklich alle Buchungen endgültig löschen?</string>	
-   	<string name="format_question_delete_time_intervals">"Wollen Sie wirklich die Buchungen von %1$s bis %2$s\? Das Löschen kann nicht rückgängig gemacht werden.</string>	
-	
-	<string name="title_confirm_removal">Löschen bestätigen</string>	
+	<string name="format_message_interval_deleted">"Buchungen gelöscht: %1$s %2$s Kategorie %3$s."</string>	
+   	<string name="format_question_delete_time_intervals">Wollen Sie wirklich folgende Buchungen löschen?\n
+						%1$s \n
+						%2$s \n
+						Kategorie: %3$s \n\n 
+						Das Löschen kann nicht rückgängig gemacht werden.</string>	
+	<string name="filter_ignore">{alle}</string>	
+   	<string name="title_confirm_removal">Löschen bestätigen</string>	
 	<string name="btn_yes">Ja</string>	
 	<string name="btn_no">Nein</string>	
 	<string name="label_no_current_activity">Keine aktuelle Kategorie</string>	
@@ -73,7 +75,8 @@
 	<string name="format_error_create_directory">Ich kann das Verzeichnis \'%1$s\' nicht erstellen. Ist die SD Speicherkarte verfügbar?</string>
 
 	<string name="title_creating_a_new_category">Neue Kategory anlegen</string>
-	<string name="format_title_edit_category">"Bearbeite %1$s"</string>
+	
+	<string name="format_title_edit_category">Bearbeite %1$s %2$s</string>
 
 	<string name="report_title_details">Detailansicht</string>
 	<string name="report_title_categories">Kategorien</string>

@@ -19,13 +19,13 @@ public class TimeTrackerSessionData extends TimeSlice implements Serializable {
 		}
 		this.setCategory(category);
 		this.setStartTime(startDateTime);
-		this.setEndTime(0);
+		this.setEndTime(TimeSlice.NO_TIME_VALUE);
 		this.setNotes("");
 	}
  
 	public long getElapsedTimeInMillisecs() {
-		if (getEndTime() == 0)
-			return 0;
+		if (getEndTime() == TimeSlice.NO_TIME_VALUE)
+			return TimeSlice.NO_TIME_VALUE;
 		return getEndTime() - getStartTime();
 	}
 

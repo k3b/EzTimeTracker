@@ -57,7 +57,7 @@ public class CategoryEditDialog extends Dialog  {
 			catNameField.setText("");
 			catDescField.setText("");
 		} else {
-			String caption = String.format(this.getContext().getString(R.string.format_title_edit_category).toString(), mCategory.getCategoryName());
+			String caption = String.format(this.getContext().getString(R.string.format_title_edit_category).toString(), mCategory.getCategoryName(), mCategory.getRowId());
 			setTitle(caption);
 			catNameField.setText(mCategory.getCategoryName());
 			catDescField.setText(mCategory.getDescription());

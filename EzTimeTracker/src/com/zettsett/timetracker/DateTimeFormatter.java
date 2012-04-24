@@ -7,6 +7,8 @@ import java.util.Locale;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
+import com.zettsett.timetracker.model.TimeSlice;
+
 import android.text.format.DateFormat;
 import android.util.Log;
 
@@ -92,7 +94,7 @@ public class DateTimeFormatter {
 	}
 
 	public static String getLongDateStr(long dateTime) {
-		if (dateTime == 0) {
+		if (dateTime == TimeSlice.NO_TIME_VALUE) {
 			return "";
 		} else {
 			return longDateformatter.format(new Date(dateTime)); //  + getShortDateStr(dateTime);
@@ -100,7 +102,7 @@ public class DateTimeFormatter {
 	}
 
 	public static String getShortDateStr(long dateTime) {
-		if (dateTime == 0) {
+		if (dateTime == TimeSlice.NO_TIME_VALUE) {
 			return "";
 		} else {
 			return shortDateformatter.format(new Date(dateTime));
@@ -108,7 +110,7 @@ public class DateTimeFormatter {
 	}
 
 	public static String getTimeString(long dateTime) {
-		if (dateTime == 0) {
+		if (dateTime == TimeSlice.NO_TIME_VALUE) {
 			return "";
 		} else {
 			return shortTimeformatter.format(new Date(dateTime)); // DateFormat.format(timeFormatString, timeMilliSecs).toString();
@@ -116,8 +118,12 @@ public class DateTimeFormatter {
 	}
 
 	public static String getDateTimeStr(long dateTime) {
-		if (dateTime == 0) {
-			return "";
+		return getDateTimeStr(dateTime, "");
+	}
+	
+	public static String getDateTimeStr(long dateTime, String emptyReplacement) {
+		if (dateTime == TimeSlice.NO_TIME_VALUE) {
+			return emptyReplacement;
 		} else {
 			return DateTimeFormatter.getLongDateStr(dateTime) + " " + DateTimeFormatter.getTimeString(dateTime);
 		}
@@ -128,7 +134,7 @@ public class DateTimeFormatter {
 	}
 
 	public static String getMonthStr(long startTime) {
-		if (startTime == 0) {
+		if (startTime == TimeSlice.NO_TIME_VALUE) {
 			return "";
 		} else {
 			return DateFormat.format("MMMM yyyy", startTime).toString();
@@ -136,7 +142,7 @@ public class DateTimeFormatter {
 	}
 	
 	public static String getWeekStr(long dateTime) {
-		if (dateTime == 0) {
+		if (dateTime == TimeSlice.NO_TIME_VALUE) {
 			return "";
 		} else {
 			Calendar cal = Calendar.getInstance();
@@ -158,7 +164,7 @@ public class DateTimeFormatter {
 					mDateSelectedForAdd).getTime();
 		} catch (ParseException e) {
 			Log.w(Global.LOG_CONTEXT,"cannot reconvert " + mDateSelectedForAdd + " to dateTime using " + shortDateformatter,e);
-			return 0;
+			return TimeSlice.NO_TIME_VALUE;
 		}
 	}
 	

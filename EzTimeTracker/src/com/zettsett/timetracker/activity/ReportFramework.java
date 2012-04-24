@@ -30,6 +30,7 @@ import com.zetter.androidTime.R;
 import com.zettsett.timetracker.DateTimeFormatter;
 import com.zettsett.timetracker.EmailUtilities;
 import com.zettsett.timetracker.LinearScroller;
+import com.zettsett.timetracker.model.TimeSlice;
 import com.zettsett.timetracker.report.ReportInterface;
 import com.zettsett.timetracker.report.ReportOutput;
 import com.zettsett.timetracker.report.SDDataExporter;
@@ -68,8 +69,8 @@ public class ReportFramework implements Serializable {
 	private final Activity activity;
 	private final ReportInterface report;
 	private LinearScroller scrollView;
-	private long mFromDate = 0;
-	private long mToDate = 0;
+	private long mFromDate = TimeSlice.NO_TIME_VALUE;
+	private long mToDate = TimeSlice.NO_TIME_VALUE;
 	private TextView startDateTV;
 	private TextView endDateTV;
 	private List<TextView> reportViewList;
@@ -97,7 +98,7 @@ public class ReportFramework implements Serializable {
 
 	private void initializeDateRanges() {
 		Date currDate = new Date();
-		if (mFromDate == 0) {
+		if (mFromDate == TimeSlice.NO_TIME_VALUE) {
 			Calendar calendar = new GregorianCalendar();
 			calendar.setTime(currDate);
 			calendar.set(Calendar.HOUR, 0);
@@ -109,7 +110,7 @@ public class ReportFramework implements Serializable {
 				mFromDate = calendar.getTimeInMillis();
 			}
 		}
-		if (mToDate == 0) {
+		if (mToDate == TimeSlice.NO_TIME_VALUE) {
 			Calendar calendar = new GregorianCalendar();
 			calendar.setTime(currDate);
 			mToDate = calendar.getTimeInMillis();

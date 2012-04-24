@@ -1,23 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="wrap_content" android:layout_height="wrap_content"
-	android:orientation="vertical">
+  android:layout_width="fill_parent" 
+  style="@style/GlobalStyle"
+  android:layout_height="fill_parent" android:orientation="vertical"
+ >
+	<TextView android:text="@string/category_name" android:textSize="20sp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+    <Spinner android:id="@+id/spinnerEditTimeSliceCategory"
+		android:layout_height="wrap_content" android:drawSelectorOnTop="true"
+		android:textSize="20sp" android:prompt="@string/category_prompt"
+		android:layout_width="fill_parent" />
+	 	
 	<CheckBox android:text="@string/checkbox_remove_ts_all"
 		android:id="@+id/checkbox_remove_ts_all" android:layout_width="fill_parent"
 		android:layout_height="wrap_content"></CheckBox>
 	<LinearLayout android:id="@+id/LinearLayout_remove_ts_dates"
-		android:layout_width="wrap_content" android:layout_height="wrap_content"
+		android:layout_width="match_parent" android:layout_height="wrap_content"
 		android:orientation="vertical">
-		<TextView android:text="@string/delete_from_date"
-			android:layout_width="wrap_content" android:textSize="20sp"
-			android:layout_height="wrap_content"></TextView>
-		<DatePicker android:id="@+id/DatePicker_remove_ts_start"
-			android:layout_width="wrap_content" android:layout_height="wrap_content"></DatePicker>
-		<TextView android:text="@string/delete_to_date"
-			android:layout_width="wrap_content" android:textSize="20sp"
-			android:layout_height="wrap_content"></TextView>
-		<DatePicker android:id="@+id/DatePicker_remove_ts_end"
-			android:layout_width="wrap_content" android:layout_height="wrap_content"></DatePicker>
+		<Button android:text="@string/formatStartDate" android:id="@+id/EditTimeIn"
+				android:layout_width="fill_parent" android:textSize="20sp"
+				android:layout_height="wrap_content" />
+		<Button android:text="@string/formatEndDate" android:id="@+id/EditTimeOut"
+				android:textSize="20sp" android:layout_width="fill_parent"
+				android:layout_height="wrap_content"></Button>
 	</LinearLayout>
 	<Button android:text="@string/cmd_delete" android:id="@+id/cmd_delete"
 		android:textSize="26sp" android:textColor="#151555"

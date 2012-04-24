@@ -7,9 +7,7 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -25,7 +23,6 @@ import com.zettsett.timetracker.database.TimeSliceCategoryDBAdapter;
 import com.zettsett.timetracker.database.TimeSliceDBAdapter;
 import com.zettsett.timetracker.model.TimeSlice;
 import com.zettsett.timetracker.model.TimeSliceCategory;
-import com.zettsett.timetracker.model.TimeSliceCategoryAdapter;
 
 public class TimeSliceEditActivity extends Activity  implements CategorySetter {
 	protected static final int GET_END_DATETIME = 0;
@@ -42,7 +39,7 @@ public class TimeSliceEditActivity extends Activity  implements CategorySetter {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.edit_time_slice);
 		int rowId = getIntent().getIntExtra("row_id", 0);
-		long date = getIntent().getLongExtra("date", 0);
+		long date = getIntent().getLongExtra("date", TimeSlice.NO_TIME_VALUE);
 		initialize(rowId, date);
 	}
 
