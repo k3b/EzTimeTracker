@@ -1,9 +1,6 @@
 info see http://zettsetttech.blogspot.com/
 
 todo
->	delete items with category-filter
-		filter-dialog (von, bis, categoryID)?
-	main: edit category/start
 	
 	merge small on/off
 
@@ -14,6 +11,9 @@ todo
 
 ?	find out if country has 24h or am/pm display for is24HourView()
 	
+	bug? delete items with old datepicker	
+		+ ggf category-filter
+
 multi-selection display for report with actions: change category, delete, merge, sort by date/category for detailreport
 multi-selection display for category with actions: delete,merge
 

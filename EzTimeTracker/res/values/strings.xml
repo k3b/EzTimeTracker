@@ -22,10 +22,9 @@
 	<string name="radio_button_data_export_range">Export Data for Date Range</string>	
 	<string name="checkbox_data_export_email">Export to Email</string>	
 	<string name="button_data_export">Export Data</string>	
-	<string name="delete_interval_confirmation">Are you sure you want to delete this time interval?</string>	
 	<string name="cmd_delete">Delete</string>	
 	<string name="cmd_cancel"> Cancel </string>	
-	<string name="checkbox_remove_ts_all">Delete All Time Intervals</string>	
+	<string name="checkbox_remove_ts_all">Ignore Date</string>	
 	<string name="export_data_to_csv_file">Export Data to CSV File</string>	
 	<string name="menu_export_report">Export Report</string>	
 	<string name="menu_export_report_to_sd_card">Export Report to SD Card</string>	

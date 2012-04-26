@@ -51,14 +51,7 @@ public class TimeSliceEditActivity extends Activity  implements CategorySetter {
 			mTimeSlice = TimeSliceDBAdapter.getTimeSliceDBAdapter(this).fetchByRowID(rowId);
 			TimeSliceCategory currentCategory = mTimeSlice
 					.getCategory();
-			int currentCategoryID = (currentCategory != null) ? currentCategory.getRowId() : TimeSliceCategory.NOT_SAVED;
-			for (int position = 0; position < catSpinner.getCount(); position++) {
-
-				if (((TimeSliceCategory) catSpinner.getItemAtPosition(position)).getRowId() == currentCategoryID) {
-					catSpinner.setSelection(position);
-					break;
-				}
-			}
+			FilterActivity.selectSpinner(catSpinner, currentCategory);
 		} else {
 			mTimeSlice = new TimeSlice();
 			mTimeSlice.setStartTime(date);

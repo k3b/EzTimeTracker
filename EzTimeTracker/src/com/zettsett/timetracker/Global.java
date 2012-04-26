@@ -6,6 +6,7 @@ public class Global {
 	public static final String CMD_START = "start";
 
 	public static final String REFRESH_GUI = "com.zettsett.timetracker.action.REFRESH_GUI";
+	public static final String FILTER_PARAMETER = "filter";
 	
 	public static boolean isDebugEnabled() {
 		return true; //  Log.isLoggable(Global.LOG_CONTEXT, Log.DEBUG); // Log.isLoggable() does not work :-(

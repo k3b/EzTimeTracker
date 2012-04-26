@@ -7,9 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -33,6 +31,7 @@ import com.zettsett.timetracker.DateTimeFormatter;
 import com.zettsett.timetracker.Global;
 import com.zettsett.timetracker.database.TimeSliceDBAdapter;
 import com.zettsett.timetracker.model.TimeSlice;
+import com.zettsett.timetracker.model.TimeSliceCategory;
 import com.zettsett.timetracker.report.ReportInterface;
 
 /*
@@ -250,22 +249,26 @@ public class TimeSheetReportActivity extends Activity implements ReportInterface
 	}
 
 	private void buildDeleteDialog() {
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		TimeSlice ts = TimeSliceDBAdapter.getTimeSliceDBAdapter(this).fetchByRowID(mChosenRowId);
-		builder.setTitle(ts.getTitle());
-		builder.setMessage(getString(R.string.delete_interval_confirmation)).setCancelable(false)
-				.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int id) {
-						mTimeSliceDBAdapter.delete(mChosenRowId);
-						loadDataIntoReport(0);
-					}
-				}).setNegativeButton("No", new DialogInterface.OnClickListener() {
-					public void onClick(DialogInterface dialog, int id) {
-						dialog.cancel();
-					}
-				});
-		AlertDialog alert = builder.create();
-		alert.show();
+		Intent intent = new Intent().setClass(this, RemoveTimeSliceActivity.class);
+		intent.putExtra(SummaryReportActivity.MENU_ID, TimeSliceCategory.NOT_SAVED); //  item.getItemId());
+		startActivity(intent);
+		
+//		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//		TimeSlice ts = TimeSliceDBAdapter.getTimeSliceDBAdapter(this).fetchByRowID(mChosenRowId);
+//		builder.setTitle(ts.getTitle());
+//		builder.setMessage(getString(R.string.delete_interval_confirmation)).setCancelable(false)
+//				.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+//					public void onClick(DialogInterface dialog, int id) {
+//						mTimeSliceDBAdapter.delete(mChosenRowId);
+//						loadDataIntoReport(0);
+//					}
+//				}).setNegativeButton("No", new DialogInterface.OnClickListener() {
+//					public void onClick(DialogInterface dialog, int id) {
+//						dialog.cancel();
+//					}
+//				});
+//		AlertDialog alert = builder.create();
+//		alert.show();
 	}
 
 	@Override
