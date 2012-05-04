@@ -19,6 +19,7 @@ import com.googlecode.android.widgets.DateSlider.DateSlider;
 import com.googlecode.android.widgets.DateSlider.DateTimeMinuteSlider;
 import com.zetter.androidTime.R;
 import com.zettsett.timetracker.DateTimeFormatter;
+import com.zettsett.timetracker.Global;
 import com.zettsett.timetracker.database.TimeSliceCategoryDBAdapter;
 import com.zettsett.timetracker.database.TimeSliceDBAdapter;
 import com.zettsett.timetracker.model.TimeSlice;
@@ -38,7 +39,7 @@ public class TimeSliceEditActivity extends Activity  implements CategorySetter {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.edit_time_slice);
-		int rowId = getIntent().getIntExtra("row_id", 0);
+		int rowId = getIntent().getIntExtra("row_id", TimeSlice.IS_NEW_TIMESLICE);
 		long date = getIntent().getLongExtra("date", TimeSlice.NO_TIME_VALUE);
 		initialize(rowId, date);
 	}
@@ -99,8 +100,8 @@ public class TimeSliceEditActivity extends Activity  implements CategorySetter {
 				if (validate()) {
 					Intent intent = new Intent();
 					Bundle b = new Bundle();
-					b.putSerializable("time_slice", mTimeSlice);
-					intent.putExtra("data", b);
+					b.putSerializable(Global.EXTRA_FORMAT, mTimeSlice);
+					intent.putExtra(Global.EXTRA_DATA, b);
 					setResult(RESULT_OK, intent);
 					finish();
 				}

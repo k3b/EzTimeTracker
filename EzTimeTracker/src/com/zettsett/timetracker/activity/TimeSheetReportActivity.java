@@ -218,9 +218,9 @@ public class TimeSheetReportActivity extends Activity implements ReportInterface
 	protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
 		super.onActivityResult(requestCode, resultCode, intent);
 		if (intent != null) {
-			Bundle data = intent.getBundleExtra("data");
+			Bundle data = intent.getBundleExtra(Global.EXTRA_DATA);
 			if (data != null) {
-				TimeSlice updatedTimeSlice = (TimeSlice) data.getSerializable("time_slice");
+				TimeSlice updatedTimeSlice = (TimeSlice) data.getSerializable(Global.EXTRA_FORMAT);
 				if (updatedTimeSlice.getRowId() == TimeSlice.IS_NEW_TIMESLICE) {
 					mTimeSliceDBAdapter.createTimeSlice(updatedTimeSlice);
 				} else {

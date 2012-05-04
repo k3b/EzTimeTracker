@@ -9,9 +9,10 @@ import com.zettsett.timetracker.DateTimeFormatter;
 public class TimeSlice implements Serializable {
 	private static final long serialVersionUID = 6586305797483181442L;
 	
-	public static long NO_TIME_VALUE = 0;
+	public static final long NO_TIME_VALUE = 0;
+	public static final int IS_NEW_TIMESLICE = -1;
 
-	private int rowId;
+	private int rowId = IS_NEW_TIMESLICE;
 
 	private long startTime = NO_TIME_VALUE;
 
@@ -22,8 +23,6 @@ public class TimeSlice implements Serializable {
 	private String notes;
 
 	private static Calendar calendar = new GregorianCalendar();
-
-	public static final int IS_NEW_TIMESLICE = -1;
 
 	public int getRowId() {
 		return rowId;
