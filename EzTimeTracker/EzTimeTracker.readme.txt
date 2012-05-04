@@ -31,8 +31,6 @@ public void onActivityResult(int requestCode, int resultCode, Intent data) {
 }
 =================
 
-    create new timeslice from detail-report
-        bug: does not work
 >	delete items with category-filter
 		main delete
 		detail-report-delete

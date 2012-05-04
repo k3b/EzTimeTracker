@@ -198,7 +198,7 @@ public abstract class FilterActivity  extends Activity {
     }
 	
 	public static FilterParameter getFilterParameter(Activity activity) {
-		FilterParameter filter = (FilterParameter) activity.getIntent().getExtras().get(Global.FILTER_PARAMETER);
+		FilterParameter filter = (FilterParameter) activity.getIntent().getExtras().get(Global.EXTRA_FILTER);
 		if (filter == null)
 			filter = new FilterParameter();
 		return filter;

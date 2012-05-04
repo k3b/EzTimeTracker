@@ -99,9 +99,7 @@ public class TimeSliceEditActivity extends Activity  implements CategorySetter {
 				mTimeSlice.setNotes((getNotesEditText()).getText().toString());
 				if (validate()) {
 					Intent intent = new Intent();
-					Bundle b = new Bundle();
-					b.putSerializable(Global.EXTRA_FORMAT, mTimeSlice);
-					intent.putExtra(Global.EXTRA_DATA, b);
+					intent.putExtra(Global.EXTRA_TIMESLICE, mTimeSlice);
 					setResult(RESULT_OK, intent);
 					finish();
 				}

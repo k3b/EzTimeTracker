@@ -29,11 +29,11 @@ public class RemoveTimeSliceActivity extends FilterActivity {
 		long selectedCategoryID = (selectedCategory != null) ? selectedCategory.getRowId() : TimeSliceCategory.NOT_SAVED;
 
 		boolean ignoreDates = this.filter.isIgnoreDates();
-		mTimeSliceDBAdapter.deleteForDateRange(
+		int itemsDeleted = mTimeSliceDBAdapter.deleteForDateRange(
 				ignoreDates ? TimeSlice.NO_TIME_VALUE : filter.getStartTime(), 
 				ignoreDates ? TimeSlice.NO_TIME_VALUE : filter.getEndTime(),
 				selectedCategoryID);
-		String message = getStatusMessage(R.string.format_message_interval_deleted);
+		String message = getStatusMessage(R.string.format_message_interval_deleted) + itemsDeleted;
 		Toast.makeText(
 				getApplicationContext(),
 				message, Toast.LENGTH_LONG).show();
@@ -51,8 +51,8 @@ public class RemoveTimeSliceActivity extends FilterActivity {
 					public void onClick(DialogInterface dialog, int id) {
 						doRemove();
 
-						Intent resultIntent = new Intent((Intent) null);
-						resultIntent.putExtra(Global.FILTER_PARAMETER, filter);
+						Intent resultIntent = new Intent();
+						resultIntent.putExtra(Global.EXTRA_FILTER, filter);
 						setResult(Activity.RESULT_OK, resultIntent);
 					}
 				}).setNegativeButton(R.string.btn_no, new DialogInterface.OnClickListener() {

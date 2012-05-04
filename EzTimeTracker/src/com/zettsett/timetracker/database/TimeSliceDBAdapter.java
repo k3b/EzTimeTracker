@@ -78,14 +78,14 @@ public class TimeSliceDBAdapter {
         return CURRENT_DB_INSTANCE.getDb().delete(DatabaseHelper.TIME_SLICE_TABLE,  "_id=" + rowId, null) > 0;
     }
 
-	public boolean deleteForDateRange(long startDate, long endDate, long categoryId) {
+	public int deleteForDateRange(long startDate, long endDate, long categoryId) {
 		StringBuilder filter = new StringBuilder();
 		
 		add(filter, "start_time>=", startDate, TimeSlice.NO_TIME_VALUE);
 		add(filter, "start_time <=", endDate, TimeSlice.NO_TIME_VALUE);
 		add(filter, "category_id =", categoryId, TimeSliceCategory.NOT_SAVED);
 		return CURRENT_DB_INSTANCE.getDb().delete(DatabaseHelper.TIME_SLICE_TABLE,
-				filter.toString(), null) > 0;
+				filter.toString(), null);
 	}
 
     private void add(StringBuilder filter, String field, long value, long emptyValue) {
