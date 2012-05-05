@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import com.zettsett.timetracker.model.*;
 
-public class FilterParameter  implements Serializable {
+public class FilterParameter  implements Serializable, ITimeSliceFilter {
 	private static final long serialVersionUID = 6586305797483181492L;
 
 	private long startTime = TimeSlice.NO_TIME_VALUE;
@@ -20,12 +20,11 @@ public class FilterParameter  implements Serializable {
 		return this;
 	}
 	
-	public FilterParameter setParameter(TimeSlice timeSlice)
+	public FilterParameter setParameter(ITimeSliceFilter timeSlice)
 	{
 		if (timeSlice != null) 
 		{
-			TimeSliceCategory category = timeSlice.getCategory();
-			return setParameter(timeSlice.getStartTime(), timeSlice.getEndTime(), (category != null) ? category.getRowId() : TimeSliceCategory.NOT_SAVED);
+			return setParameter(timeSlice.getStartTime(), timeSlice.getEndTime(), timeSlice.getCategoryId());
 		}
 		return this;
 	}

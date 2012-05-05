@@ -11,6 +11,7 @@ import android.util.Log;
 
 import com.zettsett.timetracker.Global;
 import com.zettsett.timetracker.Settings;
+import com.zettsett.timetracker.model.ITimeSliceFilter;
 import com.zettsett.timetracker.model.TimeSlice;
 import com.zettsett.timetracker.model.TimeSliceCategory;
 
@@ -78,21 +79,52 @@ public class TimeSliceDBAdapter {
 				timeSliceContentValuesList(timeSlice),"_id = " + timeSlice.getRowId(), null);
 	}
 
+	public static int getCount(ITimeSliceFilter filterParam, boolean ignoreDates) {
+		String filter = createFilter(filterParam, ignoreDates);
+		Cursor cur = null;
+		try {
+			cur = CURRENT_DB_INSTANCE.getDb().query(DatabaseHelper.TIME_SLICE_TABLE, new String[] {"COUNT(*)"}, filter, null, null, null, null);
+			if ((cur != null) && (cur.moveToFirst())) {
+				int count = cur.getInt(0);
+				Log.d(Global.LOG_CONTEXT, "TimeSliceDBAdapter.getCount(" + filter + ") = " + count);
+				return count;
+			}
+    	} finally {
+    		if (cur != null)
+    			cur.close();
+    	}
+		Log.e(Global.LOG_CONTEXT, "Not found : TimeSliceDBAdapter.getCount(" + filter + ")");
+		return -1;
+		
+	}
+
 	public boolean delete(final long rowId) {
         return CURRENT_DB_INSTANCE.getDb().delete(DatabaseHelper.TIME_SLICE_TABLE,  "_id=" + rowId, null) > 0;
     }
 
-	public int deleteForDateRange(long startDate, long endDate, long categoryId) {
-		StringBuilder filter = new StringBuilder();
-		
-		add(filter, "start_time>=", startDate, TimeSlice.NO_TIME_VALUE);
-		add(filter, "start_time <=", endDate, TimeSlice.NO_TIME_VALUE);
-		add(filter, "category_id =", categoryId, TimeSliceCategory.NOT_SAVED);
+	public static int deleteForDateRange(ITimeSliceFilter filterParam, boolean ignoreDates) {
+		String filter = createFilter(filterParam, ignoreDates);
 		return CURRENT_DB_INSTANCE.getDb().delete(DatabaseHelper.TIME_SLICE_TABLE,
-				filter.toString(), null);
+				filter, null);
 	}
 
-    private void add(StringBuilder filter, String field, long value, long emptyValue) {
+	public static String createFilter(ITimeSliceFilter filter, boolean ignoreDates) {
+		return createFilter(filter.getStartTime(), filter.getEndTime(), filter.getCategoryId(), ignoreDates);
+	}
+	
+	public static String createFilter(long startDate, long endDate,
+			long categoryId, boolean ignoreDates) {
+		StringBuilder filter = new StringBuilder();
+		
+		if (!ignoreDates) {
+			add(filter, "start_time>=", startDate, TimeSlice.NO_TIME_VALUE);
+			add(filter, "start_time <=", endDate, TimeSlice.NO_TIME_VALUE);
+		}
+		add(filter, "category_id =", categoryId, TimeSliceCategory.NOT_SAVED);
+		return filter.toString();
+	}
+
+    private static void add(StringBuilder filter, String field, long value, long emptyValue) {
     	if (value != emptyValue)
     	{
     		if (filter.length() > 0)
@@ -209,7 +241,7 @@ public class TimeSliceDBAdapter {
 
 	private ContentValues timeSliceContentValuesList(final TimeSlice timeSlice) {
 		ContentValues values = new ContentValues();
-		values.put("category_id", timeSlice.getCategory().getRowId());
+		values.put("category_id", timeSlice.getCategoryId());
 		values.put("start_time", timeSlice.getStartTime());
 		values.put("end_time", timeSlice.getEndTime());
 		values.put("notes", timeSlice.getNotes());

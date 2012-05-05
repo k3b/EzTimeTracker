@@ -36,8 +36,9 @@
 						%2$s \n
 						Kategorie: %3$s \n\n 
 						Das Löschen kann nicht rückgängig gemacht werden.</string>	
-	<string name="filter_ignore">{alle}</string>	
-   	<string name="title_confirm_removal">Löschen bestätigen</string>	
+	<string name="no_items_found">Keine Daten gefunden</string>	
+   	<string name="filter_ignore">{alle}</string>	
+   	<string name="title_confirm_removal">"Löschen bestätigen "</string>	
 	<string name="btn_yes">Ja</string>	
 	<string name="btn_no">Nein</string>	
 	<string name="label_no_current_activity">Keine aktuelle Kategorie</string>	

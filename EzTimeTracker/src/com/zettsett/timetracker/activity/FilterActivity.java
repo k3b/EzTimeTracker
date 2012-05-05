@@ -161,7 +161,7 @@ public abstract class FilterActivity  extends Activity {
 		String ignoreText = getText(R.string.filter_ignore).toString();
 		String categoryName =ignoreText;
 
-		TimeSliceCategory selectedCategory = (TimeSliceCategory)catSpinner.getSelectedItem();
+		TimeSliceCategory selectedCategory = getCurrentCategory();
 		
 		if ((selectedCategory != null) && (selectedCategory != TimeSliceCategory.NO_CATEGORY))
 		{
@@ -205,7 +205,7 @@ public abstract class FilterActivity  extends Activity {
 	}
 	
 	public static void selectSpinner(Spinner catSpinner , TimeSliceCategory currentCategory) {
-		int currentCategoryID = (currentCategory != null) ? currentCategory.getRowId() : TimeSliceCategory.NOT_SAVED;
+		int currentCategoryID = getCategoryId(currentCategory);
 		selectSpinner(catSpinner, currentCategoryID);
 	}
 
@@ -219,5 +219,18 @@ public abstract class FilterActivity  extends Activity {
 		}
 	}	
 	
-	protected abstract void onOkCLick();
+	protected void onOkCLick()
+	{
+		TimeSliceCategory currentCategory = getCurrentCategory();
+		int currentCategoryID = getCategoryId(currentCategory);
+		filter.setCategoryId(currentCategoryID);
+	}
+
+	protected static int getCategoryId(TimeSliceCategory category) {
+		return (category != null) ? category.getRowId() : TimeSliceCategory.NOT_SAVED;
+	}
+
+	protected TimeSliceCategory getCurrentCategory() {
+		return (TimeSliceCategory)catSpinner.getSelectedItem();
+	}
 }

@@ -6,7 +6,7 @@ import java.util.GregorianCalendar;
 
 import com.zettsett.timetracker.DateTimeFormatter;
 
-public class TimeSlice implements Serializable {
+public class TimeSlice implements Serializable, ITimeSliceFilter {
 	private static final long serialVersionUID = 6586305797483181442L;
 	
 	public static final long NO_TIME_VALUE = 0;
@@ -92,6 +92,7 @@ public class TimeSlice implements Serializable {
 		this.category = category;
 	}
 
+	@Override
 	public long getStartTime() {
 		return startTime;
 	}
@@ -101,6 +102,7 @@ public class TimeSlice implements Serializable {
 		return this;
 	}
 
+	@Override
 	public long getEndTime() {
 		return endTime;
 	}
@@ -159,5 +161,11 @@ public class TimeSlice implements Serializable {
 
 	@Override public String toString() {
 		return getTitleWithDuration();
+	}
+
+	@Override
+	public int getCategoryId() {
+		TimeSliceCategory category = getCategory();
+		return (category != null) ? category.getRowId() : TimeSliceCategory.NOT_SAVED;
 	}
 }
