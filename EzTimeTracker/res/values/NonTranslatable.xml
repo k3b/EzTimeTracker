@@ -11,31 +11,15 @@
 		    
 	<string name="about_title">About EZ Time Tracker</string>
 	<string name="about_title_condensed">About</string>
-	<string name="about_content"><![CDATA[ <html><body>
+	<string name="about_content_xxx"><![CDATA[
+]]></string>
+
+		<string name="about_content"><![CDATA[ <html><body>
 <a href="https://github.com/k3b/EzTimeTracker/wiki"><b>EZ
 Time Tracker</b></a><br/>Version $versionName$
 <br />
 <hr />
-
-<h2>About</h2>
-<a href="https://github.com/k3b/EzTimeTracker/wiki">EZ
-Time Tracker</a>&nbsp;is an Android app to record time
-spend&nbsp;on&nbsp;user definable activities/categories. <br />
-<br />
-It records the time between "punch in" and "punch out" even if the
-app&nbsp;is not running.<br />
-<br />
-There are reports for details or totals by day, week, month and/or
-category that can be viewed or exported to textfile/email.<br />
-<br />
-Raw data can be exported to csv file on sd-card. <br />
-<br />
-<a href="http://kebabapps.blogspot.com/search/label/Llama">Android
-Llama</a> + <a
- href="https://github.com/k3b/EzTimeTracker/wiki">EZ Time
-Tracker</a> =&nbsp;location based timetracking: i.e.
-aoutmatic recording when entering/leaving job/buro.<br />
-<br />
+$about$
 <hr />
 <h2>History</h2>
 EZ Time Tracker up to Version

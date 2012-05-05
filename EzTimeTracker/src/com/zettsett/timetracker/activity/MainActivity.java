@@ -207,8 +207,10 @@ public class MainActivity extends Activity implements OnChronometerTickListener,
 		  try {
 			String versionName = context.getPackageManager().getPackageInfo (context.getPackageName(), 0).versionName;
 			html = html.replace("$versionName$", versionName);
-		} catch (NameNotFoundException e) {
-		}
+		  } catch (NameNotFoundException e) {
+		  }
+		  html = html.replace("$about$", getText(R.string.about_content_about));
+		  
 		  wv.loadData(html, "text/html", "UTF-8");
 		  wv.setVerticalScrollBarEnabled(true);
 		  

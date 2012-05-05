@@ -98,4 +98,31 @@
 	<string name="report_title_category_day">Kategory täglich</string>
 	<string name="report_title_category_week">Kategory wöchentlich</string>
 	<string name="report_title_category_month">Kategory monatlich</string>
+	
+	<string name="about_content_about"><![CDATA[
+<h2>About</h2>
+<a href="https://github.com/k3b/EzTimeTracker/wiki">EZ
+Time Tracker</a>&nbsp;ist eine Android App zur Zeiterfassung 
+mit selbstdefinierten Aktivit&auml;ten/Kategorien. <br />
+<br />
+Es zeichnet die Zeit zwischen "Start" und "Stop" auf, auch 
+wenn die App gerade nicht l&auml;uft.<br />
+<br />
+Die App enth&auml;lt Auswertungen/Reports zur Anzeige von Details or 
+Summen nach Tag/Woche/Monat und/oder Kategorien. Diese k&ouml;nnen 
+auch als Text-Datei exportiert oder als EMail versendet werden.<br />
+<br />
+Die Zeiterfassungs-Rohdaten k&ouml;nnen als Csv-Datei auf der 
+sd-Speicherkarte abgelegt werden. <br />
+<br />
+<a href="http://kebabapps.blogspot.com/search/label/Llama">Android
+Llama</a> + <a
+ href="https://github.com/k3b/EzTimeTracker/wiki">EZ Time
+Tracker</a> =&nbsp;automatisierte ortsbasierte Zeiterfassung. <br />
+Beispiel: Automatische Erfassung der Komme/Gehe-Zeiten am Arbeitsplatz.
+<br />
+<br />
+]]></string>
+		
+	
 </resources>
