@@ -96,16 +96,18 @@ public class TimeSlice implements Serializable {
 		return startTime;
 	}
 
-	public void setStartTime(long startTime) {
+	public TimeSlice setStartTime(long startTime) {
 		this.startTime = startTime;
+		return this;
 	}
 
 	public long getEndTime() {
 		return endTime;
 	}
 
-	public void setEndTime(long endTime) {
+	public TimeSlice setEndTime(long endTime) {
 		this.endTime = endTime;
+		return this;
 	}
 
 	public String getTitleWithDuration() {
@@ -134,8 +136,9 @@ public class TimeSlice implements Serializable {
 		}
 	}
 
-	public void setNotes(String notes) {
+	public TimeSlice setNotes(String notes) {
 		this.notes = (notes != null) ? notes.trim() : "";
+		return this;
 	}
 
 	public boolean isPunchedIn() {

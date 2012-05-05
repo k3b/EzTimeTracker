@@ -194,13 +194,6 @@ public class TimeSheetReportActivity extends Activity implements ReportInterface
 		return startDateLine;
 	}
 
-	private void showTimeSliceEditDialog(int rowId, long date) {
-		Intent i = new Intent(this, TimeSliceEditActivity.class);
-		i.putExtra("row_id", rowId);
-		i.putExtra("date", date);
-		startActivityForResult(i, 1);
-	}
-
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 		super.onCreateContextMenu(menu, v, menuInfo);
@@ -232,13 +225,15 @@ public class TimeSheetReportActivity extends Activity implements ReportInterface
 	public boolean onContextItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case EDIT_MENU_ID:
-			showTimeSliceEditDialog(mChosenRowId, 0);
+			TimeSliceEditActivity.showTimeSliceEditDialog(this, mChosenRowId);
 			return true;
 		case DELETE_MENU_ID:
 			buildDeleteDialog();
 			return true;
 		case ADD_MENU_ID:
-			showTimeSliceEditDialog(TimeSlice.IS_NEW_TIMESLICE, DateTimeFormatter.parseDate(mDateSelectedForAdd));
+			long now = DateTimeFormatter.parseDate(mDateSelectedForAdd);
+			TimeSlice newSlice = new TimeSlice().setStartTime(now).setEndTime(now);
+			TimeSliceEditActivity.showTimeSliceEditDialog(this, newSlice);
 			return true;
 		default:
 			return super.onContextItemSelected(item);
@@ -249,23 +244,6 @@ public class TimeSheetReportActivity extends Activity implements ReportInterface
 		Intent intent = new Intent().setClass(this, RemoveTimeSliceActivity.class);
 		intent.putExtra(SummaryReportActivity.MENU_ID, TimeSliceCategory.NOT_SAVED); //  item.getItemId());
 		startActivity(intent);
-		
-//		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-//		TimeSlice ts = TimeSliceDBAdapter.getTimeSliceDBAdapter(this).fetchByRowID(mChosenRowId);
-//		builder.setTitle(ts.getTitle());
-//		builder.setMessage(getString(R.string.delete_interval_confirmation)).setCancelable(false)
-//				.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-//					public void onClick(DialogInterface dialog, int id) {
-//						mTimeSliceDBAdapter.delete(mChosenRowId);
-//						loadDataIntoReport(0);
-//					}
-//				}).setNegativeButton("No", new DialogInterface.OnClickListener() {
-//					public void onClick(DialogInterface dialog, int id) {
-//						dialog.cancel();
-//					}
-//				});
-//		AlertDialog alert = builder.create();
-//		alert.show();
 	}
 
 	@Override
@@ -288,7 +266,9 @@ public class TimeSheetReportActivity extends Activity implements ReportInterface
 		switch (item.getItemId()) {
 		case ADD_MENU_ID:
 			Calendar c = Calendar.getInstance();
-			showTimeSliceEditDialog(TimeSlice.IS_NEW_TIMESLICE, c.getTimeInMillis());
+			long now = c.getTimeInMillis();
+			TimeSlice newSlice = new TimeSlice().setStartTime(now).setEndTime(now);
+			TimeSliceEditActivity.showTimeSliceEditDialog(this, newSlice);
 
 			break;
 		case SHOW_DESC_MENU_ID:

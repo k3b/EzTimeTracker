@@ -39,26 +39,23 @@ public class TimeSliceEditActivity extends Activity  implements CategorySetter {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.edit_time_slice);
-		int rowId = getIntent().getIntExtra("row_id", TimeSlice.IS_NEW_TIMESLICE);
-		long date = getIntent().getLongExtra("date", TimeSlice.NO_TIME_VALUE);
-		initialize(rowId, date);
+		TimeSlice timeSlice = (TimeSlice) getIntent().getExtras().get(Global.EXTRA_TIMESLICE);
+		initialize(timeSlice);
 	}
 
-	private void initialize(int rowId, long date) {
+	private void initialize(TimeSlice timeSlice) {
 		setContentView(R.layout.edit_time_slice);
 		catSpinner = (Spinner) findViewById(R.id.spinnerEditTimeSliceCategory);
 		catSpinner.setAdapter( TimeSliceCategory.getCategoryAdapter(this, TimeSliceCategory.NO_CATEGORY));
-		if (rowId != TimeSlice.IS_NEW_TIMESLICE) {
-			mTimeSlice = TimeSliceDBAdapter.getTimeSliceDBAdapter(this).fetchByRowID(rowId);
+		mTimeSlice = timeSlice;
+		if (mTimeSlice.getRowId() != TimeSlice.IS_NEW_TIMESLICE) {
 			TimeSliceCategory currentCategory = mTimeSlice
 					.getCategory();
 			FilterActivity.selectSpinner(catSpinner, currentCategory);
-		} else {
-			mTimeSlice = new TimeSlice();
-			mTimeSlice.setStartTime(date);
-			mTimeSlice.setEndTime(date);
+		} 
+		
+		if (mTimeSlice.getCategory() == null) {
 			mTimeSlice.setCategory((TimeSliceCategory) catSpinner.getAdapter().getItem(0));
-			mTimeSlice.setRowId(TimeSlice.IS_NEW_TIMESLICE);
 		}
 		
 		catSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
@@ -214,4 +211,18 @@ public class TimeSliceEditActivity extends Activity  implements CategorySetter {
 			mTimeSlice.setCategory(newCategory);
 		}
 	}
+
+	public static void showTimeSliceEditDialog(TimeSheetReportActivity parentActivity, int rowId) 
+	{
+		TimeSlice timeSlice = TimeSliceDBAdapter.getTimeSliceDBAdapter(parentActivity).fetchByRowID(rowId);
+		showTimeSliceEditDialog(parentActivity, timeSlice);
+	}
+
+	public static void showTimeSliceEditDialog(
+			TimeSheetReportActivity parentActivity, TimeSlice timeSlice) {
+		Intent indent = new Intent(parentActivity, TimeSliceEditActivity.class);
+		indent.putExtra(Global.EXTRA_TIMESLICE, timeSlice);
+		parentActivity.startActivityForResult(indent, 1);
+	}
+
 }
