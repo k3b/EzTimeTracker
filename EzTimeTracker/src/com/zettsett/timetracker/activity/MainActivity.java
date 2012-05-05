@@ -13,6 +13,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.*;
+import android.view.View.OnLongClickListener;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.*;
@@ -21,6 +22,7 @@ import android.widget.Chronometer.OnChronometerTickListener;
 import com.zetter.androidTime.R;
 import com.zettsett.timetracker.*;
 import com.zettsett.timetracker.database.TimeSliceCategoryDBAdapter;
+import com.zettsett.timetracker.model.TimeSlice;
 import com.zettsett.timetracker.model.TimeSliceCategory;
 
 /**
@@ -39,7 +41,7 @@ import com.zettsett.timetracker.model.TimeSliceCategory;
  * the License.
  * 
  */
-public class MainActivity extends Activity implements OnChronometerTickListener, CategorySetter {
+public class MainActivity extends Activity implements OnChronometerTickListener, OnLongClickListener, CategorySetter {
 	public static final String PREFS_NAME = "TimerPrefs";
 
 	private static final int SELECT = 0;
@@ -63,7 +65,6 @@ public class MainActivity extends Activity implements OnChronometerTickListener,
 			{
 				Log.i(Global.LOG_CONTEXT, "MainActivity.onReceive(intent='" + intent + "')");
 			}
-			
 			reloadGui();
 		}
 	}
@@ -281,6 +282,10 @@ public class MainActivity extends Activity implements OnChronometerTickListener,
 				showPunchInDialog();
 			}
 		});
+		
+		
+		punchInButton.setOnLongClickListener(this);
+		
 		Button punchOutButton = (Button) findViewById(R.id.btnPunchOut);
 		punchOutButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(final View view) {
@@ -333,6 +338,38 @@ public class MainActivity extends Activity implements OnChronometerTickListener,
 			elapsedTimeDisplay.setTextColor(Color.RED);		
 		}
 		updateChronOutputTextView();
+	}
+
+    @Override
+    public boolean onLongClick(View v) {
+    	if ((sessionData != null) && (sessionData.isPunchedIn()))
+    	{
+    		TimeSlice editItem = new TimeSlice()
+    			.setCategory(sessionData.getCategory())
+    			.setStartTime(sessionData.getStartTime())
+    			.setEndTime(TimeSliceEditActivity.HIDDEN)
+    			.setNotes(TimeSliceEditActivity.HIDDEN_NOTES)
+    			.setRowId(32531);
+    		TimeSliceEditActivity.showTimeSliceEditDialog(this, editItem);
+    	}
+		return true;	 // consumed        	
+    } 
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+		super.onActivityResult(requestCode, resultCode, intent);
+		
+		TimeSlice updatedTimeSlice;
+		if ((intent != null) && ((updatedTimeSlice = (TimeSlice) intent.getExtras().get(Global.EXTRA_TIMESLICE)) != null)) {
+			
+			sessionData = reloadSessionData();
+
+			sessionData
+				.setCategory(updatedTimeSlice.getCategory())
+				.setStartTime(updatedTimeSlice.getStartTime());
+			saveState();
+			reloadGui();
+		}
 	}
 
 	@Override

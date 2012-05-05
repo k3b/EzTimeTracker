@@ -33,32 +33,36 @@ public class FilterParameter  implements Serializable, ITimeSliceFilter {
 		return startTime;
 	}
 
-	public void setStartTime(long startTime) {
+	public FilterParameter setStartTime(long startTime) {
 		this.startTime = startTime;
+		return this;
 	}
 
 	public long getEndTime() {
 		return endTime;
 	}
 
-	public void setEndTime(long endTime) {
+	public FilterParameter setEndTime(long endTime) {
 		this.endTime = endTime;
+		return this;
 	}
 
 	public int getCategoryId() {
 		return categoryId;
 	}
 
-	public void setCategoryId(int categoryId) {
+	public FilterParameter setCategoryId(int categoryId) {
 		this.categoryId = categoryId;
+		return this;
 	}
 	
 	public boolean isIgnoreDates() {
 		return mIgnoreDates;
 	}
 
-	public void setIgnoreDates(boolean mIgnoreDates) {
+	public FilterParameter setIgnoreDates(boolean mIgnoreDates) {
 		this.mIgnoreDates = mIgnoreDates;
+		return this;
 	}
 
 }

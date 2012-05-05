@@ -28,8 +28,9 @@ public class TimeSlice implements Serializable, ITimeSliceFilter {
 		return rowId;
 	}
 
-	public void setRowId(int rowId) {
+	public TimeSlice setRowId(int rowId) {
 		this.rowId = rowId;
+		return this;
 	}
 
 	public long getDurationInMilliseconds() {
@@ -55,10 +56,11 @@ public class TimeSlice implements Serializable, ITimeSliceFilter {
 		return calendar.get(componentId);
 	}
 
-	public void setStartTimeComponent(int componentId, int value) {
+	public TimeSlice setStartTimeComponent(int componentId, int value) {
 		calendar.setTimeInMillis(startTime);
 		calendar.set(componentId, value);
 		startTime = calendar.getTimeInMillis();
+		return this;
 	}
 
 	public int getEndTimeComponent(int componentId) {
@@ -66,10 +68,11 @@ public class TimeSlice implements Serializable, ITimeSliceFilter {
 		return calendar.get(componentId);
 	}
 
-	public void setEndTimeComponent(int componentId, int value) {
+	public TimeSlice setEndTimeComponent(int componentId, int value) {
 		calendar.setTimeInMillis(endTime);
 		calendar.set(componentId, value);
 		endTime = calendar.getTimeInMillis();
+		return this;
 	}
 
 	public String getStartTimeStr() {
@@ -88,8 +91,9 @@ public class TimeSlice implements Serializable, ITimeSliceFilter {
 		return category;
 	}
 
-	public void setCategory(TimeSliceCategory category) {
+	public TimeSlice setCategory(TimeSliceCategory category) {
 		this.category = category;
+		return this;
 	}
 
 	@Override

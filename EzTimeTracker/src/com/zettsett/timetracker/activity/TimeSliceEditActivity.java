@@ -7,13 +7,8 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.AdapterView;
+import android.widget.*;
 import android.widget.AdapterView.OnItemSelectedListener;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Spinner;
-import android.widget.Toast;
 
 import com.googlecode.android.widgets.DateSlider.DateSlider;
 import com.googlecode.android.widgets.DateSlider.DateTimeMinuteSlider;
@@ -26,14 +21,19 @@ import com.zettsett.timetracker.model.TimeSlice;
 import com.zettsett.timetracker.model.TimeSliceCategory;
 
 public class TimeSliceEditActivity extends Activity  implements CategorySetter {
+	public static final long HIDDEN = -5;
+	public static final String HIDDEN_NOTES = "!%&HIDDEN&%!";
+	
 	protected static final int GET_END_DATETIME = 0;
 	protected static final int GET_START_DATETIME = 1;
 	private static final int EDIT_CATEGORY_ID = 99;
 	
-	private TimeSlice mTimeSlice;
 	private Button mTimeInButton;
 	private Button mTimeOutButton;
 	private Spinner catSpinner;
+	private EditText notesEditText;
+
+	private TimeSlice timeSlice;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -45,58 +45,80 @@ public class TimeSliceEditActivity extends Activity  implements CategorySetter {
 
 	private void initialize(TimeSlice timeSlice) {
 		setContentView(R.layout.edit_time_slice);
-		catSpinner = (Spinner) findViewById(R.id.spinnerEditTimeSliceCategory);
-		catSpinner.setAdapter( TimeSliceCategory.getCategoryAdapter(this, TimeSliceCategory.NO_CATEGORY));
-		mTimeSlice = timeSlice;
-		if (mTimeSlice.getRowId() != TimeSlice.IS_NEW_TIMESLICE) {
-			TimeSliceCategory currentCategory = mTimeSlice
-					.getCategory();
-			FilterActivity.selectSpinner(catSpinner, currentCategory);
-		} 
+		this.timeSlice = timeSlice;
 		
-		if (mTimeSlice.getCategory() == null) {
-			mTimeSlice.setCategory((TimeSliceCategory) catSpinner.getAdapter().getItem(0));
+		notesEditText = (EditText) findViewById(R.id.edit_text_ts_notes);
+		if (HIDDEN_NOTES.equals(this.timeSlice.getNotes())) {
+			notesEditText.setVisibility(View.INVISIBLE);
+			findViewById(R.id.LabelNotes).setVisibility(View.INVISIBLE);
 		}
 		
-		catSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
-			@Override
-			public void onItemSelected(AdapterView<?> paramAdapterView,
-					View paramView, int paramInt, long paramLong) {
-				TimeSliceCategory newCategory = (TimeSliceCategory) catSpinner.getSelectedItem();
-				setCategory(newCategory);
+		catSpinner = (Spinner) findViewById(R.id.spinnerEditTimeSliceCategory);
+		if (this.timeSlice.getCategoryId() != HIDDEN) {
+			catSpinner.setAdapter( TimeSliceCategory.getCategoryAdapter(this, TimeSliceCategory.NO_CATEGORY));
+			
+			if (this.timeSlice.getRowId() != TimeSlice.IS_NEW_TIMESLICE) {
+				TimeSliceCategory currentCategory = this.timeSlice
+						.getCategory();
+				FilterActivity.selectSpinner(catSpinner, currentCategory);
+			} 
+			
+			if (this.timeSlice.getCategory() == null) {
+				this.timeSlice.setCategory((TimeSliceCategory) catSpinner.getAdapter().getItem(0));
 			}
-
-			@Override
-			public void onNothingSelected(AdapterView<?> paramAdapterView) {
-				// TODO Auto-generated method stub
-				
-			}
-		});
+		
+			catSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+				@Override
+				public void onItemSelected(AdapterView<?> paramAdapterView,
+						View paramView, int paramInt, long paramLong) {
+					TimeSliceCategory newCategory = (TimeSliceCategory) catSpinner.getSelectedItem();
+					setCategory(newCategory);
+				}
+	
+				@Override
+				public void onNothingSelected(AdapterView<?> paramAdapterView) {
+					// TODO Auto-generated method stub
+					
+				}
+			});
+		} else {
+			catSpinner.setVisibility(View.INVISIBLE);
+		}
 
 		mTimeInButton = (Button) findViewById(R.id.EditTimeIn);
-		mTimeInButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				mTimeSlice.setNotes((getNotesEditText()).getText().toString());
-				showDialog(GET_START_DATETIME);
-			}
-		});
+		if (this.timeSlice.getStartTime() != HIDDEN) {
+			mTimeInButton.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					TimeSliceEditActivity.this.timeSlice.setNotes(notesEditText.getText().toString());
+					showDialog(GET_START_DATETIME);
+				}
+			});
+		} else {
+			mTimeInButton.setVisibility(View.INVISIBLE);
+		}
+
 		mTimeOutButton = (Button) findViewById(R.id.EditTimeOut);
-		mTimeOutButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				mTimeSlice.setNotes((getNotesEditText()).getText().toString());
-				showDialog(GET_END_DATETIME);
-			}
-		});
+		if (this.timeSlice.getEndTime() != HIDDEN) {
+			mTimeOutButton.setOnClickListener(new View.OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					TimeSliceEditActivity.this.timeSlice.setNotes(notesEditText.getText().toString());
+					showDialog(GET_END_DATETIME);
+				}
+			});
+		} else {
+			mTimeOutButton.setVisibility(View.INVISIBLE);
+		}
+		
 		Button saveButton = (Button) findViewById(R.id.ButtonSaveTimeSlice);
 		saveButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				mTimeSlice.setNotes((getNotesEditText()).getText().toString());
+				TimeSliceEditActivity.this.timeSlice.setNotes(notesEditText.getText().toString());
 				if (validate()) {
 					Intent intent = new Intent();
-					intent.putExtra(Global.EXTRA_TIMESLICE, mTimeSlice);
+					intent.putExtra(Global.EXTRA_TIMESLICE, TimeSliceEditActivity.this.timeSlice);
 					setResult(RESULT_OK, intent);
 					finish();
 				}
@@ -117,7 +139,7 @@ public class TimeSliceEditActivity extends Activity  implements CategorySetter {
         new DateSlider.OnDateSetListener() {
             public void onDateSet(DateSlider view, Calendar selectedDate) {
                 // update the dateText view with the corresponding date
-            	mTimeSlice.setStartTime(selectedDate.getTimeInMillis());
+            	timeSlice.setStartTime(selectedDate.getTimeInMillis());
         		setTimeTexts();
             }
     };
@@ -127,7 +149,7 @@ public class TimeSliceEditActivity extends Activity  implements CategorySetter {
         new DateSlider.OnDateSetListener() {
             public void onDateSet(DateSlider view, Calendar selectedDate) {
                 // update the dateText view with the corresponding date
-            	mTimeSlice.setEndTime(selectedDate.getTimeInMillis());
+            	timeSlice.setEndTime(selectedDate.getTimeInMillis());
         		setTimeTexts();
             }
     };
@@ -153,10 +175,10 @@ public class TimeSliceEditActivity extends Activity  implements CategorySetter {
         
         switch (id) {
         case GET_START_DATETIME:
-        	c.setTimeInMillis(mTimeSlice.getStartTime());
+        	c.setTimeInMillis(this.timeSlice.getStartTime());
             return new DateTimeMinuteSlider(this,mDateTimeSetListenerStart,c);
         case GET_END_DATETIME:
-        	c.setTimeInMillis(mTimeSlice.getEndTime());
+        	c.setTimeInMillis(this.timeSlice.getEndTime());
             return new DateTimeMinuteSlider(this,mDateTimeSetListenerEnd,c);
 		case EDIT_CATEGORY_ID:
 			return this.edit;
@@ -164,12 +186,9 @@ public class TimeSliceEditActivity extends Activity  implements CategorySetter {
         return null;
     }
 
-	private EditText getNotesEditText() {
-		return (EditText) findViewById(R.id.edit_text_ts_notes);
-	}
-
 	private boolean validate() {
-		if (mTimeSlice.getEndTime() < mTimeSlice.getStartTime()) {
+		long endTime = this.timeSlice.getEndTime();
+		if ((endTime != HIDDEN) && (endTime < this.timeSlice.getStartTime())) {
 			Toast.makeText(getApplicationContext(),
 					"Invalid input: end time must be after start time.", Toast.LENGTH_SHORT).show();
 			return false;
@@ -179,15 +198,15 @@ public class TimeSliceEditActivity extends Activity  implements CategorySetter {
 
 	private void setTimeTexts() {
 		String label = String.format(this.getText(R.string.formatStartDate).toString(), 
-				DateTimeFormatter.getDateTimeStr(mTimeSlice.getStartTime()));
+				DateTimeFormatter.getDateTimeStr(this.timeSlice.getStartTime()));
 		mTimeInButton.setText(label);
 
 		label = String.format(this.getText(R.string.formatEndDate).toString(), 
-				DateTimeFormatter.getDateTimeStr(mTimeSlice.getEndTime()));
+				DateTimeFormatter.getDateTimeStr(this.timeSlice.getEndTime()));
 		mTimeOutButton.setText(label);
 		
-		setTitle(mTimeSlice.getStartDateStr());
-		getNotesEditText().setText(mTimeSlice.getNotes());
+		setTitle(this.timeSlice.getStartDateStr());
+		this.notesEditText.setText(this.timeSlice.getNotes());
 	}
 
 	@Override
@@ -206,20 +225,20 @@ public class TimeSliceEditActivity extends Activity  implements CategorySetter {
 			catSpinner.setAdapter( categoryAdapter);		
 			int newPosition = categoryAdapter.getPosition(newCategory);
 			catSpinner.setSelection(newPosition);
-			mTimeSlice.setCategory(newCategory);
+			this.timeSlice.setCategory(newCategory);
 		} else {
-			mTimeSlice.setCategory(newCategory);
+			this.timeSlice.setCategory(newCategory);
 		}
 	}
 
-	public static void showTimeSliceEditDialog(TimeSheetReportActivity parentActivity, int rowId) 
+	public static void showTimeSliceEditDialog(Activity parentActivity, int rowId) 
 	{
 		TimeSlice timeSlice = TimeSliceDBAdapter.getTimeSliceDBAdapter(parentActivity).fetchByRowID(rowId);
 		showTimeSliceEditDialog(parentActivity, timeSlice);
 	}
 
 	public static void showTimeSliceEditDialog(
-			TimeSheetReportActivity parentActivity, TimeSlice timeSlice) {
+			Activity parentActivity, TimeSlice timeSlice) {
 		Intent indent = new Intent(parentActivity, TimeSliceEditActivity.class);
 		indent.putExtra(Global.EXTRA_TIMESLICE, timeSlice);
 		parentActivity.startActivityForResult(indent, 1);
