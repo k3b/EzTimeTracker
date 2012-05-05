@@ -32,7 +32,10 @@ public class TimeSliceDBAdapter {
 	}
 	
 	public long createTimeSlice(final TimeSlice timeSlice) {
-		TimeSlice oldTimeSlice = findTimesliceByCategoryAndEndTimeBiggerThan(timeSlice.getCategory(), timeSlice.getStartTime() - Settings.getMinminTrashholdInMilliSecs());
+		long startTime = timeSlice.getStartTime();
+		TimeSlice oldTimeSlice = findTimesliceByCategoryAndEndTimeInterval(
+				timeSlice.getCategory(), 
+				startTime - Settings.getMinminTrashholdInMilliSecs(), startTime);
 		
 		if (oldTimeSlice != null)
 		{
@@ -51,13 +54,14 @@ public class TimeSliceDBAdapter {
 		}
 	}
 	
-	private TimeSlice findTimesliceByCategoryAndEndTimeBiggerThan(
-			TimeSliceCategory category, long minimumEndDate) {
+	private TimeSlice findTimesliceByCategoryAndEndTimeInterval(
+			TimeSliceCategory category, long minimumEndDate, long maximumEndDate) {
 		Cursor cur = null;
 		try {
 			cur = CURRENT_DB_INSTANCE.getDb().query(true,
 					DatabaseHelper.TIME_SLICE_TABLE, columnList(),
-					"category_id=? AND end_time>?", new String[] {Long.toString(category.getRowId()), Long.toString(minimumEndDate)}, null, null, null, null);
+					"category_id=? AND end_time>=?  AND end_time<=?", 
+					new String[] {Long.toString(category.getRowId()), Long.toString(minimumEndDate), Long.toString(maximumEndDate)}, null, null, null, null);
 			if ((cur != null) && (cur.moveToFirst())) {
 				return fillTimeSliceFromCursor(cur);
 			}
