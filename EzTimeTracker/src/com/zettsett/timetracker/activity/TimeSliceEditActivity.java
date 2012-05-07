@@ -231,13 +231,13 @@ public class TimeSliceEditActivity extends Activity  implements CategorySetter {
 		}
 	}
 
-	public static void showTimeSliceEditDialog(Activity parentActivity, int rowId) 
+	public static void showTimeSliceEditActivity(Activity parentActivity, int rowId) 
 	{
 		TimeSlice timeSlice = TimeSliceDBAdapter.getTimeSliceDBAdapter(parentActivity).fetchByRowID(rowId);
-		showTimeSliceEditDialog(parentActivity, timeSlice);
+		showTimeSliceEditActivity(parentActivity, timeSlice);
 	}
 
-	public static void showTimeSliceEditDialog(
+	public static void showTimeSliceEditActivity(
 			Activity parentActivity, TimeSlice timeSlice) {
 		Intent indent = new Intent(parentActivity, TimeSliceEditActivity.class);
 		indent.putExtra(Global.EXTRA_TIMESLICE, timeSlice);

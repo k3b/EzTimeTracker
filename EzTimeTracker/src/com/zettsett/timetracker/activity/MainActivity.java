@@ -352,7 +352,7 @@ public class MainActivity extends Activity implements OnChronometerTickListener,
     			.setEndTime(TimeSliceEditActivity.HIDDEN)
     			.setNotes(TimeSliceEditActivity.HIDDEN_NOTES)
     			.setRowId(32531);
-    		TimeSliceEditActivity.showTimeSliceEditDialog(this, editItem);
+    		TimeSliceEditActivity.showTimeSliceEditActivity(this, editItem);
     	}
 		return true;	 // consumed        	
     } 

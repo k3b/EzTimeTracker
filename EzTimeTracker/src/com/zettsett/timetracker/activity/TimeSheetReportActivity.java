@@ -53,19 +53,21 @@ import com.zettsett.timetracker.report.ReportInterface;
 
 /**
  * Detail report grouped by date with optional date-filter
+ * 
+ * TODO reimplement as ListViewActivity? See tutorial http://www.vogella.com/articles/AndroidListView/article.html
  */
 public class TimeSheetReportActivity extends Activity implements ReportInterface {
 	private static final int EDIT_MENU_ID = Menu.FIRST;
 	private static final int DELETE_MENU_ID = Menu.FIRST + 1;
 	private static final int ADD_MENU_ID = Menu.FIRST + 2;
 	private static final int SHOW_DESC_MENU_ID = Menu.FIRST + 3;
+	
 	private TimeSliceDBAdapter mTimeSliceDBAdapter;
 	private LinearLayout mMainLayout;
-	private final Map<View, Integer> mRowToSliceRowIdMap = new HashMap<View, Integer>();
-	private int mChosenRowId;
+	private TimeSlice mCurrentSelectedTimeSlice;
+	private long mCurrentSelectedDate;
 	private ReportFramework mReportFramework;
 	private List<TextView> mReportViewList;
-	private String mDateSelectedForAdd;
 	private boolean mShowNotes = true;
 
 	@Override
@@ -113,15 +115,9 @@ public class TimeSheetReportActivity extends Activity implements ReportInterface
 		Log.i(Global.LOG_CONTEXT, "fetchTimeSlicesByDateRange:"  + (System.currentTimeMillis() - performanceMeasureStart) );
 		performanceMeasureStart = System.currentTimeMillis();
 		for (TimeSlice aSlice : timeSlices) {
-//			try {
-//				Thread.sleep(1000);
-//			} catch (InterruptedException e1) {
-//				// TODO Auto-generated catch block
-//				e1.printStackTrace();
-//			}
 			if (!lastStartDate.equals(aSlice.getStartDateStr())) {
 				lastStartDate = aSlice.getStartDateStr();
-				addDateHeaderLine(lastStartDate);
+				addDateHeaderLine(lastStartDate, aSlice.getStartTime());
 			}
 			addTimeSliceLine(aSlice);
 		}
@@ -152,7 +148,7 @@ public class TimeSheetReportActivity extends Activity implements ReportInterface
 
 	private void addTimeSliceLine(TimeSlice aSlice) {
 		TextView sliceReportLine = new TextView(this);
-		mRowToSliceRowIdMap.put(sliceReportLine, aSlice.getRowId());
+		sliceReportLine.setTag(aSlice);
 		StringBuilder sliceReportText = new StringBuilder();
 		sliceReportText.append("  ").append(aSlice.getTitleWithDuration());
 		int lineOneEnd = sliceReportText.length();
@@ -167,17 +163,16 @@ public class TimeSheetReportActivity extends Activity implements ReportInterface
 					.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 		}
 		registerForContextMenu(sliceReportLine);
-		sliceReportLine.setTag("Detail");
 		mMainLayout.addView(sliceReportLine);
 		mReportViewList.add(sliceReportLine);
 	}
 
-	private TextView addDateHeaderLine(String dateText) {
+	private TextView addDateHeaderLine(String dateText, long dateInMillies) {
 		TextView startDateLine = new TextView(this);
+		startDateLine.setTag(Long.valueOf(dateInMillies));
 		startDateLine.setText(dateText);
 		startDateLine.setTextColor(Color.GREEN);
 		registerForContextMenu(startDateLine);
-		startDateLine.setTag("Header");
 		mMainLayout.addView(startDateLine);
 		mReportViewList.add(startDateLine);
 		startDateLine.setOnTouchListener(new OnTouchListener() {
@@ -197,13 +192,16 @@ public class TimeSheetReportActivity extends Activity implements ReportInterface
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 		super.onCreateContextMenu(menu, v, menuInfo);
-		if (v.getTag().equals("Detail")) {
+		Object tag = v.getTag();
+		if (tag instanceof TimeSlice) {
+			menu.add(0, ADD_MENU_ID, 0, getString(R.string.menu_report_add_new_time_interval));
 			menu.add(0, EDIT_MENU_ID, 0, getString(R.string.menu_text_edit));
 			menu.add(0, DELETE_MENU_ID, 0, getString(R.string.cmd_delete));
-			mChosenRowId = mRowToSliceRowIdMap.get(v);
-		} else if (v.getTag().equals("Header")) {
+			mCurrentSelectedTimeSlice = (TimeSlice) v.getTag();
+			mCurrentSelectedDate = mCurrentSelectedTimeSlice.getStartTime();
+		} else if (tag instanceof Long) {
 			menu.add(0, ADD_MENU_ID, 0, getString(R.string.menu_report_add_new_time_interval));
-			mDateSelectedForAdd = (String) ((TextView) v).getText();
+			mCurrentSelectedDate = (Long) v.getTag();
 		}
 	}
 
@@ -225,15 +223,14 @@ public class TimeSheetReportActivity extends Activity implements ReportInterface
 	public boolean onContextItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case EDIT_MENU_ID:
-			TimeSliceEditActivity.showTimeSliceEditDialog(this, mChosenRowId);
+			TimeSliceEditActivity.showTimeSliceEditActivity(this, mCurrentSelectedTimeSlice);
 			return true;
 		case DELETE_MENU_ID:
 			buildDeleteDialog();
 			return true;
 		case ADD_MENU_ID:
-			long now = DateTimeFormatter.parseDate(mDateSelectedForAdd);
-			TimeSlice newSlice = new TimeSlice().setStartTime(now).setEndTime(now);
-			TimeSliceEditActivity.showTimeSliceEditDialog(this, newSlice);
+			TimeSlice newSlice = new TimeSlice().setStartTime(mCurrentSelectedDate).setEndTime(mCurrentSelectedDate);
+			TimeSliceEditActivity.showTimeSliceEditActivity(this, newSlice);
 			return true;
 		default:
 			return super.onContextItemSelected(item);
@@ -268,7 +265,7 @@ public class TimeSheetReportActivity extends Activity implements ReportInterface
 			Calendar c = Calendar.getInstance();
 			long now = c.getTimeInMillis();
 			TimeSlice newSlice = new TimeSlice().setStartTime(now).setEndTime(now);
-			TimeSliceEditActivity.showTimeSliceEditDialog(this, newSlice);
+			TimeSliceEditActivity.showTimeSliceEditActivity(this, newSlice);
 
 			break;
 		case SHOW_DESC_MENU_ID:

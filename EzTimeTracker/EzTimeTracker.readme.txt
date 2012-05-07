@@ -2,42 +2,14 @@ info see http://zettsetttech.blogspot.com/
 
 todo
 --
-getIntent().getExtras().get("resultadoDiametrofuste");
-----
-
-parent-form
-Intent i = new Intent(this,TextEntryActivity.class);    
-startActivityForResult(i, STATIC_INTEGER_VALUE);
-
-child-form
-resultIntent = new Intent(null);
-resultIntent.putExtra(PUBLIC_STATIC_STRING_IDENTIFIER, enteredTextValue);
-setResult(Activity.RESULT_OK, resultIntent);
-finish();
-
-parent-form receives this
-@Override 
-public void onActivityResult(int requestCode, int resultCode, Intent data) {     
-  super.onActivityResult(requestCode, resultCode, data); 
-  switch(requestCode) { 
-    case (STATIC_INTEGER_VALUE) : { 
-      if (resultCode == Activity.RESULT_OK) { 
-      String newText = data.getStringExtra(PUBLIC_STATIC_STRING_IDENTIFIER);
-      // TODO Update your TextView.
-      } 
-      break; 
-    } 
-  } 
-}
 =================
 
 >	delete items with category-filter
-		main delete
+	v	main delete
 		detail-report-delete
 		summary-report-delete
 		filter-dialog (von, bis, categoryID)?s
-	main: edit category/start
-	
+
 	merge small on/off
 
 	report with filter api
@@ -111,3 +83,6 @@ Posted by Eric Z at 11:15 AM 0 comments
 Home
 Subscribe to: Posts (Atom)
 
+####################################################
+
+Manual
