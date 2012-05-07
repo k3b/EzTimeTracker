@@ -6,7 +6,7 @@ todo
 
 >	delete items with category-filter
 	v	main delete
-		detail-report-delete
+	v	detail-report-delete
 		summary-report-delete
 		filter-dialog (von, bis, categoryID)?s
 

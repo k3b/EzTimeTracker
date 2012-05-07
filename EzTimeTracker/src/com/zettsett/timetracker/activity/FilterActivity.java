@@ -4,6 +4,7 @@ import java.util.Calendar;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -30,17 +31,17 @@ public abstract class FilterActivity  extends Activity {
 	protected TimeSliceDBAdapter mTimeSliceDBAdapter;
 	protected Button mTimeInButton;
 	protected Button mTimeOutButton;
-	protected Spinner catSpinner;
-	protected CheckBox allDatesCheckBox ;
+	protected Spinner mCatSpinner;
+	protected CheckBox mAllDatesCheckBox ;
 
-	protected FilterParameter filter = null;
+	protected FilterParameter mFilter = null;
 	
     // define the listener which is called once a user selected the date.
 	protected DateSlider.OnDateSetListener mDateTimeSetListenerStart =
         new DateSlider.OnDateSetListener() {
 			public void onDateSet(DateSlider view, Calendar selectedDate) {
                 // update the dateText view with the corresponding date
-				filter.setStartTime(selectedDate.getTimeInMillis());
+				mFilter.setStartTime(selectedDate.getTimeInMillis());
         		mTimeInButton.setText(getFormattedStartTime());
             }
     };
@@ -50,26 +51,26 @@ public abstract class FilterActivity  extends Activity {
         new DateSlider.OnDateSetListener() {
 			public void onDateSet(DateSlider view, Calendar selectedDate) {
                 // update the dateText view with the corresponding date
-				filter.setEndTime(selectedDate.getTimeInMillis());
+				mFilter.setEndTime(selectedDate.getTimeInMillis());
         		mTimeOutButton.setText(getFormattedEndTime());
             }
     };
-	private int idCmdOk;
-	private int idCaption;
+	private int mIdCmdOk;
+	private int mIdCaption;
 
 	public FilterActivity(int idCaption, int idCmdOk) {
-		this.idCaption = idCaption;
-		this.idCmdOk = idCmdOk;
+		this.mIdCaption = idCaption;
+		this.mIdCmdOk = idCmdOk;
 	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		this.filter = FilterActivity.getFilterParameter(this);
+		this.mFilter = FilterActivity.getFilterParameter(this);
 		
 		setContentView(R.layout.remove_ts);
-		setTitle(this.idCaption);
+		setTitle(this.mIdCaption);
 		CURRENT_DB_INSTANCE.initialize(this);
 		mTimeSliceDBAdapter = new TimeSliceDBAdapter(this);
 		Button okButton = (Button) findViewById(R.id.cmd_delete);
@@ -79,7 +80,7 @@ public abstract class FilterActivity  extends Activity {
 				onOkCLick();
 			}
 		});
-		okButton.setText(this.idCmdOk);
+		okButton.setText(this.mIdCmdOk);
 		Button cancelButton = (Button) findViewById(R.id.button_remove_ts_cancel);
 		cancelButton.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -87,17 +88,17 @@ public abstract class FilterActivity  extends Activity {
 				finish();
 			}
 		});
-		allDatesCheckBox = (CheckBox) findViewById(R.id.checkbox_remove_ts_all);
-		allDatesCheckBox.setOnClickListener(new View.OnClickListener() {
+		mAllDatesCheckBox = (CheckBox) findViewById(R.id.checkbox_remove_ts_all);
+		mAllDatesCheckBox.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				updateTimeFilter();
 			}
 		});
 
-		catSpinner = (Spinner) findViewById(R.id.spinnerEditTimeSliceCategory);
-		catSpinner.setAdapter( TimeSliceCategory.getCategoryAdapter(this, TimeSliceCategory.NO_CATEGORY));
-		FilterActivity.selectSpinner(catSpinner, filter.getCategoryId());
+		mCatSpinner = (Spinner) findViewById(R.id.spinnerEditTimeSliceCategory);
+		mCatSpinner.setAdapter( TimeSliceCategory.getCategoryAdapter(this, TimeSliceCategory.NO_CATEGORY));
+		FilterActivity.selectSpinner(mCatSpinner, mFilter.getCategoryId());
 
 		mTimeInButton = (Button) findViewById(R.id.EditTimeIn);
 		mTimeInButton.setOnClickListener(new View.OnClickListener() {
@@ -114,25 +115,25 @@ public abstract class FilterActivity  extends Activity {
 			}
 		});
 		
-		if (filter.getEndTime() == TimeSlice.NO_TIME_VALUE && filter.getStartTime() == TimeSlice.NO_TIME_VALUE)
+		if (mFilter.getEndTime() == TimeSlice.NO_TIME_VALUE && mFilter.getStartTime() == TimeSlice.NO_TIME_VALUE)
 		{
-			allDatesCheckBox.setChecked(true);
+			mAllDatesCheckBox.setChecked(true);
 		}
 		updateTimeFilter();
 	}
 
 	private void updateTimeFilter() {
 		LinearLayout ll = (LinearLayout) findViewById(R.id.LinearLayout_remove_ts_dates);
-		if (allDatesCheckBox.isChecked()) {
+		if (mAllDatesCheckBox.isChecked()) {
 			ll.setVisibility(View.GONE);
-			this.filter.setIgnoreDates(true);
+			this.mFilter.setIgnoreDates(true);
 		} else {
 			ll.setVisibility(View.VISIBLE);
-			this.filter.setIgnoreDates(false);
-			if (this.filter.getStartTime() == TimeSlice.NO_TIME_VALUE)
-				this.filter.setStartTime(System.currentTimeMillis());
-			if (this.filter.getEndTime() == TimeSlice.NO_TIME_VALUE)
-				this.filter.setEndTime(System.currentTimeMillis());
+			this.mFilter.setIgnoreDates(false);
+			if (this.mFilter.getStartTime() == TimeSlice.NO_TIME_VALUE)
+				this.mFilter.setStartTime(System.currentTimeMillis());
+			if (this.mFilter.getEndTime() == TimeSlice.NO_TIME_VALUE)
+				this.mFilter.setEndTime(System.currentTimeMillis());
 		}
 		
 		mTimeInButton.setText(getFormattedStartTime());
@@ -143,12 +144,12 @@ public abstract class FilterActivity  extends Activity {
     
    
 	private String getFormattedEndTime() {
-		return getFormattedTime(R.string.formatEndDate, filter.getEndTime(), "");
+		return getFormattedTime(R.string.formatEndDate, mFilter.getEndTime(), "");
 	}
 
 	private String getFormattedStartTime() {
 		return getFormattedTime(R.string.formatStartDate, 
-				filter.getStartTime(), "");
+				mFilter.getStartTime(), "");
 	}
 
 	private String getFormattedTime(int idFormat, long dateTimeValue, String emptyReplacement) {
@@ -168,9 +169,9 @@ public abstract class FilterActivity  extends Activity {
 			categoryName = selectedCategory.getCategoryName();
 		}
 		
-		boolean ignoreDates = this.filter.isIgnoreDates();
-		String startTime = getFormattedTime(R.string.formatStartDate, ignoreDates ? TimeSlice.NO_TIME_VALUE : filter.getStartTime(), ignoreText);
-		String endTime = getFormattedTime(R.string.formatEndDate, ignoreDates ? TimeSlice.NO_TIME_VALUE : filter.getEndTime(), ignoreText);
+		boolean ignoreDates = this.mFilter.isIgnoreDates();
+		String startTime = getFormattedTime(R.string.formatStartDate, ignoreDates ? TimeSlice.NO_TIME_VALUE : mFilter.getStartTime(), ignoreText);
+		String endTime = getFormattedTime(R.string.formatEndDate, ignoreDates ? TimeSlice.NO_TIME_VALUE : mFilter.getEndTime(), ignoreText);
 		return String.format(getString(idFormatMessage).toString(),
 				startTime,
 				endTime,
@@ -188,10 +189,10 @@ public abstract class FilterActivity  extends Activity {
         
         switch (id) {
         case GET_START_DATETIME:
-        	c.setTimeInMillis(filter.getStartTime());
+        	c.setTimeInMillis(mFilter.getStartTime());
             return new DateTimeMinuteSlider(this,mDateTimeSetListenerStart,c);
         case GET_END_DATETIME:
-        	c.setTimeInMillis(filter.getEndTime());
+        	c.setTimeInMillis(mFilter.getEndTime());
             return new DateTimeMinuteSlider(this,mDateTimeSetListenerEnd,c);
         }
         return null;
@@ -223,14 +224,22 @@ public abstract class FilterActivity  extends Activity {
 	{
 		TimeSliceCategory currentCategory = getCurrentCategory();
 		int currentCategoryID = getCategoryId(currentCategory);
-		filter.setCategoryId(currentCategoryID);
+		mFilter.setCategoryId(currentCategoryID);		
 	}
 
+	@Override public void finish()
+	{
+		Intent intent = new Intent();
+		intent.putExtra(Global.EXTRA_FILTER, mFilter);
+		setResult(RESULT_OK, intent);
+		super.finish();
+	}
+	
 	protected static int getCategoryId(TimeSliceCategory category) {
 		return (category != null) ? category.getRowId() : TimeSliceCategory.NOT_SAVED;
 	}
 
 	protected TimeSliceCategory getCurrentCategory() {
-		return (TimeSliceCategory)catSpinner.getSelectedItem();
+		return (TimeSliceCategory)mCatSpinner.getSelectedItem();
 	}
 }

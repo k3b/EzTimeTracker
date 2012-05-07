@@ -2,9 +2,7 @@ package com.zettsett.timetracker.activity;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -27,11 +25,9 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.zetter.androidTime.R;
-import com.zettsett.timetracker.DateTimeFormatter;
 import com.zettsett.timetracker.Global;
 import com.zettsett.timetracker.database.TimeSliceDBAdapter;
 import com.zettsett.timetracker.model.TimeSlice;
-import com.zettsett.timetracker.model.TimeSliceCategory;
 import com.zettsett.timetracker.report.ReportInterface;
 
 /*
@@ -66,6 +62,8 @@ public class TimeSheetReportActivity extends Activity implements ReportInterface
 	private LinearLayout mMainLayout;
 	private TimeSlice mCurrentSelectedTimeSlice;
 	private long mCurrentSelectedDate;
+	private FilterParameter mCurrentSelectedFilter = null;
+	
 	private ReportFramework mReportFramework;
 	private List<TextView> mReportViewList;
 	private boolean mShowNotes = true;
@@ -99,32 +97,6 @@ public class TimeSheetReportActivity extends Activity implements ReportInterface
 		outState.putLong("EndDateRange", mReportFramework.getEndDateRange());
 	}
 
-	public void loadDataIntoReport(int id) {
-		long performanceMeasureStart = System.currentTimeMillis();
-
-		initScrollview();
-		String lastStartDate = "";
-		final Calendar c = Calendar.getInstance();
-		c.setTime(new Date(mReportFramework.getEndDateRange()));
-		c.set(Calendar.HOUR_OF_DAY, 23);
-		c.set(Calendar.MINUTE, 59);
-		long endDate = c.getTimeInMillis();
-
-		List<TimeSlice> timeSlices = mTimeSliceDBAdapter.fetchTimeSlicesByDateRange(
-				mReportFramework.getStartDateRange(), endDate);
-		Log.i(Global.LOG_CONTEXT, "fetchTimeSlicesByDateRange:"  + (System.currentTimeMillis() - performanceMeasureStart) );
-		performanceMeasureStart = System.currentTimeMillis();
-		for (TimeSlice aSlice : timeSlices) {
-			if (!lastStartDate.equals(aSlice.getStartDateStr())) {
-				lastStartDate = aSlice.getStartDateStr();
-				addDateHeaderLine(lastStartDate, aSlice.getStartTime());
-			}
-			addTimeSliceLine(aSlice);
-		}
-		Log.i(Global.LOG_CONTEXT, "addTimeSliceLine:"  + (System.currentTimeMillis() - performanceMeasureStart) );
-		initialScrollToEnd();
-	}
-
 	private void initScrollview() {
 		setContentView(mReportFramework.buildViews());
 		mMainLayout = new LinearLayout(this);
@@ -144,6 +116,38 @@ public class TimeSheetReportActivity extends Activity implements ReportInterface
 						ScrollView.FOCUS_DOWN);
 			}
 		});
+	}
+	
+	public void loadDataIntoReport(int id) {
+		long performanceMeasureStart = System.currentTimeMillis();
+
+		initScrollview();
+		String lastStartDate = "";
+		final Calendar c = Calendar.getInstance();
+		c.setTime(new Date(mReportFramework.getEndDateRange()));
+		c.set(Calendar.HOUR_OF_DAY, 23);
+		c.set(Calendar.MINUTE, 59);
+		long endDate = c.getTimeInMillis();
+
+		List<TimeSlice> timeSlices = mTimeSliceDBAdapter.fetchTimeSlicesByDateRange(
+				mReportFramework.getStartDateRange(), endDate);
+		Log.i(Global.LOG_CONTEXT, "fetchTimeSlicesByDateRange:"  + (System.currentTimeMillis() - performanceMeasureStart) );
+		performanceMeasureStart = System.currentTimeMillis();
+		FilterParameter filter = null;
+		for (TimeSlice aSlice : timeSlices) {
+			if (!lastStartDate.equals(aSlice.getStartDateStr())) {
+				lastStartDate = aSlice.getStartDateStr();
+				long startTime = aSlice.getStartTime();
+				filter = new FilterParameter().setStartTime(startTime);
+				addDateHeaderLine(lastStartDate, filter);
+			}
+			
+			filter.setEndTime(aSlice.getStartTime());
+			
+			addTimeSliceLine(aSlice);
+		}
+		Log.i(Global.LOG_CONTEXT, "addTimeSliceLine:"  + (System.currentTimeMillis() - performanceMeasureStart) );
+		initialScrollToEnd();
 	}
 
 	private void addTimeSliceLine(TimeSlice aSlice) {
@@ -167,9 +171,9 @@ public class TimeSheetReportActivity extends Activity implements ReportInterface
 		mReportViewList.add(sliceReportLine);
 	}
 
-	private TextView addDateHeaderLine(String dateText, long dateInMillies) {
+	private TextView addDateHeaderLine(String dateText, FilterParameter filter) {
 		TextView startDateLine = new TextView(this);
-		startDateLine.setTag(Long.valueOf(dateInMillies));
+		startDateLine.setTag(filter);
 		startDateLine.setText(dateText);
 		startDateLine.setTextColor(Color.GREEN);
 		registerForContextMenu(startDateLine);
@@ -188,7 +192,7 @@ public class TimeSheetReportActivity extends Activity implements ReportInterface
 		});
 		return startDateLine;
 	}
-
+	
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 		super.onCreateContextMenu(menu, v, menuInfo);
@@ -199,9 +203,12 @@ public class TimeSheetReportActivity extends Activity implements ReportInterface
 			menu.add(0, DELETE_MENU_ID, 0, getString(R.string.cmd_delete));
 			mCurrentSelectedTimeSlice = (TimeSlice) v.getTag();
 			mCurrentSelectedDate = mCurrentSelectedTimeSlice.getStartTime();
-		} else if (tag instanceof Long) {
+		} else if (tag instanceof FilterParameter) {
 			menu.add(0, ADD_MENU_ID, 0, getString(R.string.menu_report_add_new_time_interval));
-			mCurrentSelectedDate = (Long) v.getTag();
+			menu.add(0, DELETE_MENU_ID, 0, getString(R.string.cmd_delete));
+			mCurrentSelectedTimeSlice = null;
+			mCurrentSelectedFilter = (FilterParameter) v.getTag();
+			mCurrentSelectedDate = mCurrentSelectedFilter.getStartTime();
 		}
 	}
 
@@ -210,10 +217,13 @@ public class TimeSheetReportActivity extends Activity implements ReportInterface
 		super.onActivityResult(requestCode, resultCode, intent);
 		if (intent != null) {
 			TimeSlice updatedTimeSlice = (TimeSlice) intent.getExtras().get(Global.EXTRA_TIMESLICE); 
-			if (updatedTimeSlice.getRowId() == TimeSlice.IS_NEW_TIMESLICE) {
-				mTimeSliceDBAdapter.createTimeSlice(updatedTimeSlice);
-			} else {
-				mTimeSliceDBAdapter.updateTimeSlice(updatedTimeSlice);
+			
+			if (updatedTimeSlice != null) {
+				if (updatedTimeSlice.getRowId() == TimeSlice.IS_NEW_TIMESLICE) {
+					mTimeSliceDBAdapter.createTimeSlice(updatedTimeSlice);
+				} else {
+					mTimeSliceDBAdapter.updateTimeSlice(updatedTimeSlice);
+				}
 			}
 			loadDataIntoReport(0);
 		}
@@ -226,7 +236,14 @@ public class TimeSheetReportActivity extends Activity implements ReportInterface
 			TimeSliceEditActivity.showTimeSliceEditActivity(this, mCurrentSelectedTimeSlice);
 			return true;
 		case DELETE_MENU_ID:
-			buildDeleteDialog();
+			FilterParameter parameter;
+			if (mCurrentSelectedTimeSlice != null)
+			{
+				parameter = new FilterParameter().setParameter(mCurrentSelectedTimeSlice).setEndTime(mCurrentSelectedTimeSlice.getStartTime());
+			} else {
+				parameter = mCurrentSelectedFilter;
+			}
+			RemoveTimeSliceActivity.showRemoveActivity(this, parameter);
 			return true;
 		case ADD_MENU_ID:
 			TimeSlice newSlice = new TimeSlice().setStartTime(mCurrentSelectedDate).setEndTime(mCurrentSelectedDate);
@@ -235,12 +252,6 @@ public class TimeSheetReportActivity extends Activity implements ReportInterface
 		default:
 			return super.onContextItemSelected(item);
 		}
-	}
-
-	private void buildDeleteDialog() {
-		Intent intent = new Intent().setClass(this, RemoveTimeSliceActivity.class);
-		intent.putExtra(SummaryReportActivity.MENU_ID, TimeSliceCategory.NOT_SAVED); //  item.getItemId());
-		startActivity(intent);
 	}
 
 	@Override

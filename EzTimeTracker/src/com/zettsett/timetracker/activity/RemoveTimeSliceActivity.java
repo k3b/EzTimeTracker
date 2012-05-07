@@ -2,6 +2,7 @@ package com.zettsett.timetracker.activity;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,8 +11,6 @@ import android.widget.Toast;
 import com.zetter.androidTime.R;
 import com.zettsett.timetracker.Global;
 import com.zettsett.timetracker.database.TimeSliceDBAdapter;
-import com.zettsett.timetracker.model.TimeSlice;
-import com.zettsett.timetracker.model.TimeSliceCategory;
 
 public class RemoveTimeSliceActivity extends FilterActivity {
 	public RemoveTimeSliceActivity() {
@@ -25,7 +24,7 @@ public class RemoveTimeSliceActivity extends FilterActivity {
 	}
 	
 	private void doRemove() {
-		int itemsDeleted = TimeSliceDBAdapter.deleteForDateRange(this.filter, this.filter.isIgnoreDates());
+		int itemsDeleted = TimeSliceDBAdapter.deleteForDateRange(this.mFilter, this.mFilter.isIgnoreDates());
 		String message = getStatusMessage(R.string.format_message_interval_deleted) + itemsDeleted;
 		Toast.makeText(
 				getApplicationContext(),
@@ -36,7 +35,7 @@ public class RemoveTimeSliceActivity extends FilterActivity {
 	@Override
 	protected void onOkCLick() {
 		super.onOkCLick();
-		int count = TimeSliceDBAdapter.getCount(this.filter, this.filter.isIgnoreDates());
+		int count = TimeSliceDBAdapter.getCount(this.mFilter, this.mFilter.isIgnoreDates());
 		
 		if (count <= 0) {
 			String message = getText(R.string.no_items_found).toString();
@@ -59,7 +58,7 @@ public class RemoveTimeSliceActivity extends FilterActivity {
 							doRemove();
 	
 							Intent resultIntent = new Intent();
-							resultIntent.putExtra(Global.EXTRA_FILTER, filter);
+							resultIntent.putExtra(Global.EXTRA_FILTER, mFilter);
 							setResult(Activity.RESULT_OK, resultIntent);
 						}
 					})
@@ -74,4 +73,9 @@ public class RemoveTimeSliceActivity extends FilterActivity {
 		}
 	}
 
+	public static void showRemoveActivity(Context owner, FilterParameter filter) {
+		Intent intent = new Intent().setClass(owner, RemoveTimeSliceActivity.class);
+		intent.putExtra(Global.EXTRA_FILTER, filter); //  item.getItemId());
+		owner.startActivity(intent);
+	}
 }
