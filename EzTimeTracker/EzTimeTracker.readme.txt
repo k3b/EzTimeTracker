@@ -7,7 +7,9 @@ todo
 >	delete items with category-filter
 	v	main delete
 	v	detail-report-delete
-		summary-report-delete
+	>	summary-report-delete
+			calculate filter for each summary item
+				hash := displayText => filter
 		filter-dialog (von, bis, categoryID)?s
 
 	merge small on/off
