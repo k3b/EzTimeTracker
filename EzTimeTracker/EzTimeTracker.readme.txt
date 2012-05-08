@@ -4,16 +4,24 @@ todo
 --
 =================
 
+	bug
+		detail-report-add => no update of list
+?		detail-report - von-bis auswahl does not alwaysset right limits
+			selecting start date sets end date
+	
+
 >	delete items with category-filter
 	v	main delete
 	v	detail-report-delete
-		summary-report-delete
+	?	summary-report-delete
+			calculate filter for each summary item
+				hash := displayText => filter
 		filter-dialog (von, bis, categoryID)?s
+			report with filter api
+	
 
 	merge small on/off
 
-	report with filter api
-	
 	gui: menü mit images
 	config select if private or public database	
 

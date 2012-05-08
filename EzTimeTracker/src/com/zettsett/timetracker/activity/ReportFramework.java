@@ -10,6 +10,7 @@ import java.util.List;
 import android.app.Activity;
 import android.app.Dialog;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.text.Spannable;
 import android.text.style.StyleSpan;
 import android.view.HapticFeedbackConstants;
@@ -66,14 +67,14 @@ public class ReportFramework implements Serializable {
 	private static final int MENU_ITEM_EXPORT_SD = Menu.FIRST + 12;
 	private static final int MENU_ITEM_EXPORT_EMAIL = Menu.FIRST + 13;
 
-	private final Activity activity;
-	private final ReportInterface report;
-	private LinearScroller scrollView;
-	private long mFromDate = TimeSlice.NO_TIME_VALUE;
-	private long mToDate = TimeSlice.NO_TIME_VALUE;
-	private TextView startDateTV;
-	private TextView endDateTV;
-	private List<TextView> reportViewList;
+	private final Activity mActivity;
+	private final ReportInterface mReport;
+	private LinearScroller mScrollView;
+	
+	private FilterParameter mFilter;
+	private TextView mStartDateTV;
+	private TextView mEndDateTV;
+	private List<TextView> mReportViewList;
 
 	public enum ReportTypes {
 		TIMESHEET, SUMMARY
@@ -85,36 +86,38 @@ public class ReportFramework implements Serializable {
 		this.reportType = reportType;
 	}
 
-	ReportFramework(Activity activity, ReportInterface report) {
+	ReportFramework(Activity activity, ReportInterface report, FilterParameter filter) {
 		super();
-		initializeDateRanges();
-		this.activity = activity;
-		this.report = report;
+		initializeDateRanges(filter);
+		this.mActivity = activity;
+		this.mReport = report;
 	}
 
-	public long getStartDateRange() {
-		return mFromDate;
-	}
-
-	private void initializeDateRanges() {
+	private void initializeDateRanges(FilterParameter filter) {
+		mFilter = (filter != null) ? filter : new FilterParameter();
 		Date currDate = new Date();
-		if (mFromDate == TimeSlice.NO_TIME_VALUE) {
+		long startTime = filter.getStartTime();
+		if (startTime  == TimeSlice.NO_TIME_VALUE) {
 			Calendar calendar = new GregorianCalendar();
 			calendar.setTime(currDate);
 			calendar.set(Calendar.HOUR, 0);
 			calendar.set(Calendar.MINUTE, 0);
 			calendar.roll(Calendar.MONTH, false);
-			mFromDate = calendar.getTimeInMillis();
-			if (mFromDate > currDate.getTime()) {
+			startTime = calendar.getTimeInMillis();
+			if (startTime > currDate.getTime()) {
 				calendar.roll(Calendar.YEAR, false);
-				mFromDate = calendar.getTimeInMillis();
+				startTime = calendar.getTimeInMillis();
 			}
 		}
-		if (mToDate == TimeSlice.NO_TIME_VALUE) {
+		filter.setStartTime(startTime);
+		
+		long endTime = filter.getEndTime();
+		if (endTime == TimeSlice.NO_TIME_VALUE) {
 			Calendar calendar = new GregorianCalendar();
 			calendar.setTime(currDate);
-			mToDate = calendar.getTimeInMillis();
+			endTime = calendar.getTimeInMillis();
 		}
+		filter.setEndTime(endTime);
 	}
 
 	public boolean onPrepareOptionsMenu(Menu menu) {
@@ -123,12 +126,12 @@ public class ReportFramework implements Serializable {
 		exportMenu.add(Menu.NONE, MENU_ITEM_EXPORT_SD, 1, R.string.menu_export_report_to_sd_card);
 		exportMenu.add(Menu.NONE, MENU_ITEM_EXPORT_EMAIL, 2, R.string.menu_email_report);
 		SubMenu dateRangeMenu = menu.addSubMenu(Menu.NONE, Menu.NONE, 3, R.string.menu_select_date_range);
-		String labelStartDate = String.format(activity.getString(R.string.formatStartDate)
-				, DateTimeFormatter.getLongDateStr(getStartDateRange()));
+		String labelStartDate = String.format(mActivity.getString(R.string.formatStartDate)
+				, DateTimeFormatter.getLongDateStr(mFilter.getStartTime()));
 		dateRangeMenu.add(Menu.NONE, MENU_ITEM_START_DATE, 0, labelStartDate);
 		
-		String labelEndDate = String.format(activity.getString(R.string.formatEndDate), 
-				DateTimeFormatter.getLongDateStr(getEndDateRange()));
+		String labelEndDate = String.format(mActivity.getString(R.string.formatEndDate), 
+				DateTimeFormatter.getLongDateStr(mFilter.getEndTime()));
 		dateRangeMenu.add(Menu.NONE, MENU_ITEM_END_DATE, 1, labelEndDate);
 
 		return result;
@@ -143,12 +146,12 @@ public class ReportFramework implements Serializable {
 			showDateRangeDialog(GET_END_DATETIME);
 			break;
 		case MENU_ITEM_EXPORT_SD:
-			SDDataExporter.exportToSD(getDefaultReportName(), activity, ReportOutput.makeFormatter(reportViewList));
+			SDDataExporter.exportToSD(getDefaultReportName(), mActivity, ReportOutput.makeFormatter(mReportViewList));
 			break;
 		case MENU_ITEM_EXPORT_EMAIL:
-			ReportOutput outPutter = ReportOutput.makeFormatter(reportViewList);
+			ReportOutput outPutter = ReportOutput.makeFormatter(mReportViewList);
 			outPutter.setTerminator("\n");
-			EmailUtilities.send("", getEMailSummaryLine(), activity, outPutter.getOutput());
+			EmailUtilities.send("", getEMailSummaryLine(), mActivity, outPutter.getOutput());
 			break;
 		}
 
@@ -156,26 +159,26 @@ public class ReportFramework implements Serializable {
 	}
 
 	private void showDateRangeDialog(int doingSetStartDateRange) {
-		activity.showDialog(doingSetStartDateRange);
+		mActivity.showDialog(doingSetStartDateRange);
 	}
 
 	private String getDefaultReportName() {
 		String name;
 		if (reportType == ReportTypes.TIMESHEET) {
-			name = activity.getString(R.string.default_export_ts_name);
+			name = mActivity.getString(R.string.default_export_ts_name);
 		} else {
-			name = activity.getString(R.string.default_export_sum_name);
+			name = mActivity.getString(R.string.default_export_sum_name);
 		}
 		return name;
 	}
 
 	private String getEMailSummaryLine() {
-		String appName = activity.getString(R.string.app_name);
+		String appName = mActivity.getString(R.string.app_name);
 		String summary;
 		if (reportType == ReportTypes.TIMESHEET) {
-			summary = String.format(activity.getString(R.string.default_mail_ts_subject), appName);
+			summary = String.format(mActivity.getString(R.string.default_mail_ts_subject), appName);
 		} else {
-			summary = String.format(activity.getString(R.string.default_mail_sum_subject), appName);
+			summary = String.format(mActivity.getString(R.string.default_mail_sum_subject), appName);
 		}
 		return summary;
 
@@ -186,8 +189,8 @@ public class ReportFramework implements Serializable {
         new DateSlider.OnDateSetListener() {
             public void onDateSet(DateSlider view, Calendar selectedDate) {
                 // update the dateText view with the corresponding date
-            	mFromDate = selectedDate.getTimeInMillis();
-    			report.loadDataIntoReport(0);
+            	mFilter.setStartTime(selectedDate.getTimeInMillis());
+    			mReport.loadDataIntoReport(0);
             }
     };
 
@@ -196,8 +199,8 @@ public class ReportFramework implements Serializable {
         new DateSlider.OnDateSetListener() {
             public void onDateSet(DateSlider view, Calendar selectedDate) {
                 // update the dateText view with the corresponding date
-            	mToDate = selectedDate.getTimeInMillis();
-    			report.loadDataIntoReport(0);
+        		mFilter.setEndTime(selectedDate.getTimeInMillis());
+    			mReport.loadDataIntoReport(0);
             }
     };
 
@@ -211,30 +214,17 @@ public class ReportFramework implements Serializable {
         
         switch (id) {
         case GET_START_DATETIME:
-        	c.setTimeInMillis(getStartDateRange());
-            return new DefaultDateSlider(this.activity,mDateTimeSetListenerStart,c);
+        	c.setTimeInMillis(mFilter.getStartTime());
+            return new DefaultDateSlider(this.mActivity,mDateTimeSetListenerStart,c);
         case GET_END_DATETIME:
-        	c.setTimeInMillis(getEndDateRange());
-            return new DefaultDateSlider(this.activity,mDateTimeSetListenerEnd,c);
+        	c.setTimeInMillis(mFilter.getEndTime());
+            return new DefaultDateSlider(this.mActivity,mDateTimeSetListenerEnd,c);
         }
         return null;
     }
 	
-	public void setStartDateRange(long mFromDate) {
-		this.mFromDate = mFromDate;
-	}
-
-	public long getEndDateRange() {
-
-		return mToDate;
-	}
-
-	public void setEndDateRange(long mToDate) {
-		this.mToDate = mToDate;
-	}
-
 	LinearScroller getLinearScroller() {
-		return scrollView;
+		return mScrollView;
 	}
 
 	private void configureDateRangeView(final TextView view, final int isForStartDate) {
@@ -261,41 +251,65 @@ public class ReportFramework implements Serializable {
 	}
 
 	LinearLayout buildViews() {
-		activity.setContentView(R.layout.report_framework);
-		startDateTV = new TextView(activity);
-		endDateTV = new TextView(activity);
-		LinearLayout contentView = (LinearLayout) activity.findViewById(R.id.report_frame);
+		mActivity.setContentView(R.layout.report_framework);
+		mStartDateTV = new TextView(mActivity);
+		mEndDateTV = new TextView(mActivity);
+		LinearLayout contentView = (LinearLayout) mActivity.findViewById(R.id.report_frame);
 		contentView.setOrientation(LinearLayout.VERTICAL);
-		scrollView = new LinearScroller(activity);
-		startDateTV.setPadding(20, 0, 0, 0);
-		String labelStartDate = String.format(this.activity.getString(R.string.formatStartDate).toString(), 
-				DateTimeFormatter.getLongDateStr(mFromDate));
-		startDateTV.setText(labelStartDate, TextView.BufferType.SPANNABLE);
-		Spannable str = (Spannable) startDateTV.getText();
+		mScrollView = new LinearScroller(mActivity);
+		mStartDateTV.setPadding(20, 0, 0, 0);
+		String labelStartDate = String.format(this.mActivity.getString(R.string.formatStartDate).toString(), 
+				DateTimeFormatter.getLongDateStr(mFilter.getStartTime()));
+		mStartDateTV.setText(labelStartDate, TextView.BufferType.SPANNABLE);
+		Spannable str = (Spannable) mStartDateTV.getText();
 		str.setSpan(new StyleSpan(android.graphics.Typeface.ITALIC), 0, 11, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 		str.setSpan(new StyleSpan(android.graphics.Typeface.BOLD), 0, 11, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-		contentView.addView(startDateTV);
-		endDateTV.setPadding(49, 0, 0, 0);
-		String labelEndDate = String.format(this.activity.getString(R.string.formatEndDate).toString(), 
-				DateTimeFormatter.getLongDateStr(mToDate));
-		endDateTV.setText(labelEndDate,
+		contentView.addView(mStartDateTV);
+		mEndDateTV.setPadding(49, 0, 0, 0);
+		String labelEndDate = String.format(this.mActivity.getString(R.string.formatEndDate).toString(), 
+				DateTimeFormatter.getLongDateStr(mFilter.getEndTime()));
+		mEndDateTV.setText(labelEndDate,
 				TextView.BufferType.SPANNABLE);
-		str = (Spannable) endDateTV.getText();
+		str = (Spannable) mEndDateTV.getText();
 		str.setSpan(new StyleSpan(android.graphics.Typeface.ITALIC), 0, 9, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 		str.setSpan(new StyleSpan(android.graphics.Typeface.BOLD), 0, 9, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-		contentView.addView(endDateTV);
-		contentView.addView(scrollView.getScrollView());
-		configureDateRangeView(startDateTV, GET_START_DATETIME);
-		configureDateRangeView(endDateTV, GET_END_DATETIME);
+		contentView.addView(mEndDateTV);
+		contentView.addView(mScrollView.getScrollView());
+		configureDateRangeView(mStartDateTV, GET_START_DATETIME);
+		configureDateRangeView(mEndDateTV, GET_END_DATETIME);
 		return contentView;
 	}
 
 	public List<TextView> initializeTextViewsForExportList() {
 		List<TextView> tvList = new ArrayList<TextView>();
-		tvList.add(startDateTV);
-		tvList.add(endDateTV);
-		reportViewList = tvList;
+		tvList.add(mStartDateTV);
+		tvList.add(mEndDateTV);
+		mReportViewList = tvList;
 		return tvList;
+	}
+
+	public static FilterParameter getLastFilter(Bundle savedInstanceState, String parameterName) {
+		FilterParameter rangeFilter = null;
+		if (savedInstanceState != null) {
+			Serializable filter = savedInstanceState.getSerializable(parameterName);
+			
+			if (filter instanceof FilterParameter)
+				rangeFilter = (FilterParameter) filter;
+		}
+		if (rangeFilter == null)
+		{
+			rangeFilter = new FilterParameter();
+		}
+		return rangeFilter;
+	}
+
+	public static long getFixedEndTime(FilterParameter rangeFilter) {
+		final Calendar c = Calendar.getInstance();
+		c.setTime(new Date(rangeFilter.getEndTime()));
+		c.set(Calendar.HOUR_OF_DAY, 23);
+		c.set(Calendar.MINUTE, 59);
+		long endDate = c.getTimeInMillis();
+		return endDate;
 	}
 
 }

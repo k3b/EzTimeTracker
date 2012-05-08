@@ -1,7 +1,6 @@
 package com.zettsett.timetracker.activity;
 
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import android.app.Activity;
@@ -53,6 +52,7 @@ import com.zettsett.timetracker.report.ReportInterface;
  * TODO reimplement as ListViewActivity? See tutorial http://www.vogella.com/articles/AndroidListView/article.html
  */
 public class TimeSheetReportActivity extends Activity implements ReportInterface {
+	private static final String SAVED_REPORT_FILTER = "DetailReportFilter";
 	private static final int EDIT_MENU_ID = Menu.FIRST;
 	private static final int DELETE_MENU_ID = Menu.FIRST + 1;
 	private static final int ADD_MENU_ID = Menu.FIRST + 2;
@@ -63,6 +63,7 @@ public class TimeSheetReportActivity extends Activity implements ReportInterface
 	private TimeSlice mCurrentSelectedTimeSlice;
 	private long mCurrentSelectedDate;
 	private FilterParameter mCurrentSelectedFilter = null;
+	private FilterParameter mRangeFilter;
 	
 	private ReportFramework mReportFramework;
 	private List<TextView> mReportViewList;
@@ -73,11 +74,9 @@ public class TimeSheetReportActivity extends Activity implements ReportInterface
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		mTimeSliceDBAdapter = new TimeSliceDBAdapter(this);
-		mReportFramework = new ReportFramework(this, this);
-		if (savedInstanceState != null) {
-			mReportFramework.setStartDateRange(savedInstanceState.getLong("StartDateRange"));
-			mReportFramework.setEndDateRange(savedInstanceState.getLong("EndDateRange"));
-		}
+		
+		this.mRangeFilter = ReportFramework.getLastFilter(savedInstanceState, SAVED_REPORT_FILTER);
+		mReportFramework = new ReportFramework(this, this, mRangeFilter);
 		loadDataIntoReport(0);
 	}
 
@@ -93,8 +92,7 @@ public class TimeSheetReportActivity extends Activity implements ReportInterface
 
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
-		outState.putLong("StartDateRange", mReportFramework.getStartDateRange());
-		outState.putLong("EndDateRange", mReportFramework.getEndDateRange());
+		outState.putSerializable(SAVED_REPORT_FILTER, this.mRangeFilter);		
 	}
 
 	private void initScrollview() {
@@ -123,26 +121,23 @@ public class TimeSheetReportActivity extends Activity implements ReportInterface
 
 		initScrollview();
 		String lastStartDate = "";
-		final Calendar c = Calendar.getInstance();
-		c.setTime(new Date(mReportFramework.getEndDateRange()));
-		c.set(Calendar.HOUR_OF_DAY, 23);
-		c.set(Calendar.MINUTE, 59);
-		long endDate = c.getTimeInMillis();
+		FilterParameter rangeFilter = this.mRangeFilter;
+		long endDate = ReportFramework.getFixedEndTime(rangeFilter);
 
 		List<TimeSlice> timeSlices = mTimeSliceDBAdapter.fetchTimeSlicesByDateRange(
-				mReportFramework.getStartDateRange(), endDate);
+				rangeFilter.getStartTime(), endDate);
 		Log.i(Global.LOG_CONTEXT, "fetchTimeSlicesByDateRange:"  + (System.currentTimeMillis() - performanceMeasureStart) );
 		performanceMeasureStart = System.currentTimeMillis();
-		FilterParameter filter = null;
+		FilterParameter headerFilter = null;
 		for (TimeSlice aSlice : timeSlices) {
 			if (!lastStartDate.equals(aSlice.getStartDateStr())) {
 				lastStartDate = aSlice.getStartDateStr();
 				long startTime = aSlice.getStartTime();
-				filter = new FilterParameter().setStartTime(startTime);
-				addDateHeaderLine(lastStartDate, filter);
+				headerFilter = new FilterParameter().setStartTime(startTime);
+				addDateHeaderLine(lastStartDate, headerFilter);
 			}
 			
-			filter.setEndTime(aSlice.getStartTime());
+			headerFilter.setEndTime(aSlice.getStartTime());
 			
 			addTimeSliceLine(aSlice);
 		}
