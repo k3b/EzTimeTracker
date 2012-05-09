@@ -6,8 +6,6 @@ todo
 
 	bug
 		detail-report-add => no update of list
-?		detail-report - von-bis auswahl does not alwaysset right limits
-			selecting start date sets end date
 	
 
 >	delete items with category-filter
