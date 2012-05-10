@@ -16,17 +16,18 @@
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
 		</activity>
-		<activity android:name="com.zettsett.timetracker.activity.TimeSheetReportActivity"></activity>
-		<activity android:name="com.zettsett.timetracker.activity.CategoryListActivity"></activity>
-		<activity android:name="com.zettsett.timetracker.activity.SummaryReportActivity"></activity>
+		<activity android:name="com.zettsett.timetracker.activity.TimeSheetReportActivity"/>
+		<activity android:name="com.zettsett.timetracker.activity.CategoryListActivity"/>
+		<activity android:name="com.zettsett.timetracker.activity.SummaryReportActivity"/>
 		<activity android:name="com.zettsett.timetracker.activity.TimeSliceEditActivity"
-			android:screenOrientation="portrait"></activity>
+			android:screenOrientation="portrait"/>
 		<activity android:name="com.zettsett.timetracker.activity.DataExportActivity"
-			android:screenOrientation="portrait"></activity>
+			android:screenOrientation="portrait"/>
 		<activity android:name="com.zettsett.timetracker.activity.RemoveTimeSliceActivity"
-			android:screenOrientation="portrait"></activity>
+			android:screenOrientation="portrait"/>
+		<activity android:name="com.zettsett.timetracker.activity.ReportFilterActivity" />
 	    <activity android:name="com.zettsett.timetracker.activity.SettingsActivity"
-			android:screenOrientation="portrait"></activity>
+			android:screenOrientation="portrait"/>
 		<receiver android:enabled="true"
 				android:name="com.zettsett.timetracker.receiver.RemoteTimeTrackerReceiver">
 			<intent-filter>

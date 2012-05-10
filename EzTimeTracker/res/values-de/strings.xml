@@ -19,6 +19,7 @@
 	<string name="radio_button_data_export_range">Exportiere Buchungen von .. bis</string>	
 	<string name="checkbox_data_export_email">Exportiere in Email</string>	
 	<string name="button_data_export">Exportiere Buchungen</string>	
+	<string name="cmd_update">Anwenden</string>	
 	<string name="cmd_delete">Löschen</string>	
 	<string name="cmd_cancel"> Abbrechen </string>	
 	<string name="checkbox_remove_ts_all">Datum egal</string>	
@@ -29,6 +30,8 @@
 	<string name="menu_select_date_range">Eingabe Datum von/bis</string>	
 	<string name="formatStartDate">"Start: %1$s"</string>	
 	<string name="formatEndDate">"Ende: %1$s"</string>	
+	<string name="label_report_filter">Welche Daten anzeigen?</string>	
+	<string name="menu_filter">Filter</string>	
 	<string name="label_delete_time_interval_data">Lösche Buchung</string>	
 	<string name="format_message_interval_deleted">"Buchungen gelöscht: %1$s %2$s Kategorie %3$s "</string>	
    	<string name="format_question_delete_time_intervals">Wollen Sie wirklich folgende Buchungen löschen?\n

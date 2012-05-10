@@ -73,9 +73,9 @@ public class RemoveTimeSliceActivity extends FilterActivity {
 		}
 	}
 
-	public static void showRemoveActivity(Context owner, FilterParameter filter) {
+	public static void showActivity(Activity owner, FilterParameter filter) {
 		Intent intent = new Intent().setClass(owner, RemoveTimeSliceActivity.class);
 		intent.putExtra(Global.EXTRA_FILTER, filter); //  item.getItemId());
-		owner.startActivity(intent);
+		owner.startActivityForResult(intent, 0);
 	}
 }

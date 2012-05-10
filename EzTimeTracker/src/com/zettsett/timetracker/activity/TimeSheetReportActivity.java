@@ -238,7 +238,7 @@ public class TimeSheetReportActivity extends Activity implements ReportInterface
 			} else {
 				parameter = mCurrentSelectedFilter;
 			}
-			RemoveTimeSliceActivity.showRemoveActivity(this, parameter);
+			RemoveTimeSliceActivity.showActivity(this, parameter);
 			return true;
 		case ADD_MENU_ID:
 			TimeSlice newSlice = new TimeSlice().setStartTime(mCurrentSelectedDate).setEndTime(mCurrentSelectedDate);

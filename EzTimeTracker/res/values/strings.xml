@@ -22,6 +22,7 @@
 	<string name="radio_button_data_export_range">Export Data for Date Range</string>	
 	<string name="checkbox_data_export_email">Export to Email</string>	
 	<string name="button_data_export">Export Data</string>	
+	<string name="cmd_update">Update</string>	
 	<string name="cmd_delete">Delete</string>	
 	<string name="cmd_cancel"> Cancel </string>	
 	<string name="checkbox_remove_ts_all">Ignore Date</string>	
@@ -32,6 +33,8 @@
 	<string name="menu_select_date_range">Select Date Range</string>	
 	<string name="formatStartDate">"Start: %1$s"</string>	
 	<string name="formatEndDate">"End: %1$s"</string>	
+	<string name="label_report_filter">Which Data to show?</string>	
+	<string name="menu_filter">Filter</string>	
 	<string name="label_delete_time_interval_data">Delete Time Interval Data</string>	
 	<string name="format_message_interval_deleted">"Time intervals removed: %1$s %2$s Category %3$s "</string>	
 	<string name="format_question_delete_time_intervals">"Are you sure you want to permanently delete time intervals?\n

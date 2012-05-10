@@ -67,6 +67,8 @@ public class ReportFramework implements Serializable {
 	private static final int MENU_ITEM_EXPORT_SD = Menu.FIRST + 12;
 	private static final int MENU_ITEM_EXPORT_EMAIL = Menu.FIRST + 13;
 
+	private static final int MENU_ITEM_SET_FILTER = Menu.FIRST + 21;
+
 	private final Activity mActivity;
 	private final ReportInterface mReport;
 	private LinearScroller mScrollView;
@@ -126,6 +128,7 @@ public class ReportFramework implements Serializable {
 		exportMenu.add(Menu.NONE, MENU_ITEM_EXPORT_SD, 1, R.string.menu_export_report_to_sd_card);
 		exportMenu.add(Menu.NONE, MENU_ITEM_EXPORT_EMAIL, 2, R.string.menu_email_report);
 		SubMenu dateRangeMenu = menu.addSubMenu(Menu.NONE, Menu.NONE, 3, R.string.menu_select_date_range);
+		
 		String labelStartDate = String.format(mActivity.getString(R.string.formatStartDate)
 				, DateTimeFormatter.getLongDateStr(mFilter.getStartTime()));
 		dateRangeMenu.add(Menu.NONE, MENU_ITEM_START_DATE, 0, labelStartDate);
@@ -134,11 +137,16 @@ public class ReportFramework implements Serializable {
 				DateTimeFormatter.getLongDateStr(mFilter.getEndTime()));
 		dateRangeMenu.add(Menu.NONE, MENU_ITEM_END_DATE, 1, labelEndDate);
 
+		dateRangeMenu.add(Menu.NONE, MENU_ITEM_SET_FILTER, 2, R.string.menu_filter);
+
 		return result;
 	}
 
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
+		case MENU_ITEM_SET_FILTER:
+			ReportFilterActivity.showActivity(this.mActivity, this.mFilter);
+			break;
 		case MENU_ITEM_START_DATE:
 			showDateRangeDialog(GET_START_DATETIME);
 			break;
