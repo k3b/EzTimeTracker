@@ -7,6 +7,7 @@ import java.util.TreeMap;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -62,7 +63,7 @@ public class SummaryReportActivity extends Activity implements ReportInterface {
 	private ReportDateGrouping mReportDateGrouping = ReportDateGrouping.WEEKLY;
 	private ReportModes mReportMode = ReportModes.BY_DATE;
 	private List<TextView> mReportViewList;
-	private FilterParameter mRangeFilter = new FilterParameter();
+	private FilterParameter mRangeFilter;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -143,6 +144,14 @@ public class SummaryReportActivity extends Activity implements ReportInterface {
 		return mReportFramework.onCreateDialog(id);
 	}
 
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+		super.onActivityResult(requestCode, resultCode, intent);
+		if (intent != null) {
+			loadDataIntoReport(0);
+		}
+	}
+
 	public void loadDataIntoReport(int reportType) {
 		long performanceMeasureStart = System.currentTimeMillis();
 
@@ -206,8 +215,6 @@ public class SummaryReportActivity extends Activity implements ReportInterface {
 		performanceMeasureStart = System.currentTimeMillis();
 	}
 	
-	// private ITimeSliceFilter mRangeFilter = new FilterParameter();
-
 	private Map<String, Map<String, Long>> loadReportDataStructures() {
 		FilterParameter rangeFilter = this.mRangeFilter;
 		long endDate = ReportFramework.getFixedEndTime(rangeFilter);
