@@ -217,9 +217,8 @@ public class SummaryReportActivity extends Activity implements ReportInterface {
 	
 	private Map<String, Map<String, Long>> loadReportDataStructures() {
 		FilterParameter rangeFilter = this.mRangeFilter;
-		long endDate = ReportFramework.getFixedEndTime(rangeFilter);
 
-		List<TimeSlice> timeSlices = mTimeSliceDBAdapter.fetchTimeSlicesByDateRange(rangeFilter.getStartTime(), endDate);
+		List<TimeSlice> timeSlices = mTimeSliceDBAdapter.fetchTimeSlices(rangeFilter, rangeFilter.isIgnoreDates());
 		Map<String, Map<String, Long>> summaries;
 		if (mReportMode == ReportModes.BY_DATE) {
 			summaries = new LinkedHashMap<String, Map<String, Long>>();

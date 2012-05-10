@@ -122,10 +122,8 @@ public class TimeSheetReportActivity extends Activity implements ReportInterface
 		initScrollview();
 		String lastStartDate = "";
 		FilterParameter rangeFilter = this.mRangeFilter;
-		long endDate = ReportFramework.getFixedEndTime(rangeFilter);
-
-		List<TimeSlice> timeSlices = mTimeSliceDBAdapter.fetchTimeSlicesByDateRange(
-				rangeFilter.getStartTime(), endDate);
+		List<TimeSlice> timeSlices = mTimeSliceDBAdapter.fetchTimeSlices(
+				rangeFilter, rangeFilter.isIgnoreDates());
 		Log.i(Global.LOG_CONTEXT, "fetchTimeSlicesByDateRange:"  + (System.currentTimeMillis() - performanceMeasureStart) );
 		performanceMeasureStart = System.currentTimeMillis();
 		FilterParameter headerFilter = null;

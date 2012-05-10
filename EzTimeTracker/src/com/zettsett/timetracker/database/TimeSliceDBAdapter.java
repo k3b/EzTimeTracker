@@ -121,7 +121,12 @@ public class TimeSliceDBAdapter {
 			add(filter, "start_time <=", endDate, TimeSlice.NO_TIME_VALUE);
 		}
 		add(filter, "category_id =", categoryId, TimeSliceCategory.NOT_SAVED);
-		return filter.toString();
+		if (filter.length() == 0)
+		{
+			return null;
+		} else {
+			return filter.toString();
+		}
 	}
 
     private static void add(StringBuilder filter, String field, long value, long emptyValue) {
@@ -167,19 +172,19 @@ public class TimeSliceDBAdapter {
 
 	}
 
-    public List<TimeSlice> fetchAllTimeSlices() {
+    public List<TimeSlice> fetchTimeSlices(ITimeSliceFilter filterParam, boolean ignoreDates) {
+		String filter = createFilter(filterParam, ignoreDates);
 		List<TimeSlice> result = new ArrayList<TimeSlice>(); 
 		Cursor cur = null;
 		try {
 			cur = CURRENT_DB_INSTANCE.getDb().query(
-				DatabaseHelper.TIME_SLICE_TABLE, columnList(), null, null,
-				null, null, null);
+				DatabaseHelper.TIME_SLICE_TABLE, columnList(), 
+				filter 
+				, null,
+				null, null, "start_time");
 			while (cur.moveToNext()) {
 				TimeSlice ts = this.fillTimeSliceFromCursor(cur);
-				
-				if (ts != null) {
-					result.add(ts);
-				}
+				result.add(ts);
 			}
     	} finally {
     		if (cur != null)
@@ -188,7 +193,7 @@ public class TimeSliceDBAdapter {
 
 		return result;
 	}
-	
+
 	public List<TimeSlice> fetchTimeSlicesByDateRange(long startDate, long endDate) {
 		List<TimeSlice> result = new ArrayList<TimeSlice>(); 
 		Cursor cur = null;

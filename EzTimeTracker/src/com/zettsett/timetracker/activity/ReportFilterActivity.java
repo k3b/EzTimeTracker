@@ -1,7 +1,6 @@
 package com.zettsett.timetracker.activity;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 
 import com.zetter.androidTime.R;
@@ -22,6 +21,8 @@ public class ReportFilterActivity extends FilterActivity {
 	protected void onOkCLick()
 	{
 		super.onOkCLick();
+		this.mFilter.setEndTime(ReportFramework.getFixedEndTime(this.mFilter));
+
 		this.finish();
 	}
 }
