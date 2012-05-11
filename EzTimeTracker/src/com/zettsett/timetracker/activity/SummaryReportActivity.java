@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -72,7 +71,7 @@ public class SummaryReportActivity extends Activity implements ReportInterface {
 		mTimeSliceDBAdapter = new TimeSliceDBAdapter(this);
 		this.mRangeFilter = ReportFramework.getLastFilter(savedInstanceState, SAVED_REPORT_FILTER);
 
-		mReportFramework = new ReportFramework(this, this, mRangeFilter);
+		mReportFramework = new ReportFramework(this, mRangeFilter);
 		if (savedInstanceState != null) {
 			mReportDateGrouping = (ReportDateGrouping) savedInstanceState
 					.getSerializable(SAVED_REPORT_GROUPING());
@@ -137,11 +136,6 @@ public class SummaryReportActivity extends Activity implements ReportInterface {
 			mReportFramework.onOptionsItemSelected(item);
 		}
 		return true;
-	}
-
-	@Override
-	protected Dialog onCreateDialog(int id) {
-		return mReportFramework.onCreateDialog(id);
 	}
 
 	@Override

@@ -1,21 +1,19 @@
 info see http://zettsetttech.blogspot.com/
 
 todo
+	add new item startet mit category-last instead of ?
 ?	after report update scroll to last know pos
 			
 --
 =================
 
 
->	delete items with category-filter
+	delete items with category-filter
 	v	main delete
 	v	detail-report-delete
 	?	summary-report-delete
 			calculate filter for each summary item
 				hash := displayText => filter
-		filter-dialog (von, bis, categoryID)?s
-			report with filter api
-	
 
 	merge small on/off
 

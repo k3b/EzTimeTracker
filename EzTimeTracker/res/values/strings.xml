@@ -30,7 +30,6 @@
 	<string name="menu_export_report">Export Report</string>	
 	<string name="menu_export_report_to_sd_card">Export Report to SD Card</string>	
 	<string name="menu_email_report">Email Report</string>	
-	<string name="menu_select_date_range">Select Date Range</string>	
 	<string name="formatStartDate">"Start: %1$s"</string>	
 	<string name="formatEndDate">"End: %1$s"</string>	
 	<string name="label_report_filter">Which Data to show?</string>	

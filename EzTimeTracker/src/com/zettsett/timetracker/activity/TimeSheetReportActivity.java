@@ -4,7 +4,6 @@ import java.util.Calendar;
 import java.util.List;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -76,7 +75,7 @@ public class TimeSheetReportActivity extends Activity implements ReportInterface
 		mTimeSliceDBAdapter = new TimeSliceDBAdapter(this);
 		
 		this.mRangeFilter = ReportFramework.getLastFilter(savedInstanceState, SAVED_REPORT_FILTER);
-		mReportFramework = new ReportFramework(this, this, mRangeFilter);
+		mReportFramework = new ReportFramework(this, mRangeFilter);
 		loadDataIntoReport(0);
 	}
 
@@ -293,15 +292,5 @@ public class TimeSheetReportActivity extends Activity implements ReportInterface
 		}
 
 		return true;
-	}
-
-	@Override
-	protected Dialog onCreateDialog(int id) {
-		Dialog dialog = mReportFramework.onCreateDialog(id);
-		if (dialog == null)
-		{
-			dialog = super.onCreateDialog(id);
-		}
-		return dialog;
 	}
 }

@@ -27,7 +27,6 @@
 	<string name="menu_export_report">Export Report</string>	
 	<string name="menu_export_report_to_sd_card">&#8230; auf Speicherkarte</string>	
 	<string name="menu_email_report">&#8230; in Email</string>	
-	<string name="menu_select_date_range">Eingabe Datum von/bis</string>	
 	<string name="formatStartDate">"Start: %1$s"</string>	
 	<string name="formatEndDate">"Ende: %1$s"</string>	
 	<string name="label_report_filter">Welche Daten anzeigen?</string>	
