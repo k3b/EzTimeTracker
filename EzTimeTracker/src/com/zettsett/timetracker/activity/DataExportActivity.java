@@ -168,11 +168,8 @@ public class DataExportActivity extends Activity implements RadioGroup.OnChecked
 		TimeSliceDBAdapter mTimeSliceDBAdapter = new TimeSliceDBAdapter(this);
 		List<TimeSlice> timeSlices;
 
-		if (mExportAll) {
-			timeSlices = mTimeSliceDBAdapter.fetchAllTimeSlices();
-		} else {
-			timeSlices = mTimeSliceDBAdapter.fetchTimeSlicesByDateRange(mFromDate, mToDate);
-		}
+		FilterParameter filter = new FilterParameter().setStartTime(mFromDate).setEndTime(mToDate);
+		timeSlices = mTimeSliceDBAdapter.fetchTimeSlices(filter, !mExportAll);
 		StringBuilder output = new StringBuilder();
 		output.append("Start, End, Category Name, Category Description, Notes").append(CSV_LINE_SEPERATOR);
 		for (TimeSlice aTimeSlice : timeSlices) {
