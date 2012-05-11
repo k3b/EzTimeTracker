@@ -2,10 +2,6 @@ info see http://zettsetttech.blogspot.com/
 
 todo
 ?	after report update scroll to last know pos
-?	filter ok. speziell export (untested)
-		export csv
-			date from-to filter not ok
-			wrong csv-format
 			
 --
 =================
