@@ -57,15 +57,12 @@ public class TimeSliceEditActivity extends Activity  implements CategorySetter {
 		if (this.timeSlice.getCategoryId() != HIDDEN) {
 			catSpinner.setAdapter( TimeSliceCategory.getCategoryAdapter(this, TimeSliceCategory.NO_CATEGORY));
 			
-			if (this.timeSlice.getRowId() != TimeSlice.IS_NEW_TIMESLICE) {
-				TimeSliceCategory currentCategory = this.timeSlice
-						.getCategory();
-				FilterActivity.selectSpinner(catSpinner, currentCategory);
-			} 
+			TimeSliceCategory currentCategory = this.timeSlice.getCategory();
 			
-			if (this.timeSlice.getCategory() == null) {
-				this.timeSlice.setCategory((TimeSliceCategory) catSpinner.getAdapter().getItem(0));
+			if (currentCategory == null) {
+				currentCategory =(TimeSliceCategory) catSpinner.getAdapter().getItem(0);
 			}
+			FilterActivity.selectSpinner(catSpinner, currentCategory);
 		
 			catSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 				@Override
@@ -237,8 +234,21 @@ public class TimeSliceEditActivity extends Activity  implements CategorySetter {
 		showTimeSliceEditActivity(parentActivity, timeSlice);
 	}
 
+	private static TimeSliceCategory lastCategory = TimeSliceCategory.NO_CATEGORY;
+	
 	public static void showTimeSliceEditActivity(
-			Activity parentActivity, TimeSlice timeSlice) {
+			Activity parentActivity, TimeSlice timeSlice) 
+	{
+		if (timeSlice != null)
+		{
+			if (timeSlice.getCategoryId() != TimeSliceCategory.NOT_SAVED)
+			{
+				lastCategory = timeSlice.getCategory();
+			} else {
+				timeSlice.setCategory(lastCategory);
+			}
+		}
+		
 		Intent indent = new Intent(parentActivity, TimeSliceEditActivity.class);
 		indent.putExtra(Global.EXTRA_TIMESLICE, timeSlice);
 		parentActivity.startActivityForResult(indent, 1);
