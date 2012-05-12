@@ -216,14 +216,9 @@ public class TimeSheetReportActivity extends Activity implements ReportInterface
 				} else {
 					mTimeSliceDBAdapter.updateTimeSlice(updatedTimeSlice);
 				}
+			} else {
+				mRangeFilter = this.mReportFramework.onActivityResult(intent, mRangeFilter);
 			}
-			
-			FilterParameter filter = (FilterParameter) intent.getExtras().get(Global.EXTRA_FILTER); 
-			
-			if (filter != null) {
-				mRangeFilter = filter;
-			}
-
 			loadDataIntoReport(0);
 		}
 	}

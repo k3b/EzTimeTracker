@@ -142,13 +142,7 @@ public class SummaryReportActivity extends Activity implements ReportInterface {
 	protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
 		super.onActivityResult(requestCode, resultCode, intent);
 		if (intent != null) {
-		
-			FilterParameter filter = (FilterParameter) intent.getExtras().get(Global.EXTRA_FILTER); 
-			
-			if (filter != null) {
-				mRangeFilter = filter;
-			}
-
+			mRangeFilter = this.mReportFramework.onActivityResult(intent, mRangeFilter);
 			loadDataIntoReport(0);
 		}
 	}

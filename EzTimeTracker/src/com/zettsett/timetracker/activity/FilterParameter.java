@@ -20,11 +20,20 @@ public class FilterParameter  implements Serializable, ITimeSliceFilter {
 		return this;
 	}
 	
-	public FilterParameter setParameter(ITimeSliceFilter timeSlice)
+	public FilterParameter setParameter(ITimeSliceFilter source)
 	{
-		if (timeSlice != null) 
+		if (source != null) 
 		{
-			return setParameter(timeSlice.getStartTime(), timeSlice.getEndTime(), timeSlice.getCategoryId());
+			return setParameter(source.getStartTime(), source.getEndTime(), source.getCategoryId());
+		}
+		return this;
+	}
+	
+	public FilterParameter setParameter(FilterParameter source)
+	{
+		if (source != null) 
+		{
+			return setParameter((ITimeSliceFilter) source).setIgnoreDates(source.isIgnoreDates());
 		}
 		return this;
 	}

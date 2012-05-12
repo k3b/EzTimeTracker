@@ -8,6 +8,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -17,6 +18,7 @@ import android.widget.TextView;
 
 import com.zetter.androidTime.R;
 import com.zettsett.timetracker.EmailUtilities;
+import com.zettsett.timetracker.Global;
 import com.zettsett.timetracker.LinearScroller;
 import com.zettsett.timetracker.model.TimeSlice;
 import com.zettsett.timetracker.report.ReportOutput;
@@ -62,10 +64,6 @@ public class ReportFramework implements Serializable {
 
 	private ReportTypes reportType;
 
-	public void setReportType(ReportTypes reportType) {
-		this.reportType = reportType;
-	}
-
 	ReportFramework(Activity activity, FilterParameter filter) {
 		super();
 		initializeDateRanges(filter);
@@ -74,8 +72,9 @@ public class ReportFramework implements Serializable {
 
 	private void initializeDateRanges(FilterParameter filter) {
 		mFilter = (filter != null) ? filter : new FilterParameter();
+
 		Date currDate = new Date();
-		long startTime = filter.getStartTime();
+		long startTime = this.mFilter.getStartTime();
 		if (startTime  == TimeSlice.NO_TIME_VALUE) {
 			Calendar calendar = new GregorianCalendar();
 			calendar.setTime(currDate);
@@ -88,15 +87,15 @@ public class ReportFramework implements Serializable {
 				startTime = calendar.getTimeInMillis();
 			}
 		}
-		filter.setStartTime(startTime);
+		this.mFilter.setStartTime(startTime);
 		
-		long endTime = filter.getEndTime();
+		long endTime = this.mFilter.getEndTime();
 		if (endTime == TimeSlice.NO_TIME_VALUE) {
 			Calendar calendar = new GregorianCalendar();
 			calendar.setTime(currDate);
 			endTime = calendar.getTimeInMillis();
 		}
-		filter.setEndTime(endTime);
+		this.mFilter.setEndTime(endTime);
 	}
 
 	public boolean onPrepareOptionsMenu(Menu menu) {
@@ -169,6 +168,10 @@ public class ReportFramework implements Serializable {
 		return tvList;
 	}
 
+	public void setReportType(ReportTypes reportType) {
+		this.reportType = reportType;
+	}
+
 	public static FilterParameter getLastFilter(Bundle savedInstanceState, String parameterName) {
 		FilterParameter rangeFilter = null;
 		if (savedInstanceState != null) {
@@ -191,6 +194,18 @@ public class ReportFramework implements Serializable {
 		c.set(Calendar.MINUTE, 59);
 		long endDate = c.getTimeInMillis();
 		return endDate;
+	}
+
+	public FilterParameter onActivityResult(Intent intent,
+			FilterParameter previosRangeFilter) {
+		FilterParameter newRangeFilter = (FilterParameter) intent.getExtras().get(Global.EXTRA_FILTER); 
+		
+		if (newRangeFilter == null) {
+			newRangeFilter = previosRangeFilter;
+		}
+
+		initializeDateRanges(newRangeFilter);
+		return newRangeFilter;
 	}
 
 }
