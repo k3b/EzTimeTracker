@@ -1,9 +1,7 @@
 info see http://zettsetttech.blogspot.com/
 
 todo
-	bug
-		report+filter+exit+report => filter is reset to default
-?	after report update scroll to last know pos
+	?	after report update scroll to last know pos
 			
 --
 =================

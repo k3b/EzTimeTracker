@@ -62,14 +62,14 @@ public class SummaryReportActivity extends Activity implements ReportInterface {
 	private ReportDateGrouping mReportDateGrouping = ReportDateGrouping.WEEKLY;
 	private ReportModes mReportMode = ReportModes.BY_DATE;
 	private List<TextView> mReportViewList;
-	private FilterParameter mRangeFilter;
+	private static FilterParameter mRangeFilter;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		mTimeSliceDBAdapter = new TimeSliceDBAdapter(this);
-		this.mRangeFilter = ReportFramework.getLastFilter(savedInstanceState, SAVED_REPORT_FILTER);
+		mRangeFilter = ReportFramework.getLastFilter(savedInstanceState, SAVED_REPORT_FILTER, mRangeFilter);
 
 		mReportFramework = new ReportFramework(this, mRangeFilter);
 		if (savedInstanceState != null) {
@@ -86,7 +86,7 @@ public class SummaryReportActivity extends Activity implements ReportInterface {
 
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
-		outState.putSerializable(SAVED_REPORT_FILTER, this.mRangeFilter);		
+		outState.putSerializable(SAVED_REPORT_FILTER, mRangeFilter);		
 		outState.putSerializable(SAVED_REPORT_GROUPING(), mReportDateGrouping);
 		outState.putSerializable(SAVED_REPORT_MODE, mReportMode);
 	}
@@ -211,7 +211,7 @@ public class SummaryReportActivity extends Activity implements ReportInterface {
 	}
 	
 	private Map<String, Map<String, Long>> loadReportDataStructures() {
-		FilterParameter rangeFilter = this.mRangeFilter;
+		FilterParameter rangeFilter = mRangeFilter;
 
 		List<TimeSlice> timeSlices = mTimeSliceDBAdapter.fetchTimeSlices(rangeFilter, rangeFilter.isIgnoreDates());
 		Map<String, Map<String, Long>> summaries;

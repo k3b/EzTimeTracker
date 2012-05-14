@@ -62,7 +62,7 @@ public class TimeSheetReportActivity extends Activity implements ReportInterface
 	private TimeSlice mCurrentSelectedTimeSlice;
 	private long mCurrentSelectedDate;
 	private FilterParameter mCurrentSelectionFilter = null;
-	private FilterParameter mRangeFilter;
+	private static FilterParameter mRangeFilter;
 	
 	private ReportFramework mReportFramework;
 	private List<TextView> mReportViewList;
@@ -74,7 +74,7 @@ public class TimeSheetReportActivity extends Activity implements ReportInterface
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		mTimeSliceDBAdapter = new TimeSliceDBAdapter(this);
 		
-		this.mRangeFilter = ReportFramework.getLastFilter(savedInstanceState, SAVED_REPORT_FILTER);
+		mRangeFilter = ReportFramework.getLastFilter(savedInstanceState, SAVED_REPORT_FILTER, mRangeFilter);
 		mReportFramework = new ReportFramework(this, mRangeFilter);
 		loadDataIntoReport(0);
 	}
@@ -91,7 +91,7 @@ public class TimeSheetReportActivity extends Activity implements ReportInterface
 
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
-		outState.putSerializable(SAVED_REPORT_FILTER, this.mRangeFilter);		
+		outState.putSerializable(SAVED_REPORT_FILTER, mRangeFilter);		
 	}
 
 	private void initScrollview() {
@@ -120,7 +120,7 @@ public class TimeSheetReportActivity extends Activity implements ReportInterface
 
 		initScrollview();
 		String lastStartDate = "";
-		FilterParameter rangeFilter = this.mRangeFilter;
+		FilterParameter rangeFilter = mRangeFilter;
 		List<TimeSlice> timeSlices = mTimeSliceDBAdapter.fetchTimeSlices(
 				rangeFilter, rangeFilter.isIgnoreDates());
 		Log.i(Global.LOG_CONTEXT, "fetchTimeSlicesByDateRange:"  + (System.currentTimeMillis() - performanceMeasureStart) );

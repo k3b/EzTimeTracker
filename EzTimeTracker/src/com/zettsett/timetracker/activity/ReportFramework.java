@@ -172,7 +172,7 @@ public class ReportFramework implements Serializable {
 		this.reportType = reportType;
 	}
 
-	public static FilterParameter getLastFilter(Bundle savedInstanceState, String parameterName) {
+	public static FilterParameter getLastFilter(Bundle savedInstanceState, String parameterName, FilterParameter notFoundValue) {
 		FilterParameter rangeFilter = null;
 		if (savedInstanceState != null) {
 			Serializable filter = savedInstanceState.getSerializable(parameterName);
@@ -180,10 +180,17 @@ public class ReportFramework implements Serializable {
 			if (filter instanceof FilterParameter)
 				rangeFilter = (FilterParameter) filter;
 		}
+		
+		if (rangeFilter == null)
+		{
+			rangeFilter = notFoundValue;
+		}
+		
 		if (rangeFilter == null)
 		{
 			rangeFilter = new FilterParameter();
 		}
+		
 		return rangeFilter;
 	}
 
