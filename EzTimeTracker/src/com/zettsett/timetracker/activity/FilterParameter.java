@@ -1,7 +1,7 @@
 package com.zettsett.timetracker.activity;
 
 import java.io.Serializable;
-
+import com.zettsett.timetracker.DateTimeFormatter;
 import com.zettsett.timetracker.model.*;
 
 public class FilterParameter  implements Serializable, ITimeSliceFilter {
@@ -72,6 +72,13 @@ public class FilterParameter  implements Serializable, ITimeSliceFilter {
 	public FilterParameter setIgnoreDates(boolean mIgnoreDates) {
 		this.mIgnoreDates = mIgnoreDates;
 		return this;
+	}
+	
+	@Override public String toString() {
+		return String.format("%1$s-%2$s:%3$i", 
+				DateTimeFormatter.getShortDateStr(this.getStartTime()), 
+				DateTimeFormatter.getShortDateStr(this.getEndTime()), 
+				this.getCategoryId());
 	}
 
 }

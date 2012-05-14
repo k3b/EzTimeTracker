@@ -61,7 +61,7 @@ public class TimeSheetReportActivity extends Activity implements ReportInterface
 	private LinearLayout mMainLayout;
 	private TimeSlice mCurrentSelectedTimeSlice;
 	private long mCurrentSelectedDate;
-	private FilterParameter mCurrentSelectedFilter = null;
+	private FilterParameter mCurrentSelectionFilter = null;
 	private FilterParameter mRangeFilter;
 	
 	private ReportFramework mReportFramework;
@@ -199,8 +199,8 @@ public class TimeSheetReportActivity extends Activity implements ReportInterface
 			menu.add(0, ADD_MENU_ID, 0, getString(R.string.menu_report_add_new_time_interval));
 			menu.add(0, DELETE_MENU_ID, 0, getString(R.string.cmd_delete));
 			mCurrentSelectedTimeSlice = null;
-			mCurrentSelectedFilter = (FilterParameter) v.getTag();
-			mCurrentSelectedDate = mCurrentSelectedFilter.getStartTime();
+			mCurrentSelectionFilter = (FilterParameter) v.getTag();
+			mCurrentSelectedDate = mCurrentSelectionFilter.getStartTime();
 		}
 	}
 
@@ -216,7 +216,7 @@ public class TimeSheetReportActivity extends Activity implements ReportInterface
 				} else {
 					mTimeSliceDBAdapter.updateTimeSlice(updatedTimeSlice);
 				}
-			} else {
+			} else if (resultCode == ReportFilterActivity.RESULT_FILTER_CHANGED) {
 				mRangeFilter = this.mReportFramework.onActivityResult(intent, mRangeFilter);
 			}
 			loadDataIntoReport(0);
@@ -227,25 +227,37 @@ public class TimeSheetReportActivity extends Activity implements ReportInterface
 	public boolean onContextItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case EDIT_MENU_ID:
-			TimeSliceEditActivity.showTimeSliceEditActivity(this, mCurrentSelectedTimeSlice);
+			onCommandEditTimeSlice();
 			return true;
 		case DELETE_MENU_ID:
-			FilterParameter parameter;
-			if (mCurrentSelectedTimeSlice != null)
-			{
-				parameter = new FilterParameter().setParameter(mCurrentSelectedTimeSlice).setEndTime(mCurrentSelectedTimeSlice.getStartTime());
-			} else {
-				parameter = mCurrentSelectedFilter;
-			}
-			RemoveTimeSliceActivity.showActivity(this, parameter);
+			onCommandDeleteTimeSlice();
 			return true;
 		case ADD_MENU_ID:
-			TimeSlice newSlice = new TimeSlice().setStartTime(mCurrentSelectedDate).setEndTime(mCurrentSelectedDate);
-			TimeSliceEditActivity.showTimeSliceEditActivity(this, newSlice);
+			onCommandAddTimeSlice();
 			return true;
 		default:
 			return super.onContextItemSelected(item);
 		}
+	}
+
+	private void onCommandEditTimeSlice() {
+		TimeSliceEditActivity.showTimeSliceEditActivity(this, mCurrentSelectedTimeSlice);
+	}
+
+	private void onCommandDeleteTimeSlice() {
+		FilterParameter parameter;
+		if (mCurrentSelectedTimeSlice != null)
+		{
+			parameter = new FilterParameter().setParameter(mCurrentSelectedTimeSlice).setEndTime(mCurrentSelectedTimeSlice.getStartTime());
+		} else {
+			parameter = mCurrentSelectionFilter;
+		}
+		RemoveTimeSliceActivity.showActivity(this, parameter);
+	}
+
+	private void onCommandAddTimeSlice() {
+		TimeSlice newSlice = new TimeSlice().setStartTime(mCurrentSelectedDate).setEndTime(mCurrentSelectedDate);
+		TimeSliceEditActivity.showTimeSliceEditActivity(this, newSlice);
 	}
 
 	@Override

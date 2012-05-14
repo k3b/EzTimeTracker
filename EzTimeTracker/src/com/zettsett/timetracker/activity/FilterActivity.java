@@ -34,6 +34,7 @@ public abstract class FilterActivity  extends Activity {
 	protected Spinner mCatSpinner;
 	protected CheckBox mAllDatesCheckBox ;
 
+	private  final int mFilterResultCodeOnOk;
 	protected FilterParameter mFilter = null;
 	
     // define the listener which is called once a user selected the date.
@@ -58,9 +59,10 @@ public abstract class FilterActivity  extends Activity {
 	private int mIdCmdOk;
 	private int mIdCaption;
 
-	public FilterActivity(int idCaption, int idCmdOk) {
+	public FilterActivity(int idCaption, int idCmdOk, int filterResultCodeOnOk) {
 		this.mIdCaption = idCaption;
 		this.mIdCmdOk = idCmdOk;
+		this.mFilterResultCodeOnOk = filterResultCodeOnOk;
 	}
 
 	@Override
@@ -231,7 +233,7 @@ public abstract class FilterActivity  extends Activity {
 	{
 		Intent intent = new Intent();
 		intent.putExtra(Global.EXTRA_FILTER, mFilter);
-		setResult(RESULT_OK, intent);
+		setResult(mFilterResultCodeOnOk, intent);
 		super.finish();
 	}
 	

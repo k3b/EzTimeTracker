@@ -31,7 +31,7 @@
 	    <activity android:name="com.zettsett.timetracker.activity.SettingsActivity"
 			android:screenOrientation="portrait"/>
 		<receiver android:enabled="true"
-				android:name="com.zettsett.timetracker.receiver.RemoteTimeTrackerReceiver">
+				android:name="com.zettsett.timetracker.receiver.RemoteTimeTrackerBroadcastReceiver">
 			<intent-filter>
 				<action android:name="com.zettsett.timetracker.action.COMMAND" />
 		        <data android:scheme="cmd"/>

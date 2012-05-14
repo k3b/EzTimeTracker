@@ -2,7 +2,6 @@ info see http://zettsetttech.blogspot.com/
 
 todo
 	bug
-		tsreport: after delete TS filter is replaced by delete-item
 		report+filter+exit+report => filter is reset to default
 ?	after report update scroll to last know pos
 			

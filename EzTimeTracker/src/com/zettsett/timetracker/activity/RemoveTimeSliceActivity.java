@@ -12,8 +12,10 @@ import com.zettsett.timetracker.Global;
 import com.zettsett.timetracker.database.TimeSliceDBAdapter;
 
 public class RemoveTimeSliceActivity extends FilterActivity {
+	public static final int RESULT_DELETE_OK = 19284;
+
 	public RemoveTimeSliceActivity() {
-		super(R.string.label_delete_time_interval_data, R.string.cmd_delete);
+		super(R.string.label_delete_time_interval_data, R.string.cmd_delete, RESULT_DELETE_OK);
 	}
 	
 	@Override
