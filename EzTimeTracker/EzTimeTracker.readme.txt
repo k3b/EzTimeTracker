@@ -1,3 +1,5 @@
+
+
 info see http://zettsetttech.blogspot.com/
 
 todo
@@ -22,6 +24,10 @@ todo
 	Propertie-dialog with value preview
 
 ?	find out if country has 24h or am/pm display for is24HourView()
+------
+long press starttime in stop-mode: select start-Time and start
+long press stoptime in start-mode: select stop-Time and stop
+------
 	
 multi-selection display for report with actions: change category, delete, merge, sort by date/category for detailreport
 multi-selection display for category with actions: delete,merge

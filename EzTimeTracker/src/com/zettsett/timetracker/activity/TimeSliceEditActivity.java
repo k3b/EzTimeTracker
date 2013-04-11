@@ -39,7 +39,8 @@ public class TimeSliceEditActivity extends Activity  implements CategorySetter {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.edit_time_slice);
-		TimeSlice timeSlice = (TimeSlice) getIntent().getExtras().get(Global.EXTRA_TIMESLICE);
+		Intent intent = getIntent();
+		TimeSlice timeSlice = (TimeSlice) intent.getExtras().get(Global.EXTRA_TIMESLICE);
 		initialize(timeSlice);
 	}
 
@@ -228,16 +229,16 @@ public class TimeSliceEditActivity extends Activity  implements CategorySetter {
 		}
 	}
 
-	public static void showTimeSliceEditActivity(Activity parentActivity, int rowId) 
+	public static void showTimeSliceEditActivity(Activity parentActivity, int rowId, int requestCode) 
 	{
 		TimeSlice timeSlice = TimeSliceDBAdapter.getTimeSliceDBAdapter(parentActivity).fetchByRowID(rowId);
-		showTimeSliceEditActivity(parentActivity, timeSlice);
+		showTimeSliceEditActivity(parentActivity, timeSlice, requestCode);
 	}
 
 	private static TimeSliceCategory lastCategory = TimeSliceCategory.NO_CATEGORY;
 	
 	public static void showTimeSliceEditActivity(
-			Activity parentActivity, TimeSlice timeSlice) 
+			Activity parentActivity, TimeSlice timeSlice, int requestCode) 
 	{
 		if (timeSlice != null)
 		{
@@ -251,7 +252,7 @@ public class TimeSliceEditActivity extends Activity  implements CategorySetter {
 		
 		Intent indent = new Intent(parentActivity, TimeSliceEditActivity.class);
 		indent.putExtra(Global.EXTRA_TIMESLICE, timeSlice);
-		parentActivity.startActivityForResult(indent, 1);
+		parentActivity.startActivityForResult(indent, requestCode);
 	}
 
 }

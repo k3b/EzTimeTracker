@@ -56,6 +56,8 @@ public class TimeSheetReportActivity extends Activity implements ReportInterface
 	private static final int DELETE_MENU_ID = Menu.FIRST + 1;
 	private static final int ADD_MENU_ID = Menu.FIRST + 2;
 	private static final int SHOW_DESC_MENU_ID = Menu.FIRST + 3;
+	private static final int ID_EDIT_TIME_SLICE = Menu.FIRST + 4;
+	private static final int ID_ADD_TIME_SLICE = Menu.FIRST + 5;
 	
 	private TimeSliceDBAdapter mTimeSliceDBAdapter;
 	private LinearLayout mMainLayout;
@@ -241,7 +243,7 @@ public class TimeSheetReportActivity extends Activity implements ReportInterface
 	}
 
 	private void onCommandEditTimeSlice() {
-		TimeSliceEditActivity.showTimeSliceEditActivity(this, mCurrentSelectedTimeSlice);
+		TimeSliceEditActivity.showTimeSliceEditActivity(this, mCurrentSelectedTimeSlice, ID_EDIT_TIME_SLICE);
 	}
 
 	private void onCommandDeleteTimeSlice() {
@@ -257,7 +259,7 @@ public class TimeSheetReportActivity extends Activity implements ReportInterface
 
 	private void onCommandAddTimeSlice() {
 		TimeSlice newSlice = new TimeSlice().setStartTime(mCurrentSelectedDate).setEndTime(mCurrentSelectedDate);
-		TimeSliceEditActivity.showTimeSliceEditActivity(this, newSlice);
+		TimeSliceEditActivity.showTimeSliceEditActivity(this, newSlice, ID_ADD_TIME_SLICE);
 	}
 
 	@Override
@@ -282,7 +284,7 @@ public class TimeSheetReportActivity extends Activity implements ReportInterface
 			Calendar c = Calendar.getInstance();
 			long now = c.getTimeInMillis();
 			TimeSlice newSlice = new TimeSlice().setStartTime(now).setEndTime(now);
-			TimeSliceEditActivity.showTimeSliceEditActivity(this, newSlice);
+			TimeSliceEditActivity.showTimeSliceEditActivity(this, newSlice, ADD_MENU_ID);
 
 			break;
 		case SHOW_DESC_MENU_ID:

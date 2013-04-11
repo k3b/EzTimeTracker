@@ -81,6 +81,7 @@ public class ReportFramework implements Serializable {
 			calendar.set(Calendar.HOUR, 0);
 			calendar.set(Calendar.MINUTE, 0);
 			calendar.roll(Calendar.MONTH, false);
+			calendar.roll(Calendar.MONTH, false); // -= 2 months
 			startTime = calendar.getTimeInMillis();
 			if (startTime > currDate.getTime()) {
 				calendar.roll(Calendar.YEAR, false);
@@ -94,6 +95,7 @@ public class ReportFramework implements Serializable {
 			Calendar calendar = new GregorianCalendar();
 			calendar.setTime(currDate);
 			endTime = calendar.getTimeInMillis();
+			calendar.roll(Calendar.WEEK_OF_YEAR, true); // += 1 week to see also entries that where made after the programstart.
 		}
 		this.mFilter.setEndTime(endTime);
 	}

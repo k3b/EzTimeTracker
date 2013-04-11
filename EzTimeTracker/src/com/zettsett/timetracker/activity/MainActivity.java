@@ -13,7 +13,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.*;
-import android.view.View.OnLongClickListener;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.*;
@@ -40,12 +39,22 @@ import com.zettsett.timetracker.model.TimeSliceCategory;
  * License for the specific language governing permissions and limitations under
  * the License.
  * 
+ * GUI to start and/or stop time tracking:
+ * Workflow:
+ * stopped+start->showSelectCategoryForPunchInDialog->(createNewCategory->)started(now)
+ * stopped+long-start->editStartSettings()->started(selected-time, selectedCategory)
+ * 
+ * started+long-start->editStartSettings()->started(selected-time, selectedCategory)
+ * started+stop->punchOutClock()->stopped(now)
+ * started+start->showSelectCategoryForPunchInDialog->(createNewCategory->)stop(now)+started(now)
  */
-public class MainActivity extends Activity implements OnChronometerTickListener, OnLongClickListener, CategorySetter {
+public class MainActivity extends Activity implements OnChronometerTickListener, CategorySetter {
 	public static final String PREFS_NAME = "TimerPrefs";
 
-	private static final int SELECT = 0;
-	private static final int CREATE = 1;
+	private static final int SELECT_CATAGORY = 0;
+	private static final int CREATE_NEW_CATEGORY = 1;
+	private static final int EDIT_START = 2;
+	private static final int EDIT_STOP = 3;
 
 	private TextView elapsedTimeDisplay;
 	private EditText notesEditor;
@@ -249,8 +258,8 @@ public class MainActivity extends Activity implements OnChronometerTickListener,
 	    }
 	}
 
-	private void showPunchInDialog() {
-		showDialog(SELECT);
+	private void showSelectCategoryForPunchInDialog() {
+		showDialog(SELECT_CATAGORY);
 	}
 
 	private CategoryEditDialog edit = null;
@@ -261,15 +270,15 @@ public class MainActivity extends Activity implements OnChronometerTickListener,
 			this.edit = new CategoryEditDialog(this, this);
 		}
 		this.edit.setCategory(category);
-		showDialog(CREATE);
+		showDialog(CREATE_NEW_CATEGORY);
 	}
 	
 	protected Dialog onCreateDialog(int id) {
 		switch (id) {
-			case SELECT:
+			case SELECT_CATAGORY:
 				return new SelectCategoryDialog(this, R.style.PunchDialog, TimeSliceCategory.NO_CATEGORY)
 							.setCategoryCallback(this);
-			case CREATE:
+			case CREATE_NEW_CATEGORY:
 				return this.edit;
 			case R.id.about:
 				return this.getAboutDialog();
@@ -281,23 +290,35 @@ public class MainActivity extends Activity implements OnChronometerTickListener,
 		Button punchInButton = (Button) findViewById(R.id.btnPunchIn);
 		punchInButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(final View view) {
-				showPunchInDialog();
+				showSelectCategoryForPunchInDialog();
 			}
 		});
-		
-		
-		punchInButton.setOnLongClickListener(this);
+		punchInButton.setOnLongClickListener(new View.OnLongClickListener() {
+			@Override
+			public boolean onLongClick(View v) {
+				// TODO Auto-generated method stub
+				return editStartSettings();
+			}
+		});
 		
 		Button punchOutButton = (Button) findViewById(R.id.btnPunchOut);
 		punchOutButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(final View view) {
-				punchOutClock();
+				punchOutClock(tracker.currentTimeMillis());
 			}
 		});
+		punchOutButton.setOnLongClickListener(new View.OnLongClickListener() {
+			@Override
+			public boolean onLongClick(View v) {
+				// TODO Auto-generated method stub
+				return editStopSettings();
+			}
+		});
+		
 	}
 
 	/**
-	 * Called by SelectCategoryDialog
+	 * Called by showSelectCategoryForPunchInDialog
 	 */
 	@Override
 	public void setCategory(TimeSliceCategory selectedCategory) {
@@ -309,20 +330,25 @@ public class MainActivity extends Activity implements OnChronometerTickListener,
 				timeSliceCategoryDBAdapter.createTimeSliceCategory(selectedCategory);
 			} 
 			long elapsedRealtime = tracker.currentTimeMillis();
-			tracker.punchInClock(selectedCategory, elapsedRealtime);
-			reloadGui();
+			punchInClock(elapsedRealtime, selectedCategory);
 		}
 	}
 
-	private void punchOutClock() {
-		tracker.punchOutClock(tracker.currentTimeMillis(), this.notesEditor.getText().toString());
+	private void punchInClock(long elapsedRealtime,
+			TimeSliceCategory selectedCategory) {
+		tracker.punchInClock(selectedCategory, elapsedRealtime);
 		reloadGui();
 	}
 
-	private void updateElapsedTimeLabel(long elapsed) {
+	private void punchOutClock(long elapsedRealtime) {
+		tracker.punchOutClock(elapsedRealtime, this.notesEditor.getText().toString());
+		reloadGui();
+	}
+
+	private void updateElapsedTimeLabel(long elapsedRealtime) {
 		if (elapsedTimeDisplay != null) {
 			elapsedTimeDisplay.setText(DateTimeFormatter
-					.hrColMin(elapsed, false,true));
+					.hrColMin(elapsedRealtime, false,true));
 		}
 	}
 
@@ -342,36 +368,73 @@ public class MainActivity extends Activity implements OnChronometerTickListener,
 		updateChronOutputTextView();
 	}
 
-    @Override
-    public boolean onLongClick(View v) {
-    	if ((sessionData != null) && (sessionData.isPunchedIn()))
+	private boolean editStartSettings() {
+		if (sessionData != null) { 
+    		TimeSlice editItem = new TimeSlice()
+			.setCategory(sessionData.getCategory())
+			.setEndTime(TimeSliceEditActivity.HIDDEN)
+			.setNotes(TimeSliceEditActivity.HIDDEN_NOTES)
+			.setRowId(32531);
+			// edit already running starttime
+			if (sessionData.isPunchedIn()){
+	    		editItem.setStartTime(sessionData.getStartTime());
+			} else {
+	    		editItem.setStartTime(tracker.currentTimeMillis());
+			}
+    		TimeSliceEditActivity.showTimeSliceEditActivity(this, editItem, EDIT_START);
+		}
+		
+		return true;	 // consumed        	
+	} 
+
+	private boolean editStopSettings() {
+		if ((sessionData != null) && (sessionData.isPunchedIn()))
     	{
     		TimeSlice editItem = new TimeSlice()
     			.setCategory(sessionData.getCategory())
     			.setStartTime(sessionData.getStartTime())
-    			.setEndTime(TimeSliceEditActivity.HIDDEN)
+    			.setEndTime(tracker.currentTimeMillis())
     			.setNotes(TimeSliceEditActivity.HIDDEN_NOTES)
     			.setRowId(32531);
-    		TimeSliceEditActivity.showTimeSliceEditActivity(this, editItem);
+    		TimeSliceEditActivity.showTimeSliceEditActivity(this, editItem, EDIT_STOP);
     	}
 		return true;	 // consumed        	
-    } 
+	} 
 
+	/**
+	 * call back from sub-activities
+	 */
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
 		super.onActivityResult(requestCode, resultCode, intent);
 		
-		TimeSlice updatedTimeSlice;
-		if ((intent != null) && ((updatedTimeSlice = (TimeSlice) intent.getExtras().get(Global.EXTRA_TIMESLICE)) != null)) {
-			
-			sessionData = reloadSessionData();
+		TimeSlice updatedTimeSlice = getTimeSlice(intent);
+		sessionData = reloadSessionData();
+		if ((sessionData != null) && (updatedTimeSlice != null)) { //  (requestCode == EDIT_START) || (requestCode == EDIT_STOP)) {
 
-			sessionData
+			boolean punchedIn = sessionData.isPunchedIn();
+			if ((requestCode == EDIT_START) && !punchedIn) {
+				punchInClock(updatedTimeSlice.getStartTime(), updatedTimeSlice.getCategory());
+				
+			} else if ((requestCode == EDIT_START) && punchedIn) {
+				sessionData
+					.setCategory(updatedTimeSlice.getCategory())
+					.setStartTime(updatedTimeSlice.getStartTime());
+				saveState();
+				reloadGui();
+			} else if ((requestCode == EDIT_STOP) && punchedIn) {
+				sessionData
 				.setCategory(updatedTimeSlice.getCategory())
 				.setStartTime(updatedTimeSlice.getStartTime());
-			saveState();
-			reloadGui();
+				saveState();
+				reloadGui();
+				punchOutClock(updatedTimeSlice.getEndTime());
+			}
 		}
+	}
+
+	private TimeSlice getTimeSlice(Intent intent) {
+		return (intent != null) ? ((TimeSlice) intent.getExtras().get(Global.EXTRA_TIMESLICE)) : null;
 	}
 
 	@Override
