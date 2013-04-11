@@ -48,7 +48,7 @@ import com.zettsett.timetracker.model.TimeSliceCategory;
  * started+stop->punchOutClock()->stopped(now)
  * started+start->showSelectCategoryForPunchInDialog->(createNewCategory->)stop(now)+started(now)
  */
-public class MainActivity extends Activity implements OnChronometerTickListener, CategorySetter {
+public class PunchInPunchOutActivity extends Activity implements OnChronometerTickListener, CategorySetter {
 	public static final String PREFS_NAME = "TimerPrefs";
 
 	private static final int SELECT_CATAGORY = 0;
@@ -72,7 +72,7 @@ public class MainActivity extends Activity implements OnChronometerTickListener,
 		public void onReceive (Context context, Intent intent) {
 			if (Log.isLoggable(Global.LOG_CONTEXT, Log.INFO))
 			{
-				Log.i(Global.LOG_CONTEXT, "MainActivity.onReceive(intent='" + intent + "')");
+				Log.i(Global.LOG_CONTEXT, "PunchInPunchOutActivity.onReceive(intent='" + intent + "')");
 			}
 			reloadGui();
 		}
@@ -82,7 +82,7 @@ public class MainActivity extends Activity implements OnChronometerTickListener,
 	public void onCreate(Bundle savedInstanceState) {
 		if (Global.isDebugEnabled())
 		{
-			Log.d(Global.LOG_CONTEXT, "MainActivity()");
+			Log.d(Global.LOG_CONTEXT, "PunchInPunchOutActivity()");
 		}
 		
 		super.onCreate(savedInstanceState);
@@ -136,7 +136,7 @@ public class MainActivity extends Activity implements OnChronometerTickListener,
 	 */
 	void reloadGui()
 	{
-		Log.d(Global.LOG_CONTEXT, "MainActivity.refreshGui()");
+		Log.d(Global.LOG_CONTEXT, "PunchInPunchOutActivity.refreshGui()");
 
 		sessionData = reloadSessionData();
 		

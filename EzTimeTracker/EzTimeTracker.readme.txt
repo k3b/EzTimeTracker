@@ -1,5 +1,3 @@
-
-
 info see http://zettsetttech.blogspot.com/
 
 todo
@@ -33,7 +31,7 @@ multi-selection display for report with actions: change category, delete, merge,
 multi-selection display for category with actions: delete,merge
 ------
 
-MainActivity: Long pressing the startbutton allows to edit current recording startTime/Category
+PunchInPunchOutActivity: Long pressing the startbutton allows to edit current recording startTime/Category
 Improved delete timeslice allows filtering from/to/category
 added versionnumber to main header, create about-box
 
