@@ -29,12 +29,12 @@ public class RemoteTimeTrackerBroadcastReceiver extends BroadcastReceiver {
 			mgr.reloadSessionData();
 			if (Global.CMD_START.equalsIgnoreCase(cmd) && (category != null) && (category.length() > 0)) 
 			{
-				long elapsedRealtime = mgr.currentTimeMillis();
+				long elapsedRealtime = TimeTrackerManager.currentTimeMillis();
 				mgr.punchInClock(category, elapsedRealtime);
 				addNotes(mgr, 3, parts);
 			} else 	if (Global.CMD_STOP.equalsIgnoreCase(cmd)) 
 			{
-				long elapsedRealtime = mgr.currentTimeMillis();
+				long elapsedRealtime = TimeTrackerManager.currentTimeMillis();
 				addNotes(mgr, 2, parts);
 				mgr.punchOutClock(elapsedRealtime, "");
 			} else {

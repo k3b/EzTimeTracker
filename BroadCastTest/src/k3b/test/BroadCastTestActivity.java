@@ -19,11 +19,11 @@ public class BroadCastTestActivity extends Activity implements View.OnClickListe
 			String data = intent.getDataString();
 			if (data != null)
 			{
-				String[] parts = data.split(":");
 				
 		        TextView text = (TextView) findViewById(R.id.text1);
 
 		        text.append("a " + data + "\n");
+//				String[] parts = data.split(":");
 //				message
 //				.append(parts[1]).append(" ").append((parts.length > 2) ? parts[2] : "").append("\n");
 				;
@@ -39,7 +39,7 @@ public class BroadCastTestActivity extends Activity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         
-        TextView text = (TextView) findViewById(R.id.text1);
+        // TextView text = (TextView) findViewById(R.id.text1);
         
         ((Button) findViewById(R.id.button1)).setOnClickListener(this);
         ((Button) findViewById(R.id.button2)).setOnClickListener(this);
@@ -83,7 +83,7 @@ public class BroadCastTestActivity extends Activity implements View.OnClickListe
 		
 		sendBroadcast(intent);
 
-        TextView text = (TextView) findViewById(R.id.text1);
+        // TextView text = (TextView) findViewById(R.id.text1);
         
         // text.setText(RemoteTimeTrackerReceiver.message.toString());
 	}

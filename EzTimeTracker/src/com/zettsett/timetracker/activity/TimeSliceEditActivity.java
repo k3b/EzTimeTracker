@@ -15,6 +15,7 @@ import com.googlecode.android.widgets.DateSlider.DateTimeMinuteSlider;
 import com.zetter.androidTime.R;
 import com.zettsett.timetracker.DateTimeFormatter;
 import com.zettsett.timetracker.Global;
+import com.zettsett.timetracker.TimeTrackerManager;
 import com.zettsett.timetracker.database.TimeSliceCategoryDBAdapter;
 import com.zettsett.timetracker.database.TimeSliceDBAdapter;
 import com.zettsett.timetracker.model.TimeSlice;
@@ -26,6 +27,8 @@ public class TimeSliceEditActivity extends Activity  implements CategorySetter {
 	
 	protected static final int GET_END_DATETIME = 0;
 	protected static final int GET_START_DATETIME = 1;
+	protected static final int GET_END_DATETIME_NOW = 2;
+	protected static final int GET_START_DATETIME_NOW = 3;
 	private static final int EDIT_CATEGORY_ID = 99;
 	
 	private Button mTimeInButton;
@@ -88,8 +91,14 @@ public class TimeSliceEditActivity extends Activity  implements CategorySetter {
 			mTimeInButton.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					TimeSliceEditActivity.this.timeSlice.setNotes(notesEditText.getText().toString());
 					showDialog(GET_START_DATETIME);
+				}
+			});
+			mTimeInButton.setOnLongClickListener(new View.OnLongClickListener() {
+				@Override
+				public boolean onLongClick(View v) {
+					showDialog(GET_START_DATETIME_NOW);
+					return true;
 				}
 			});
 		} else {
@@ -101,8 +110,14 @@ public class TimeSliceEditActivity extends Activity  implements CategorySetter {
 			mTimeOutButton.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View v) {
-					TimeSliceEditActivity.this.timeSlice.setNotes(notesEditText.getText().toString());
 					showDialog(GET_END_DATETIME);
+				}
+			});
+			mTimeOutButton.setOnLongClickListener(new View.OnLongClickListener() {
+				@Override
+				public boolean onLongClick(View v) {
+					showDialog(GET_END_DATETIME_NOW);
+					return true;
 				}
 			});
 		} else {
@@ -171,12 +186,20 @@ public class TimeSliceEditActivity extends Activity  implements CategorySetter {
     	// get today's date and time
         final Calendar c = Calendar.getInstance();
         
+		TimeSliceEditActivity.this.timeSlice.setNotes(notesEditText.getText().toString());
+
         switch (id) {
         case GET_START_DATETIME:
         	c.setTimeInMillis(this.timeSlice.getStartTime());
             return new DateTimeMinuteSlider(this,mDateTimeSetListenerStart,c);
+        case GET_START_DATETIME_NOW:
+        	c.setTimeInMillis(TimeTrackerManager.currentTimeMillis());
+            return new DateTimeMinuteSlider(this,mDateTimeSetListenerStart,c);
         case GET_END_DATETIME:
         	c.setTimeInMillis(this.timeSlice.getEndTime());
+            return new DateTimeMinuteSlider(this,mDateTimeSetListenerEnd,c);
+        case GET_END_DATETIME_NOW:
+        	c.setTimeInMillis(TimeTrackerManager.currentTimeMillis());
             return new DateTimeMinuteSlider(this,mDateTimeSetListenerEnd,c);
 		case EDIT_CATEGORY_ID:
 			return this.edit;

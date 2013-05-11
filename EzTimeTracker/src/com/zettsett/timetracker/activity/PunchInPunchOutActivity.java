@@ -89,6 +89,14 @@ public class PunchInPunchOutActivity extends Activity implements OnChronometerTi
 		//DateTimeFormatter.SetFormat(DateFormat.get DateInstance(DateFormat.S));
 		setContentView(R.layout.main);
 		this.elapsedTimeDisplay = (TextView) findViewById(R.id.mainViewChronOutput);
+		this.elapsedTimeDisplay.setOnLongClickListener(new View.OnLongClickListener() {
+			
+			@Override
+			public boolean onLongClick(View v) {
+				return startActivity(R.id.details);
+			}
+		});
+		
 		this.notesEditor = (EditText) findViewById(R.id.main_edit_text_notes);
 
 		setupButtons();
@@ -179,23 +187,32 @@ public class PunchInPunchOutActivity extends Activity implements OnChronometerTi
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 
-		Class<? extends Activity> itemHandler = getMenuIntentHandler(item);
-		if (itemHandler != null)
+		int itemId = item.getItemId();
+		if (startActivity(itemId))
 		{
-			Intent intent = new Intent().setClass(this, itemHandler);
-			intent.putExtra(SummaryReportActivity.MENU_ID, item.getItemId());
-			startActivity(intent);
 			return true;
 		} else {
-			switch (item.getItemId()) {
+			switch (itemId) {
 				case R.id.about:
-					showDialog(item.getItemId());
+					showDialog(itemId);
 					return true;
 			}
 	        return super.onOptionsItemSelected(item);
 	    }
 	}
-	
+
+	private boolean startActivity(int itemId) {
+		Class<? extends Activity> itemHandler = getMenuIntentHandler(itemId);
+		if (itemHandler != null)
+		{
+			Intent intent = new Intent().setClass(this, itemHandler);
+			intent.putExtra(SummaryReportActivity.MENU_ID, itemId);
+			startActivity(intent);
+			return true;
+		} 
+		return false;
+	}
+
 	private Dialog getAboutDialog() {
 		Context mContext = this;
 		  AlertDialog.Builder alert = new AlertDialog.Builder(mContext);
@@ -234,8 +251,8 @@ public class PunchInPunchOutActivity extends Activity implements OnChronometerTi
       return alert.create();	
     }
 
-	private Class<? extends Activity> getMenuIntentHandler(MenuItem item) {
-	    switch (item.getItemId()) {
+	private Class<? extends Activity> getMenuIntentHandler(int item) {
+	    switch (item) {
 	    case R.id.details:
 	        return TimeSheetReportActivity.class;
 	    case R.id.summary_day:
@@ -304,7 +321,7 @@ public class PunchInPunchOutActivity extends Activity implements OnChronometerTi
 		Button punchOutButton = (Button) findViewById(R.id.btnPunchOut);
 		punchOutButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(final View view) {
-				punchOutClock(tracker.currentTimeMillis());
+				punchOutClock(TimeTrackerManager.currentTimeMillis());
 			}
 		});
 		punchOutButton.setOnLongClickListener(new View.OnLongClickListener() {
@@ -329,7 +346,7 @@ public class PunchInPunchOutActivity extends Activity implements OnChronometerTi
 			if (selectedCategory.getRowId() == TimeSliceCategory.NOT_SAVED) {
 				timeSliceCategoryDBAdapter.createTimeSliceCategory(selectedCategory);
 			} 
-			long elapsedRealtime = tracker.currentTimeMillis();
+			long elapsedRealtime = TimeTrackerManager.currentTimeMillis();
 			punchInClock(elapsedRealtime, selectedCategory);
 		}
 	}
@@ -379,7 +396,7 @@ public class PunchInPunchOutActivity extends Activity implements OnChronometerTi
 			if (sessionData.isPunchedIn()){
 	    		editItem.setStartTime(sessionData.getStartTime());
 			} else {
-	    		editItem.setStartTime(tracker.currentTimeMillis());
+	    		editItem.setStartTime(TimeTrackerManager.currentTimeMillis());
 			}
     		TimeSliceEditActivity.showTimeSliceEditActivity(this, editItem, EDIT_START);
 		}
@@ -393,7 +410,7 @@ public class PunchInPunchOutActivity extends Activity implements OnChronometerTi
     		TimeSlice editItem = new TimeSlice()
     			.setCategory(sessionData.getCategory())
     			.setStartTime(sessionData.getStartTime())
-    			.setEndTime(tracker.currentTimeMillis())
+    			.setEndTime(TimeTrackerManager.currentTimeMillis())
     			.setNotes(TimeSliceEditActivity.HIDDEN_NOTES)
     			.setRowId(32531);
     		TimeSliceEditActivity.showTimeSliceEditActivity(this, editItem, EDIT_STOP);
@@ -452,7 +469,7 @@ public class PunchInPunchOutActivity extends Activity implements OnChronometerTi
 	}
 	
 	private void updateChronOutputTextView() {
-		long elapsed = (!tracker.isPunchedIn()) ? tracker.getElapsedTimeInMillisecs() : (tracker.currentTimeMillis() - sessionData.getStartTime());
+		long elapsed = (!tracker.isPunchedIn()) ? tracker.getElapsedTimeInMillisecs() : (TimeTrackerManager.currentTimeMillis() - sessionData.getStartTime());
 		updateElapsedTimeLabel(elapsed);
 	}
 

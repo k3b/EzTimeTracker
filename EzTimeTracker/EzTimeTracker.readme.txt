@@ -2,7 +2,8 @@ info see http://zettsetttech.blogspot.com/
 
 todo
 	?	after report update scroll to last know pos
-			
+v	TimeSliceEditActivity: long press on Start/Stop-time ==> sets to now before editing
+v	PunchInPunchOutActivity: long press on elapsedTime => shows Detail-report	
 --
 =================
 
@@ -23,17 +24,16 @@ todo
 
 ?	find out if country has 24h or am/pm display for is24HourView()
 ------
-long press starttime in stop-mode: select start-Time and start
-long press stoptime in start-mode: select stop-Time and stop
-------
-	
-multi-selection display for report with actions: change category, delete, merge, sort by date/category for detailreport
-multi-selection display for category with actions: delete,merge
+PunchInPunchOutActivity
+v	long press starttime in stop-mode: select start-Time and start
+v	long press stoptime in start-mode: select stop-Time and stop
+	multi-selection display for report with actions: change category, delete, merge, sort by date/category for detailreport
+	multi-selection display for category with actions: delete,merge
 ------
 
-PunchInPunchOutActivity: Long pressing the startbutton allows to edit current recording startTime/Category
-Improved delete timeslice allows filtering from/to/category
-added versionnumber to main header, create about-box
+v	PunchInPunchOutActivity: Long pressing the startbutton allows to edit current recording startTime/Category
+v	Improved delete timeslice allows filtering from/to/category
+v	added versionnumber to main header, create about-box
 
 copy taken on Date: 02.02.2012 18:09:20 from http://eztimetracker.googlecode.com/svn/trunk/ "r10 Updating to version 1.6"
 

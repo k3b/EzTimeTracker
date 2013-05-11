@@ -117,7 +117,7 @@ public class TimeTrackerManager {
 		return sessionData.isPunchedIn();
 	}
 
-	public long currentTimeMillis() {
+	public static long currentTimeMillis() {
 		return System.currentTimeMillis(); // SystemClock.elapsedRealtime();
 	}
 
