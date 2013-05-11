@@ -7,3 +7,5 @@ pkg
 /AndroidQuickPreferencesProject
 /backup
 /.metadata
+
+*.bak

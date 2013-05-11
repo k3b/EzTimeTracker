@@ -76,7 +76,10 @@ I hope you enjoy the new features.
 Posted by Eric Z at 9:25 PM 0 comments
 Tuesday, June 8, 2010
 Introducing EZ Time Tracker
-EZ Time Tacker for Android is a simple way to track the passage of time. Punch in/punch out for user definable activity categories. The app will keep track of the interval between punch in/out, or between the punch in for a current activity and a new punch in (there is no need to punch out between activities.) The interval is recorded even if the app is terminated for any reason.
+EZ Time Tacker for Android is a simple way to track the passage of time. Punch in/punch out for user definable 
+activity categories. The app will keep track of the interval between punch in/out, or between the punch in for a 
+current activity and a new punch in (there is no need to punch out between activities.) The interval is recorded 
+even if the app is terminated for any reason.
 
 EZ Time Tacker currently includes two types of reports: time sheet and summary. Time sheet shows an ordered list of all punch in/out intervals with the category, in and out times and total durations displayed. The summary shows totals either by date or category, grouped (or in the case of category, sub-grouped) by day, week or month. Both reports are filterable by a date range. Both reports are also exportable to the device's SD card.
 
@@ -92,3 +95,85 @@ Subscribe to: Posts (Atom)
 ####################################################
 
 Manual
+Introducing EZ Time Tracker
+EZ Time Tacker for Android is a simple way to track the passage of time. Punch in/punch out for user definable 
+activity categories. The app will keep track of the interval between punch in/out, or between the punch in for a 
+current activity and a new punch in (there is no need to punch out between activities.) The interval is recorded 
+even if the app is terminated for any reason.
+
+EZ Time Tacker currently includes two types of reports: time sheet and summary. Time sheet shows an ordered list 
+of all punch in/out intervals with the category, in and out times and total durations displayed. The summary shows 
+totals either by date or category, grouped (or in the case of category, sub-grouped) by day, week or month. Both 
+reports are filterable by a date range. Both reports are also exportable to the device's SD card.
+
+EZ Time Tacker is available for free. The source code is available under Apache License 2.0 at 
+https://github.com/k3b/EzTimeTracker/ so... if you don't like it... fix it! (You might do me the favor of 
+sharing any changes you make, although under the Apache license, you are not required to do so.)
+
+EZ Time Tracker was originally written by Eric Z up to version 1.6 july 2010 
+(see http://zettsetttech.blogspot.com/ and http://eztimetracker.googlecode.com/svn/trunk/)
+
+The current version is maintained by k3b (see https://github.com/k3b/EzTimeTracker)
+
+Usage
+PunchInPunchOut Screen
+	- press "punch in": opens the "Select or Create Category" Dialog (? means "Create new Category"). 
+						After select/create time recording is started with current date/time, 
+						elapsed time is displayed in green and constantly updated. 
+						Use "punch in" to start new time recording-the previous recording is 
+						automatically punched out if neccessary.
+						
+	- long-press "punch in": opens the "Select Category/Start time" screen. 
+						After "save" time recording is started with selected category/start, 
+						elapsed time is displayed in green and constantly updated. 
+						Use long-press "punch in" to punch in with a specific date/time (instead of current date/time)
+						or to change current "punch in" category and/or date/time.
+						
+	- press "punch out": stops time recording with current date/time. 
+						After "punch out" elapsed time is displayed in red.
+	
+	- long-press "punch out": opens the "Select Category/Start/Stop time" screen. 
+						After "save" time recording is stopped with given category/start/stop 
+						and elapsed time is displayed in red.
+						
+	- long-press "elapsed time": Opens the "Detail Report"
+	
+	- menu: opens the main menu: 
+		- Report
+			Opens one of several Reports
+			- Detail Report with all entries
+			- Summary by day/week/month with cumulated durations ordered by date
+			- Category by day/week/month with cumulated durations ordered by category
+			
+		- Categories
+			opens the List of Categories.
+			- Long-press "?" to create a new Category
+			- Long-press a category to edit or delete a category
+		- Export
+			to export activity data to csv-file or email
+			
+		- Remove to delete one or more time intervalls
+		- Settings
+		- About
+		
+"Select Category/Start/Stop time" screen
+		- press "start" to change the start time based on its previos value
+		- long-press "start"  to change the start time based on current date/time
+		- press "stop" to change the stop time based on its previos value
+		- long-press "stop"  to change the stop time based on current date/time	
+		- press "category" to select an existing category or "?" to create a new.
+			
+"Detail Report"
+		- long-press a report-item to open the context-menue to
+			- manually add a new "time intervall"
+			- view/edit the selected  "time intervall"
+			- delete the selected  "time intervall"
+		- menu-key to open the report menu
+			- manually add a new "time intervall"
+			- Export the Report to csv-file or email
+			- Filter to limit the Report range
+				- category=?: all categories else only the selected category
+				- [X] ignore date: all dates else only those between Start and End
+				- press "update" to apply the filter or cancel to not change it.
+				
+			
