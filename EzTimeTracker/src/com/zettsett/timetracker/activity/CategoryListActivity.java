@@ -10,7 +10,6 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import com.zetter.androidTime.R;
 import com.zettsett.timetracker.database.*;
 import com.zettsett.timetracker.model.TimeSliceCategory;
-import com.zettsett.timetracker.model.TimeSliceCategoryAdapter;
 
 public class CategoryListActivity extends ListActivity implements CategorySetter {
 	private static final int MENU_ADD_CATEGORY = Menu.FIRST;
@@ -29,7 +28,7 @@ public class CategoryListActivity extends ListActivity implements CategorySetter
 	}
 
 	private void refreshCategoryList() {
-		setListAdapter(TimeSliceCategoryAdapter.getTimeSliceCategoryAdapterFromDB(this,
+		setListAdapter(CategoryListAdapterDetailed.createAdapter(this,
 				R.layout.category_list_view_row, true, TimeSliceCategory.NO_CATEGORY, TimeSliceCategory.MIN_VALID_DATE));
 
 	}

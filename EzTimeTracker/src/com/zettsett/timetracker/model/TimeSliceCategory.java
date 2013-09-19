@@ -133,23 +133,6 @@ public class TimeSliceCategory implements Serializable, Comparable<TimeSliceCate
 		return true;
 	}
 
-	public static ArrayAdapter<TimeSliceCategory> getCategoryAdapter(Context context, TimeSliceCategory firstElement, long currentDateTime) {
-		TimeSliceCategoryRepsitory repository = new TimeSliceCategoryRepsitory(context);
-		
-		List<TimeSliceCategory> categories = repository
-				.fetchAllTimeSliceCategories(currentDateTime);
-		if(firstElement != null)
-		{
-			categories.add(0, firstElement);
-		}
-
-		TimeSliceCategory[] durationCategories = categories
-				.toArray(new TimeSliceCategory[0]);
-		return new ArrayAdapter<TimeSliceCategory>(
-				context, android.R.layout.simple_spinner_item, durationCategories);
-		
-	}
-
 	@Override
 	public int compareTo(TimeSliceCategory anotherTimeSliceCategory) {
 		return this.categoryName.compareTo(anotherTimeSliceCategory.categoryName);

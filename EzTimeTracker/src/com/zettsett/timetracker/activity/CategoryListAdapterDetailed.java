@@ -1,4 +1,4 @@
-package com.zettsett.timetracker.model;
+package com.zettsett.timetracker.activity;
 
 import java.util.List;
 
@@ -11,15 +11,16 @@ import android.widget.TextView;
 
 import com.zetter.androidTime.R;
 import com.zettsett.timetracker.database.TimeSliceCategoryRepsitory;
+import com.zettsett.timetracker.model.TimeSliceCategory;
 
-public class TimeSliceCategoryAdapter extends ArrayAdapter<TimeSliceCategory> {
+public class CategoryListAdapterDetailed extends ArrayAdapter<TimeSliceCategory> {
 
 	public static final int NO_CATEGORY = -1;
 	private final Context context;
 	private final boolean withDescription;
 	private final int viewId;
 	
-	public TimeSliceCategoryAdapter(Context context, int textViewResourceId,
+	public CategoryListAdapterDetailed(Context context, int textViewResourceId,
 			List<TimeSliceCategory> items, boolean withDescription) {
 		super(context, textViewResourceId, items);
 		this.items = items;
@@ -30,7 +31,7 @@ public class TimeSliceCategoryAdapter extends ArrayAdapter<TimeSliceCategory> {
 
 	private final List<TimeSliceCategory> items;
 
-	public static TimeSliceCategoryAdapter getTimeSliceCategoryAdapterFromDB(
+	public static CategoryListAdapterDetailed createAdapter(
 			Context context, int viewId, boolean withDescription, TimeSliceCategory firstElement, long currentDateTime) {
 		TimeSliceCategoryRepsitory repository = new TimeSliceCategoryRepsitory(context);
 
@@ -41,7 +42,7 @@ public class TimeSliceCategoryAdapter extends ArrayAdapter<TimeSliceCategory> {
 		{
 			categories.add(0, firstElement);
 		}
-		return new TimeSliceCategoryAdapter(context,
+		return new CategoryListAdapterDetailed(context,
 				viewId, categories, withDescription);
 	}
 

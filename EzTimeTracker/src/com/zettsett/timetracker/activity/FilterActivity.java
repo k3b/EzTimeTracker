@@ -104,7 +104,7 @@ public abstract class FilterActivity  extends Activity {
 		});
 
 		mCatSpinner = (Spinner) findViewById(R.id.spinnerEditTimeSliceCategory);
-		this.allCategoriesAdapter=TimeSliceCategory.getCategoryAdapter(this, TimeSliceCategory.NO_CATEGORY, TimeSliceCategory.MIN_VALID_DATE); 
+		this.allCategoriesAdapter=CategoryListAdapterSimple.createAdapter(this, TimeSliceCategory.NO_CATEGORY, TimeSliceCategory.MIN_VALID_DATE); 
 		mCatSpinner.setAdapter( this.allCategoriesAdapter );
 		FilterActivity.selectSpinner(mCatSpinner, mFilter.getCategoryId());
 

@@ -10,7 +10,6 @@ import android.widget.AdapterView.OnItemClickListener;
 
 import com.zetter.androidTime.R;
 import com.zettsett.timetracker.model.TimeSliceCategory;
-import com.zettsett.timetracker.model.TimeSliceCategoryAdapter;
 
 /**
  * Ask for Category
@@ -29,7 +28,7 @@ public class SelectCategoryDialog extends Dialog {
 		this.newItemPlaceholder = newItemPlaceholder;
 		// setTitle("Punch In for Activity");
 		this.list = new ListView(context);
-		this.list.setAdapter(TimeSliceCategoryAdapter.getTimeSliceCategoryAdapterFromDB(context,
+		this.list.setAdapter(CategoryListAdapterDetailed.createAdapter(context,
 				R.layout.punchin_list_view_row, false, this.newItemPlaceholder, this.currentDateTime));
 		LinearLayout contentView = new LinearLayout(context);
 		contentView.setOrientation(LinearLayout.VERTICAL);
@@ -40,7 +39,7 @@ public class SelectCategoryDialog extends Dialog {
 	@Override
 	public void show()
 	{
-		this.list.setAdapter(TimeSliceCategoryAdapter.getTimeSliceCategoryAdapterFromDB(getContext(),
+		this.list.setAdapter(CategoryListAdapterDetailed.createAdapter(getContext(),
 				R.layout.punchin_list_view_row, false, this.newItemPlaceholder, this.currentDateTime));
 
 		super.show();
