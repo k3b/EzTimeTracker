@@ -6,6 +6,7 @@ import java.util.List;
 import android.content.Context;
 import android.widget.ArrayAdapter;
 
+import com.zettsett.timetracker.DateTimeFormatter;
 import com.zettsett.timetracker.database.TimeSliceCategoryRepsitory;
 
 public class TimeSliceCategory implements Serializable, Comparable<TimeSliceCategory>{
@@ -14,11 +15,18 @@ public class TimeSliceCategory implements Serializable, Comparable<TimeSliceCate
 	public static final int NOT_SAVED = -1;
 	public static final TimeSliceCategory NO_CATEGORY = new TimeSliceCategory(NOT_SAVED, "?");
 
+	public static final long MIN_VALID_DATE = 0;
+	public static final long MAX_VALID_DATE = Long.MAX_VALUE;
+	
 	private int rowId = NOT_SAVED;
 	
 	private String categoryName;
 	
 	private String description;
+
+	private long startTime = MIN_VALID_DATE;
+
+	private long endTime = MAX_VALID_DATE;
 
 	public TimeSliceCategory()
 	{
@@ -60,6 +68,40 @@ public class TimeSliceCategory implements Serializable, Comparable<TimeSliceCate
 		this.description = description;
 	}
 
+	public long getStartTime() {
+		return startTime;
+	}
+
+	public TimeSliceCategory setStartTime(long startTime) {
+		this.startTime = startTime;
+		return this;
+	}
+
+	public long getEndTime() {
+		return endTime;
+	}
+
+	public TimeSliceCategory setEndTime(long endTime) {
+		this.endTime = endTime;
+		return this;
+	}
+
+	public String getStartDateStr() {
+		if (startTime == MIN_VALID_DATE) {
+			return "";
+		} else {
+			return DateTimeFormatter.getShortDateStr(startTime);
+		}
+	}
+
+	public String getEndTimeStr() {
+		if (endTime == MAX_VALID_DATE) {
+			return "";
+		} else {
+			return DateTimeFormatter.getShortDateStr(endTime);
+		}
+	}
+	
 	@Override
 	public String toString() {
 		return categoryName;
@@ -91,11 +133,11 @@ public class TimeSliceCategory implements Serializable, Comparable<TimeSliceCate
 		return true;
 	}
 
-	public static ArrayAdapter<TimeSliceCategory> getCategoryAdapter(Context context, TimeSliceCategory firstElement) {
-		TimeSliceCategoryRepsitory timeSliceCategoryDBAdapter = new TimeSliceCategoryRepsitory(context);
+	public static ArrayAdapter<TimeSliceCategory> getCategoryAdapter(Context context, TimeSliceCategory firstElement, long currentDateTime) {
+		TimeSliceCategoryRepsitory repository = new TimeSliceCategoryRepsitory(context);
 		
-		List<TimeSliceCategory> categories = timeSliceCategoryDBAdapter
-				.fetchAllTimeSliceCategories();
+		List<TimeSliceCategory> categories = repository
+				.fetchAllTimeSliceCategories(currentDateTime);
 		if(firstElement != null)
 		{
 			categories.add(0, firstElement);

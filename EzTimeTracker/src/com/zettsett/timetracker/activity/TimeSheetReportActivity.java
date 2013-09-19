@@ -59,7 +59,7 @@ public class TimeSheetReportActivity extends Activity implements ReportInterface
 	private static final int ID_EDIT_TIME_SLICE = Menu.FIRST + 4;
 	private static final int ID_ADD_TIME_SLICE = Menu.FIRST + 5;
 	
-	private TimeSliceRepository mTimeSliceDBAdapter;
+	private TimeSliceRepository mTimeSliceRepository;
 	private LinearLayout mMainLayout;
 	private TimeSlice mCurrentSelectedTimeSlice;
 	private long mCurrentSelectedDate;
@@ -74,7 +74,7 @@ public class TimeSheetReportActivity extends Activity implements ReportInterface
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		mTimeSliceDBAdapter = new TimeSliceRepository(this);
+		mTimeSliceRepository = new TimeSliceRepository(this);
 		
 		mRangeFilter = ReportFramework.getLastFilter(savedInstanceState, SAVED_REPORT_FILTER, mRangeFilter);
 		mReportFramework = new ReportFramework(this, mRangeFilter);
@@ -123,7 +123,7 @@ public class TimeSheetReportActivity extends Activity implements ReportInterface
 		initScrollview();
 		String lastStartDate = "";
 		FilterParameter rangeFilter = mRangeFilter;
-		List<TimeSlice> timeSlices = mTimeSliceDBAdapter.fetchTimeSlices(
+		List<TimeSlice> timeSlices = mTimeSliceRepository.fetchTimeSlices(
 				rangeFilter, rangeFilter.isIgnoreDates());
 		Log.i(Global.LOG_CONTEXT, "fetchTimeSlicesByDateRange:"  + (System.currentTimeMillis() - performanceMeasureStart) );
 		performanceMeasureStart = System.currentTimeMillis();
@@ -214,9 +214,9 @@ public class TimeSheetReportActivity extends Activity implements ReportInterface
 			
 			if (updatedTimeSlice != null) {
 				if (updatedTimeSlice.getRowId() == TimeSlice.IS_NEW_TIMESLICE) {
-					mTimeSliceDBAdapter.createTimeSlice(updatedTimeSlice);
+					mTimeSliceRepository.createTimeSlice(updatedTimeSlice);
 				} else {
-					mTimeSliceDBAdapter.updateTimeSlice(updatedTimeSlice);
+					mTimeSliceRepository.updateTimeSlice(updatedTimeSlice);
 				}
 			} else if (resultCode == ReportFilterActivity.RESULT_FILTER_CHANGED) {
 				mRangeFilter = this.mReportFramework.onActivityResult(intent, mRangeFilter);

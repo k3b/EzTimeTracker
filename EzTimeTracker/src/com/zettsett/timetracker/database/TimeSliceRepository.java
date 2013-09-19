@@ -17,19 +17,19 @@ import com.zettsett.timetracker.model.TimeSliceCategory;
 
 public class TimeSliceRepository {
 	private static final DatabaseInstance CURRENT_DB_INSTANCE = DatabaseInstance.getCurrentInstance();
-	private static TimeSliceRepository timeSliceDBAdapterSingleton;
-	private final TimeSliceCategoryRepsitory categoryDBAdapter;
+	private static TimeSliceRepository timeSliceRepositorySingleton;
+	private final TimeSliceCategoryRepsitory categoryRepository;
 	
 	public TimeSliceRepository(Context context) {
 		CURRENT_DB_INSTANCE.initialize(context);
-		categoryDBAdapter = new TimeSliceCategoryRepsitory(context);	
+		categoryRepository = new TimeSliceCategoryRepsitory(context);	
 	}
 	
 	public static TimeSliceRepository getTimeSliceDBAdapter(Context context) {
-		if(timeSliceDBAdapterSingleton == null) {
-			timeSliceDBAdapterSingleton = new TimeSliceRepository(context);
+		if(timeSliceRepositorySingleton == null) {
+			timeSliceRepositorySingleton = new TimeSliceRepository(context);
 		}		
-		return timeSliceDBAdapterSingleton;
+		return timeSliceRepositorySingleton;
 	}
 	
 	public long createTimeSlice(final TimeSlice timeSlice) {
@@ -225,7 +225,7 @@ public class TimeSliceRepository {
 			ts.setStartTime(cur
 					.getLong(cur.getColumnIndexOrThrow("start_time")));
 			ts.setEndTime(cur.getLong(cur.getColumnIndexOrThrow("end_time")));
-			ts.setCategory(categoryDBAdapter.fetchByRowID(categoryID));
+			ts.setCategory(categoryRepository.fetchByRowID(categoryID));
 			ts.setNotes(cur.getString(cur.getColumnIndexOrThrow("notes")));
 			return ts;
 		}

@@ -31,11 +31,11 @@ public class TimeSliceCategoryAdapter extends ArrayAdapter<TimeSliceCategory> {
 	private final List<TimeSliceCategory> items;
 
 	public static TimeSliceCategoryAdapter getTimeSliceCategoryAdapterFromDB(
-			Context context, int viewId, boolean withDescription, TimeSliceCategory firstElement) {
-		TimeSliceCategoryRepsitory timeSliceCategoryDBAdapter = new TimeSliceCategoryRepsitory(context);
+			Context context, int viewId, boolean withDescription, TimeSliceCategory firstElement, long currentDateTime) {
+		TimeSliceCategoryRepsitory repository = new TimeSliceCategoryRepsitory(context);
 
-		List<TimeSliceCategory> categories = timeSliceCategoryDBAdapter
-				.fetchAllTimeSliceCategories();
+		List<TimeSliceCategory> categories = repository
+				.fetchAllTimeSliceCategories(currentDateTime);
 		
 		if(firstElement != null)
 		{

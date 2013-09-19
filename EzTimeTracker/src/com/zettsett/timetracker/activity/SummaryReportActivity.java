@@ -58,7 +58,7 @@ public class SummaryReportActivity extends Activity implements ReportInterface {
 	}
 
 	private ReportFramework mReportFramework;
-	private TimeSliceRepository mTimeSliceDBAdapter;
+	private TimeSliceRepository mTimeSliceRepository;
 	private ReportDateGrouping mReportDateGrouping = ReportDateGrouping.WEEKLY;
 	private ReportModes mReportMode = ReportModes.BY_DATE;
 	private List<TextView> mReportViewList;
@@ -68,7 +68,7 @@ public class SummaryReportActivity extends Activity implements ReportInterface {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		mTimeSliceDBAdapter = new TimeSliceRepository(this);
+		mTimeSliceRepository = new TimeSliceRepository(this);
 		mRangeFilter = ReportFramework.getLastFilter(savedInstanceState, SAVED_REPORT_FILTER, mRangeFilter);
 
 		mReportFramework = new ReportFramework(this, mRangeFilter);
@@ -213,7 +213,7 @@ public class SummaryReportActivity extends Activity implements ReportInterface {
 	private Map<String, Map<String, Long>> loadReportDataStructures() {
 		FilterParameter rangeFilter = mRangeFilter;
 
-		List<TimeSlice> timeSlices = mTimeSliceDBAdapter.fetchTimeSlices(rangeFilter, rangeFilter.isIgnoreDates());
+		List<TimeSlice> timeSlices = mTimeSliceRepository.fetchTimeSlices(rangeFilter, rangeFilter.isIgnoreDates());
 		Map<String, Map<String, Long>> summaries;
 		if (mReportMode == ReportModes.BY_DATE) {
 			summaries = new LinkedHashMap<String, Map<String, Long>>();
@@ -256,7 +256,7 @@ public class SummaryReportActivity extends Activity implements ReportInterface {
 			}
 			Long timeSum = group.get(reportLine);
 			if (timeSum == null) {
-				timeSum = new Long(0);
+				timeSum = Long.valueOf(0);
 			}
 			long sliceDuration = aSlice.getEndTime() - aSlice.getStartTime();
 			group.put(reportLine, timeSum + sliceDuration);

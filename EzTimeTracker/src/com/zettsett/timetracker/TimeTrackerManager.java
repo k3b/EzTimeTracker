@@ -12,16 +12,16 @@ public class TimeTrackerManager {
 
 	private Context context;
 	private SessionDataPersistance<TimeTrackerSessionData> timeTrackerSessionDataPersistance = null;
-	private TimeSliceRepository timeSliceDBAdapter;
+	private TimeSliceRepository timeSliceRepository;
+	private TimeSliceCategoryRepsitory timeSliceCategoryRepository;
 	private TimeTrackerSessionData sessionData = new TimeTrackerSessionData();
-	private TimeSliceCategoryRepsitory timeSlicecategoryDBAdapter;
 
 	public TimeTrackerManager(Context context)
 	{
 		this.context = context;
 		this.timeTrackerSessionDataPersistance = new SessionDataPersistance<TimeTrackerSessionData>(context);
-		this.timeSliceDBAdapter = new TimeSliceRepository(context);
-		this.timeSlicecategoryDBAdapter = new TimeSliceCategoryRepsitory(context);
+		this.timeSliceRepository = new TimeSliceRepository(context);
+		this.timeSliceCategoryRepository = new TimeSliceCategoryRepsitory(context);
 	}
 	
 	public void saveState() {		
@@ -46,7 +46,7 @@ public class TimeTrackerManager {
 
 
 	public Boolean punchInClock(String selectedCategoryName, long startDateTime) {
-		TimeSliceCategory cat = this.timeSlicecategoryDBAdapter.getOrCreateTimeSlice(selectedCategoryName);
+		TimeSliceCategory cat = this.timeSliceCategoryRepository.getOrCreateTimeSlice(selectedCategoryName);
 		return punchInClock(cat, startDateTime);
 	}
 	
@@ -63,7 +63,7 @@ public class TimeTrackerManager {
 		if (!isPunchedIn || hasCategoryChanged) {
 			if (isPunchedIn && hasCategoryChanged) {
 				sessionData.setEndTime(startDateTime);
-				timeSliceDBAdapter.createTimeSlice(sessionData);
+				timeSliceRepository.createTimeSlice(sessionData);
 			} 
 			sessionData.beginNewSlice(selectedCategory, startDateTime);
 			sessionData.setNotes("");
@@ -96,7 +96,7 @@ public class TimeTrackerManager {
 			sessionData.setEndTime(endDateTime);
 			if (sessionData.getElapsedTimeInMillisecs() >  Settings.getMinminTrashholdInMilliSecs())
 			{
-				timeSliceDBAdapter.createTimeSlice(sessionData);
+				timeSliceRepository.createTimeSlice(sessionData);
 				saveState();
 				return true;
 			} else {

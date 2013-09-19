@@ -59,7 +59,7 @@ public class TimeSliceEditActivity extends Activity  implements CategorySetter {
 		
 		catSpinner = (Spinner) findViewById(R.id.spinnerEditTimeSliceCategory);
 		if (this.timeSlice.getCategoryId() != HIDDEN) {
-			catSpinner.setAdapter( TimeSliceCategory.getCategoryAdapter(this, TimeSliceCategory.NO_CATEGORY));
+			catSpinner.setAdapter( TimeSliceCategory.getCategoryAdapter(this, TimeSliceCategory.NO_CATEGORY, TimeSliceCategory.MIN_VALID_DATE));
 			
 			TimeSliceCategory currentCategory = this.timeSlice.getCategory();
 			
@@ -239,10 +239,10 @@ public class TimeSliceEditActivity extends Activity  implements CategorySetter {
 		} else if (newCategory.getRowId() == TimeSliceCategory.NOT_SAVED) {
 			// result of create new category
 			
-			TimeSliceCategoryRepsitory timeSliceCategoryDBAdapter = new TimeSliceCategoryRepsitory(
+			TimeSliceCategoryRepsitory categoryRepository = new TimeSliceCategoryRepsitory(
 					this);
-			timeSliceCategoryDBAdapter.createTimeSliceCategory(newCategory);
-			ArrayAdapter<TimeSliceCategory> categoryAdapter = TimeSliceCategory.getCategoryAdapter(this, TimeSliceCategory.NO_CATEGORY);
+			categoryRepository.createTimeSliceCategory(newCategory);
+			ArrayAdapter<TimeSliceCategory> categoryAdapter = TimeSliceCategory.getCategoryAdapter(this, TimeSliceCategory.NO_CATEGORY, TimeSliceCategory.MIN_VALID_DATE);
 			catSpinner.setAdapter( categoryAdapter);		
 			int newPosition = categoryAdapter.getPosition(newCategory);
 			catSpinner.setSelection(newPosition);

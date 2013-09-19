@@ -7,6 +7,7 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
@@ -31,7 +32,7 @@ public abstract class FilterActivity  extends Activity {
 	protected static final int GET_START_DATETIME_NOW = 3;
 	
 	protected static final DatabaseInstance CURRENT_DB_INSTANCE = DatabaseInstance.getCurrentInstance();
-	protected TimeSliceRepository mTimeSliceDBAdapter;
+	protected TimeSliceRepository mTimeSliceRepository;
 	protected Button mTimeInButton;
 	protected Button mTimeOutButton;
 	protected Spinner mCatSpinner;
@@ -61,6 +62,7 @@ public abstract class FilterActivity  extends Activity {
     };
 	private int mIdCmdOk;
 	private int mIdCaption;
+	private ArrayAdapter<TimeSliceCategory> allCategoriesAdapter;
 
 	public FilterActivity(int idCaption, int idCmdOk, int filterResultCodeOnOk) {
 		this.mIdCaption = idCaption;
@@ -77,7 +79,7 @@ public abstract class FilterActivity  extends Activity {
 		setContentView(R.layout.remove_ts);
 		setTitle(this.mIdCaption);
 		CURRENT_DB_INSTANCE.initialize(this);
-		mTimeSliceDBAdapter = new TimeSliceRepository(this);
+		mTimeSliceRepository = new TimeSliceRepository(this);
 		Button okButton = (Button) findViewById(R.id.cmd_delete);
 		okButton.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -102,7 +104,8 @@ public abstract class FilterActivity  extends Activity {
 		});
 
 		mCatSpinner = (Spinner) findViewById(R.id.spinnerEditTimeSliceCategory);
-		mCatSpinner.setAdapter( TimeSliceCategory.getCategoryAdapter(this, TimeSliceCategory.NO_CATEGORY));
+		this.allCategoriesAdapter=TimeSliceCategory.getCategoryAdapter(this, TimeSliceCategory.NO_CATEGORY, TimeSliceCategory.MIN_VALID_DATE); 
+		mCatSpinner.setAdapter( this.allCategoriesAdapter );
 		FilterActivity.selectSpinner(mCatSpinner, mFilter.getCategoryId());
 
 		mTimeInButton = (Button) findViewById(R.id.EditTimeIn);

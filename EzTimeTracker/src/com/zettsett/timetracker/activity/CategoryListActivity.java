@@ -17,7 +17,7 @@ public class CategoryListActivity extends ListActivity implements CategorySetter
 	private static final int EDIT_MENU_ID = Menu.FIRST + 1;
 	private static final int DELETE_MENU_ID = Menu.FIRST + 2;
 	private TimeSliceCategory categoryClicked;
-	private final TimeSliceCategoryRepsitory timeSliceCategoryDBAdapter = new TimeSliceCategoryRepsitory(
+	private final TimeSliceCategoryRepsitory categoryRepository = new TimeSliceCategoryRepsitory(
 			this);
 
 	@Override
@@ -30,7 +30,7 @@ public class CategoryListActivity extends ListActivity implements CategorySetter
 
 	private void refreshCategoryList() {
 		setListAdapter(TimeSliceCategoryAdapter.getTimeSliceCategoryAdapterFromDB(this,
-				R.layout.category_list_view_row, true, TimeSliceCategory.NO_CATEGORY));
+				R.layout.category_list_view_row, true, TimeSliceCategory.NO_CATEGORY, TimeSliceCategory.MIN_VALID_DATE));
 
 	}
 
@@ -39,9 +39,9 @@ public class CategoryListActivity extends ListActivity implements CategorySetter
 			showCategoryEditDialog(null);
 			return;
 		} else if (category.getRowId() == TimeSliceCategory.NOT_SAVED) {
-			timeSliceCategoryDBAdapter.createTimeSliceCategory(category);
+			categoryRepository.createTimeSliceCategory(category);
 		} else {
-			timeSliceCategoryDBAdapter.update(category);
+			categoryRepository.update(category);
 		}
 		refreshCategoryList();
 	}
@@ -69,11 +69,11 @@ public class CategoryListActivity extends ListActivity implements CategorySetter
 			}
 			return true;
 		case DELETE_MENU_ID:
-			TimeSliceRepository timeSliceDBAdapter = new TimeSliceRepository(this);
-			if (timeSliceDBAdapter.categoryHasTimeSlices(categoryClicked)) {
+			TimeSliceRepository timeSliceRepository = new TimeSliceRepository(this);
+			if (timeSliceRepository.categoryHasTimeSlices(categoryClicked)) {
 				showDialog(DELETE_MENU_ID);
 			} else {
-				timeSliceCategoryDBAdapter.delete(categoryClicked.getRowId());
+				categoryRepository.delete(categoryClicked.getRowId());
 			}
 			refreshCategoryList();
 			return true;
@@ -112,7 +112,7 @@ public class CategoryListActivity extends ListActivity implements CategorySetter
 		builder.setItems(items, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int item) {
 				if (item == 0) {
-					timeSliceCategoryDBAdapter.delete(categoryClicked.getRowId());
+					categoryRepository.delete(categoryClicked.getRowId());
 					refreshCategoryList();
 				}
 			}

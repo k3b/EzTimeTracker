@@ -55,11 +55,12 @@ public class PunchInPunchOutActivity extends Activity implements OnChronometerTi
 	private static final int CREATE_NEW_CATEGORY = 1;
 	private static final int EDIT_START = 2;
 	private static final int EDIT_STOP = 3;
+	private static final int SELECT_CATAGORY_ALL = 4;
 
 	private TextView elapsedTimeDisplay;
 	private EditText notesEditor;
 
-	private final TimeSliceCategoryRepsitory timeSliceCategoryDBAdapter = new TimeSliceCategoryRepsitory(
+	private final TimeSliceCategoryRepsitory timeSliceRepository = new TimeSliceCategoryRepsitory(
 			this);
 
 	private TimeTrackerSessionData sessionData = new TimeTrackerSessionData();
@@ -293,7 +294,10 @@ public class PunchInPunchOutActivity extends Activity implements OnChronometerTi
 	protected Dialog onCreateDialog(int id) {
 		switch (id) {
 			case SELECT_CATAGORY:
-				return new SelectCategoryDialog(this, R.style.PunchDialog, TimeSliceCategory.NO_CATEGORY)
+				return new SelectCategoryDialog(this, R.style.PunchDialog, TimeSliceCategory.NO_CATEGORY, TimeTrackerManager.currentTimeMillis())
+							.setCategoryCallback(this);
+			case SELECT_CATAGORY_ALL:
+				return new SelectCategoryDialog(this, R.style.PunchDialog, TimeSliceCategory.NO_CATEGORY, TimeSliceCategory.MAX_VALID_DATE )
 							.setCategoryCallback(this);
 			case CREATE_NEW_CATEGORY:
 				return this.edit;
@@ -344,7 +348,7 @@ public class PunchInPunchOutActivity extends Activity implements OnChronometerTi
 			showCategoryEditDialog(null);
 		} else {
 			if (selectedCategory.getRowId() == TimeSliceCategory.NOT_SAVED) {
-				timeSliceCategoryDBAdapter.createTimeSliceCategory(selectedCategory);
+				timeSliceRepository.createTimeSliceCategory(selectedCategory);
 			} 
 			long elapsedRealtime = TimeTrackerManager.currentTimeMillis();
 			punchInClock(elapsedRealtime, selectedCategory);
