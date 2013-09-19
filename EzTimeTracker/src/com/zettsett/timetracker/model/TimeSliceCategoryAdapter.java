@@ -10,7 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.zetter.androidTime.R;
-import com.zettsett.timetracker.database.TimeSliceCategoryDBAdapter;
+import com.zettsett.timetracker.database.TimeSliceCategoryRepsitory;
 
 public class TimeSliceCategoryAdapter extends ArrayAdapter<TimeSliceCategory> {
 
@@ -32,7 +32,7 @@ public class TimeSliceCategoryAdapter extends ArrayAdapter<TimeSliceCategory> {
 
 	public static TimeSliceCategoryAdapter getTimeSliceCategoryAdapterFromDB(
 			Context context, int viewId, boolean withDescription, TimeSliceCategory firstElement) {
-		TimeSliceCategoryDBAdapter timeSliceCategoryDBAdapter = new TimeSliceCategoryDBAdapter(context);
+		TimeSliceCategoryRepsitory timeSliceCategoryDBAdapter = new TimeSliceCategoryRepsitory(context);
 
 		List<TimeSliceCategory> categories = timeSliceCategoryDBAdapter
 				.fetchAllTimeSliceCategories();

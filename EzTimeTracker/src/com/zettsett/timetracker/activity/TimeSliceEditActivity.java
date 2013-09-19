@@ -16,8 +16,8 @@ import com.zetter.androidTime.R;
 import com.zettsett.timetracker.DateTimeFormatter;
 import com.zettsett.timetracker.Global;
 import com.zettsett.timetracker.TimeTrackerManager;
-import com.zettsett.timetracker.database.TimeSliceCategoryDBAdapter;
-import com.zettsett.timetracker.database.TimeSliceDBAdapter;
+import com.zettsett.timetracker.database.TimeSliceCategoryRepsitory;
+import com.zettsett.timetracker.database.TimeSliceRepository;
 import com.zettsett.timetracker.model.TimeSlice;
 import com.zettsett.timetracker.model.TimeSliceCategory;
 
@@ -239,7 +239,7 @@ public class TimeSliceEditActivity extends Activity  implements CategorySetter {
 		} else if (newCategory.getRowId() == TimeSliceCategory.NOT_SAVED) {
 			// result of create new category
 			
-			TimeSliceCategoryDBAdapter timeSliceCategoryDBAdapter = new TimeSliceCategoryDBAdapter(
+			TimeSliceCategoryRepsitory timeSliceCategoryDBAdapter = new TimeSliceCategoryRepsitory(
 					this);
 			timeSliceCategoryDBAdapter.createTimeSliceCategory(newCategory);
 			ArrayAdapter<TimeSliceCategory> categoryAdapter = TimeSliceCategory.getCategoryAdapter(this, TimeSliceCategory.NO_CATEGORY);
@@ -254,7 +254,7 @@ public class TimeSliceEditActivity extends Activity  implements CategorySetter {
 
 	public static void showTimeSliceEditActivity(Activity parentActivity, int rowId, int requestCode) 
 	{
-		TimeSlice timeSlice = TimeSliceDBAdapter.getTimeSliceDBAdapter(parentActivity).fetchByRowID(rowId);
+		TimeSlice timeSlice = TimeSliceRepository.getTimeSliceDBAdapter(parentActivity).fetchByRowID(rowId);
 		showTimeSliceEditActivity(parentActivity, timeSlice, requestCode);
 	}
 

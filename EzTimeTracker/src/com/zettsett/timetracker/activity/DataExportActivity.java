@@ -23,7 +23,7 @@ import com.zetter.androidTime.R;
 import com.zettsett.timetracker.DateTimeFormatter;
 import com.zettsett.timetracker.EmailUtilities;
 import com.zettsett.timetracker.FileUtilities;
-import com.zettsett.timetracker.database.TimeSliceDBAdapter;
+import com.zettsett.timetracker.database.TimeSliceRepository;
 import com.zettsett.timetracker.model.TimeSlice;
 
 public class DataExportActivity extends Activity implements RadioGroup.OnCheckedChangeListener {
@@ -165,7 +165,7 @@ public class DataExportActivity extends Activity implements RadioGroup.OnChecked
 	}
 
 	private void writeData() {
-		TimeSliceDBAdapter mTimeSliceDBAdapter = new TimeSliceDBAdapter(this);
+		TimeSliceRepository mTimeSliceDBAdapter = new TimeSliceRepository(this);
 		List<TimeSlice> timeSlices;
 
 		FilterParameter filter = new FilterParameter().setStartTime(mFromDate).setEndTime(mToDate);

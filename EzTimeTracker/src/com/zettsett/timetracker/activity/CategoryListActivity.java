@@ -17,7 +17,7 @@ public class CategoryListActivity extends ListActivity implements CategorySetter
 	private static final int EDIT_MENU_ID = Menu.FIRST + 1;
 	private static final int DELETE_MENU_ID = Menu.FIRST + 2;
 	private TimeSliceCategory categoryClicked;
-	private final TimeSliceCategoryDBAdapter timeSliceCategoryDBAdapter = new TimeSliceCategoryDBAdapter(
+	private final TimeSliceCategoryRepsitory timeSliceCategoryDBAdapter = new TimeSliceCategoryRepsitory(
 			this);
 
 	@Override
@@ -69,7 +69,7 @@ public class CategoryListActivity extends ListActivity implements CategorySetter
 			}
 			return true;
 		case DELETE_MENU_ID:
-			TimeSliceDBAdapter timeSliceDBAdapter = new TimeSliceDBAdapter(this);
+			TimeSliceRepository timeSliceDBAdapter = new TimeSliceRepository(this);
 			if (timeSliceDBAdapter.categoryHasTimeSlices(categoryClicked)) {
 				showDialog(DELETE_MENU_ID);
 			} else {

@@ -1,7 +1,7 @@
 package com.zettsett.timetracker;
 
-import com.zettsett.timetracker.database.TimeSliceCategoryDBAdapter;
-import com.zettsett.timetracker.database.TimeSliceDBAdapter;
+import com.zettsett.timetracker.database.TimeSliceCategoryRepsitory;
+import com.zettsett.timetracker.database.TimeSliceRepository;
 import com.zettsett.timetracker.model.TimeSliceCategory;
 
 import de.k3b.util.SessionDataPersistance;
@@ -12,16 +12,16 @@ public class TimeTrackerManager {
 
 	private Context context;
 	private SessionDataPersistance<TimeTrackerSessionData> timeTrackerSessionDataPersistance = null;
-	private TimeSliceDBAdapter timeSliceDBAdapter;
+	private TimeSliceRepository timeSliceDBAdapter;
 	private TimeTrackerSessionData sessionData = new TimeTrackerSessionData();
-	private TimeSliceCategoryDBAdapter timeSlicecategoryDBAdapter;
+	private TimeSliceCategoryRepsitory timeSlicecategoryDBAdapter;
 
 	public TimeTrackerManager(Context context)
 	{
 		this.context = context;
 		this.timeTrackerSessionDataPersistance = new SessionDataPersistance<TimeTrackerSessionData>(context);
-		this.timeSliceDBAdapter = new TimeSliceDBAdapter(context);
-		this.timeSlicecategoryDBAdapter = new TimeSliceCategoryDBAdapter(context);
+		this.timeSliceDBAdapter = new TimeSliceRepository(context);
+		this.timeSlicecategoryDBAdapter = new TimeSliceCategoryRepsitory(context);
 	}
 	
 	public void saveState() {		

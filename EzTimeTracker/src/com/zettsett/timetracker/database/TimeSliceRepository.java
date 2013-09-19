@@ -15,19 +15,19 @@ import com.zettsett.timetracker.model.ITimeSliceFilter;
 import com.zettsett.timetracker.model.TimeSlice;
 import com.zettsett.timetracker.model.TimeSliceCategory;
 
-public class TimeSliceDBAdapter {
+public class TimeSliceRepository {
 	private static final DatabaseInstance CURRENT_DB_INSTANCE = DatabaseInstance.getCurrentInstance();
-	private static TimeSliceDBAdapter timeSliceDBAdapterSingleton;
-	private final TimeSliceCategoryDBAdapter categoryDBAdapter;
+	private static TimeSliceRepository timeSliceDBAdapterSingleton;
+	private final TimeSliceCategoryRepsitory categoryDBAdapter;
 	
-	public TimeSliceDBAdapter(Context context) {
+	public TimeSliceRepository(Context context) {
 		CURRENT_DB_INSTANCE.initialize(context);
-		categoryDBAdapter = new TimeSliceCategoryDBAdapter(context);	
+		categoryDBAdapter = new TimeSliceCategoryRepsitory(context);	
 	}
 	
-	public static TimeSliceDBAdapter getTimeSliceDBAdapter(Context context) {
+	public static TimeSliceRepository getTimeSliceDBAdapter(Context context) {
 		if(timeSliceDBAdapterSingleton == null) {
-			timeSliceDBAdapterSingleton = new TimeSliceDBAdapter(context);
+			timeSliceDBAdapterSingleton = new TimeSliceRepository(context);
 		}		
 		return timeSliceDBAdapterSingleton;
 	}

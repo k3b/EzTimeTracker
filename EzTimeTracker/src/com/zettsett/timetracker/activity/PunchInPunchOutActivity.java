@@ -20,7 +20,7 @@ import android.widget.Chronometer.OnChronometerTickListener;
 
 import com.zetter.androidTime.R;
 import com.zettsett.timetracker.*;
-import com.zettsett.timetracker.database.TimeSliceCategoryDBAdapter;
+import com.zettsett.timetracker.database.TimeSliceCategoryRepsitory;
 import com.zettsett.timetracker.model.TimeSlice;
 import com.zettsett.timetracker.model.TimeSliceCategory;
 
@@ -59,7 +59,7 @@ public class PunchInPunchOutActivity extends Activity implements OnChronometerTi
 	private TextView elapsedTimeDisplay;
 	private EditText notesEditor;
 
-	private final TimeSliceCategoryDBAdapter timeSliceCategoryDBAdapter = new TimeSliceCategoryDBAdapter(
+	private final TimeSliceCategoryRepsitory timeSliceCategoryDBAdapter = new TimeSliceCategoryRepsitory(
 			this);
 
 	private TimeTrackerSessionData sessionData = new TimeTrackerSessionData();

@@ -9,7 +9,7 @@ import android.widget.Toast;
 
 import com.zetter.androidTime.R;
 import com.zettsett.timetracker.Global;
-import com.zettsett.timetracker.database.TimeSliceDBAdapter;
+import com.zettsett.timetracker.database.TimeSliceRepository;
 
 public class RemoveTimeSliceActivity extends FilterActivity {
 	public static final int RESULT_DELETE_OK = 19284;
@@ -25,7 +25,7 @@ public class RemoveTimeSliceActivity extends FilterActivity {
 	}
 	
 	private void doRemove() {
-		int itemsDeleted = TimeSliceDBAdapter.deleteForDateRange(this.mFilter, this.mFilter.isIgnoreDates());
+		int itemsDeleted = TimeSliceRepository.deleteForDateRange(this.mFilter, this.mFilter.isIgnoreDates());
 		String message = getStatusMessage(R.string.format_message_interval_deleted) + itemsDeleted;
 		Toast.makeText(
 				getApplicationContext(),
@@ -36,7 +36,7 @@ public class RemoveTimeSliceActivity extends FilterActivity {
 	@Override
 	protected void onOkCLick() {
 		super.onOkCLick();
-		int count = TimeSliceDBAdapter.getCount(this.mFilter, this.mFilter.isIgnoreDates());
+		int count = TimeSliceRepository.getCount(this.mFilter, this.mFilter.isIgnoreDates());
 		
 		if (count <= 0) {
 			String message = getText(R.string.no_items_found).toString();

@@ -18,7 +18,7 @@ import com.zetter.androidTime.R;
 import com.zettsett.timetracker.DateTimeFormatter;
 import com.zettsett.timetracker.Global;
 import com.zettsett.timetracker.database.DatabaseInstance;
-import com.zettsett.timetracker.database.TimeSliceDBAdapter;
+import com.zettsett.timetracker.database.TimeSliceRepository;
 import com.zettsett.timetracker.model.TimeSlice;
 import com.zettsett.timetracker.model.TimeSliceCategory;
 
@@ -28,7 +28,7 @@ public abstract class FilterActivity  extends Activity {
 	protected static final int GET_START_DATETIME = 1;
 	
 	protected static final DatabaseInstance CURRENT_DB_INSTANCE = DatabaseInstance.getCurrentInstance();
-	protected TimeSliceDBAdapter mTimeSliceDBAdapter;
+	protected TimeSliceRepository mTimeSliceDBAdapter;
 	protected Button mTimeInButton;
 	protected Button mTimeOutButton;
 	protected Spinner mCatSpinner;
@@ -74,7 +74,7 @@ public abstract class FilterActivity  extends Activity {
 		setContentView(R.layout.remove_ts);
 		setTitle(this.mIdCaption);
 		CURRENT_DB_INSTANCE.initialize(this);
-		mTimeSliceDBAdapter = new TimeSliceDBAdapter(this);
+		mTimeSliceDBAdapter = new TimeSliceRepository(this);
 		Button okButton = (Button) findViewById(R.id.cmd_delete);
 		okButton.setOnClickListener(new View.OnClickListener() {
 			@Override

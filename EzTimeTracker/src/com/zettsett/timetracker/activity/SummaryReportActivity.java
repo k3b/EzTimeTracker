@@ -20,7 +20,7 @@ import android.widget.LinearLayout.LayoutParams;
 
 import com.zetter.androidTime.R;
 import com.zettsett.timetracker.Global;
-import com.zettsett.timetracker.database.TimeSliceDBAdapter;
+import com.zettsett.timetracker.database.TimeSliceRepository;
 import com.zettsett.timetracker.model.TimeSlice;
 import com.zettsett.timetracker.report.ReportInterface;
 
@@ -58,7 +58,7 @@ public class SummaryReportActivity extends Activity implements ReportInterface {
 	}
 
 	private ReportFramework mReportFramework;
-	private TimeSliceDBAdapter mTimeSliceDBAdapter;
+	private TimeSliceRepository mTimeSliceDBAdapter;
 	private ReportDateGrouping mReportDateGrouping = ReportDateGrouping.WEEKLY;
 	private ReportModes mReportMode = ReportModes.BY_DATE;
 	private List<TextView> mReportViewList;
@@ -68,7 +68,7 @@ public class SummaryReportActivity extends Activity implements ReportInterface {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		mTimeSliceDBAdapter = new TimeSliceDBAdapter(this);
+		mTimeSliceDBAdapter = new TimeSliceRepository(this);
 		mRangeFilter = ReportFramework.getLastFilter(savedInstanceState, SAVED_REPORT_FILTER, mRangeFilter);
 
 		mReportFramework = new ReportFramework(this, mRangeFilter);

@@ -6,7 +6,7 @@ import java.util.List;
 import android.content.Context;
 import android.widget.ArrayAdapter;
 
-import com.zettsett.timetracker.database.TimeSliceCategoryDBAdapter;
+import com.zettsett.timetracker.database.TimeSliceCategoryRepsitory;
 
 public class TimeSliceCategory implements Serializable, Comparable<TimeSliceCategory>{
 	private static final long serialVersionUID = 4899523432240132519L;
@@ -92,7 +92,7 @@ public class TimeSliceCategory implements Serializable, Comparable<TimeSliceCate
 	}
 
 	public static ArrayAdapter<TimeSliceCategory> getCategoryAdapter(Context context, TimeSliceCategory firstElement) {
-		TimeSliceCategoryDBAdapter timeSliceCategoryDBAdapter = new TimeSliceCategoryDBAdapter(context);
+		TimeSliceCategoryRepsitory timeSliceCategoryDBAdapter = new TimeSliceCategoryRepsitory(context);
 		
 		List<TimeSliceCategory> categories = timeSliceCategoryDBAdapter
 				.fetchAllTimeSliceCategories();

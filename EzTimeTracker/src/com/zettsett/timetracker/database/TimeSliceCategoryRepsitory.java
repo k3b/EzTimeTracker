@@ -14,12 +14,12 @@ import com.zetter.androidTime.R;
 import com.zettsett.timetracker.Global;
 import com.zettsett.timetracker.model.TimeSliceCategory;
 
-public class TimeSliceCategoryDBAdapter {
+public class TimeSliceCategoryRepsitory {
 
 	private static final DatabaseInstance CURRENT_DB_INSTANCE = DatabaseInstance.getCurrentInstance();
 	private final Context context;
 	
-	public TimeSliceCategoryDBAdapter(Context context) {
+	public TimeSliceCategoryRepsitory(Context context) {
 		super();
 		this.context = context;
 	}
