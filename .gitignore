@@ -9,3 +9,7 @@ pkg
 /.metadata
 
 *.bak
+/google.DateTimeSlider/SliderClient/.classpath
+/google.DateTimeSlider/DateSlider/.classpath
+/BroadCastTest/.classpath
+/EzTimeTracker/.classpath

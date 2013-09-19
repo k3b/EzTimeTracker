@@ -17,6 +17,7 @@ import com.googlecode.android.widgets.DateSlider.DateTimeMinuteSlider;
 import com.zetter.androidTime.R;
 import com.zettsett.timetracker.DateTimeFormatter;
 import com.zettsett.timetracker.Global;
+import com.zettsett.timetracker.TimeTrackerManager;
 import com.zettsett.timetracker.database.DatabaseInstance;
 import com.zettsett.timetracker.database.TimeSliceRepository;
 import com.zettsett.timetracker.model.TimeSlice;
@@ -26,6 +27,8 @@ public abstract class FilterActivity  extends Activity {
 
 	protected static final int GET_END_DATETIME = 0;
 	protected static final int GET_START_DATETIME = 1;
+	protected static final int GET_END_DATETIME_NOW = 2;
+	protected static final int GET_START_DATETIME_NOW = 3;
 	
 	protected static final DatabaseInstance CURRENT_DB_INSTANCE = DatabaseInstance.getCurrentInstance();
 	protected TimeSliceRepository mTimeSliceDBAdapter;
@@ -109,11 +112,25 @@ public abstract class FilterActivity  extends Activity {
 				showDialog(GET_START_DATETIME);
 			}
 		});
+		mTimeInButton.setOnLongClickListener(new View.OnLongClickListener() {
+			@Override
+			public boolean onLongClick(View v) {
+				showDialog(GET_START_DATETIME_NOW);
+				return true;
+			}
+		});
 		mTimeOutButton = (Button) findViewById(R.id.EditTimeOut);
 		mTimeOutButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				showDialog(GET_END_DATETIME);
+			}
+		});
+		mTimeOutButton.setOnLongClickListener(new View.OnLongClickListener() {
+			@Override
+			public boolean onLongClick(View v) {
+				showDialog(GET_END_DATETIME_NOW);
+				return true;
 			}
 		});
 		
@@ -193,8 +210,14 @@ public abstract class FilterActivity  extends Activity {
         case GET_START_DATETIME:
         	c.setTimeInMillis(mFilter.getStartTime());
             return new DateTimeMinuteSlider(this,mDateTimeSetListenerStart,c);
+        case GET_START_DATETIME_NOW:
+        	c.setTimeInMillis(TimeTrackerManager.currentTimeMillis());
+            return new DateTimeMinuteSlider(this,mDateTimeSetListenerStart,c);
         case GET_END_DATETIME:
         	c.setTimeInMillis(mFilter.getEndTime());
+            return new DateTimeMinuteSlider(this,mDateTimeSetListenerEnd,c);
+        case GET_END_DATETIME_NOW:
+        	c.setTimeInMillis(TimeTrackerManager.currentTimeMillis());
             return new DateTimeMinuteSlider(this,mDateTimeSetListenerEnd,c);
         }
         return null;
