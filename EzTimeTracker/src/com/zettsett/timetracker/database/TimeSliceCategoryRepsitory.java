@@ -101,10 +101,11 @@ public class TimeSliceCategoryRepsitory {
 	public List<TimeSliceCategory> fetchAllTimeSliceCategories(long currentDateTime) {
 		List<TimeSliceCategory> result = new ArrayList<TimeSliceCategory>();
 		Cursor cur = null;
+		String filter = createCategoryListFilter(currentDateTime);
 		try
 		{
 			cur = CURRENT_DB_INSTANCE.getDb().query(
-					DatabaseHelper.TIME_SLICE_CATEGORY_TABLE, columnList(), null,
+					DatabaseHelper.TIME_SLICE_CATEGORY_TABLE, columnList(), filter,
 					null, null, null, COL_CATEGORY_NAME); // order by name
 			while (cur.moveToNext()) {
 				TimeSliceCategory cat = fillTimeSliceCategoryFromCursor(cur);
@@ -121,6 +122,18 @@ public class TimeSliceCategoryRepsitory {
 			result = fetchAllTimeSliceCategories(currentDateTime); // reload the demo items
 		}
 		return result;
+	}
+
+	private String createCategoryListFilter(long currentDateTime) {
+    	if (currentDateTime != TimeSliceCategory.MIN_VALID_DATE)
+    	{
+    		return "((" + COL_START_TIME + " IS NULL " +
+    				") OR (" + COL_START_TIME + " <= " + currentDateTime +
+    				")) AND ((" + COL_END_TIME + " IS NULL " +
+    				") OR (" + COL_END_TIME + " >= " + currentDateTime +
+    				"))";
+    	}
+		return null;
 	}
 
 	private TimeSliceCategory fillTimeSliceCategoryFromCursor(Cursor cur) {
