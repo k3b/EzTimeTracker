@@ -101,7 +101,17 @@ public class TimeSliceCategory implements Serializable, Comparable<TimeSliceCate
 			return DateTimeFormatter.getShortDateStr(endTime);
 		}
 	}
-	
+
+	public String getActiveDate() {
+		String start = getStartDateStr();
+		String end = getEndTimeStr();
+		if ((start.length() == 0) && (end.length() == 0)) {
+			return "";
+		} else {
+			return start + "-" + end;
+		}
+	}
+
 	@Override
 	public String toString() {
 		return categoryName;
@@ -136,6 +146,18 @@ public class TimeSliceCategory implements Serializable, Comparable<TimeSliceCate
 	@Override
 	public int compareTo(TimeSliceCategory anotherTimeSliceCategory) {
 		return this.categoryName.compareTo(anotherTimeSliceCategory.categoryName);
+	}
+
+	/**
+	 * @param currentDateTime dateTime when isActive should be tested
+	 * @return true if currentDateTime is between start and end
+	 */
+	public boolean isActive(long currentDateTime) {
+		if (currentDateTime == TimeSliceCategory.MIN_VALID_DATE) {
+			return true;
+		}
+
+		return ((currentDateTime >= this.getStartTime()) && (currentDateTime <= this.getEndTime()));
 	}
 
 	
