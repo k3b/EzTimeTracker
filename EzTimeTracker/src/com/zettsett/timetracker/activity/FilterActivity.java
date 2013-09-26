@@ -18,7 +18,6 @@ import com.googlecode.android.widgets.DateSlider.DateTimeMinuteSlider;
 import com.zetter.androidTime.R;
 import com.zettsett.timetracker.DateTimeFormatter;
 import com.zettsett.timetracker.Global;
-import com.zettsett.timetracker.Settings;
 import com.zettsett.timetracker.TimeTrackerManager;
 import com.zettsett.timetracker.database.DatabaseInstance;
 import com.zettsett.timetracker.database.TimeSliceRepository;

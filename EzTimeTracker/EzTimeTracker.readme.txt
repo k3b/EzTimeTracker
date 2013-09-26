@@ -1,12 +1,13 @@
 info see http://zettsetttech.blogspot.com/
 
 todo
-	?	after report update scroll to last know pos
+?	after report update scroll to last know pos
 v	TimeSliceEditActivity: long press on Start/Stop-time ==> sets to now before editing
 v	PunchInPunchOutActivity: long press on elapsedTime => shows Detail-report	
 --
 =================
 
+v	category has now start/end. In Punch-In only active Categories are shown if configured under settings
 
 	delete items with category-filter
 	v	main delete

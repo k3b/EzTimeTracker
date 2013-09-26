@@ -2,25 +2,25 @@
 
 <PreferenceScreen android:key="preferences" xmlns:android="http://schemas.android.com/apk/res/android">
 	<PreferenceCategory 
-		android:title="Settings"
+		android:title="Einstellungen"
 		android:key="first_category">
 		
 		<EditTextPreference
 			android:key="minTrashholdInSecs"
-			android:summary="Tracking only if longer than this (in seconds)"
-			android:title="Minimum treshhold" 
+			android:summary="Zeitmessung nur wenn mindestens x (in seconds)"
+			android:title="Untergrenze" 
 			android:defaultValue="1"
 		/>
 		
 		<CheckBoxPreference android:key="publicDatabase" 
 			android:defaultValue="false"
 			android:title="Public Database" 
-			android:summary="Should the Database be accessable for other apps" />
+			android:summary="Soll die DB für andere apps zugreifbar sein" />
 
 		<CheckBoxPreference android:key="hideInactiveCategories" 
 			android:defaultValue="false"
-			android:title="Hide inactive Categories" 
-			android:summary="True: Puncin in only shows active Categories." />
+			android:title="Kategorien nur aktulelle" 
+			android:summary="Unter Startlist gibt es nur aktive Kategorien." />
 
 	</PreferenceCategory>
 </PreferenceScreen>
