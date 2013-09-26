@@ -294,10 +294,10 @@ public class PunchInPunchOutActivity extends Activity implements OnChronometerTi
 	protected Dialog onCreateDialog(int id) {
 		switch (id) {
 			case SELECT_CATAGORY:
-				return new SelectCategoryDialog(this, R.style.PunchDialog, TimeSliceCategory.NO_CATEGORY, TimeTrackerManager.currentTimeMillis())
+				return new SelectCategoryDialog(this, R.style.PunchDialog, TimeSliceCategory.NO_CATEGORY)
 							.setCategoryCallback(this);
 			case SELECT_CATAGORY_ALL:
-				return new SelectCategoryDialog(this, R.style.PunchDialog, TimeSliceCategory.NO_CATEGORY, TimeSliceCategory.MAX_VALID_DATE )
+				return new SelectCategoryDialog(this, R.style.PunchDialog, TimeSliceCategory.NO_CATEGORY )
 							.setCategoryCallback(this);
 			case CREATE_NEW_CATEGORY:
 				return this.edit;

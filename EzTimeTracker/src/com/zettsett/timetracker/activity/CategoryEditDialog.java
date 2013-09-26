@@ -11,7 +11,6 @@ import android.widget.EditText;
 import com.googlecode.android.widgets.DateSlider.AlternativeDateSlider;
 import com.googlecode.android.widgets.DateSlider.DateSlider;
 import com.zetter.androidTime.R;
-import com.zettsett.timetracker.DateTimeFormatter;
 import com.zettsett.timetracker.TimeTrackerManager;
 import com.zettsett.timetracker.model.TimeSliceCategory;
 

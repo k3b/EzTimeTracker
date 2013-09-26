@@ -4,11 +4,14 @@ import android.app.Dialog;
 import android.content.Context;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.AdapterView.OnItemClickListener;
 
 import com.zetter.androidTime.R;
+import com.zettsett.timetracker.Settings;
+import com.zettsett.timetracker.TimeTrackerManager;
 import com.zettsett.timetracker.model.TimeSliceCategory;
 
 /**
@@ -22,14 +25,17 @@ public class SelectCategoryDialog extends Dialog {
 	private final TimeSliceCategory newItemPlaceholder;
 	private long currentDateTime;
 
-	public SelectCategoryDialog(Context context, int style, TimeSliceCategory newItemPlaceholder, long currentDateTime) {
+	public SelectCategoryDialog(Context context, int style, TimeSliceCategory newItemPlaceholder) {
 		super(context, style);
-		this.currentDateTime = currentDateTime;
+		if (Settings.getHideInactiveCategories()) {
+			this.currentDateTime = TimeTrackerManager.currentTimeMillis();
+		} else {
+			this.currentDateTime = TimeSliceCategory.MIN_VALID_DATE;			
+		}
 		this.newItemPlaceholder = newItemPlaceholder;
 		// setTitle("Punch In for Activity");
 		this.list = new ListView(context);
-		this.list.setAdapter(CategoryListAdapterDetailed.createAdapter(context,
-				R.layout.punchin_list_view_row, false, this.newItemPlaceholder, this.currentDateTime));
+		this.list.setAdapter(createCategoryListAdapter());
 		LinearLayout contentView = new LinearLayout(context);
 		contentView.setOrientation(LinearLayout.VERTICAL);
 		contentView.addView(this.list);
@@ -39,10 +45,14 @@ public class SelectCategoryDialog extends Dialog {
 	@Override
 	public void show()
 	{
-		this.list.setAdapter(CategoryListAdapterDetailed.createAdapter(getContext(),
-				R.layout.punchin_list_view_row, false, this.newItemPlaceholder, this.currentDateTime));
+		this.list.setAdapter(createCategoryListAdapter());
 
 		super.show();
+	}
+
+	private ArrayAdapter<TimeSliceCategory> createCategoryListAdapter() {
+		return CategoryListAdapterDetailed.createAdapter(getContext(),
+				R.layout.punchin_list_view_row, false, this.newItemPlaceholder, this.currentDateTime, "SelectCategoryDialog");
 	}
 	
 	public SelectCategoryDialog setCategoryCallback(final CategorySetter callback) {

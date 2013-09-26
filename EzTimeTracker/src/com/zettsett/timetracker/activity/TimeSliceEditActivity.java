@@ -15,6 +15,7 @@ import com.googlecode.android.widgets.DateSlider.DateTimeMinuteSlider;
 import com.zetter.androidTime.R;
 import com.zettsett.timetracker.DateTimeFormatter;
 import com.zettsett.timetracker.Global;
+import com.zettsett.timetracker.Settings;
 import com.zettsett.timetracker.TimeTrackerManager;
 import com.zettsett.timetracker.database.TimeSliceCategoryRepsitory;
 import com.zettsett.timetracker.database.TimeSliceRepository;
@@ -59,7 +60,7 @@ public class TimeSliceEditActivity extends Activity  implements CategorySetter {
 		
 		catSpinner = (Spinner) findViewById(R.id.spinnerEditTimeSliceCategory);
 		if (this.timeSlice.getCategoryId() != HIDDEN) {
-			catSpinner.setAdapter( CategoryListAdapterSimple.createAdapter(this, TimeSliceCategory.NO_CATEGORY, TimeSliceCategory.MIN_VALID_DATE));
+			catSpinner.setAdapter( createCategoryAdapter(this));
 			
 			TimeSliceCategory currentCategory = this.timeSlice.getCategory();
 			
@@ -147,7 +148,23 @@ public class TimeSliceEditActivity extends Activity  implements CategorySetter {
 		setTimeTexts();
 	}
 
-    // define the listener which is called once a user selected the date.
+    private ArrayAdapter<TimeSliceCategory> createCategoryAdapter(
+			TimeSliceEditActivity timeSliceEditActivity) {
+		long loadReferenceDate = (Settings.getHideInactiveCategories()) ? TimeTrackerManager.currentTimeMillis() :  TimeSliceCategory.MIN_VALID_DATE;
+		
+		TimeSliceCategory currentCategory = this.timeSlice.getCategory();
+		
+		if (!currentCategory.isActive(loadReferenceDate)) {
+			loadReferenceDate = TimeSliceCategory.MIN_VALID_DATE;
+		}
+
+		// return CategoryListAdapterDetailed.createAdapter(this,
+		// 		R.layout.category_list_view_row, false, TimeSliceCategory.NO_CATEGORY, 
+		// 		loadReferenceDate, "TimeSliceEditActivity");
+		return CategoryListAdapterSimple.createAdapter(this, TimeSliceCategory.NO_CATEGORY, loadReferenceDate, "TimeSliceEditActivity");
+	}
+
+	// define the listener which is called once a user selected the date.
     private DateSlider.OnDateSetListener mDateTimeSetListenerStart =
         new DateSlider.OnDateSetListener() {
             public void onDateSet(DateSlider view, Calendar selectedDate) {
@@ -242,7 +259,7 @@ public class TimeSliceEditActivity extends Activity  implements CategorySetter {
 			TimeSliceCategoryRepsitory categoryRepository = new TimeSliceCategoryRepsitory(
 					this);
 			categoryRepository.createTimeSliceCategory(newCategory);
-			ArrayAdapter<TimeSliceCategory> categoryAdapter = CategoryListAdapterSimple.createAdapter(this, TimeSliceCategory.NO_CATEGORY, TimeSliceCategory.MIN_VALID_DATE);
+			ArrayAdapter<TimeSliceCategory> categoryAdapter = createCategoryAdapter(this);
 			catSpinner.setAdapter( categoryAdapter);		
 			int newPosition = categoryAdapter.getPosition(newCategory);
 			catSpinner.setSelection(newPosition);

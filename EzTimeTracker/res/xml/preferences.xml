@@ -18,7 +18,12 @@
 			android:title="Public Database" 
 			android:summary="Should the Database be accessable for other apps" />
 
-		<!-- 		
+		<CheckBoxPreference android:key="hideInactiveCategories" 
+			android:defaultValue="false"
+			android:title="Hide inactive Categories" 
+			android:summary="False= also show inactive Categories" />
+
+				<!-- 		
 		<de.k3b.widgets.EditTextPreferenceWithSummary
 			android:key="test"
 			android:title="Test Message" 

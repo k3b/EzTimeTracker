@@ -18,6 +18,7 @@ import com.googlecode.android.widgets.DateSlider.DateTimeMinuteSlider;
 import com.zetter.androidTime.R;
 import com.zettsett.timetracker.DateTimeFormatter;
 import com.zettsett.timetracker.Global;
+import com.zettsett.timetracker.Settings;
 import com.zettsett.timetracker.TimeTrackerManager;
 import com.zettsett.timetracker.database.DatabaseInstance;
 import com.zettsett.timetracker.database.TimeSliceRepository;
@@ -104,7 +105,9 @@ public abstract class FilterActivity  extends Activity {
 		});
 
 		mCatSpinner = (Spinner) findViewById(R.id.spinnerEditTimeSliceCategory);
-		this.allCategoriesAdapter=CategoryListAdapterSimple.createAdapter(this, TimeSliceCategory.NO_CATEGORY, TimeSliceCategory.MIN_VALID_DATE); 
+		long loadReferenceDate = TimeSliceCategory.MIN_VALID_DATE; // (Settings.getHideInactiveCategories()) ? TimeTrackerManager.currentTimeMillis() :  TimeSliceCategory.MIN_VALID_DATE;
+
+		this.allCategoriesAdapter=CategoryListAdapterSimple.createAdapter(this, TimeSliceCategory.NO_CATEGORY, loadReferenceDate, "FilterActivity"); 
 		mCatSpinner.setAdapter( this.allCategoriesAdapter );
 		FilterActivity.selectSpinner(mCatSpinner, mFilter.getCategoryId());
 

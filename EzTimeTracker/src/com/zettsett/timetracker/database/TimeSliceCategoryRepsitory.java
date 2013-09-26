@@ -98,10 +98,12 @@ public class TimeSliceCategoryRepsitory {
 		return columns.toArray(new String[0]);
 	}
 
-	public List<TimeSliceCategory> fetchAllTimeSliceCategories(long currentDateTime) {
+	public List<TimeSliceCategory> fetchAllTimeSliceCategories(long currentDateTime, String debugContext) {
 		List<TimeSliceCategory> result = new ArrayList<TimeSliceCategory>();
 		Cursor cur = null;
 		String filter = createCategoryListFilter(currentDateTime);
+		Log.d(Global.LOG_CONTEXT, debugContext + "-TimeSliceCategoryRepsitory.fetchAllTimeSliceCategories(" + filter + ")");
+
 		try
 		{
 			cur = CURRENT_DB_INSTANCE.getDb().query(
@@ -119,7 +121,7 @@ public class TimeSliceCategoryRepsitory {
 		// Database does not contain categories yet, create them
 		if (result.size() == 0) {
 			createInitialDemoCategoriesFromResources();
-			result = fetchAllTimeSliceCategories(currentDateTime); // reload the demo items
+			result = fetchAllTimeSliceCategories(currentDateTime, debugContext); // reload the demo items
 		}
 		return result;
 	}

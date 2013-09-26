@@ -1,13 +1,8 @@
 package com.zettsett.timetracker.model;
 
 import java.io.Serializable;
-import java.util.List;
-
-import android.content.Context;
-import android.widget.ArrayAdapter;
 
 import com.zettsett.timetracker.DateTimeFormatter;
-import com.zettsett.timetracker.database.TimeSliceCategoryRepsitory;
 
 public class TimeSliceCategory implements Serializable, Comparable<TimeSliceCategory>{
 	private static final long serialVersionUID = 4899523432240132519L;
@@ -153,7 +148,7 @@ public class TimeSliceCategory implements Serializable, Comparable<TimeSliceCate
 	 * @return true if currentDateTime is between start and end
 	 */
 	public boolean isActive(long currentDateTime) {
-		if (currentDateTime == TimeSliceCategory.MIN_VALID_DATE) {
+		if ((currentDateTime == TimeSliceCategory.MIN_VALID_DATE) || (this == NO_CATEGORY)) {
 			return true;
 		}
 

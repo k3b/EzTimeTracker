@@ -29,7 +29,8 @@ public class CategoryListActivity extends ListActivity implements CategorySetter
 
 	private void refreshCategoryList() {
 		setListAdapter(CategoryListAdapterDetailed.createAdapter(this,
-				R.layout.category_list_view_row, true, TimeSliceCategory.NO_CATEGORY, TimeSliceCategory.MIN_VALID_DATE));
+				R.layout.category_list_view_row, true, TimeSliceCategory.NO_CATEGORY, 
+				TimeSliceCategory.MIN_VALID_DATE, "CategoryListActivity"));
 
 	}
 

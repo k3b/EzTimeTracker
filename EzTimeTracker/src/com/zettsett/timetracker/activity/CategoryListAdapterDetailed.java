@@ -11,6 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.zetter.androidTime.R;
+import com.zettsett.timetracker.TimeTrackerManager;
 import com.zettsett.timetracker.database.TimeSliceCategoryRepsitory;
 import com.zettsett.timetracker.model.TimeSliceCategory;
 
@@ -40,12 +41,12 @@ public class CategoryListAdapterDetailed extends ArrayAdapter<TimeSliceCategory>
 	private final String descriptionPrefix;
 	
 	/**
-	 * dateTime when isActive should be tested
+	 * dateTime when isActive is displayed
 	 */
-	private final long currentDateTime;
+	private long currentDateTimeDisplay;
 	
 	public CategoryListAdapterDetailed(Context context, int textViewResourceId,
-			List<TimeSliceCategory> items, boolean withDescription, long currentDateTime) {
+			List<TimeSliceCategory> items, boolean withDescription) {
 		super(context, textViewResourceId, items);
 		this.items = items;
 		this.context = context;
@@ -53,24 +54,25 @@ public class CategoryListAdapterDetailed extends ArrayAdapter<TimeSliceCategory>
 		this.viewId = textViewResourceId;
 		this.namePrefix = context.getString(R.string.category_name) + " ";
 		this.descriptionPrefix = context.getString(R.string.category_description) + " ";
-		this.currentDateTime = currentDateTime;
+		this.currentDateTimeDisplay = TimeTrackerManager.currentTimeMillis();
 	}
 
 	private final List<TimeSliceCategory> items;
 
-	public static CategoryListAdapterDetailed createAdapter(
-			Context context, int viewId, boolean withDescription, TimeSliceCategory firstElement, long currentDateTime) {
+	public static ArrayAdapter<TimeSliceCategory> createAdapter(
+			Context context, int viewId, boolean withDescription, TimeSliceCategory firstElement, 
+			long currentDateTimeDatabaseLoad, String debugContext) {
 		TimeSliceCategoryRepsitory repository = new TimeSliceCategoryRepsitory(context);
 
 		List<TimeSliceCategory> categories = repository
-				.fetchAllTimeSliceCategories(currentDateTime);
+				.fetchAllTimeSliceCategories(currentDateTimeDatabaseLoad, debugContext + "-CategoryListAdapterDetailed");
 		
 		if(firstElement != null)
 		{
 			categories.add(0, firstElement);
 		}
 		return new CategoryListAdapterDetailed(context,
-				viewId, categories, withDescription, currentDateTime);
+				viewId, categories, withDescription);
 	}
 
 	@Override
@@ -110,9 +112,9 @@ public class CategoryListAdapterDetailed extends ArrayAdapter<TimeSliceCategory>
 				activeView.setHeight(0);
 			}
 			
-			boolean isActive = category.isActive(this.currentDateTime);
+			boolean isActive = category.isActive(this.currentDateTimeDisplay);
 			if (!isActive) {
-				nameView.setTextColor(Color.GRAY);
+				nameView.setTextColor(Color.BLUE);
 			}
 		}
 		return view;

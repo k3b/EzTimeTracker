@@ -9,11 +9,12 @@ import com.zettsett.timetracker.database.TimeSliceCategoryRepsitory;
 import com.zettsett.timetracker.model.TimeSliceCategory;
 
 public class CategoryListAdapterSimple {
-	public static ArrayAdapter<TimeSliceCategory> createAdapter(Context context, TimeSliceCategory firstElement, long currentDateTime) {
+	public static ArrayAdapter<TimeSliceCategory> createAdapter(Context context, 
+			TimeSliceCategory firstElement, long currentDateTime, String debugContext) {
 		TimeSliceCategoryRepsitory repository = new TimeSliceCategoryRepsitory(context);
 		
 		List<TimeSliceCategory> categories = repository
-				.fetchAllTimeSliceCategories(currentDateTime);
+				.fetchAllTimeSliceCategories(currentDateTime, debugContext + "-CategoryListAdapterSimple");
 		if(firstElement != null)
 		{
 			categories.add(0, firstElement);
