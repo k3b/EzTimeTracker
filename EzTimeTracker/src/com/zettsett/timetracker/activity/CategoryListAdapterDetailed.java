@@ -93,23 +93,31 @@ public class CategoryListAdapterDetailed extends ArrayAdapter<TimeSliceCategory>
 				.findViewById(R.id.category_list_view_active_field);
 			
 			if(withDescription) {
-				nameView.setText(this.namePrefix + category.getCategoryName());
-				String description = category.getDescription();
-				if (description.length() > 0) {
-					descriptionView.setText(this.descriptionPrefix + description);
-				} else {
-					descriptionView.setHeight(0);
+				if (nameView != null) {
+					nameView.setText(this.namePrefix + category.getCategoryName());
 				}
-				String active = category.getActiveDate();
-				if (active.length() > 0) {
-					activeView.setText(active);
-				} else {
-					activeView.setHeight(0);
+				
+				if (descriptionView != null) {
+					String description = category.getDescription();
+					if (description.length() > 0) {
+						descriptionView.setText(this.descriptionPrefix + description);
+					} else {
+						descriptionView.setHeight(0);
+					}
+				}
+				
+				if (activeView != null) {
+					String active = category.getActiveDate();
+					if (active.length() > 0) {
+						activeView.setText(active);
+					} else {
+						activeView.setHeight(0);
+					}
 				}
 			} else {
 				nameView.setText(category.getCategoryName());
-				descriptionView.setHeight(0);
-				activeView.setHeight(0);
+				if (descriptionView != null)descriptionView.setHeight(0);
+				if (activeView != null) activeView.setHeight(0);
 			}
 			
 			boolean isActive = category.isActive(this.currentDateTimeDisplay);
