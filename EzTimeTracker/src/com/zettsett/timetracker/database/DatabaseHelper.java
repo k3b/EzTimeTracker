@@ -14,8 +14,9 @@ import de.k3b.database.DatabaseContext;
 public class DatabaseHelper extends SQLiteOpenHelper {
 	public static final int DATABASE_VERSION_3_TIMESLICE_WITH_NOTES = 3;
 	public static final int DATABASE_VERSION_4_CATEGORY_ACTIVE = 4;
+	public static final int DATABASE_VERSION_5_REPORT_VIEW = 5;
 
-	public static final int DATABASE_VERSION = DATABASE_VERSION_4_CATEGORY_ACTIVE;
+	public static final int DATABASE_VERSION = DATABASE_VERSION_5_REPORT_VIEW;
 	
 	public static final String TIME_SLICE_CATEGORY_TABLE = "time_slice_category";
 	public static final String TIME_SLICE_TABLE = "time_slice";
@@ -26,12 +27,18 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 	@Override
 	public void onCreate(final SQLiteDatabase db) {
-		db.execSQL("CREATE TABLE " + TIME_SLICE_CATEGORY_TABLE
-				+ " (_id integer primary key autoincrement, "
-				+ "category_name text, description text, start_time date, end_time date)");
-		db.execSQL("CREATE TABLE " + TIME_SLICE_TABLE + " (_id integer primary key autoincrement, "
-						+ "category_id integer, start_time date, end_time date)");
-		version3Upgrade(db);
+		db.execSQL("CREATE TABLE " + TIME_SLICE_CATEGORY_TABLE +"(" +
+				"_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+				"category_name TEXT, description TEXT" +
+				",start_time DATE,end_time DATE" + // v4
+				")");
+		db.execSQL("CREATE TABLE " + TIME_SLICE_TABLE + "(" +
+				"_id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+				"category_id INTEGER REFERENCES " + TIME_SLICE_CATEGORY_TABLE + "(_id), " +
+				"start_time DATE, end_time DATE, " + // v3
+				"notes TEXT)");
+		
+		version5Upgrade(db);
 	}
 
 	@Override
@@ -46,6 +53,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 		if (oldVersion < DATABASE_VERSION_4_CATEGORY_ACTIVE) {
 			version4Upgrade(db);
 		}
+		if (oldVersion < DATABASE_VERSION_5_REPORT_VIEW) {
+			version5Upgrade(db);
+		}
 	}
 
 	private void version3Upgrade(final SQLiteDatabase db) {
@@ -53,9 +63,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	}
 	
 	private void version4Upgrade(final SQLiteDatabase db) {
-		db.execSQL("ALTER TABLE " + TIME_SLICE_CATEGORY_TABLE + " ADD COLUMN start_time date");
-		db.execSQL("ALTER TABLE " + TIME_SLICE_CATEGORY_TABLE + " ADD COLUMN end_time date");
-		db.execSQL("UPDATE " + TIME_SLICE_CATEGORY_TABLE + " set start_time = " + TimeSliceCategory.MIN_VALID_DATE + " where start_time is null");
-		db.execSQL("UPDATE " + TIME_SLICE_CATEGORY_TABLE + " set end_time = " + TimeSliceCategory.MAX_VALID_DATE + " where end_time is null");
+		db.execSQL("ALTER TABLE " + TIME_SLICE_CATEGORY_TABLE + " ADD COLUMN start_time DATE");
+		db.execSQL("ALTER TABLE " + TIME_SLICE_CATEGORY_TABLE + " ADD COLUMN end_time DATE");
+		db.execSQL("UPDATE " + TIME_SLICE_CATEGORY_TABLE + " SET start_time = " + TimeSliceCategory.MIN_VALID_DATE + " WHERE start_time IS NULL");
+		db.execSQL("UPDATE " + TIME_SLICE_CATEGORY_TABLE + " SET end_time = " + TimeSliceCategory.MAX_VALID_DATE + " WHERE end_time IS NULL");
+	}
+	
+	private void version5Upgrade(final SQLiteDatabase db) {
+		db.execSQL("CREATE VIEW time_slice_report AS "
+			+ "SELECT "
+				+ "ca.category_name, "
+				+ "datetime(ts.start_time /1000, 'unixepoch', 'localtime') AS start, "
+				+ "datetime(ts.end_time /1000, 'unixepoch', 'localtime') AS end, "
+				+ "(ts.end_time - ts.start_time)/3600.0/1000.0 AS hours, "
+				+ "notes, "
+				+ "ts._id, "
+				+ "category_id "
+			+ "FROM " + TIME_SLICE_TABLE + " AS ts "
+			+ "LEFT JOIN " + TIME_SLICE_CATEGORY_TABLE + " AS ca ON ts.category_id = ca._id "
+			+ "ORDER BY ts.start_time DESC ");
 	}
 }
