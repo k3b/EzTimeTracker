@@ -13,6 +13,8 @@ public class TimeSliceCategory implements Serializable, Comparable<TimeSliceCate
 	public static final long MIN_VALID_DATE = 0;
 	public static final long MAX_VALID_DATE = Long.MAX_VALUE;
 	
+	private static long currentDateTime = MIN_VALID_DATE;
+	
 	private int rowId = NOT_SAVED;
 	
 	private String categoryName;
@@ -63,6 +65,11 @@ public class TimeSliceCategory implements Serializable, Comparable<TimeSliceCate
 		this.description = description;
 	}
 
+	
+	public static void setCurrentDateTime(long value) {
+		currentDateTime = value;
+	}
+
 	public long getStartTime() {
 		return startTime;
 	}
@@ -109,7 +116,11 @@ public class TimeSliceCategory implements Serializable, Comparable<TimeSliceCate
 
 	@Override
 	public String toString() {
-		return categoryName;
+		if (isActive(currentDateTime)) {
+			return categoryName;
+		} else {
+			return "[-- " + categoryName + " --]";
+		}
 	}
 
 	@Override

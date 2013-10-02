@@ -3,7 +3,6 @@ package com.zettsett.timetracker.activity;
 import java.util.List;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,7 +28,6 @@ public class CategoryListAdapterDetailed extends ArrayAdapter<TimeSliceCategory>
 	 */
 	private final boolean withDescription;
 	private final int viewId;
-	
 	/**
 	 * Prefex to be prepended before each category name
 	 */
@@ -40,11 +38,6 @@ public class CategoryListAdapterDetailed extends ArrayAdapter<TimeSliceCategory>
 	 */
 	private final String descriptionPrefix;
 	
-	/**
-	 * dateTime when isActive is displayed
-	 */
-	private long currentDateTimeDisplay;
-	
 	public CategoryListAdapterDetailed(Context context, int textViewResourceId,
 			List<TimeSliceCategory> items, boolean withDescription) {
 		super(context, textViewResourceId, items);
@@ -54,7 +47,7 @@ public class CategoryListAdapterDetailed extends ArrayAdapter<TimeSliceCategory>
 		this.viewId = textViewResourceId;
 		this.namePrefix = context.getString(R.string.category_name) + " ";
 		this.descriptionPrefix = context.getString(R.string.category_description) + " ";
-		this.currentDateTimeDisplay = TimeTrackerManager.currentTimeMillis();
+		TimeSliceCategory.setCurrentDateTime(TimeTrackerManager.currentTimeMillis());
 	}
 
 	private final List<TimeSliceCategory> items;
@@ -66,6 +59,7 @@ public class CategoryListAdapterDetailed extends ArrayAdapter<TimeSliceCategory>
 
 		List<TimeSliceCategory> categories = repository
 				.fetchAllTimeSliceCategories(currentDateTimeDatabaseLoad, debugContext + "-CategoryListAdapterDetailed");
+		
 		
 		if(firstElement != null)
 		{
@@ -93,38 +87,25 @@ public class CategoryListAdapterDetailed extends ArrayAdapter<TimeSliceCategory>
 				.findViewById(R.id.category_list_view_active_field);
 			
 			if(withDescription) {
-				if (nameView != null) {
-					nameView.setText(this.namePrefix + category.getCategoryName());
-				}
-				
-				if (descriptionView != null) {
-					String description = category.getDescription();
-					if (description.length() > 0) {
-						descriptionView.setText(this.descriptionPrefix + description);
-					} else {
-						descriptionView.setHeight(0);
-					}
-				}
-				
-				if (activeView != null) {
-					String active = category.getActiveDate();
-					if (active.length() > 0) {
-						activeView.setText(active);
-					} else {
-						activeView.setHeight(0);
-					}
-				}
+				setContent(nameView, this.namePrefix, category.toString());
+				setContent(descriptionView, this.descriptionPrefix, category.getDescription());
+				setContent(activeView, "", category.getActiveDate());
 			} else {
-				nameView.setText(category.getCategoryName());
-				if (descriptionView != null)descriptionView.setHeight(0);
-				if (activeView != null) activeView.setHeight(0);
-			}
-			
-			boolean isActive = category.isActive(this.currentDateTimeDisplay);
-			if (!isActive) {
-				nameView.setTextColor(Color.BLUE);
+				setContent(nameView, "", category.toString());
+				setContent(descriptionView, "", null);
+				setContent(activeView, "", null);
 			}
 		}
 		return view;
+	}
+
+	private void setContent(TextView view, String prefix, String text) {
+		if (view != null) {
+			if ((text != null) && (text.length() > 0)) {
+				view.setText(prefix + text);
+			} else {
+				view.setHeight(0);
+			}
+		}
 	}
 }

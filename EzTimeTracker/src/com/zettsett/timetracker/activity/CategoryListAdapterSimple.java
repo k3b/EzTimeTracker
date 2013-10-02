@@ -5,6 +5,7 @@ import java.util.List;
 import android.content.Context;
 import android.widget.ArrayAdapter;
 
+import com.zettsett.timetracker.TimeTrackerManager;
 import com.zettsett.timetracker.database.TimeSliceCategoryRepsitory;
 import com.zettsett.timetracker.model.TimeSliceCategory;
 
@@ -19,6 +20,8 @@ public class CategoryListAdapterSimple {
 		{
 			categories.add(0, firstElement);
 		}
+
+		TimeSliceCategory.setCurrentDateTime(TimeTrackerManager.currentTimeMillis());
 
 		TimeSliceCategory[] durationCategories = categories
 				.toArray(new TimeSliceCategory[0]);

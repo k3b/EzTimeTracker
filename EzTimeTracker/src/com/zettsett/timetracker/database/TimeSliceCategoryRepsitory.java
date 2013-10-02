@@ -108,7 +108,7 @@ public class TimeSliceCategoryRepsitory {
 		{
 			cur = CURRENT_DB_INSTANCE.getDb().query(
 					DatabaseHelper.TIME_SLICE_CATEGORY_TABLE, columnList(), filter,
-					null, null, null, COL_CATEGORY_NAME); // order by name
+					null, null, null, "lower(" + COL_CATEGORY_NAME + ")"); // order by name
 			while (cur.moveToNext()) {
 				TimeSliceCategory cat = fillTimeSliceCategoryFromCursor(cur);
 				result.add(cat);

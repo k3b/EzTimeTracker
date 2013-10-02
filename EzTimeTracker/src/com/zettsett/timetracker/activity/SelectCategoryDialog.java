@@ -23,15 +23,9 @@ public class SelectCategoryDialog extends Dialog {
 
 	private final ListView list;
 	private final TimeSliceCategory newItemPlaceholder;
-	private long currentDateTime;
 
 	public SelectCategoryDialog(Context context, int style, TimeSliceCategory newItemPlaceholder) {
 		super(context, style);
-		if (Settings.getHideInactiveCategories()) {
-			this.currentDateTime = TimeTrackerManager.currentTimeMillis();
-		} else {
-			this.currentDateTime = TimeSliceCategory.MIN_VALID_DATE;			
-		}
 		this.newItemPlaceholder = newItemPlaceholder;
 		// setTitle("Punch In for Activity");
 		this.list = new ListView(context);
@@ -51,8 +45,12 @@ public class SelectCategoryDialog extends Dialog {
 	}
 
 	private ArrayAdapter<TimeSliceCategory> createCategoryListAdapter() {
+		long currentDateTime = (Settings.getHideInactiveCategories()) 
+					? TimeTrackerManager.currentTimeMillis()
+					: TimeSliceCategory.MIN_VALID_DATE;			
+
 		return CategoryListAdapterDetailed.createAdapter(getContext(),
-				R.layout.punchin_list_view_row, false, this.newItemPlaceholder, this.currentDateTime, "SelectCategoryDialog");
+				R.layout.punchin_list_view_row, false, this.newItemPlaceholder, currentDateTime, "SelectCategoryDialog");
 	}
 	
 	public SelectCategoryDialog setCategoryCallback(final CategorySetter callback) {
