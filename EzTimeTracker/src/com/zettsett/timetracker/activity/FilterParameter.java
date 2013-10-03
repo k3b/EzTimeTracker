@@ -1,6 +1,8 @@
 package com.zettsett.timetracker.activity;
 
 import java.io.Serializable;
+import java.util.Locale;
+
 import com.zettsett.timetracker.DateTimeFormatter;
 import com.zettsett.timetracker.model.*;
 
@@ -75,7 +77,11 @@ public class FilterParameter  implements Serializable, ITimeSliceFilter {
 	}
 	
 	@Override public String toString() {
-		return String.format("%1$s-%2$s:%3$i", 
+		if (this.mIgnoreDates) {
+			return String.format(Locale.US,"%1$d",
+					this.getCategoryId());
+		} 
+		return String.format(Locale.US, "%1$s-%2$s:%3$d", 
 				DateTimeFormatter.getShortDateStr(this.getStartTime()), 
 				DateTimeFormatter.getShortDateStr(this.getEndTime()), 
 				this.getCategoryId());

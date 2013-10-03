@@ -15,6 +15,7 @@ public class CategoryListActivity extends ListActivity implements ICategorySette
 	private static final int MENU_ADD_CATEGORY = Menu.FIRST;
 	private static final int EDIT_MENU_ID = Menu.FIRST + 1;
 	private static final int DELETE_MENU_ID = Menu.FIRST + 2;
+	private static final int REPORT_MENU_ID = Menu.FIRST + 3;
 	private TimeSliceCategory categoryClicked;
 	private final TimeSliceCategoryRepsitory categoryRepository = new TimeSliceCategoryRepsitory(
 			this);
@@ -52,10 +53,14 @@ public class CategoryListActivity extends ListActivity implements ICategorySette
 		categoryClicked = (TimeSliceCategory) getListView().getItemAtPosition(
 				((AdapterContextMenuInfo) menuInfo).position);
 		
-		if (categoryClicked != null)
+		if (categoryClicked != null) {
 			menu.setHeaderTitle("" + categoryClicked.getCategoryName());
+		}
 		menu.add(0, EDIT_MENU_ID, 0, R.string.cmd_edit);
 		menu.add(0, DELETE_MENU_ID, 0, R.string.cmd_delete);
+		if ((categoryClicked != null) && (categoryClicked != TimeSliceCategory.NO_CATEGORY)) {
+			menu.add(0, REPORT_MENU_ID, 0, R.string.cmd_report);
+		}
 	}
 
 	@Override
@@ -77,6 +82,15 @@ public class CategoryListActivity extends ListActivity implements ICategorySette
 			}
 			refreshCategoryList();
 			return true;
+		case REPORT_MENU_ID:
+			if ((categoryClicked != null) && (categoryClicked != TimeSliceCategory.NO_CATEGORY)) {
+				FilterParameter filter = new FilterParameter()
+					.setCategoryId(categoryClicked.getRowId())
+					.setIgnoreDates(true);
+				TimeSheetDetailReportActivity.showActivity(this, filter);
+				return true;
+			}
+
 		default:
 			return super.onContextItemSelected(item);
 		}

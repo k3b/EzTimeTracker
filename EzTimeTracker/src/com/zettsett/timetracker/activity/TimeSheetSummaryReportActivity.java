@@ -40,14 +40,14 @@ import com.zettsett.timetracker.report.IReportInterface;
  * the License.
  * 
  */
-public class SummaryReportActivity extends Activity implements IReportInterface {
+public class TimeSheetSummaryReportActivity extends Activity implements IReportInterface {
 	private static final String SAVED_REPORT_MODE = "reportMode";
 	private static final int MENU_ITEM_GROUP_DAILY = Menu.FIRST;
 	private static final int MENU_ITEM_GROUP_WEEKLY = Menu.FIRST + 1;
 	private static final int MENU_ITEM_GROUP_MONTHLY = Menu.FIRST + 2;
 	private static final int MENU_ITEM_GROUP_CATEGORY = Menu.FIRST + 3;
 	public static final String MENU_ID = "MENU_ID";
-	private static final String SAVED_REPORT_FILTER = "DetailReportFilter";
+	private static final String SAVED_REPORT_FILTER = "SummaryReportFilter";
 
 	private enum ReportDateGrouping {
 		DAILY, WEEKLY, MONTHLY
@@ -77,7 +77,7 @@ public class SummaryReportActivity extends Activity implements IReportInterface 
 					.getSerializable(SAVED_REPORT_GROUPING());
 			mReportMode = (ReportModes) savedInstanceState.getSerializable(SAVED_REPORT_MODE);
 		}
-		loadDataIntoReport(this.getIntent().getIntExtra(SummaryReportActivity.MENU_ID, 0));
+		loadDataIntoReport(this.getIntent().getIntExtra(TimeSheetSummaryReportActivity.MENU_ID, 0));
 	}
 
 	protected String SAVED_REPORT_GROUPING() {
@@ -86,7 +86,7 @@ public class SummaryReportActivity extends Activity implements IReportInterface 
 
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
-		outState.putSerializable(SAVED_REPORT_FILTER, mRangeFilter);		
+		ReportFramework.setLastFilter(outState, SAVED_REPORT_FILTER, mRangeFilter);		
 		outState.putSerializable(SAVED_REPORT_GROUPING(), mReportDateGrouping);
 		outState.putSerializable(SAVED_REPORT_MODE, mReportMode);
 	}

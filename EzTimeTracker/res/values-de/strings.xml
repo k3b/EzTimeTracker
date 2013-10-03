@@ -21,7 +21,9 @@
 	<string name="button_data_export">Exportiere Buchungen</string>	
 	<string name="cmd_update">Anwenden</string>	
 	<string name="cmd_delete">Löschen</string>	
-	<string name="cmd_cancel"> Abbrechen </string>	
+	<string name="cmd_cancel"> Abbrechen </string>
+	<string name="cmd_report"> Details </string>
+		
 	<string name="checkbox_remove_ts_all">Datum egal</string>	
 	<string name="export_data_to_csv_file">Buchungen in CSV Datei exportieren</string>	
 	<string name="menu_export_report">Export Report</string>	

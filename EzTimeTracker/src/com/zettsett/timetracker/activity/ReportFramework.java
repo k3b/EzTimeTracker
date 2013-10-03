@@ -174,6 +174,13 @@ public class ReportFramework implements Serializable {
 		this.reportType = reportType;
 	}
 
+	/**
+	 * retrieves filter from bundle
+	 * @param savedInstanceState : where filter infos are stored
+	 * @param parameterName : the name of the filter. Every context has a different name.
+	 * @param notFoundValue : value returend if not found
+	 * @return filter or parameterName
+	 */
 	public static FilterParameter getLastFilter(Bundle savedInstanceState, String parameterName, FilterParameter notFoundValue) {
 		FilterParameter rangeFilter = null;
 		if (savedInstanceState != null) {
@@ -194,6 +201,16 @@ public class ReportFramework implements Serializable {
 		}
 		
 		return rangeFilter;
+	}
+
+	/**
+	 * saves filter to bundle
+	 * @param savedInstanceState : where filter infos are stored
+	 * @param parameterName : the name of the filter. Every context has a different name.
+	 * @param rangeFilter : value to be saved
+	 */
+	public static void setLastFilter(Bundle savedInstanceState, String parameterName, FilterParameter rangeFilter) {
+		savedInstanceState.putSerializable(parameterName, rangeFilter);
 	}
 
 	public static long getFixedEndTime(FilterParameter rangeFilter) {

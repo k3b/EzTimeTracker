@@ -13,7 +13,6 @@ import com.googlecode.android.widgets.DateSlider.AlternativeDateSlider;
 import com.googlecode.android.widgets.DateSlider.DateSlider;
 import com.zetter.androidTime.R;
 import com.zettsett.timetracker.TimeTrackerManager;
-import com.zettsett.timetracker.database.TimeSliceCategoryRepsitory;
 import com.zettsett.timetracker.database.TimeSliceRepository;
 import com.zettsett.timetracker.model.TimeSliceCategory;
 

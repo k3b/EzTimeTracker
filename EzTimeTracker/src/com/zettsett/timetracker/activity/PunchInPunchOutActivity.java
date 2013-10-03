@@ -207,7 +207,7 @@ public class PunchInPunchOutActivity extends Activity implements OnChronometerTi
 		if (itemHandler != null)
 		{
 			Intent intent = new Intent().setClass(this, itemHandler);
-			intent.putExtra(SummaryReportActivity.MENU_ID, itemId);
+			intent.putExtra(TimeSheetSummaryReportActivity.MENU_ID, itemId);
 			startActivity(intent);
 			return true;
 		} 
@@ -255,14 +255,14 @@ public class PunchInPunchOutActivity extends Activity implements OnChronometerTi
 	private Class<? extends Activity> getMenuIntentHandler(int item) {
 	    switch (item) {
 	    case R.id.details:
-	        return TimeSheetReportActivity.class;
+	        return TimeSheetDetailReportActivity.class;
 	    case R.id.summary_day:
 	    case R.id.summary_month:
 	    case R.id.summary_week:
 	    case R.id.category_day:
 	    case R.id.category_month:
 	    case R.id.category_week:
-	        return SummaryReportActivity.class;
+	        return TimeSheetSummaryReportActivity.class;
 	    case R.id.categories:
 	        return CategoryListActivity.class;
 	    case R.id.export:

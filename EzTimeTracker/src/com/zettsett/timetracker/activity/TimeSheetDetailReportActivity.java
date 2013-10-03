@@ -4,6 +4,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -50,8 +51,9 @@ import com.zettsett.timetracker.report.IReportInterface;
  * 
  * TODO reimplement as ListViewActivity? See tutorial http://www.vogella.com/articles/AndroidListView/article.html
  */
-public class TimeSheetReportActivity extends Activity implements IReportInterface {
-	private static final String SAVED_REPORT_FILTER = "DetailReportFilter";
+public class TimeSheetDetailReportActivity extends Activity implements IReportInterface {
+	public static final String SAVED_REPORT_FILTER = "DetailReportFilter"; // can be used as intent-extra to specify a different filter
+	
 	private static final int EDIT_MENU_ID = Menu.FIRST;
 	private static final int DELETE_MENU_ID = Menu.FIRST + 1;
 	private static final int ADD_MENU_ID = Menu.FIRST + 2;
@@ -70,13 +72,31 @@ public class TimeSheetReportActivity extends Activity implements IReportInterfac
 	private List<TextView> mReportViewList;
 	private boolean mShowNotes = true;
 
+	private String instanceFilter;
+
+	public static void showActivity(Context parent, FilterParameter filter) {
+		Intent intent = new Intent().setClass(parent, TimeSheetDetailReportActivity.class);
+		
+		intent.putExtra(TimeSheetDetailReportActivity.SAVED_REPORT_FILTER, filter);
+		parent.startActivity(intent);
+	}
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		mTimeSliceRepository = new TimeSliceRepository(this);
+				
+		Intent intent = this.getIntent();
+		FilterParameter rangeFilter = (FilterParameter) intent.getExtras().get(SAVED_REPORT_FILTER); 
+		if (rangeFilter == null) {
+			mRangeFilter = ReportFramework.getLastFilter(savedInstanceState, instanceFilter, mRangeFilter);
+			this.instanceFilter = SAVED_REPORT_FILTER;	// must als be saved for next time
+		} else {
+			mRangeFilter = rangeFilter;
+			this.instanceFilter = null; // can be discarded
+		}
 		
-		mRangeFilter = ReportFramework.getLastFilter(savedInstanceState, SAVED_REPORT_FILTER, mRangeFilter);
 		mReportFramework = new ReportFramework(this, mRangeFilter);
 		loadDataIntoReport(0);
 	}
@@ -93,7 +113,13 @@ public class TimeSheetReportActivity extends Activity implements IReportInterfac
 
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
-		outState.putSerializable(SAVED_REPORT_FILTER, mRangeFilter);		
+		if (this.instanceFilter != null) {
+			// filter must be saved
+			ReportFramework.setLastFilter(outState, this.instanceFilter, mRangeFilter);		
+		} else {
+			// current filter should be discarded. Restore previous filter
+			mRangeFilter = ReportFramework.getLastFilter(outState, SAVED_REPORT_FILTER, mRangeFilter);					
+		}
 	}
 
 	private void initScrollview() {
