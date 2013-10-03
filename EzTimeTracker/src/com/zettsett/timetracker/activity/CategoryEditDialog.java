@@ -56,7 +56,7 @@ public class CategoryEditDialog extends Dialog  {
 	
 	private TimeSliceCategory mCategory;
 
-	public CategoryEditDialog(Context context, 
+	public CategoryEditDialog(final Context context, 
 			final ICategorySetter owner) {
 		super(context);
 		setContentView(R.layout.category_edit);
@@ -67,7 +67,21 @@ public class CategoryEditDialog extends Dialog  {
 
 		mTimeInButton = (Button) findViewById(R.id.EditTimeIn);
 		
-		this.usage = (TextView) findViewById(R.id.category_usage);
+		usage = (TextView) findViewById(R.id.category_usage);
+		
+		usage.setOnLongClickListener(new View.OnLongClickListener() {
+			@Override
+			public boolean onLongClick(View v) {
+				saveChangesAndExit(owner);
+				if ((mCategory != null) && (mCategory != TimeSliceCategory.NO_CATEGORY)) {
+					FilterParameter filter = new FilterParameter()
+						.setCategoryId(mCategory.getRowId())
+						.setIgnoreDates(true);
+					TimeSheetDetailReportActivity.showActivity(context, filter);
+				}
+				return true;
+			}
+		});
 		
 		mTimeInButton.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -103,11 +117,9 @@ public class CategoryEditDialog extends Dialog  {
 		saveButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				mCategory.setCategoryName(catNameField.getText().toString());
-				mCategory.setDescription(catDescField.getText().toString());
-				owner.setCategory(mCategory);
-				dismiss();
+				saveChangesAndExit(owner);
 			}
+
 		});
 		cancelButton.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -115,6 +127,15 @@ public class CategoryEditDialog extends Dialog  {
 				cancel();
 			}
 		});
+	}
+
+	private void saveChangesAndExit(final ICategorySetter owner) {
+		mCategory.setCategoryName(catNameField.getText().toString());
+		mCategory.setDescription(catDescField.getText().toString());
+		if (owner != null) {
+			owner.setCategory(mCategory);
+		}
+		dismiss();
 	}
 
 	private void setTimeTexts() {
