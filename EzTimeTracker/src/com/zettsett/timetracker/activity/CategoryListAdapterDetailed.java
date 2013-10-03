@@ -27,7 +27,12 @@ public class CategoryListAdapterDetailed extends ArrayAdapter<TimeSliceCategory>
 	 * false means short disply only with categoryname but witout description
 	 */
 	private final boolean withDescription;
+	
+	/**
+	 * The Resource used for the adapter
+	 */
 	private final int viewId;
+	
 	/**
 	 * Prefex to be prepended before each category name
 	 */
@@ -38,20 +43,18 @@ public class CategoryListAdapterDetailed extends ArrayAdapter<TimeSliceCategory>
 	 */
 	private final String descriptionPrefix;
 	
-	public CategoryListAdapterDetailed(Context context, int textViewResourceId,
-			List<TimeSliceCategory> items, boolean withDescription) {
-		super(context, textViewResourceId, items);
-		this.items = items;
-		this.context = context;
-		this.withDescription = withDescription;
-		this.viewId = textViewResourceId;
-		this.namePrefix = context.getString(R.string.category_name) + " ";
-		this.descriptionPrefix = context.getString(R.string.category_description) + " ";
-		TimeSliceCategory.setCurrentDateTime(TimeTrackerManager.currentTimeMillis());
-	}
-
+	/**
+	 * Items that are displayed in the adapter
+	 */
 	private final List<TimeSliceCategory> items;
 
+	/**
+	 * Workaround for recycled Items: 
+	 * Sometimes Text is not visible because previos 
+	 * ItemHeight==0 is sometimes remembered.
+	 */
+	private int itemHight = 0;
+	
 	public static ArrayAdapter<TimeSliceCategory> createAdapter(
 			Context context, int viewId, boolean withDescription, TimeSliceCategory firstElement, 
 			long currentDateTimeDatabaseLoad, String debugContext) {
@@ -69,6 +72,18 @@ public class CategoryListAdapterDetailed extends ArrayAdapter<TimeSliceCategory>
 				viewId, categories, withDescription);
 	}
 
+	private CategoryListAdapterDetailed(Context context, int textViewResourceId,
+			List<TimeSliceCategory> items, boolean withDescription) {
+		super(context, textViewResourceId, items);
+		this.items = items;
+		this.context = context;
+		this.withDescription = withDescription;
+		this.viewId = textViewResourceId;
+		this.namePrefix = context.getString(R.string.category_name) + " ";
+		this.descriptionPrefix = context.getString(R.string.category_description) + " ";
+		TimeSliceCategory.setCurrentDateTime(TimeTrackerManager.currentTimeMillis());
+	}
+
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		View view = convertView;
@@ -76,6 +91,13 @@ public class CategoryListAdapterDetailed extends ArrayAdapter<TimeSliceCategory>
 			LayoutInflater vi = (LayoutInflater) context
 					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			view = vi.inflate(viewId, null);
+			
+			if ((itemHight == 0) && (withDescription)) {
+				itemHight = view
+							.findViewById(R.id.category_list_view_description_field)
+							.getHeight();
+				
+			}
 		}
 		TimeSliceCategory category = items.get(position);
 		if (category != null) {
@@ -87,13 +109,13 @@ public class CategoryListAdapterDetailed extends ArrayAdapter<TimeSliceCategory>
 				.findViewById(R.id.category_list_view_active_field);
 			
 			if(withDescription) {
-				setContent(nameView, this.namePrefix, category.toString());
 				setContent(descriptionView, this.descriptionPrefix, category.getDescription());
 				setContent(activeView, "", category.getActiveDate());
+				setContent(nameView, this.namePrefix, category.toString());
 			} else {
-				setContent(nameView, "", category.toString());
 				setContent(descriptionView, "", null);
 				setContent(activeView, "", null);
+				setContent(nameView, "", category.toString());
 			}
 		}
 		return view;
@@ -101,8 +123,20 @@ public class CategoryListAdapterDetailed extends ArrayAdapter<TimeSliceCategory>
 
 	private void setContent(TextView view, String prefix, String text) {
 		if (view != null) {
+			if (itemHight == 0) {
+				itemHight = view.getHeight();
+			}
 			if ((text != null) && (text.length() > 0)) {
 				view.setText(prefix + text);
+				if (itemHight == 0) {
+					itemHight = view.getHeight();
+				}
+				if ((itemHight > 0) && (view.getHeight() == 0)) {
+					// Workaround for recycled Items: 
+					// Sometimes Text is not visible because previos 
+					// ItemHeight==0 is sometimes remembered.
+					view.setHeight(this.itemHight);					
+				}
 			} else {
 				view.setHeight(0);
 			}
