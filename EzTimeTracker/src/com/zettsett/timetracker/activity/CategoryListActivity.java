@@ -83,16 +83,20 @@ public class CategoryListActivity extends ListActivity implements ICategorySette
 			refreshCategoryList();
 			return true;
 		case REPORT_MENU_ID:
-			if ((categoryClicked != null) && (categoryClicked != TimeSliceCategory.NO_CATEGORY)) {
-				FilterParameter filter = new FilterParameter()
-					.setCategoryId(categoryClicked.getRowId())
-					.setIgnoreDates(true);
-				TimeSheetDetailReportActivity.showActivity(this, filter);
-				return true;
-			}
+			showDetailReport();
+			return true;
 
 		default:
 			return super.onContextItemSelected(item);
+		}
+	}
+
+	private void showDetailReport() {
+		if ((categoryClicked != null) && (categoryClicked != TimeSliceCategory.NO_CATEGORY)) {
+			FilterParameter filter = new FilterParameter()
+				.setCategoryId(categoryClicked.getRowId())
+				.setIgnoreDates(true);
+			TimeSheetDetailReportActivity.showActivity(this, filter);
 		}
 	}
 
@@ -120,14 +124,22 @@ public class CategoryListActivity extends ListActivity implements ICategorySette
 	}
 	
 	private Dialog createDeleteWarningDialog() {
-		final CharSequence[] items = { "Go ahead and delete it.", "Don't delete it." };
+		final CharSequence[] items = { 
+				getResources().getString(R.string.cmd_delete_confirm), // "Go ahead and delete it.", 
+				getResources().getString(R.string.cmd_delete_cancel), // "Don't delete it.",
+				getResources().getString(R.string.cmd_report)	      // Details
+		};
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle("Warning: time is already assigned to " + categoryClicked + ":");
+		builder.setTitle(getResources().getString(R.string.cmd_delete_warning)  // "Warning already in use : " 
+				+ categoryClicked.getCategoryName());
 		builder.setItems(items, new DialogInterface.OnClickListener() {
 			public void onClick(DialogInterface dialog, int item) {
 				if (item == 0) {
 					categoryRepository.delete(categoryClicked.getRowId());
 					refreshCategoryList();
+				}
+				if (item == 2) {
+					showDetailReport();
 				}
 			}
 		});

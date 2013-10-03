@@ -24,6 +24,9 @@
 	<string name="button_data_export">Export Data</string>	
 	<string name="cmd_update">Update</string>	
 	<string name="cmd_delete">Delete</string>	
+	<string name="cmd_delete_warning">"Warning still in use : " </string>
+	<string name="cmd_delete_confirm">"Go ahead and delete it."</string>
+	<string name="cmd_delete_cancel">"Don't delete it."</string>
 	<string name="cmd_cancel"> Cancel </string>	
 	<string name="cmd_report"> Details </string>
 	<string name="checkbox_remove_ts_all">Ignore Date</string>	

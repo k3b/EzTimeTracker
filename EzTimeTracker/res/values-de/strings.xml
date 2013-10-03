@@ -21,6 +21,10 @@
 	<string name="button_data_export">Exportiere Buchungen</string>	
 	<string name="cmd_update">Anwenden</string>	
 	<string name="cmd_delete">Löschen</string>	
+	<string name="cmd_delete_warning">"Warnung: Wird noch verwendet : " </string>	
+	<string name="cmd_delete_confirm">"Trotzdem löschen."</string>
+	<string name="cmd_delete_cancel">"Nicht löschen."</string>
+	
 	<string name="cmd_cancel"> Abbrechen </string>
 	<string name="cmd_report"> Details </string>
 		

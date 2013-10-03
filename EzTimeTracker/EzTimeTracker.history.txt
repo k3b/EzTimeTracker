@@ -1,4 +1,4 @@
-* TimeSheetDetailreport from CategoryList-Contextmenue, CategoryEdit-Usage-longpress
+* TimeSheetDetailreport from CategoryList-Contextmenue, CategoryEdit-Usage-longpress, CategoryList-Delete-Warning
 * CategoryEditDialog with usage infos
 * DB:5 - VIEW time_slice_report
 * DB:4 - Categorie active/expired: 
