@@ -1,0 +1,73 @@
+* CategoryEditDialog with usage infos
+* DB:5 - VIEW time_slice_report
+* DB:4 - Categorie active/expired: 
+  * Different display Categoryname if expired as [-- xxx --]
+  * Expired Categories can be hidden if configured in Options
+* FilterActivity Long press on start/end starts editor with now
+* TimeSliceEditActivity: long press on Start/Stop-time ==> sets to now before editing
+
+Version: 2.4 2013-05-11
+* PunchInPunchOutActivity: long press on elapsedTime => shows Detail-report
+
+version 2.3. 2013-04-11
+* Implemented PunchInPunchOutActivity LongPress: start/stop to edit current timeslice
+
+v 2.2 2012-05-12
+* Fixed re-define rangefilter
+
+V 2.1.99 2012-05-11
+
+* add new TimeSlice with category-last-used instead of ?
+* bugfix export csv
+* Report with filter
+
+V 2.1 2012-05-09
+* TimeSheetReportActivity reimplemented delete by date
+* About-Box now has localizable About text in en and de
+* MainActivity: Long pressing the startbutton allows to edit current recording startTime/Category
+* created ITimeSliceFilter. RemoveTimeSliceActivity now shows number of rows that would be deleted. Toast-message if no items found.
+* reimplementing delete timeslices
+* Allow to create new category from EditTimeSlice
+
+version 2.0 2012-04-03
+* Fixed lint issues
+* removed dependency to external lib dateslider
+* Localizing gui en-US, de. 
+  * Extracted hardcoded strings to resources to make app traslatable into different languages
+  * externalized all date time formatting to DateTimeFormatter.java; changed exportfields
+* DB:3 - Added Notes to timeslice
+* Remote Broadcast allows Llama to control TimeTracker
+
+Version 1.9 2012-02-02
+* cloned from http://eztimetracker.googlecode.com/svn/trunk/ "r10 Updating to version 1.6"
+
+-----------------------
+Tuesday, July 27, 2010
+EZ Time Tracker 1.5
+EZ Time Tracker 1.5 new features:
+
+    * Notes are now visible from the time sheet screen. They can be hidden via the menu on that screen.
+    * There is a new screen for removing (i.e. permanently deleting) previously recorded time intervals. They can be removed either in a date range or all can be removed at once providing a clean start. Be VERY careful with this feature... time intervals can not be restored. (I hope to add a backup, restore/transfer feature in some later version).
+    * There are also some minor UI tweaks to hopefully give a cleaner feel.
+
+Monday, July 19, 2010
+EZ Time Tracker 1.4
+EZ Time Tracker 1.4 new features:
+
+    * Notes can now be added to time intervals. A notes area is now available in the punch in screen and in the edit screen from the time sheet.
+    * A new data export screen for exporting data to CSV format, either to an SD card file or to an email message. This can be used for loading the file into spreadsheets or databases.
+    * The menu on the punch in screen has been moved to a list on a separate screen. This screen is itself accessed from the punch in screen menu. I hope this doesn't cause any confusion, but it was necessary because the punch in screen menu was getting cluttered and, I believe, hard to navigate.
+
+Tuesday, June 22, 2010
+EZ Time Tracker 1.3
+EZ Time Tracker 1.3 new features:
+
+    * Ability to manually add new activities to the timesheet. A new item is on the menu for the timesheet report: Add New Activity. Choose a date, then enter the activity time interval and category. Alternatively long click a date header row to add an activity for that date.
+    * All items on the timesheet have a context menu. In other words, long click a row to get an appropriate menu like the add activity described above, or delete/edit for any existing activity. Also the date range heading can be long clicked to change the date range of the report.
+
+EZ Time Tracker 1.2 new features:
+
+    * Export both timesheet and summary reports to SD card. This option is available from the menu of both screens.
+    * Email both timesheet and summary reports. This option is available from the menu of both screens.
+
+ 
