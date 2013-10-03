@@ -7,11 +7,14 @@ import android.content.Context;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.googlecode.android.widgets.DateSlider.AlternativeDateSlider;
 import com.googlecode.android.widgets.DateSlider.DateSlider;
 import com.zetter.androidTime.R;
 import com.zettsett.timetracker.TimeTrackerManager;
+import com.zettsett.timetracker.database.TimeSliceCategoryRepsitory;
+import com.zettsett.timetracker.database.TimeSliceRepository;
 import com.zettsett.timetracker.model.TimeSliceCategory;
 
 /**
@@ -30,6 +33,7 @@ public class CategoryEditDialog extends Dialog  {
 	private final Button cancelButton;
 	private Button mTimeInButton;
 	private Button mTimeOutButton;
+	private TextView usage;
 
     // define the listener which is called once a user selected the date.
     private DateSlider.OnDateSetListener mDateTimeSetListenerStart =
@@ -63,6 +67,9 @@ public class CategoryEditDialog extends Dialog  {
 		cancelButton = (Button) findViewById(R.id.edit_time_category_cancel_button);
 
 		mTimeInButton = (Button) findViewById(R.id.EditTimeIn);
+		
+		this.usage = (TextView) findViewById(R.id.category_usage);
+		
 		mTimeInButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -137,7 +144,25 @@ public class CategoryEditDialog extends Dialog  {
 			catDescField.setText(mCategory.getDescription());
 			setTimeTexts();
 		}
+		
+		showUsage();
+
 		super.show();
+	}
+
+	private void showUsage() {
+		final FilterParameter filterParam = new FilterParameter().setCategoryId(mCategory.getRowId());
+		
+		final int itemCount = TimeSliceRepository.getCount(filterParam, true);
+		if (itemCount > 0) {
+			final int hours = (int) TimeSliceRepository.getTotalDurationInHours(filterParam, true);
+			final String label = String.format(this.getContext().getText(R.string.category_usage_format).toString(),
+					itemCount, hours);
+			this.usage.setText(label);
+			this.usage.setVisibility(View.VISIBLE);
+		} else {
+			this.usage.setVisibility(View.INVISIBLE);
+		}
 	}
 	
 	private void showDialog(int id) {
