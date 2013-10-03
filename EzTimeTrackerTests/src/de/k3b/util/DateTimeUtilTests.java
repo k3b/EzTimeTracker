@@ -31,6 +31,12 @@ public class DateTimeUtilTests {
 	}
 
 	@Test
+	public void ShouldFormatYear() {
+		String resultSylvester = dtu.getYearString(testDateSylvester2013);
+		Assert.assertEquals("Sylvester", "2013", resultSylvester);
+	}
+
+	@Test
 	public void ShouldTruncateYear() {
 		long truncatedSylvester = dtu.getStartOfYear(testDateSylvester2013);
 		long truncatedNewYear = dtu.getStartOfYear(testDateNewYear2013);

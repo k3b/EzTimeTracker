@@ -45,7 +45,8 @@ public class TimeSheetSummaryReportActivity extends Activity implements IReportI
 	private static final int MENU_ITEM_GROUP_DAILY = Menu.FIRST;
 	private static final int MENU_ITEM_GROUP_WEEKLY = Menu.FIRST + 1;
 	private static final int MENU_ITEM_GROUP_MONTHLY = Menu.FIRST + 2;
-	private static final int MENU_ITEM_GROUP_CATEGORY = Menu.FIRST + 3;
+	private static final int MENU_ITEM_GROUP_YARLY = Menu.FIRST + 3;
+	private static final int MENU_ITEM_GROUP_CATEGORY = Menu.FIRST + 4;
 	public static final String MENU_ID = "MENU_ID";
 	private static final String SAVED_REPORT_FILTER = "SummaryReportFilter";
 
@@ -99,6 +100,7 @@ public class TimeSheetSummaryReportActivity extends Activity implements IReportI
 		groupDateMenu.add(0, MENU_ITEM_GROUP_DAILY, 0, R.string.menu_select_date_grouping_daily);
 		groupDateMenu.add(0, MENU_ITEM_GROUP_WEEKLY, 1, R.string.menu_select_date_grouping_weekly);
 		groupDateMenu.add(0, MENU_ITEM_GROUP_MONTHLY, 2, R.string.menu_select_date_grouping_monthly);
+		groupDateMenu.add(0, MENU_ITEM_GROUP_YARLY, 2, R.string.menu_select_date_grouping_yearly);
 		mReportFramework.onPrepareOptionsMenu(menu);
 		if (mReportMode == ReportModes.BY_DATE) {
 			menu.add(0, MENU_ITEM_GROUP_CATEGORY, 1, R.string.menu_switch_to_category_headers);
@@ -123,6 +125,11 @@ public class TimeSheetSummaryReportActivity extends Activity implements IReportI
 			mReportDateGrouping = ReportDateGrouping.MONTHLY;
 			loadDataIntoReport(0);
 			break;
+		case MENU_ITEM_GROUP_YARLY:
+			mReportDateGrouping = ReportDateGrouping.YEARLY;
+			loadDataIntoReport(0);
+			break;
+			
 		case MENU_ITEM_GROUP_CATEGORY:
 			if (mReportMode == ReportModes.BY_CATEGORY) {
 				mReportMode = ReportModes.BY_DATE;

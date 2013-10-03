@@ -142,7 +142,7 @@ public class DateTimeUtil {
 		if (isEmpty(dateTime)) {
 			return "";
 		} else {
-			return "" + new Date(dateTime).getYear();
+			return "" + getStartOfDayCal(dateTime).get(Calendar.YEAR);
 		}
 	}
 

@@ -61,6 +61,7 @@
 	<string name="menu_select_date_grouping_daily">Daily</string>	
 	<string name="menu_select_date_grouping_weekly">Weekly</string>	
 	<string name="menu_select_date_grouping_monthly">Monthly</string>	
+	<string name="menu_select_date_grouping_yearly">Yearky</string>	
 	<string name="menu_switch_to_category_headers">Switch to Category Headers</string>	
 	<string name="menu_switch_to_date_headers">Switch to Date Headers</string>	
 	
