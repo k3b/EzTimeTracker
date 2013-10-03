@@ -87,7 +87,7 @@ public class PunchInPunchOutActivity extends Activity implements OnChronometerTi
 		}
 		
 		super.onCreate(savedInstanceState);
-		//DateTimeFormatter.SetFormat(DateFormat.get DateInstance(DateFormat.S));
+		//DateTimeFormatter.getInstance().SetFormat(DateFormat.get DateInstance(DateFormat.S));
 		setContentView(R.layout.time_slice_main);
 		this.elapsedTimeDisplay = (TextView) findViewById(R.id.mainViewChronOutput);
 		this.elapsedTimeDisplay.setOnLongClickListener(new View.OnLongClickListener() {
@@ -368,7 +368,7 @@ public class PunchInPunchOutActivity extends Activity implements OnChronometerTi
 
 	private void updateElapsedTimeLabel(long elapsedRealtime) {
 		if (elapsedTimeDisplay != null) {
-			elapsedTimeDisplay.setText(DateTimeFormatter
+			elapsedTimeDisplay.setText(DateTimeFormatter.getInstance()
 					.hrColMin(elapsedRealtime, false,true));
 		}
 	}

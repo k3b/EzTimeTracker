@@ -235,11 +235,11 @@ public class TimeSliceEditActivity extends Activity  implements ICategorySetter 
 
 	private void setTimeTexts() {
 		String label = String.format(this.getText(R.string.formatStartDate).toString(), 
-				DateTimeFormatter.getDateTimeStr(this.timeSlice.getStartTime()));
+				DateTimeFormatter.getInstance().getDateTimeStr(this.timeSlice.getStartTime()));
 		mTimeInButton.setText(label);
 
 		label = String.format(this.getText(R.string.formatEndDate).toString(), 
-				DateTimeFormatter.getDateTimeStr(this.timeSlice.getEndTime()));
+				DateTimeFormatter.getInstance().getDateTimeStr(this.timeSlice.getEndTime()));
 		mTimeOutButton.setText(label);
 		
 		setTitle(this.timeSlice.getStartDateStr());

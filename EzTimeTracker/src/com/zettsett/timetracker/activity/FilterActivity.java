@@ -177,7 +177,7 @@ public abstract class FilterActivity  extends Activity {
 	}
 
 	private String getFormattedTime(int idFormat, long dateTimeValue, String emptyReplacement) {
-		String dateTimeStr = DateTimeFormatter.getDateTimeStr(dateTimeValue, emptyReplacement);
+		String dateTimeStr = DateTimeFormatter.getInstance().getDateTimeStr(dateTimeValue, emptyReplacement);
 		return String.format(this.getText(idFormat).toString(), 
 				dateTimeStr);
 	}

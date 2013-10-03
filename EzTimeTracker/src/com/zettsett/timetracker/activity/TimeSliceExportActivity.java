@@ -104,12 +104,12 @@ public class TimeSliceExportActivity extends Activity implements RadioGroup.OnCh
 	private void assignFromToDateLabels() {
 		Button fromButton = (Button) findViewById(R.id.button_data_export_from);
 		String label = String.format(this.getText(R.string.formatStartDate).toString(), 
-				DateTimeFormatter.getShortDateStr(mFromDate));
+				DateTimeFormatter.getInstance().getShortDateStr(mFromDate));
 		fromButton.setText(label);
 
 		Button toButton = (Button) findViewById(R.id.button_data_export_to);
 		label = String.format(this.getText(R.string.formatEndDate).toString(), 
-				DateTimeFormatter.getShortDateStr(mToDate));
+				DateTimeFormatter.getInstance().getShortDateStr(mToDate));
 		toButton.setText(label);
 	}
 
@@ -173,8 +173,8 @@ public class TimeSliceExportActivity extends Activity implements RadioGroup.OnCh
 		StringBuilder output = new StringBuilder();
 		output.append("Start, End, Category Name, Category Description, Notes").append(CSV_LINE_SEPERATOR);
 		for (TimeSlice aTimeSlice : timeSlices) {
-			output.append(DateTimeFormatter.getIsoDateTimeStr(aTimeSlice.getStartTime())).append(CSV_FIELD_SEPERATOR);
-			output.append(DateTimeFormatter.getIsoDateTimeStr(aTimeSlice.getEndTime())).append(CSV_FIELD_SEPERATOR);
+			output.append(DateTimeFormatter.getInstance().getIsoDateTimeStr(aTimeSlice.getStartTime())).append(CSV_FIELD_SEPERATOR);
+			output.append(DateTimeFormatter.getInstance().getIsoDateTimeStr(aTimeSlice.getEndTime())).append(CSV_FIELD_SEPERATOR);
 			output.append(aTimeSlice.getCategoryName()).append(CSV_FIELD_SEPERATOR);
 			output.append(aTimeSlice.getCategoryDescription()).append(CSV_FIELD_SEPERATOR);
 			output.append(aTimeSlice.getNotes().replace(CSV_LINE_SEPERATOR, " "));

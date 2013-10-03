@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -210,10 +211,26 @@ public class TimeSheetSummaryReportActivity extends Activity implements IReportI
 		performanceMeasureStart = System.currentTimeMillis();
 	}
 	
+	/**
+	 * 
+	 * @return 
+	 * Map<categoryName, Map<startDate.toString(), totalDurationsWithinSubinterval>> or
+	 * Map<startDate.toString(), Map<categoryName, totalDurationsWithinSubinterval>>
+	 */
 	private Map<String, Map<String, Long>> loadReportDataStructures() {
 		FilterParameter rangeFilter = mRangeFilter;
 
 		List<TimeSlice> timeSlices = mTimeSliceRepository.fetchTimeSlices(rangeFilter, rangeFilter.isIgnoreDates());
+		
+		Map<String, Map<String, Long>> summaries = loadReportDataStructures(this,
+				mReportMode, mReportDateGrouping, timeSlices);
+		return summaries;
+	}
+
+	private static Map<String, Map<String, Long>> loadReportDataStructures(
+			Context context,
+			ReportModes mReportMode, ReportDateGrouping mReportDateGrouping,
+			List<TimeSlice> timeSlices) {
 		Map<String, Map<String, Long>> summaries;
 		if (mReportMode == ReportModes.BY_DATE) {
 			summaries = new LinkedHashMap<String, Map<String, Long>>();
@@ -224,7 +241,7 @@ public class TimeSheetSummaryReportActivity extends Activity implements IReportI
 			String header;
 			if (mReportMode == ReportModes.BY_DATE) {
 				if (mReportDateGrouping == ReportDateGrouping.WEEKLY) {
-					header = String.format(getString(R.string.format_week_of_).toString(),aSlice.getStartWeekStr());
+					header = String.format(context.getString(R.string.format_week_of_).toString(),aSlice.getStartWeekStr());
 				} else if (mReportDateGrouping == ReportDateGrouping.MONTHLY) {
 					header = aSlice.getStartMonthStr();
 				} else {

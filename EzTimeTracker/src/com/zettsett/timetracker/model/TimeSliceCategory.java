@@ -92,7 +92,7 @@ public class TimeSliceCategory implements Serializable, Comparable<TimeSliceCate
 		if (startTime == MIN_VALID_DATE) {
 			return "";
 		} else {
-			return DateTimeFormatter.getShortDateStr(startTime);
+			return DateTimeFormatter.getInstance().getShortDateStr(startTime);
 		}
 	}
 
@@ -100,7 +100,7 @@ public class TimeSliceCategory implements Serializable, Comparable<TimeSliceCate
 		if (endTime == MAX_VALID_DATE) {
 			return "";
 		} else {
-			return DateTimeFormatter.getShortDateStr(endTime);
+			return DateTimeFormatter.getInstance().getShortDateStr(endTime);
 		}
 	}
 

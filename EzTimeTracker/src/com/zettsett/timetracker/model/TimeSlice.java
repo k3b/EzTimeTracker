@@ -38,17 +38,17 @@ public class TimeSlice implements Serializable, ITimeSliceFilter {
 	}
 
 	public String getStartDateStr() {
-		return DateTimeFormatter.getLongDateStr(startTime);
+		return DateTimeFormatter.getInstance().getLongDateStr(startTime);
 	}
 
 	public String getStartMonthStr() {
-		return DateTimeFormatter.getMonthStr(startTime);
+		return DateTimeFormatter.getInstance().getMonthStr(startTime);
 	}
 
 	// TODO make getStartWeekStr() work with non american locale
 	public String getStartWeekStr() {
 		long startTime = this.startTime;
-		return DateTimeFormatter.getWeekStr(startTime);
+		return DateTimeFormatter.getInstance().getWeekStr(startTime);
 	}
 
 	public int getStartTimeComponent(int componentId) {
@@ -76,14 +76,14 @@ public class TimeSlice implements Serializable, ITimeSliceFilter {
 	}
 
 	public String getStartTimeStr() {
-		return DateTimeFormatter.getTimeString(startTime);
+		return DateTimeFormatter.getInstance().getTimeString(startTime);
 	}
 
 	public String getEndTimeStr() {
 		if (startTime == NO_TIME_VALUE) {
 			return "";
 		} else {
-			return DateTimeFormatter.getTimeString(endTime);
+			return DateTimeFormatter.getInstance().getTimeString(endTime);
 		}
 	}
 
@@ -119,7 +119,7 @@ public class TimeSlice implements Serializable, ITimeSliceFilter {
 	public String getTitleWithDuration() {
 		return getCategoryName() + ": " 
 				+ getStartTimeStr() + " - " + getEndTimeStr()
-				+ " (" + DateTimeFormatter.hrColMin(getDurationInMilliseconds(), true,true) + ")";
+				+ " (" + DateTimeFormatter.getInstance().hrColMin(getDurationInMilliseconds(), true,true) + ")";
 	}
 
 	public String getCategoryName() {

@@ -82,8 +82,8 @@ public class FilterParameter  implements Serializable, ITimeSliceFilter {
 					this.getCategoryId());
 		} 
 		return String.format(Locale.US, "%1$s-%2$s:%3$d", 
-				DateTimeFormatter.getShortDateStr(this.getStartTime()), 
-				DateTimeFormatter.getShortDateStr(this.getEndTime()), 
+				DateTimeFormatter.getInstance().getShortDateStr(this.getStartTime()), 
+				DateTimeFormatter.getInstance().getShortDateStr(this.getEndTime()), 
 				this.getCategoryId());
 	}
 
