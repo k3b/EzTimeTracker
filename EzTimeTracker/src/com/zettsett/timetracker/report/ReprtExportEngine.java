@@ -17,20 +17,20 @@ import android.widget.Toast;
 
 import com.zetter.androidTime.R;
 
-public class SDDataExporter {
+public class ReprtExportEngine {
 	private Writer writer;
 	private Context context;
 	// private List<TextView> reportList;
 	ReportOutput output;
 	private String defaultName;
 
-	private SDDataExporter() {
+	private ReprtExportEngine() {
 
 	}
 
 	private void buildSaveFileDialog() {
 		final Dialog dialog = new Dialog(context);
-		dialog.setContentView(R.layout.choose_file_name);
+		dialog.setContentView(R.layout.file_choose_name);
 		dialog.setTitle(R.string.choose_filename);
 		final Button saveButton = (Button) dialog.findViewById(R.id.choose_file_name_save_button);
 		final Button cancelButton = (Button) dialog
@@ -55,7 +55,7 @@ public class SDDataExporter {
 	}
 
 	public static void exportToSD(String defaultName, Context context, ReportOutput output) {
-		SDDataExporter exporter = new SDDataExporter();
+		ReprtExportEngine exporter = new ReprtExportEngine();
 		exporter.context = context;
 		exporter.defaultName = defaultName;
 		exporter.output = output;

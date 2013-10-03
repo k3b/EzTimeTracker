@@ -26,7 +26,7 @@ import com.zetter.androidTime.R;
 import com.zettsett.timetracker.Global;
 import com.zettsett.timetracker.database.TimeSliceRepository;
 import com.zettsett.timetracker.model.TimeSlice;
-import com.zettsett.timetracker.report.ReportInterface;
+import com.zettsett.timetracker.report.IReportInterface;
 
 /*
  * Copyright 2010 Eric Zetterbaum ezetter@gmail.com
@@ -50,7 +50,7 @@ import com.zettsett.timetracker.report.ReportInterface;
  * 
  * TODO reimplement as ListViewActivity? See tutorial http://www.vogella.com/articles/AndroidListView/article.html
  */
-public class TimeSheetReportActivity extends Activity implements ReportInterface {
+public class TimeSheetReportActivity extends Activity implements IReportInterface {
 	private static final String SAVED_REPORT_FILTER = "DetailReportFilter";
 	private static final int EDIT_MENU_ID = Menu.FIRST;
 	private static final int DELETE_MENU_ID = Menu.FIRST + 1;
@@ -254,7 +254,7 @@ public class TimeSheetReportActivity extends Activity implements ReportInterface
 		} else {
 			parameter = mCurrentSelectionFilter;
 		}
-		RemoveTimeSliceActivity.showActivity(this, parameter);
+		TimeSliceRemoveActivity.showActivity(this, parameter);
 	}
 
 	private void onCommandAddTimeSlice() {

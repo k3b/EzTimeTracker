@@ -50,7 +50,7 @@ public class CategoryListAdapterDetailed extends ArrayAdapter<TimeSliceCategory>
 
 	/**
 	 * Workaround for recycled Items: 
-	 * Sometimes Text is not visible because previos 
+	 * Sometimes Text is not visible because previous 
 	 * ItemHeight==0 is sometimes remembered.
 	 */
 	private int itemHight = 0;
@@ -133,7 +133,7 @@ public class CategoryListAdapterDetailed extends ArrayAdapter<TimeSliceCategory>
 				}
 				if ((itemHight > 0) && (view.getHeight() == 0)) {
 					// Workaround for recycled Items: 
-					// Sometimes Text is not visible because previos 
+					// Sometimes Text is not visible because previous 
 					// ItemHeight==0 is sometimes remembered.
 					view.setHeight(this.itemHight);					
 				}

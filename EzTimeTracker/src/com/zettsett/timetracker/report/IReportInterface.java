@@ -1,5 +1,5 @@
 package com.zettsett.timetracker.report;
 
-public interface ReportInterface {
+public interface IReportInterface {
 	void loadDataIntoReport(int reportType);
 }

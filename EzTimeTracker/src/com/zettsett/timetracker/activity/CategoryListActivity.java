@@ -11,7 +11,7 @@ import com.zetter.androidTime.R;
 import com.zettsett.timetracker.database.*;
 import com.zettsett.timetracker.model.TimeSliceCategory;
 
-public class CategoryListActivity extends ListActivity implements CategorySetter {
+public class CategoryListActivity extends ListActivity implements ICategorySetter {
 	private static final int MENU_ADD_CATEGORY = Menu.FIRST;
 	private static final int EDIT_MENU_ID = Menu.FIRST + 1;
 	private static final int DELETE_MENU_ID = Menu.FIRST + 2;

@@ -23,9 +23,9 @@
 		<activity android:name="com.zettsett.timetracker.activity.SummaryReportActivity"/>
 		<activity android:name="com.zettsett.timetracker.activity.TimeSliceEditActivity"
 			android:screenOrientation="portrait"/>
-		<activity android:name="com.zettsett.timetracker.activity.DataExportActivity"
+		<activity android:name="com.zettsett.timetracker.activity.TimeSliceExportActivity"
 			android:screenOrientation="portrait"/>
-		<activity android:name="com.zettsett.timetracker.activity.RemoveTimeSliceActivity"
+		<activity android:name="com.zettsett.timetracker.activity.TimeSliceRemoveActivity"
 			android:screenOrientation="portrait"/>
 		<activity android:name="com.zettsett.timetracker.activity.ReportFilterActivity" />
 	    <activity android:name="com.zettsett.timetracker.activity.SettingsActivity"

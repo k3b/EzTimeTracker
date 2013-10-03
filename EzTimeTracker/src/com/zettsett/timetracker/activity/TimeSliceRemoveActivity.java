@@ -11,10 +11,10 @@ import com.zetter.androidTime.R;
 import com.zettsett.timetracker.Global;
 import com.zettsett.timetracker.database.TimeSliceRepository;
 
-public class RemoveTimeSliceActivity extends FilterActivity {
+public class TimeSliceRemoveActivity extends FilterActivity {
 	public static final int RESULT_DELETE_OK = 19284;
 
-	public RemoveTimeSliceActivity() {
+	public TimeSliceRemoveActivity() {
 		super(R.string.label_delete_time_interval_data, R.string.cmd_delete, RESULT_DELETE_OK);
 	}
 	
@@ -75,7 +75,7 @@ public class RemoveTimeSliceActivity extends FilterActivity {
 	}
 
 	public static void showActivity(Activity owner, FilterParameter filter) {
-		Intent intent = new Intent().setClass(owner, RemoveTimeSliceActivity.class);
+		Intent intent = new Intent().setClass(owner, TimeSliceRemoveActivity.class);
 		intent.putExtra(Global.EXTRA_FILTER, filter); //  item.getItemId());
 		owner.startActivityForResult(intent, 0);
 	}

@@ -19,12 +19,12 @@ import com.zettsett.timetracker.model.TimeSliceCategory;
  * @author EVE
  *
  */
-public class SelectCategoryDialog extends Dialog {
+public class CategorySelectDialog extends Dialog {
 
 	private final ListView list;
 	private final TimeSliceCategory newItemPlaceholder;
 
-	public SelectCategoryDialog(Context context, int style, TimeSliceCategory newItemPlaceholder) {
+	public CategorySelectDialog(Context context, int style, TimeSliceCategory newItemPlaceholder) {
 		super(context, style);
 		this.newItemPlaceholder = newItemPlaceholder;
 		// setTitle("Punch In for Activity");
@@ -50,10 +50,10 @@ public class SelectCategoryDialog extends Dialog {
 					: TimeSliceCategory.MIN_VALID_DATE;			
 
 		return CategoryListAdapterDetailed.createAdapter(getContext(),
-				R.layout.punchin_list_view_row, false, this.newItemPlaceholder, currentDateTime, "SelectCategoryDialog");
+				R.layout.time_slice_list_view_row, false, this.newItemPlaceholder, currentDateTime, "CategorySelectDialog");
 	}
 	
-	public SelectCategoryDialog setCategoryCallback(final CategorySetter callback) {
+	public CategorySelectDialog setCategoryCallback(final ICategorySetter callback) {
 		this.list.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override

@@ -26,7 +26,7 @@ import com.zettsett.timetracker.FileUtilities;
 import com.zettsett.timetracker.database.TimeSliceRepository;
 import com.zettsett.timetracker.model.TimeSlice;
 
-public class DataExportActivity extends Activity implements RadioGroup.OnCheckedChangeListener {
+public class TimeSliceExportActivity extends Activity implements RadioGroup.OnCheckedChangeListener {
 	private static final int GET_START_DATETIME = 0;
 	private static final int GET_END_DATETIME = 1;
 
@@ -42,7 +42,7 @@ public class DataExportActivity extends Activity implements RadioGroup.OnChecked
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setTitle(R.string.export_data_to_csv_file);
-		setContentView(R.layout.data_export);
+		setContentView(R.layout.time_slice_export_settings);
 		initializeDateRanges();
 		mRadioGroup = (RadioGroup) findViewById(R.id.radio_group_data_export);
 		mRadioGroup.setOnCheckedChangeListener(this);

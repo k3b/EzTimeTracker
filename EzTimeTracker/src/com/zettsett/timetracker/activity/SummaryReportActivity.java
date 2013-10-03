@@ -22,7 +22,7 @@ import com.zetter.androidTime.R;
 import com.zettsett.timetracker.Global;
 import com.zettsett.timetracker.database.TimeSliceRepository;
 import com.zettsett.timetracker.model.TimeSlice;
-import com.zettsett.timetracker.report.ReportInterface;
+import com.zettsett.timetracker.report.IReportInterface;
 
 /**
  * Copyright 2010 Eric Zetterbaum ezetter@gmail.com
@@ -40,7 +40,7 @@ import com.zettsett.timetracker.report.ReportInterface;
  * the License.
  * 
  */
-public class SummaryReportActivity extends Activity implements ReportInterface {
+public class SummaryReportActivity extends Activity implements IReportInterface {
 	private static final String SAVED_REPORT_MODE = "reportMode";
 	private static final int MENU_ITEM_GROUP_DAILY = Menu.FIRST;
 	private static final int MENU_ITEM_GROUP_WEEKLY = Menu.FIRST + 1;

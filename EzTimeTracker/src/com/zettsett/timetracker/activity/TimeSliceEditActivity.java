@@ -22,7 +22,7 @@ import com.zettsett.timetracker.database.TimeSliceRepository;
 import com.zettsett.timetracker.model.TimeSlice;
 import com.zettsett.timetracker.model.TimeSliceCategory;
 
-public class TimeSliceEditActivity extends Activity  implements CategorySetter {
+public class TimeSliceEditActivity extends Activity  implements ICategorySetter {
 	public static final long HIDDEN = -5;
 	public static final String HIDDEN_NOTES = "!%&HIDDEN&%!";
 	
@@ -42,14 +42,13 @@ public class TimeSliceEditActivity extends Activity  implements CategorySetter {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.edit_time_slice);
 		Intent intent = getIntent();
 		TimeSlice timeSlice = (TimeSlice) intent.getExtras().get(Global.EXTRA_TIMESLICE);
 		initialize(timeSlice);
 	}
 
 	private void initialize(TimeSlice timeSlice) {
-		setContentView(R.layout.edit_time_slice);
+		setContentView(R.layout.time_slice_edit);
 		this.timeSlice = timeSlice;
 		
 		notesEditText = (EditText) findViewById(R.id.edit_text_ts_notes);

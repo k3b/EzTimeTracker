@@ -48,7 +48,7 @@ import com.zettsett.timetracker.model.TimeSliceCategory;
  * started+stop->punchOutClock()->stopped(now)
  * started+start->showSelectCategoryForPunchInDialog->(createNewCategory->)stop(now)+started(now)
  */
-public class PunchInPunchOutActivity extends Activity implements OnChronometerTickListener, CategorySetter {
+public class PunchInPunchOutActivity extends Activity implements OnChronometerTickListener, ICategorySetter {
 	public static final String PREFS_NAME = "TimerPrefs";
 
 	private static final int SELECT_CATAGORY = 0;
@@ -88,7 +88,7 @@ public class PunchInPunchOutActivity extends Activity implements OnChronometerTi
 		
 		super.onCreate(savedInstanceState);
 		//DateTimeFormatter.SetFormat(DateFormat.get DateInstance(DateFormat.S));
-		setContentView(R.layout.main);
+		setContentView(R.layout.time_slice_main);
 		this.elapsedTimeDisplay = (TextView) findViewById(R.id.mainViewChronOutput);
 		this.elapsedTimeDisplay.setOnLongClickListener(new View.OnLongClickListener() {
 			
@@ -266,9 +266,9 @@ public class PunchInPunchOutActivity extends Activity implements OnChronometerTi
 	    case R.id.categories:
 	        return CategoryListActivity.class;
 	    case R.id.export:
-	        return DataExportActivity.class;
+	        return TimeSliceExportActivity.class;
 	    case R.id.remove:
-	        return RemoveTimeSliceActivity.class;
+	        return TimeSliceRemoveActivity.class;
 	    case R.id.settings:
 	        return SettingsActivity.class;
 	    default:
@@ -294,10 +294,10 @@ public class PunchInPunchOutActivity extends Activity implements OnChronometerTi
 	protected Dialog onCreateDialog(int id) {
 		switch (id) {
 			case SELECT_CATAGORY:
-				return new SelectCategoryDialog(this, R.style.PunchDialog, TimeSliceCategory.NO_CATEGORY)
+				return new CategorySelectDialog(this, R.style.PunchDialog, TimeSliceCategory.NO_CATEGORY)
 							.setCategoryCallback(this);
 			case SELECT_CATAGORY_ALL:
-				return new SelectCategoryDialog(this, R.style.PunchDialog, TimeSliceCategory.NO_CATEGORY )
+				return new CategorySelectDialog(this, R.style.PunchDialog, TimeSliceCategory.NO_CATEGORY )
 							.setCategoryCallback(this);
 			case CREATE_NEW_CATEGORY:
 				return this.edit;

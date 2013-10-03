@@ -76,7 +76,7 @@ public abstract class FilterActivity  extends Activity {
 
 		this.mFilter = FilterActivity.getFilterParameter(this);
 		
-		setContentView(R.layout.remove_ts);
+		setContentView(R.layout.time_slice_filter);
 		setTitle(this.mIdCaption);
 		CURRENT_DB_INSTANCE.initialize(this);
 		mTimeSliceRepository = new TimeSliceRepository(this);

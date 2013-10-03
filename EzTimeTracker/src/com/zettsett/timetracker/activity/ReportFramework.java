@@ -22,7 +22,7 @@ import com.zettsett.timetracker.Global;
 import com.zettsett.timetracker.LinearScroller;
 import com.zettsett.timetracker.model.TimeSlice;
 import com.zettsett.timetracker.report.ReportOutput;
-import com.zettsett.timetracker.report.SDDataExporter;
+import com.zettsett.timetracker.report.ReprtExportEngine;
 
 /*
  * Copyright 2010 Eric Zetterbaum ezetter@gmail.com
@@ -117,7 +117,7 @@ public class ReportFramework implements Serializable {
 			ReportFilterActivity.showActivity(this.mActivity, this.mFilter);
 			break;
 		case MENU_ITEM_EXPORT_SD:
-			SDDataExporter.exportToSD(getDefaultReportName(), mActivity, ReportOutput.makeFormatter(mReportViewList));
+			ReprtExportEngine.exportToSD(getDefaultReportName(), mActivity, ReportOutput.makeFormatter(mReportViewList));
 			break;
 		case MENU_ITEM_EXPORT_EMAIL:
 			ReportOutput outPutter = ReportOutput.makeFormatter(mReportViewList);
@@ -156,7 +156,7 @@ public class ReportFramework implements Serializable {
 	}
 
 	LinearLayout buildViews() {
-		mActivity.setContentView(R.layout.report_framework);
+		mActivity.setContentView(R.layout.time_slice_report_framework);
 		LinearLayout contentView = (LinearLayout) mActivity.findViewById(R.id.report_frame);
 		contentView.setOrientation(LinearLayout.VERTICAL);
 		mScrollView = new LinearScroller(mActivity);

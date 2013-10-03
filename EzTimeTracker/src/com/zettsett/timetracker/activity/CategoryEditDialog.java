@@ -54,9 +54,9 @@ public class CategoryEditDialog extends Dialog  {
 	private TimeSliceCategory mCategory;
 
 	public CategoryEditDialog(Context context, 
-			final CategorySetter owner) {
+			final ICategorySetter owner) {
 		super(context);
-		setContentView(R.layout.edit_category);
+		setContentView(R.layout.category_edit);
 		catNameField = (EditText) findViewById(R.id.edit_time_category_name_field);
 		catDescField = (EditText) findViewById(R.id.edit_time_category_desc_field);
 		saveButton = (Button) findViewById(R.id.edit_time_category_save_button);
