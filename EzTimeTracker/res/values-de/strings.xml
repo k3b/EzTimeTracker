@@ -52,7 +52,6 @@
 	<string name="label_no_current_activity">Keine aktuelle Kategorie</string>	
 	<string name="format_start_time_">"Start Zeit: %1$s"</string>	
 	<string name="category_usage_format">"%1$d Buchungen mit %2$d Stunden"</string>
-	<string name="format_week_of_">"Woche %1$s"</string>	
 	<string name="hoursWord1">Stunde</string>	
 	<string name="hoursWordN">Stunden</string>	
 	<string name="minutesWord1">Minute</string>	

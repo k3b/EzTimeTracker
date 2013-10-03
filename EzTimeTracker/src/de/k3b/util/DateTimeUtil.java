@@ -21,7 +21,7 @@ public class DateTimeUtil {
 	
 	final private static java.text.DateFormat longDateformatter = new SimpleDateFormat("E " 
 			+ ((SimpleDateFormat)shortDateformatter).toPattern());
-	final private static java.text.DateFormat isoDateTimeformatter = new SimpleDateFormat("yyyy-MM-dd'T'h:m:ssZ");
+	final private static java.text.DateFormat isoDateTimeformatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
 
 	final private static java.text.DateFormat monthformatter = new SimpleDateFormat("MMMM yyyy");
 
@@ -47,6 +47,15 @@ public class DateTimeUtil {
 		c.set(Calendar.YEAR, year);
 		c.set(Calendar.MONTH, monthOfYear);
 		c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+		return c;
+	}
+
+	public Calendar getCalendar(int year, int monthOfYear, int dayOfMonth, int hour, int minute, int second, int millisec) {
+		final Calendar c = getCalendar(year, monthOfYear, dayOfMonth);
+		c.set(Calendar.HOUR_OF_DAY, hour);
+		c.set(Calendar.MINUTE, minute);
+		c.set(Calendar.SECOND, second);
+		c.set(Calendar.MILLISECOND, millisec);
 		return c;
 	}
 
@@ -129,11 +138,19 @@ public class DateTimeUtil {
 		return isoDateTimeformatter.format(new Date(dateTime));
 	}
 
-	public String getMonthStr(long startTime) {
-		if (isEmpty(startTime)) {
+	public String getYearString(long dateTime) {
+		if (isEmpty(dateTime)) {
 			return "";
 		} else {
-			return monthformatter.format(new Date(startTime)); 
+			return "" + new Date(dateTime).getYear();
+		}
+	}
+
+	public String getMonthStr(long dateTime) {
+		if (isEmpty(dateTime)) {
+			return "";
+		} else {
+			return monthformatter.format(new Date(dateTime)); 
 			
 		}
 	}
@@ -147,21 +164,8 @@ public class DateTimeUtil {
 	}
 
 	public long getStartOfWeek(long dateTime) {
-		return getStartOfInterval(dateTime, Calendar.DAY_OF_WEEK);
-	}
-
-	public long getStartOfMonth(long dateTime) {
-		return getStartOfInterval(dateTime, Calendar.DAY_OF_MONTH);
-	}
-
-	public long getStartOfYear(long dateTime) {
-		return getStartOfInterval(dateTime, Calendar.DAY_OF_YEAR);
-	}
-
-	private static long getStartOfInterval(long dateTime, int offsetType) {
-		Calendar cal = Calendar.getInstance();
-		cal.setTimeInMillis(dateTime);
-		int offset = cal.get(offsetType);
+		Calendar cal = getStartOfDayCal(dateTime);
+		int offset = cal.get(Calendar.DAY_OF_WEEK);
 		
 		if (offset > 0)
 		{
@@ -171,6 +175,43 @@ public class DateTimeUtil {
 	}
 
 	
+
+	public long getStartOfMonth(long dateTime) {
+		Calendar c = getStartOfDayCal(dateTime);
+		c.set(Calendar.DAY_OF_MONTH, 1);
+		return c.getTimeInMillis();
+	}
+
+	public long getStartOfYear(long dateTime) {
+		Calendar c = getStartOfDayCal(dateTime);
+		c.set(Calendar.MONTH, 1-1);
+		c.set(Calendar.DAY_OF_MONTH, 1);
+		return c.getTimeInMillis();
+	}
+
+	public long getStartOfDay(long dateTime) {
+		Calendar c = getStartOfDayCal(dateTime);
+		return c.getTimeInMillis();
+	}
+	
+	public long addDays(long dateTime, int addDays) {
+		Calendar c = Calendar.getInstance();
+		c.setTimeInMillis(dateTime);
+		
+		c.add(Calendar.DAY_OF_MONTH, addDays);
+		return c.getTimeInMillis();
+	}
+
+	private Calendar getStartOfDayCal(long dateTime) {
+		Calendar c = Calendar.getInstance();
+		c.setTimeInMillis(dateTime);
+		c.set(Calendar.HOUR_OF_DAY, 0);
+		c.set(Calendar.MINUTE, 0);
+		c.set(Calendar.SECOND, 0);
+		c.set(Calendar.MILLISECOND, 0);
+		return c;
+	}
+
 	public long parseDate(String mDateSelectedForAdd) throws ParseException {
 		return longDateformatter.parse(
 					mDateSelectedForAdd).getTime();

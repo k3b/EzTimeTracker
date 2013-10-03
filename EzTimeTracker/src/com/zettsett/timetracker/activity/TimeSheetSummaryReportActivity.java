@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -50,11 +49,11 @@ public class TimeSheetSummaryReportActivity extends Activity implements IReportI
 	public static final String MENU_ID = "MENU_ID";
 	private static final String SAVED_REPORT_FILTER = "SummaryReportFilter";
 
-	private enum ReportDateGrouping {
-		DAILY, WEEKLY, MONTHLY
+	public enum ReportDateGrouping {
+		DAILY, WEEKLY, MONTHLY, YEARLY
 	}
 
-	private enum ReportModes {
+	public enum ReportModes {
 		BY_DATE, BY_CATEGORY
 	}
 
@@ -180,13 +179,14 @@ public class TimeSheetSummaryReportActivity extends Activity implements IReportI
 		}
 		setContentView(mReportFramework.buildViews());
 		mReportViewList = mReportFramework.initializeTextViewsForExportList();
-		Map<String, Map<String, Long>> reportDataStructure = loadReportDataStructures();
+		TimeSheetSummaryCalculator reportDataStructure = loadReportDataStructures();
 
 		Log.i(Global.LOG_CONTEXT, "loadReportDataStructures:"  + (System.currentTimeMillis() - performanceMeasureStart) );
 		performanceMeasureStart = System.currentTimeMillis();
 
-		for (String header : reportDataStructure.keySet()) {
-			Map<String, Long> reportRows = reportDataStructure.get(header);
+		Map<String, Map<String, Long>> reportData = reportDataStructure.getReportData();
+		for (String header : reportData.keySet()) {
+			Map<String, Long> reportRows = reportData.get(header);
 			TextView headerTextView = new TextView(this);
 			headerTextView.setText(header);
 			headerTextView.setTextColor(Color.GREEN);
@@ -217,67 +217,13 @@ public class TimeSheetSummaryReportActivity extends Activity implements IReportI
 	 * Map<categoryName, Map<startDate.toString(), totalDurationsWithinSubinterval>> or
 	 * Map<startDate.toString(), Map<categoryName, totalDurationsWithinSubinterval>>
 	 */
-	private Map<String, Map<String, Long>> loadReportDataStructures() {
+	private TimeSheetSummaryCalculator loadReportDataStructures() {
 		FilterParameter rangeFilter = mRangeFilter;
 
 		List<TimeSlice> timeSlices = mTimeSliceRepository.fetchTimeSlices(rangeFilter, rangeFilter.isIgnoreDates());
 		
-		Map<String, Map<String, Long>> summaries = loadReportDataStructures(this,
-				mReportMode, mReportDateGrouping, timeSlices);
-		return summaries;
-	}
-
-	private static Map<String, Map<String, Long>> loadReportDataStructures(
-			Context context,
-			ReportModes mReportMode, ReportDateGrouping mReportDateGrouping,
-			List<TimeSlice> timeSlices) {
-		Map<String, Map<String, Long>> summaries;
-		if (mReportMode == ReportModes.BY_DATE) {
-			summaries = new LinkedHashMap<String, Map<String, Long>>();
-		} else {
-			summaries = new TreeMap<String, Map<String, Long>>();
-		}
-		for (TimeSlice aSlice : timeSlices) {
-			String header;
-			if (mReportMode == ReportModes.BY_DATE) {
-				if (mReportDateGrouping == ReportDateGrouping.WEEKLY) {
-					header = String.format(context.getString(R.string.format_week_of_).toString(),aSlice.getStartWeekStr());
-				} else if (mReportDateGrouping == ReportDateGrouping.MONTHLY) {
-					header = aSlice.getStartMonthStr();
-				} else {
-					header = aSlice.getStartDateStr();
-				}
-			} else {
-				header = aSlice.getCategoryName();
-			}
-			Map<String, Long> group = summaries.get(header);
-			if (group == null) {
-				if (mReportMode == ReportModes.BY_DATE) {
-					group = new TreeMap<String, Long>();
-				} else {
-					group = new LinkedHashMap<String, Long>();
-				}
-				summaries.put(header, group);
-			}
-			String reportLine = null;
-			if (mReportMode == ReportModes.BY_DATE) {
-				reportLine = aSlice.getCategoryName();
-			} else {
-				if (mReportDateGrouping == ReportDateGrouping.WEEKLY) {
-					reportLine = aSlice.getStartWeekStr();
-				} else if (mReportDateGrouping == ReportDateGrouping.MONTHLY) {
-					reportLine = aSlice.getStartMonthStr();
-				} else {
-					reportLine = aSlice.getStartDateStr();
-				}
-			}
-			Long timeSum = group.get(reportLine);
-			if (timeSum == null) {
-				timeSum = Long.valueOf(0);
-			}
-			long sliceDuration = aSlice.getEndTime() - aSlice.getStartTime();
-			group.put(reportLine, timeSum + sliceDuration);
-		}
+		TimeSheetSummaryCalculator summaries = new TimeSheetSummaryCalculator(mReportMode,
+				mReportDateGrouping, timeSlices);
 		return summaries;
 	}
 

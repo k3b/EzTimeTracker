@@ -13,9 +13,9 @@ public class DateTimeFormatter extends DateTimeUtil {
 		super(TimeSlice.NO_TIME_VALUE);
 	}
 	
-	private static DateTimeFormatter instance = null;
+	private static DateTimeUtil instance = null;
 	
-	public static DateTimeFormatter getInstance()
+	public static DateTimeUtil getInstance()
 	{
 		if (instance == null) instance = new DateTimeFormatter();
 		
