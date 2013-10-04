@@ -1,9 +1,7 @@
 package com.zettsett.timetracker.activity;
 
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 import android.app.Activity;
 import android.content.Intent;

@@ -33,46 +33,23 @@ public class TimeSlice implements Serializable, ITimeSliceFilter {
 		return this;
 	}
 
-	public long getDurationInMilliseconds() {
-		return endTime - startTime;
+	@Override
+	public long getStartTime() {
+		return startTime;
+	}
+
+	public TimeSlice setStartTime(long startTime) {
+		this.startTime = startTime;
+		return this;
 	}
 
 	public String getStartDateStr() {
 		return DateTimeFormatter.getInstance().getLongDateStr(startTime);
 	}
 
-	public String getStartMonthStr() {
-		return DateTimeFormatter.getInstance().getMonthStr(startTime);
-	}
-
-	// TODO make getStartWeekStr() work with non american locale
-	public String getStartWeekStr() {
-		long startTime = this.startTime;
-		return DateTimeFormatter.getInstance().getWeekStr(startTime);
-	}
-
 	public int getStartTimeComponent(int componentId) {
 		calendar.setTimeInMillis(startTime);
 		return calendar.get(componentId);
-	}
-
-	public TimeSlice setStartTimeComponent(int componentId, int value) {
-		calendar.setTimeInMillis(startTime);
-		calendar.set(componentId, value);
-		startTime = calendar.getTimeInMillis();
-		return this;
-	}
-
-	public int getEndTimeComponent(int componentId) {
-		calendar.setTimeInMillis(endTime);
-		return calendar.get(componentId);
-	}
-
-	public TimeSlice setEndTimeComponent(int componentId, int value) {
-		calendar.setTimeInMillis(endTime);
-		calendar.set(componentId, value);
-		endTime = calendar.getTimeInMillis();
-		return this;
 	}
 
 	public String getStartTimeStr() {
@@ -87,25 +64,6 @@ public class TimeSlice implements Serializable, ITimeSliceFilter {
 		}
 	}
 
-	public TimeSliceCategory getCategory() {
-		return category;
-	}
-
-	public TimeSlice setCategory(TimeSliceCategory category) {
-		this.category = category;
-		return this;
-	}
-
-	@Override
-	public long getStartTime() {
-		return startTime;
-	}
-
-	public TimeSlice setStartTime(long startTime) {
-		this.startTime = startTime;
-		return this;
-	}
-
 	@Override
 	public long getEndTime() {
 		return endTime;
@@ -116,10 +74,23 @@ public class TimeSlice implements Serializable, ITimeSliceFilter {
 		return this;
 	}
 
-	public String getTitleWithDuration() {
-		return getCategoryName() + ": " 
-				+ getStartTimeStr() + " - " + getEndTimeStr()
-				+ " (" + DateTimeFormatter.getInstance().hrColMin(getDurationInMilliseconds(), true,true) + ")";
+	public long getDurationInMilliseconds() {
+		return endTime - startTime;
+	}
+
+	@Override
+	public int getCategoryId() {
+		TimeSliceCategory category = getCategory();
+		return (category != null) ? category.getRowId() : TimeSliceCategory.NOT_SAVED;
+	}
+
+	public TimeSliceCategory getCategory() {
+		return category;
+	}
+
+	public TimeSlice setCategory(TimeSliceCategory category) {
+		this.category = category;
+		return this;
 	}
 
 	public String getCategoryName() {
@@ -132,6 +103,12 @@ public class TimeSlice implements Serializable, ITimeSliceFilter {
 
 	public String getTitle() {
 		return getCategoryName() + ": " + getStartTimeStr() + " - " + getEndTimeStr();
+	}
+
+	public String getTitleWithDuration() {
+		return getCategoryName() + ": " 
+				+ getStartTimeStr() + " - " + getEndTimeStr()
+				+ " (" + DateTimeFormatter.getInstance().hrColMin(getDurationInMilliseconds(), true,true) + ")";
 	}
 
 	public String getNotes() {
@@ -165,11 +142,5 @@ public class TimeSlice implements Serializable, ITimeSliceFilter {
 
 	@Override public String toString() {
 		return getTitleWithDuration();
-	}
-
-	@Override
-	public int getCategoryId() {
-		TimeSliceCategory category = getCategory();
-		return (category != null) ? category.getRowId() : TimeSliceCategory.NOT_SAVED;
 	}
 }

@@ -95,6 +95,9 @@
 	<string name="format_error_create_directory">Unable to create directory \'%1$s\'. Is the SD card mounted?</string>
 	<string name="title_creating_a_new_category">Creating a New Category</string>
 	
+	<string name="format_title_edit_category">Edit %1$s %2$s</string>
+
+	
 	<string name="report">Report</string>	
 	<string name="report_title_details">Details Report</string>
 	<string name="report_title_summary_day">Summary by Day</string>

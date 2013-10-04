@@ -30,7 +30,6 @@
 		    android:id="@+id/EditTimeIn"
 		    android:layout_width="wrap_content"
 		    android:layout_height="wrap_content"
-		    android:layout_span="2"
 		    android:text="@string/formatStartDate"
 		    android:textSize="14sp" />
 
@@ -38,7 +37,6 @@
 		    android:id="@+id/EditTimeOut"
 		    android:layout_width="wrap_content"
 		    android:layout_height="wrap_content"
-		    android:layout_span="2"
 		    android:text="@string/formatEndDate"
 		    android:textSize="14sp" >
 </Button>

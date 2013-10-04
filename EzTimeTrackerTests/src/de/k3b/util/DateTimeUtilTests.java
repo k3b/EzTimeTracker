@@ -1,7 +1,6 @@
 package de.k3b.util;
 
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Locale;
 
 import org.junit.*;

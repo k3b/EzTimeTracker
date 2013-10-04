@@ -100,7 +100,6 @@
 	
 	
 	<string name="report">Report</string>	
-	<string name="report_title_details">Detail Report</string>
 	<string name="report_title_summary_day">Summierte Tage</string>
 	<string name="report_title_summary_week">Summierte Wochen</string>
 	<string name="report_title_summary_month">Summierte Monate</string>

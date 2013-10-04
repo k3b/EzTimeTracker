@@ -5,7 +5,11 @@ todo
 		v category list
 		v category edit via long press usage
 		v category delete if references are found
-		- summary report
+		v summary report
+		
+		remove obselte timeslice getXxxAsString
+		filter by (notes)
+		v2.5
 =================
 
 	delete items with category-filter
