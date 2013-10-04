@@ -10,19 +10,26 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
+import android.view.View;
 import android.view.Window;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.LinearLayout.LayoutParams;
 
 import com.zetter.androidTime.R;
+import com.zettsett.timetracker.DateTimeFormatter;
 import com.zettsett.timetracker.Global;
 import com.zettsett.timetracker.database.TimeSliceRepository;
 import com.zettsett.timetracker.model.TimeSlice;
+import com.zettsett.timetracker.model.TimeSliceCategory;
 import com.zettsett.timetracker.report.IReportInterface;
+
+import de.k3b.util.DateTimeUtil;
 
 /**
  * Copyright 2010 Eric Zetterbaum ezetter@gmail.com
@@ -47,6 +54,8 @@ public class TimeSheetSummaryReportActivity extends Activity implements IReportI
 	private static final int MENU_ITEM_GROUP_MONTHLY = Menu.FIRST + 2;
 	private static final int MENU_ITEM_GROUP_YARLY = Menu.FIRST + 3;
 	private static final int MENU_ITEM_GROUP_CATEGORY = Menu.FIRST + 4;
+	private static final int MENU_ITEM_REPORT = Menu.FIRST + 5;
+	
 	public static final String MENU_ID = "MENU_ID";
 	private static final String SAVED_REPORT_FILTER = "SummaryReportFilter";
 
@@ -63,6 +72,7 @@ public class TimeSheetSummaryReportActivity extends Activity implements IReportI
 	private ReportDateGrouping mReportDateGrouping = ReportDateGrouping.WEEKLY;
 	private ReportModes mReportMode = ReportModes.BY_DATE;
 	private List<TextView> mReportViewList;
+	private FilterParameter mReportFilter;
 	private static FilterParameter mRangeFilter;
 
 	@Override
@@ -108,6 +118,108 @@ public class TimeSheetSummaryReportActivity extends Activity implements IReportI
 			menu.add(0, MENU_ITEM_GROUP_CATEGORY, 1, R.string.menu_switch_to_date_headers);
 		}
 		return result;
+	}
+
+	@Override
+	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+		super.onCreateContextMenu(menu, v, menuInfo);
+		FilterParameter filter = createFilter(v);
+		if (filter != null) {
+			Log.i(Global.LOG_CONTEXT, "Detailreport: "  + filter );
+
+			menu.add(0, MENU_ITEM_REPORT, 0, getString(R.string.cmd_report));			
+		}
+		this.mReportFilter = filter;
+	}
+
+	@Override
+	public boolean onContextItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case MENU_ITEM_REPORT:
+			showDetailReport();
+			return true;
+
+		default:
+			return super.onContextItemSelected(item);
+		}
+	}
+
+	private void showDetailReport() {
+		if (mReportFilter != null) {
+			TimeSheetDetailReportActivity.showActivity(this, mReportFilter);
+		}
+	}
+
+	private FilterParameter createFilter(View v) {
+		TimeSliceCategory category = getTimeSliceCategory(v);
+		if (category != null) {
+			FilterParameter filter = new FilterParameter().setCategoryId(category.getRowId());
+			if (this.mReportMode == ReportModes.BY_DATE) {
+				int pos = this.mReportViewList.indexOf(v);
+				while(--pos >= 0) {
+					Long date = getLong(this.mReportViewList.get(pos));
+					if (date != null) {
+						return setFilterDate(filter,this.mReportDateGrouping, date);
+					}
+				}
+			}
+			return filter.setIgnoreDates(true);
+		} else {
+			Long date = getLong(v);
+			if (date != null) {
+				FilterParameter filter = setFilterDate(new FilterParameter(),this.mReportDateGrouping, date);
+				if (this.mReportMode == ReportModes.BY_CATEGORY) {
+					int pos = this.mReportViewList.indexOf(v);
+					while(--pos >= 0) {
+						category = getTimeSliceCategory(v);
+						if (category != null) {
+							return filter.setCategoryId(category.getRowId());
+						}
+					}
+				}
+				return filter;
+			} 
+		}
+		return null;
+	}
+
+	private TimeSliceCategory getTimeSliceCategory(View v) {
+		Object tag = v.getTag();
+		if ((tag != null) && (tag instanceof TimeSliceCategory)){
+			return (TimeSliceCategory) tag;
+		}
+		return null;
+	}
+	
+	private Long getLong(View v) {
+		Object tag = v.getTag();
+		if ((tag != null) && (tag instanceof Long)){
+			return (Long) tag;
+		}
+		return null;
+	}
+	
+	private FilterParameter setFilterDate(FilterParameter filterParameter,
+			ReportDateGrouping mReportDateGrouping, Long startDate) {
+		final long start = startDate.longValue();
+		final long end = getEndTime(mReportDateGrouping, start);
+		return filterParameter.setStartTime(start).setEndTime(end);
+	}
+
+	private long getEndTime(ReportDateGrouping mReportDateGrouping,
+			final long start) {
+		DateTimeUtil dtu = DateTimeFormatter.getInstance();
+		if (mReportDateGrouping == ReportDateGrouping.DAILY) {
+			return dtu.addDays(start, 1); 
+		} else if (mReportDateGrouping == ReportDateGrouping.WEEKLY) {
+			return dtu.addDays(start, 7); 
+		} else if (mReportDateGrouping == ReportDateGrouping.MONTHLY) {
+			return dtu.getStartOfMonth(dtu.addDays(start, 31)); 
+		} else if (mReportDateGrouping == ReportDateGrouping.YEARLY) {
+			return dtu.getStartOfYear(dtu.addDays(start, 366)); 
+		}
+		
+		throw new IllegalArgumentException("Unknown mReportDateGrouping " + mReportDateGrouping);
 	}
 
 	@Override
@@ -192,12 +304,22 @@ public class TimeSheetSummaryReportActivity extends Activity implements IReportI
 		performanceMeasureStart = System.currentTimeMillis();
 
 		Map<String, Map<String, Long>> reportData = reportDataStructure.getReportData();
+		Map<String, Long> dates = reportDataStructure.getDates();
+		Map<String, TimeSliceCategory> categoties = reportDataStructure.getCategoties();
 		for (String header : reportData.keySet()) {
 			Map<String, Long> reportRows = reportData.get(header);
 			TextView headerTextView = new TextView(this);
 			headerTextView.setText(header);
 			headerTextView.setTextColor(Color.GREEN);
+			if (mReportMode == ReportModes.BY_DATE) {
+				headerTextView.setTag(dates.get(header));
+			} else {
+				headerTextView.setTag(categoties.get(header));
+			}
+
 			mReportViewList.add(headerTextView);
+			registerForContextMenu(headerTextView);
+
 			mReportFramework.getLinearScroller().addView(headerTextView);
 			LayoutParams layoutParams = new LayoutParams(LayoutParams.FILL_PARENT,
 					LayoutParams.WRAP_CONTENT);
@@ -211,6 +333,12 @@ public class TimeSheetSummaryReportActivity extends Activity implements IReportI
 				mReportViewList.add(rowTextView);
 				rowTextView.setText("    " + rowCaption + ": "
 						+ timeInMillisToText(totalTimeInMillis));
+				if (mReportMode == ReportModes.BY_DATE) {
+					rowTextView.setTag(categoties.get(rowCaption));
+				} else {
+					rowTextView.setTag(dates.get(rowCaption));
+				}
+				registerForContextMenu(rowTextView);
 				rowsView.addView(rowTextView);
 			}
 		}

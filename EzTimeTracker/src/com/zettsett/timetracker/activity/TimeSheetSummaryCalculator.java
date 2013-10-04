@@ -109,11 +109,7 @@ public class TimeSheetSummaryCalculator {
 		map.put(key, timeSum + diffValue);
 	}
 	
-	private long get(ReportModes mReportMode, long startTime) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
 	public Map<String, Map<String, Long>> getReportData() { return summaries; }
-	
+	public Map<String, TimeSliceCategory> getCategoties() { return categoties; }
+	public Map<String, Long> getDates() { return dates; }
 }

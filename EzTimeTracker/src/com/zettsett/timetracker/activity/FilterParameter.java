@@ -77,14 +77,19 @@ public class FilterParameter  implements Serializable, ITimeSliceFilter {
 	}
 	
 	@Override public String toString() {
-		if (this.mIgnoreDates) {
-			return String.format(Locale.US,"%1$d",
-					this.getCategoryId());
+		StringBuffer result = new StringBuffer();
+		if (!this.mIgnoreDates) {
+			result.append(String.format(Locale.US, "%1$s-%2$s", 
+					DateTimeFormatter.getInstance().getShortDateStr(this.getStartTime()), 
+					DateTimeFormatter.getInstance().getShortDateStr(this.getEndTime())));
 		} 
-		return String.format(Locale.US, "%1$s-%2$s:%3$d", 
-				DateTimeFormatter.getInstance().getShortDateStr(this.getStartTime()), 
-				DateTimeFormatter.getInstance().getShortDateStr(this.getEndTime()), 
-				this.getCategoryId());
+		int categoryId = this.getCategoryId();
+		
+		if (categoryId != TimeSliceCategory.NO_CATEGORY.getRowId()) {
+			result.append(String.format(Locale.US,":%1$d",
+				categoryId));
+		}
+		return result.toString();
 	}
 
 }
