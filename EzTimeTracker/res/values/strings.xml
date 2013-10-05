@@ -29,7 +29,8 @@
 	<string name="cmd_delete_cancel">"Don't delete it."</string>
 	<string name="cmd_cancel"> Cancel </string>	
 	<string name="cmd_report"> Details </string>
-	<string name="checkbox_remove_ts_all">Ignore Date</string>	
+	<string name="checkbox_filter_ignore_date">Ignore Date</string>	
+	<string name="checkbox_notes_not_null">Notes contain Data</string>	
 	<string name="export_data_to_csv_file">Export Data to CSV File</string>	
 	<string name="menu_export_report">Export Report</string>	
 	<string name="menu_export_report_to_sd_card">Export Report to SD Card</string>	

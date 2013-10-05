@@ -8,21 +8,24 @@ import com.zettsett.timetracker.Global;
 
 public class ReportFilterActivity extends FilterActivity {
 	public static final int RESULT_FILTER_CHANGED = 16288;
+
 	public ReportFilterActivity() {
-		super(R.string.label_report_filter, R.string.cmd_update, RESULT_FILTER_CHANGED);
+		super(R.string.label_report_filter, R.string.cmd_update,
+				ReportFilterActivity.RESULT_FILTER_CHANGED);
 	}
 
-	public static void showActivity(Activity owner, FilterParameter filter) {
-		Intent intent = new Intent().setClass(owner, ReportFilterActivity.class);
+	public static void showActivity(final Activity owner,
+			final FilterParameter filter) {
+		final Intent intent = new Intent().setClass(owner,
+				ReportFilterActivity.class);
 		intent.putExtra(Global.EXTRA_FILTER, filter);
 		owner.startActivityForResult(intent, 0);
 	}
 
 	@Override
-	protected void onOkCLick()
-	{
+	protected void onOkCLick() {
 		super.onOkCLick();
-		this.mFilter.setEndTime(ReportFramework.getFixedEndTime(this.mFilter));
+		this.filter.setEndTime(ReportFramework.getFixedEndTime(this.filter));
 
 		this.finish();
 	}

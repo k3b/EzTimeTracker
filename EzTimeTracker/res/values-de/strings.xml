@@ -28,7 +28,9 @@
 	<string name="cmd_cancel"> Abbrechen </string>
 	<string name="cmd_report"> Details </string>
 		
-	<string name="checkbox_remove_ts_all">Datum egal</string>	
+	<string name="checkbox_filter_ignore_date">Datum egal</string>	
+	<string name="checkbox_notes_not_null">Bemerkungen nicht leer</string>	
+		
 	<string name="export_data_to_csv_file">Buchungen in CSV Datei exportieren</string>	
 	<string name="menu_export_report">Export Report</string>	
 	<string name="menu_export_report_to_sd_card">&#8230; auf Speicherkarte</string>	

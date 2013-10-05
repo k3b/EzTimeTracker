@@ -10,10 +10,10 @@
 		android:textSize="20sp" android:prompt="@string/category_prompt"
 		android:layout_width="fill_parent" />
 	 	
-	<CheckBox android:text="@string/checkbox_remove_ts_all"
-		android:id="@+id/checkbox_remove_ts_all" android:layout_width="fill_parent"
+	<CheckBox android:text="@string/checkbox_filter_ignore_date"
+		android:id="@+id/checkbox_filter_ignore_date" android:layout_width="fill_parent"
 		android:layout_height="wrap_content"></CheckBox>
-	<LinearLayout android:id="@+id/LinearLayout_remove_ts_dates"
+	<LinearLayout android:id="@+id/dates_container"
 		android:layout_width="match_parent" android:layout_height="wrap_content"
 		android:orientation="vertical">
 		<Button android:text="@string/formatStartDate" android:id="@+id/EditTimeIn"
@@ -23,10 +23,16 @@
 				android:textSize="20sp" android:layout_width="fill_parent"
 				android:layout_height="wrap_content"></Button>
 	</LinearLayout>
-	<Button android:text="@string/cmd_delete" android:id="@+id/cmd_delete"
-		android:textSize="26sp" android:textColor="#151555"
-		android:layout_height="wrap_content" android:layout_width="fill_parent" />
-	<Button android:text="@string/cmd_cancel" android:id="@+id/button_remove_ts_cancel"
-		android:textSize="26sp" android:textColor="#151555"
-		android:layout_height="wrap_content" android:layout_width="fill_parent" />
+	<CheckBox android:text="@string/checkbox_notes_not_null"
+		android:id="@+id/checkbox_notes_not_null" android:layout_width="fill_parent"
+		android:layout_height="wrap_content"></CheckBox>
+	<EditText android:id="@+id/edit_text_ts_notes" android:inputType="text"
+				android:lines="1" android:layout_width="wrap_content"
+				android:layout_height="wrap_content"/>
+	<LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal">
+		<Button android:text="@string/cmd_delete" android:id="@+id/cmd_delete" android:textSize="26sp"
+			 android:textColor="#151555" android:layout_height="wrap_content" android:layout_width="fill_parent"/>
+		<Button android:text="@string/cmd_cancel" android:id="@+id/button_remove_ts_cancel" android:textSize="26sp"
+			 android:textColor="#151555" android:layout_height="wrap_content" android:layout_width="fill_parent"/>
+	</LinearLayout>
 </LinearLayout>
