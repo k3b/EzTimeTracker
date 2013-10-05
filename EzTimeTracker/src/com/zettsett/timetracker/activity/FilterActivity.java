@@ -21,57 +21,58 @@ import com.zettsett.timetracker.DateTimeFormatter;
 import com.zettsett.timetracker.Global;
 import com.zettsett.timetracker.TimeTrackerManager;
 import com.zettsett.timetracker.database.DatabaseInstance;
-import com.zettsett.timetracker.database.TimeSliceRepository;
 import com.zettsett.timetracker.model.TimeSlice;
 import com.zettsett.timetracker.model.TimeSliceCategory;
 
 public abstract class FilterActivity extends Activity {
 
 	// const
-	protected static final int GET_END_DATETIME = 0;
-	protected static final int GET_START_DATETIME = 1;
-	protected static final int GET_END_DATETIME_NOW = 2;
-	protected static final int GET_START_DATETIME_NOW = 3;
+	private static final int GET_END_DATETIME = 0;
+	private static final int GET_START_DATETIME = 1;
+	private static final int GET_END_DATETIME_NOW = 2;
+	private static final int GET_START_DATETIME_NOW = 3;
 
-	protected static final DatabaseInstance CURRENT_DB_INSTANCE = DatabaseInstance
+	private static final DatabaseInstance CURRENT_DB_INSTANCE = DatabaseInstance
 			.getCurrentInstance();
 
 	// define the listener which is called once a user selected the date.
-	protected final DateSlider.OnDateSetListener listenerOnStartDateChanged = new DateSlider.OnDateSetListener() {
+	private final DateSlider.OnDateSetListener listenerOnStartDateChanged = new DateSlider.OnDateSetListener() {
 		@Override
 		public void onDateSet(final DateSlider view, final Calendar selectedDate) {
-			FilterActivity.this.saveStartTime(FilterActivity.this.filter,
-					selectedDate.getTimeInMillis());
+			FilterActivity.this.saveForm(FilterActivity.this.filter);
+			FilterActivity.this.filter.setStartTime(FilterActivity.this
+					.fixTime(selectedDate.getTimeInMillis()));
 			FilterActivity.this.loadForm(FilterActivity.this.filter);
 		}
 	};
 
 	// define the listener which is called once a user selected the date.
-	protected final DateSlider.OnDateSetListener listenerOnEndDateChanged = new DateSlider.OnDateSetListener() {
+	private final DateSlider.OnDateSetListener listenerOnEndDateChanged = new DateSlider.OnDateSetListener() {
 		@Override
 		public void onDateSet(final DateSlider view, final Calendar selectedDate) {
-			FilterActivity.this.saveEndTime(FilterActivity.this.filter,
-					selectedDate.getTimeInMillis());
+			FilterActivity.this.saveForm(FilterActivity.this.filter);
+			FilterActivity.this.filter.setEndTime(FilterActivity.this
+					.fixTime(selectedDate.getTimeInMillis()));
 			FilterActivity.this.loadForm(FilterActivity.this.filter);
 		}
 	};
 
 	// controlls
-	protected LinearLayout datesContainer;
+	private LinearLayout datesContainer;
 
-	protected Spinner categorySpinner;
-	protected CheckBox allDatesCheckBox;
-	protected Button timeInButton;
-	protected Button timeOutButton;
-	protected CheckBox notesNotNullCheckBox;
-	protected EditText notesEdit;
+	private Spinner categorySpinner;
+	private CheckBox allDatesCheckBox;
+	private Button timeInButton;
+	private Button timeOutButton;
+	private CheckBox notesNotNullCheckBox;
+	private EditText notesEdit;
+	// save & cancel button are local
 
 	// context infos
 	private final int idOnOkResultCode;
 	private final int idCmdOk;
 	private final int idCaption;
 
-	protected TimeSliceRepository timeSliceRepository;
 	private ArrayAdapter<TimeSliceCategory> allCategoriesAdapter;
 
 	protected FilterParameter filter = null;
@@ -90,7 +91,6 @@ public abstract class FilterActivity extends Activity {
 		this.filter = FilterActivity.getFilterParameter(this);
 
 		FilterActivity.CURRENT_DB_INSTANCE.initialize(this);
-		this.timeSliceRepository = new TimeSliceRepository(this);
 
 		this.setContentView(R.layout.time_slice_filter);
 		this.setTitle(this.idCaption);
@@ -102,8 +102,9 @@ public abstract class FilterActivity extends Activity {
 		this.allDatesCheckBox.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(final View v) {
-				FilterActivity.this.saveForm(FilterActivity.this.filter);
+				FilterActivity.this.updateForm();
 			}
+
 		});
 		this.datesContainer = (LinearLayout) this
 				.findViewById(R.id.dates_container);
@@ -115,8 +116,7 @@ public abstract class FilterActivity extends Activity {
 				.setOnClickListener(new View.OnClickListener() {
 					@Override
 					public void onClick(final View v) {
-						FilterActivity.this
-								.saveForm(FilterActivity.this.filter);
+						FilterActivity.this.updateForm();
 					}
 				});
 
@@ -163,12 +163,7 @@ public abstract class FilterActivity extends Activity {
 					}
 				});
 
-		if ((this.filter.getEndTime() == TimeSlice.NO_TIME_VALUE)
-				&& (this.filter.getStartTime() == TimeSlice.NO_TIME_VALUE)) {
-			this.allDatesCheckBox.setChecked(true);
-		}
-
-		this.saveForm(this.filter);
+		this.loadForm(this.filter);
 	}
 
 	private void defineButtons() {
@@ -197,11 +192,20 @@ public abstract class FilterActivity extends Activity {
 		CategorySpinner.selectSpinner(this.categorySpinner,
 				this.filter.getCategoryId());
 
-		this.datesContainer.setVisibility((filter.isIgnoreDates()) ? View.GONE
+		boolean ignoreDates = filter.isIgnoreDates();
+		if ((this.filter.getEndTime() == TimeSlice.NO_TIME_VALUE)
+				&& (this.filter.getStartTime() == TimeSlice.NO_TIME_VALUE)) {
+			ignoreDates = true;
+		}
+		this.allDatesCheckBox.setChecked(ignoreDates);
+		this.datesContainer.setVisibility(ignoreDates ? View.GONE
 				: View.VISIBLE);
-		this.timeInButton.setText(this.getFormattedStartTime());
-		this.timeOutButton.setText(this.getFormattedEndTime());
+		this.timeInButton.setText(this.getFormattedTime(
+				R.string.formatStartDate, this.filter.getStartTime(), ""));
+		this.timeOutButton.setText(this.getFormattedTime(
+				R.string.formatEndDate, this.filter.getEndTime(), ""));
 
+		this.notesNotNullCheckBox.setChecked(filter.isNotesNotNull());
 		this.notesEdit.setVisibility(filter.isNotesNotNull() ? View.GONE
 				: View.VISIBLE);
 		filter.setNotes(this.notesEdit.getText().toString());
@@ -211,41 +215,25 @@ public abstract class FilterActivity extends Activity {
 	 * save content of this from controls to filter
 	 */
 	private void saveForm(final FilterParameter filter) {
+		this.filter.setCategoryId(CategorySpinner.getCategoryId(this
+				.getCurrentCategory()));
+
 		filter.setIgnoreDates(this.allDatesCheckBox.isChecked());
 
 		// start/end time is saved somewhere else !!!
-		if (filter.getStartTime() == TimeSlice.NO_TIME_VALUE) {
-			filter.setStartTime(System.currentTimeMillis());
-		}
-		if (filter.getEndTime() == TimeSlice.NO_TIME_VALUE) {
-			filter.setEndTime(System.currentTimeMillis());
-		}
 
-		this.notesEdit
-				.setVisibility(this.notesNotNullCheckBox.isChecked() ? View.GONE
-						: View.VISIBLE);
-		filter.setNotes(this.notesEdit.getText().toString());
 		filter.setNotesNotNull(this.notesNotNullCheckBox.isChecked());
+		filter.setNotes(this.notesEdit.getText().toString());
 	}
 
-	private void saveStartTime(final FilterParameter filter, final long time) {
-		filter.setStartTime((time == TimeSlice.NO_TIME_VALUE) ? System
-				.currentTimeMillis() : time);
+	private void updateForm() {
+		FilterActivity.this.saveForm(FilterActivity.this.filter);
+		FilterActivity.this.loadForm(FilterActivity.this.filter);
 	}
 
-	private void saveEndTime(final FilterParameter filter, final long time) {
-		filter.setEndTime((time == TimeSlice.NO_TIME_VALUE) ? System
-				.currentTimeMillis() : time);
-	}
-
-	private String getFormattedEndTime() {
-		return this.getFormattedTime(R.string.formatEndDate,
-				this.filter.getEndTime(), "");
-	}
-
-	private String getFormattedStartTime() {
-		return this.getFormattedTime(R.string.formatStartDate,
-				this.filter.getStartTime(), "");
+	private long fixTime(final long time) {
+		return (time == TimeSlice.NO_TIME_VALUE) ? System.currentTimeMillis()
+				: time;
 	}
 
 	private String getFormattedTime(final int idFormat,
@@ -256,27 +244,13 @@ public abstract class FilterActivity extends Activity {
 	}
 
 	protected String getStatusMessage(final int idFormatMessage) {
-		final String ignoreText = this.getText(R.string.filter_ignore)
-				.toString();
-		String categoryName = ignoreText;
+		final TimeSliceCategory selectedCategory = this.getCurrentCategory(); // this.filter.getCategoryId();
 
-		final TimeSliceCategory selectedCategory = this.getCurrentCategory();
-
-		if ((selectedCategory != null)
-				&& (selectedCategory != TimeSliceCategory.NO_CATEGORY)) {
-			categoryName = selectedCategory.getCategoryName();
-		}
-
-		final boolean ignoreDates = this.filter.isIgnoreDates();
-		final String startTime = this.getFormattedTime(
-				R.string.formatStartDate, ignoreDates ? TimeSlice.NO_TIME_VALUE
-						: this.filter.getStartTime(), ignoreText);
-		final String endTime = this.getFormattedTime(
-				R.string.formatEndDate,
-				ignoreDates ? TimeSlice.NO_TIME_VALUE : this.filter
-						.getEndTime(), ignoreText);
+		final String categoryName = (CategorySpinner
+				.getCategoryId(selectedCategory) == TimeSliceCategory.NO_CATEGORY
+				.getRowId()) ? null : selectedCategory.getCategoryName();
 		return String.format(this.getString(idFormatMessage).toString(),
-				startTime, endTime, categoryName);
+				this.filter.toString(categoryName));
 	}
 
 	@Override
@@ -319,10 +293,7 @@ public abstract class FilterActivity extends Activity {
 	}
 
 	protected void onOkCLick() {
-		final TimeSliceCategory currentCategory = this.getCurrentCategory();
-		final int currentCategoryID = CategorySpinner
-				.getCategoryId(currentCategory);
-		this.filter.setCategoryId(currentCategoryID);
+		this.saveForm(this.filter);
 	}
 
 	@Override

@@ -41,11 +41,9 @@
 	<string name="label_report_filter">Which Data to show?</string>	
 	<string name="menu_filter">Filter</string>	
 	<string name="label_delete_time_interval_data">Delete Time Interval Data</string>	
-	<string name="format_message_interval_deleted">"Time intervals removed: %1$s %2$s Category %3$s "</string>	
+	<string name="format_message_interval_deleted">"Time intervals removed: %1$s "</string>	
 	<string name="format_question_delete_time_intervals">"Are you sure you want to permanently delete time intervals?\n
-						%1$s \n
-						%2$s \n
-						Category: %3$s \n\n 						 
+						%1$s \n\n 						 
 	    This operation cannot be reversed.</string>
 	<string name="no_items_found">No items Found</string>	
 	<string name="filter_ignore">{all}</string>	

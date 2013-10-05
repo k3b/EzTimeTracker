@@ -109,6 +109,15 @@ public class FilterParameter implements Serializable, ITimeSliceFilter {
 
 	@Override
 	public String toString() {
+		final int categoryId = this.getCategoryId();
+		final String categoryName = (categoryId != TimeSliceCategory.NO_CATEGORY
+				.getRowId()) ? String.format(Locale.US, "Category=%1$d",
+				categoryId) : null;
+
+		return this.toString(categoryName);
+	}
+
+	public String toString(final String categoryName) {
 		final StringBuffer result = new StringBuffer();
 
 		if (!this.ignoreDates) {
@@ -118,14 +127,12 @@ public class FilterParameter implements Serializable, ITimeSliceFilter {
 					formatter.getShortDateStr(this.getEndTime())));
 		}
 
-		final int categoryId = this.getCategoryId();
-		if (categoryId != TimeSliceCategory.NO_CATEGORY.getRowId()) {
-			result.append(String
-					.format(Locale.US, ";Category=%1$d", categoryId));
+		if (categoryName != null) {
+			result.append(";" + categoryName);
 		}
 
 		if (this.notesNotNull) {
-			result.append(":Notes not empty");
+			result.append(":Notes");
 		} else if ((this.notes != null) && (this.notes.length() > 0)) {
 			result.append(":Notes='" + this.notes + "'");
 		}

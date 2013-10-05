@@ -1,3 +1,4 @@
+* FilterActivity/FilterParameter new values notes/notesNotNull. redesign
 * TimeSheetSummaryReport: added Grouping by year 
 * TimeSheetDetailReport from  
   * CategoryList-Contextmenue, 

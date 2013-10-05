@@ -40,11 +40,9 @@
 	<string name="label_report_filter">Welche Daten anzeigen?</string>	
 	<string name="menu_filter">Filter</string>	
 	<string name="label_delete_time_interval_data">Lösche Buchung</string>	
-	<string name="format_message_interval_deleted">"Buchungen gelöscht: %1$s %2$s Kategorie %3$s "</string>	
+	<string name="format_message_interval_deleted">"Buchungen gelöscht: %1$s "</string>	
    	<string name="format_question_delete_time_intervals">Wollen Sie wirklich folgende Buchungen löschen?\n
-						%1$s \n
-						%2$s \n
-						Kategorie: %3$s \n\n 
+						%1$s \n\n 
 						Das Löschen kann nicht rückgängig gemacht werden.</string>	
 	<string name="no_items_found">Keine Daten gefunden</string>	
    	<string name="filter_ignore">{alle}</string>	
