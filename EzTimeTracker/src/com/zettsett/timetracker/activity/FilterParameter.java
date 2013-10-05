@@ -117,6 +117,13 @@ public class FilterParameter implements Serializable, ITimeSliceFilter {
 		return this.toString(categoryName);
 	}
 
+	public String toString(final TimeSliceCategory selectedCategory) {
+		final String categoryName = ((selectedCategory == null) || (selectedCategory
+				.getRowId() == TimeSliceCategory.NO_CATEGORY.getRowId())) ? null
+				: selectedCategory.getCategoryName();
+		return this.toString(categoryName);
+	}
+
 	public String toString(final String categoryName) {
 		final StringBuffer result = new StringBuffer();
 

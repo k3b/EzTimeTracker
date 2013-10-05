@@ -244,13 +244,8 @@ public abstract class FilterActivity extends Activity {
 	}
 
 	protected String getStatusMessage(final int idFormatMessage) {
-		final TimeSliceCategory selectedCategory = this.getCurrentCategory(); // this.filter.getCategoryId();
-
-		final String categoryName = (CategorySpinner
-				.getCategoryId(selectedCategory) == TimeSliceCategory.NO_CATEGORY
-				.getRowId()) ? null : selectedCategory.getCategoryName();
 		return String.format(this.getString(idFormatMessage).toString(),
-				this.filter.toString(categoryName));
+				this.filter.toString(this.getCurrentCategory()));
 	}
 
 	@Override

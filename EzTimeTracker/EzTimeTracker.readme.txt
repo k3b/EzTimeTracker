@@ -1,5 +1,11 @@
 
 todo
+	report
+		first line:filter-settings
+		if not data then --no data--
+	summaryReport-ctx-menu-
+		delete
+		change category if category selected or parent 
 ?	after report update scroll to last know pos
 	Category detail report from
 		v category list
@@ -7,7 +13,7 @@ todo
 		v category delete if references are found
 		v summary report
 		
-		remove obselte timeslice getXxxAsString
+		v remove obselte timeslice getXxxAsString
 		filter by (notes)
 		v2.5
 =================

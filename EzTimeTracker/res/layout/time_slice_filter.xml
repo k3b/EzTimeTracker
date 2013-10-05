@@ -26,9 +26,14 @@
 	<CheckBox android:text="@string/checkbox_notes_not_null"
 		android:id="@+id/checkbox_notes_not_null" android:layout_width="fill_parent"
 		android:layout_height="wrap_content"></CheckBox>
-	<EditText android:id="@+id/edit_text_ts_notes" android:inputType="text"
-				android:lines="1" android:layout_width="wrap_content"
-				android:layout_height="wrap_content"/>
+
+	<EditText
+	    android:id="@+id/edit_text_ts_notes"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:inputType="text"
+	    android:lines="1" />
+
 	<LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal">
 		<Button android:text="@string/cmd_delete" android:id="@+id/cmd_delete" android:textSize="26sp"
 			 android:textColor="#151555" android:layout_height="wrap_content" android:layout_width="fill_parent"/>
