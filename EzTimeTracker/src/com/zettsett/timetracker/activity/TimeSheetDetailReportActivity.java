@@ -189,19 +189,27 @@ public class TimeSheetDetailReportActivity extends Activity implements
 				"fetchTimeSlicesByDateRange:"
 						+ (System.currentTimeMillis() - performanceMeasureStart));
 		performanceMeasureStart = System.currentTimeMillis();
+		this.addDateHeaderLine(rangeFilter.toString(), null, Color.YELLOW);
 		TimeSliceFilterParameter headerFilter = null;
+		int itemCount = 0;
 		for (final TimeSlice aSlice : timeSlices) {
 			if (!lastStartDate.equals(aSlice.getStartDateStr())) {
 				lastStartDate = aSlice.getStartDateStr();
 				final long startTime = aSlice.getStartTime();
 				headerFilter = new TimeSliceFilterParameter()
 						.setStartTime(startTime);
-				this.addDateHeaderLine(lastStartDate, headerFilter);
+				this.addDateHeaderLine(lastStartDate, headerFilter, Color.GREEN);
 			}
 
 			headerFilter.setEndTime(aSlice.getStartTime());
 
 			this.addTimeSliceLine(aSlice);
+			itemCount++;
+		}
+
+		if (itemCount == 0) {
+			this.addDateHeaderLine(this.getString(R.string.message_no_data),
+					null, Color.YELLOW);
 		}
 		Log.i(Global.LOG_CONTEXT,
 				"addTimeSliceLine:"
@@ -234,25 +242,27 @@ public class TimeSheetDetailReportActivity extends Activity implements
 	}
 
 	private TextView addDateHeaderLine(final String dateText,
-			final TimeSliceFilterParameter filter) {
+			final TimeSliceFilterParameter filter, final int color) {
 		final TextView startDateLine = new TextView(this);
-		startDateLine.setTag(filter);
 		startDateLine.setText(dateText);
-		startDateLine.setTextColor(Color.GREEN);
-		this.registerForContextMenu(startDateLine);
+		startDateLine.setTextColor(color);
+		if (filter != null) {
+			startDateLine.setTag(filter);
+			this.registerForContextMenu(startDateLine);
+			startDateLine.setOnTouchListener(new OnTouchListener() {
+				@Override
+				public boolean onTouch(final View view, final MotionEvent event) {
+					if (event.getAction() == MotionEvent.ACTION_DOWN) {
+						((TextView) view).setTextColor(Color.rgb(0, 128, 0));
+					} else if (event.getAction() == MotionEvent.ACTION_UP) {
+						((TextView) view).setTextColor(Color.GREEN);
+					}
+					return false;
+				}
+			});
+		}
 		this.mMainLayout.addView(startDateLine);
 		this.mReportViewList.add(startDateLine);
-		startDateLine.setOnTouchListener(new OnTouchListener() {
-			@Override
-			public boolean onTouch(final View view, final MotionEvent event) {
-				if (event.getAction() == MotionEvent.ACTION_DOWN) {
-					((TextView) view).setTextColor(Color.rgb(0, 128, 0));
-				} else if (event.getAction() == MotionEvent.ACTION_UP) {
-					((TextView) view).setTextColor(Color.GREEN);
-				}
-				return false;
-			}
-		});
 		return startDateLine;
 	}
 

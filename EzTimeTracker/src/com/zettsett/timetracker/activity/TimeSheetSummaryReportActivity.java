@@ -197,7 +197,8 @@ public class TimeSheetSummaryReportActivity extends Activity implements
 			final Long date = this.getLong(v);
 			if (date != null) {
 				final TimeSliceFilterParameter filter = this.setFilterDate(
-						new TimeSliceFilterParameter(), this.mReportDateGrouping, date);
+						new TimeSliceFilterParameter(),
+						this.mReportDateGrouping, date);
 				if (this.mReportMode == ReportModes.BY_CATEGORY) {
 					int pos = this.mReportViewList.indexOf(v);
 					while (--pos >= 0) {
@@ -348,21 +349,22 @@ public class TimeSheetSummaryReportActivity extends Activity implements
 		final Map<String, Long> dates = reportDataStructure.getDates();
 		final Map<String, TimeSliceCategory> categoties = reportDataStructure
 				.getCategoties();
+		this.addDateHeaderLine(
+				TimeSheetSummaryReportActivity.mRangeFilter.toString(),
+				Color.YELLOW);
+		int itemCount = 0;
 		for (final String header : reportData.keySet()) {
 			final Map<String, Long> reportRows = reportData.get(header);
-			final TextView headerTextView = new TextView(this);
-			headerTextView.setText(header);
-			headerTextView.setTextColor(Color.GREEN);
+
+			final TextView headerTextView = this.addDateHeaderLine(header,
+					Color.GREEN);
 			if (this.mReportMode == ReportModes.BY_DATE) {
 				headerTextView.setTag(dates.get(header));
 			} else {
 				headerTextView.setTag(categoties.get(header));
 			}
 
-			this.mReportViewList.add(headerTextView);
 			this.registerForContextMenu(headerTextView);
-
-			this.mReportFramework.getLinearScroller().addView(headerTextView);
 			final LayoutParams layoutParams = new LayoutParams(
 					android.view.ViewGroup.LayoutParams.FILL_PARENT,
 					android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -385,11 +387,27 @@ public class TimeSheetSummaryReportActivity extends Activity implements
 				this.registerForContextMenu(rowTextView);
 				rowsView.addView(rowTextView);
 			}
+			itemCount++;
+		}
+
+		if (itemCount == 0) {
+			this.addDateHeaderLine(this.getString(R.string.message_no_data),
+					Color.YELLOW);
 		}
 		Log.i(Global.LOG_CONTEXT,
 				"generated report:"
 						+ (System.currentTimeMillis() - performanceMeasureStart));
 		performanceMeasureStart = System.currentTimeMillis();
+	}
+
+	private TextView addDateHeaderLine(final String header, final int color) {
+		final TextView headerTextView = new TextView(this);
+		headerTextView.setText(header);
+		headerTextView.setTextColor(color);
+		this.mReportViewList.add(headerTextView);
+
+		this.mReportFramework.getLinearScroller().addView(headerTextView);
+		return headerTextView;
 	}
 
 	/**

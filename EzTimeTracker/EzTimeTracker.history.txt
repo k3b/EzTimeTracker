@@ -4,6 +4,8 @@
   * minPunchOutTreshhold: Punchout only if longer than this (in seconds). Else discard.
 
 * FilterActivity/FilterParameter new values notes/notesNotNull. redesign
+* TimeSheetXxxxxReport added to top of report: filter-settings and --no data-- if empty 
+
 * TimeSheetSummaryReport: added Grouping by year 
 * TimeSheetDetailReport from  
   * CategoryList-Contextmenue, 
@@ -48,6 +50,7 @@ version 2.0 2012-04-03
 * Localizing gui en-US, de. 
   * Extracted hardcoded strings to resources to make app traslatable into different languages
   * externalized all date time formatting to DateTimeFormatter.java; changed exportfields
+* Delete Category: If in use: ask are you shure?
 * DB:3 - Added Notes to timeslice
 * Remote Broadcast allows Llama to control TimeTracker
 

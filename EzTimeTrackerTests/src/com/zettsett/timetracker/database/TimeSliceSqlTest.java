@@ -19,8 +19,7 @@ public class TimeSliceSqlTest {
 
 	@Test
 	public void ShouldFormatEmpty() {
-		final SqlFilter sqlFilter = TimeSliceSql
-				.createFilter(this.timeSliceFilter);
+		final SqlFilter sqlFilter = createFilter();
 
 		Assert.assertNull(sqlFilter);
 	}
@@ -29,8 +28,7 @@ public class TimeSliceSqlTest {
 	public void ShouldFormatCategory() {
 
 		this.timeSliceFilter.setCategoryId(22);
-		final SqlFilter sqlFilter = TimeSliceSql
-				.createFilter(this.timeSliceFilter);
+		final SqlFilter sqlFilter = createFilter();
 
 		Assert.assertEquals(sqlFilter.getDebugMessage("sql"),
 				"category_id = ?", sqlFilter.sql);
@@ -44,8 +42,7 @@ public class TimeSliceSqlTest {
 	public void ShouldFormatIgnoreDate() {
 		this.timeSliceFilter.setStartTime(20010101).setEndTime(20011231)
 				.setIgnoreDates(true);
-		final SqlFilter sqlFilter = TimeSliceSql
-				.createFilter(this.timeSliceFilter);
+		final SqlFilter sqlFilter = createFilter();
 
 		Assert.assertNull(sqlFilter);
 	}
@@ -53,8 +50,7 @@ public class TimeSliceSqlTest {
 	@Test
 	public void ShouldFormatDateFromTo() {
 		this.timeSliceFilter.setStartTime(20010101).setEndTime(20011231);
-		final SqlFilter sqlFilter = TimeSliceSql
-				.createFilter(this.timeSliceFilter);
+		final SqlFilter sqlFilter = createFilter();
 
 		Assert.assertEquals(sqlFilter.getDebugMessage("sql"),
 				"start_time>= ? AND start_time<= ?", sqlFilter.sql);
@@ -70,8 +66,7 @@ public class TimeSliceSqlTest {
 	public void ShouldFormatNotesNotNull() {
 
 		this.timeSliceFilter.setNotesNotNull(true);
-		final SqlFilter sqlFilter = TimeSliceSql
-				.createFilter(this.timeSliceFilter);
+		final SqlFilter sqlFilter = createFilter();
 
 		Assert.assertEquals(sqlFilter.getDebugMessage("sql"),
 				"notes IS NOT NULL AND notes <> ''", sqlFilter.sql);
@@ -82,8 +77,7 @@ public class TimeSliceSqlTest {
 	public void ShouldFormatNotesLike() {
 
 		this.timeSliceFilter.setNotes("Hello World");
-		final SqlFilter sqlFilter = TimeSliceSql
-				.createFilter(this.timeSliceFilter);
+		final SqlFilter sqlFilter = createFilter();
 
 		Assert.assertEquals(sqlFilter.getDebugMessage("sql"), "notes LIKE ?",
 				sqlFilter.sql);
@@ -98,13 +92,17 @@ public class TimeSliceSqlTest {
 
 		this.timeSliceFilter.setNotes("Hello World").setCategoryId(22)
 				.setStartTime(20010101).setEndTime(20011231);
-		final SqlFilter sqlFilter = TimeSliceSql
-				.createFilter(this.timeSliceFilter);
+		final SqlFilter sqlFilter = createFilter();
 
 		Assert.assertNotNull(sqlFilter.getDebugMessage("sql"), sqlFilter.sql);
 		Assert.assertEquals(sqlFilter.getDebugMessage("args.length"), 4,
 				sqlFilter.args.length);
 
 		System.out.append(sqlFilter.toString());
+	}
+
+	private SqlFilter createFilter() {
+		return TimeSliceSql
+				.createFilter(this.timeSliceFilter);
 	}
 }

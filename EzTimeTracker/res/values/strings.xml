@@ -106,7 +106,9 @@
 	<string name="report_title_category_day">Category by Day</string>
 	<string name="report_title_category_week">Category by Week</string>
 	<string name="report_title_category_month">Category by Month</string>
-	
+
+	<string name="message_no_data">No items found.</string>
+		
 	<string name="about_content_about"><![CDATA[
 <h2>About</h2>
 <a href="https://github.com/k3b/EzTimeTracker/wiki">EZ
