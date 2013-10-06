@@ -1,67 +1,133 @@
 package com.zettsett.timetracker.database;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.zettsett.timetracker.activity.TimeSliceFilterParameter;
 import com.zettsett.timetracker.model.ITimeSliceFilter;
 import com.zettsett.timetracker.model.TimeSlice;
 import com.zettsett.timetracker.model.TimeSliceCategory;
 
+/**
+ * TimeSlice dependent sql with no dependencies to android.<br/>
+ * Used by TimeSliceRepository to build sql.<br/>
+ * Scope=package to allow unittesting.<br/>
+ * 
+ */
 class TimeSliceSql {
 	static final String COL_CATEGORY_ID = "category_id";
 	static final String COL_NOTES = "notes";
 	static final String COL_END_TIME = "end_time";
 	static final String COL_START_TIME = "start_time";
 
-	static String createFilter(final ITimeSliceFilter filter) {
-		final StringBuilder result = new StringBuilder();
+	private static final String[] STRING_ARRAY = new String[0];
 
-		if (filter != null) {
-			final TimeSliceFilterParameter timeSliceFilterParameter = (filter instanceof TimeSliceFilterParameter) ? (TimeSliceFilterParameter) filter
+	/**
+	 * helper class because java function cannot return 2 values
+	 */
+	static class SqlFilter {
+		SqlFilter(final String sql, final String[] args) {
+			this.sql = sql;
+			this.args = args;
+		}
+
+		/**
+		 * genereted sql-where
+		 */
+		final String sql;
+
+		/**
+		 * "?" placeholder values needed for prepared sql statements
+		 */
+		final String[] args;
+
+		/**
+		 * formats sql for debugging purposes
+		 */
+		String getDebugMessage(final String debugContext) {
+			final StringBuffer result = new StringBuffer().append(debugContext)
+					.append(": ").append(this.sql);
+			if (this.args != null) {
+				result.append(" [");
+				for (final String argument : this.args) {
+					result.append("'").append(argument).append("', ");
+				}
+				result.append("]");
+			}
+			return result.toString();
+		}
+
+		@Override
+		public String toString() {
+			// TODO Auto-generated method stub
+			return this.getDebugMessage("TimeSliceSql.SqlFilter");
+		}
+	};
+
+	/**
+	 * generates sql-where from genericTimeSliceFilter
+	 */
+	static SqlFilter createFilter(final ITimeSliceFilter genericTimeSliceFilter) {
+		final StringBuilder sql = new StringBuilder();
+		final List<String> filterArgs = new ArrayList<String>();
+
+		if (genericTimeSliceFilter != null) {
+			final TimeSliceFilterParameter timeSliceFilter = (genericTimeSliceFilter instanceof TimeSliceFilterParameter) ? (TimeSliceFilterParameter) genericTimeSliceFilter
 					: null;
-			final boolean ignoreDates = (timeSliceFilterParameter == null) ? false
-					: timeSliceFilterParameter.isIgnoreDates();
+			final boolean ignoreDates = (timeSliceFilter == null) ? false
+					: timeSliceFilter.isIgnoreDates();
 
-			TimeSliceSql.createFilter(result, filter.getStartTime(),
-					filter.getEndTime(), filter.getCategoryId(), ignoreDates);
+			TimeSliceSql.createFilter(sql, filterArgs,
+					genericTimeSliceFilter.getStartTime(),
+					genericTimeSliceFilter.getEndTime(),
+					genericTimeSliceFilter.getCategoryId(), ignoreDates);
 
-			if (timeSliceFilterParameter != null) {
-				if (timeSliceFilterParameter.isNotesNotNull()) {
-					TimeSliceSql.addAND(result).append(TimeSliceSql.COL_NOTES)
+			if (timeSliceFilter != null) {
+				if (timeSliceFilter.isNotesNotNull()) {
+					TimeSliceSql.addAND(sql).append(TimeSliceSql.COL_NOTES)
 							.append(" IS NOT NULL ");
 				} else {
-					final String notes = timeSliceFilterParameter.getNotes();
+					final String notes = timeSliceFilter.getNotes();
 					if ((notes != null) && (notes.length() > 0)) {
-						TimeSliceSql.addAND(result)
-								.append(TimeSliceSql.COL_NOTES)
-								.append(" like '%").append(notes).append("%'");
+						TimeSliceSql.add(sql, filterArgs,
+								TimeSliceSql.COL_NOTES + " LIKE ? ", "%"
+										+ notes + "%", "");
 					}
 				}
 			} // if filterParameter
 		} // if not null
-		if (result.length() == 0) {
+		if (sql.length() == 0) {
 			return null;
 		} else {
-			return result.toString();
+			return new SqlFilter(sql.toString(),
+					(filterArgs.size() == 0) ? null
+							: filterArgs.toArray(TimeSliceSql.STRING_ARRAY));
 		}
+
+		// debugContext
 	}
 
 	private static void createFilter(final StringBuilder result,
-			final long startDate, final long endDate, final long categoryId,
-			final boolean ignoreDates) {
+			final List<String> filterArgs, final long startDate,
+			final long endDate, final long categoryId, final boolean ignoreDates) {
 
 		if (!ignoreDates) {
-			TimeSliceSql.add(result, TimeSliceSql.COL_START_TIME + ">=",
-					startDate, TimeSlice.NO_TIME_VALUE);
-			TimeSliceSql.add(result, TimeSliceSql.COL_START_TIME + "<=",
-					endDate, TimeSlice.NO_TIME_VALUE);
+			TimeSliceSql.add(result, filterArgs, TimeSliceSql.COL_START_TIME
+					+ ">= ?", "" + startDate, "" + TimeSlice.NO_TIME_VALUE);
+			TimeSliceSql.add(result, filterArgs, TimeSliceSql.COL_END_TIME
+					+ "<= ?", "" + endDate, "" + TimeSlice.NO_TIME_VALUE);
 		}
-		TimeSliceSql.add(result, TimeSliceSql.COL_CATEGORY_ID + " =",
-				categoryId, TimeSliceCategory.NOT_SAVED);
+		TimeSliceSql.add(result, filterArgs, TimeSliceSql.COL_CATEGORY_ID
+				+ " = ? ", "" + categoryId, "" + TimeSliceCategory.NOT_SAVED);
 	}
 
-	private static void add(final StringBuilder result, final String field,
-			final long value, final long emptyValue) {
-		if (value != emptyValue) {
-			TimeSliceSql.addAND(result).append(value);
+	private static void add(final StringBuilder result,
+			final List<String> filterArgs, final String sqlExpressiont,
+			final String value, final String emptyValue) {
+		if (emptyValue.compareTo(value) != 0) {
+			TimeSliceSql.addAND(result);
+			result.append(sqlExpressiont);
+			filterArgs.add(value);
 		}
 	}
 

@@ -14,6 +14,14 @@ import com.zettsett.timetracker.database.TimeSliceRepository;
 public class TimeSliceRemoveActivity extends FilterActivity {
 	public static final int RESULT_DELETE_OK = 19284;
 
+	public static void showActivity(final Activity owner,
+			final TimeSliceFilterParameter filter) {
+		final Intent intent = new Intent().setClass(owner,
+				TimeSliceRemoveActivity.class);
+		intent.putExtra(Global.EXTRA_FILTER, filter); // item.getItemId());
+		owner.startActivityForResult(intent, 0);
+	}
+
 	public TimeSliceRemoveActivity() {
 		super(R.string.label_delete_time_interval_data, R.string.cmd_delete,
 				TimeSliceRemoveActivity.RESULT_DELETE_OK);
@@ -87,13 +95,5 @@ public class TimeSliceRemoveActivity extends FilterActivity {
 			final AlertDialog alert = builder.create();
 			alert.show();
 		}
-	}
-
-	public static void showActivity(final Activity owner,
-			final TimeSliceFilterParameter filter) {
-		final Intent intent = new Intent().setClass(owner,
-				TimeSliceRemoveActivity.class);
-		intent.putExtra(Global.EXTRA_FILTER, filter); // item.getItemId());
-		owner.startActivityForResult(intent, 0);
 	}
 }

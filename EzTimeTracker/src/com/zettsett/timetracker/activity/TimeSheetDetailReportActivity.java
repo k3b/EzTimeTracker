@@ -194,7 +194,8 @@ public class TimeSheetDetailReportActivity extends Activity implements
 			if (!lastStartDate.equals(aSlice.getStartDateStr())) {
 				lastStartDate = aSlice.getStartDateStr();
 				final long startTime = aSlice.getStartTime();
-				headerFilter = new TimeSliceFilterParameter().setStartTime(startTime);
+				headerFilter = new TimeSliceFilterParameter()
+						.setStartTime(startTime);
 				this.addDateHeaderLine(lastStartDate, headerFilter);
 			}
 
@@ -276,7 +277,8 @@ public class TimeSheetDetailReportActivity extends Activity implements
 			menu.add(0, TimeSheetDetailReportActivity.DELETE_MENU_ID, 0,
 					this.getString(R.string.cmd_delete));
 			this.mCurrentSelectedTimeSlice = null;
-			this.mCurrentSelectionFilter = (TimeSliceFilterParameter) v.getTag();
+			this.mCurrentSelectionFilter = (TimeSliceFilterParameter) v
+					.getTag();
 			this.mCurrentSelectedDate = this.mCurrentSelectionFilter
 					.getStartTime();
 		}
