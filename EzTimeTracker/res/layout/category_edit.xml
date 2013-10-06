@@ -30,7 +30,7 @@
 	    android:layout_height="wrap_content"
 	    android:inputType="textCapSentences"
 	    android:text="" >
-</EditText>
+	</EditText>
 
 	<LinearLayout
 	    android:layout_width="wrap_content"
@@ -50,7 +50,7 @@
 		    android:layout_height="wrap_content"
 		    android:text="@string/formatEndDate"
 		    android:textSize="14sp" >
-</Button>
+		</Button>
 	</LinearLayout>
 	<LinearLayout
 			android:layout_width="wrap_content" 

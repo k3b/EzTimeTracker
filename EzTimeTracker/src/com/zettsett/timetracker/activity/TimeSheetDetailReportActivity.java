@@ -150,7 +150,7 @@ public class TimeSheetDetailReportActivity extends Activity implements IReportIn
 		String lastStartDate = "";
 		FilterParameter rangeFilter = mRangeFilter;
 		List<TimeSlice> timeSlices = mTimeSliceRepository.fetchTimeSlices(
-				rangeFilter, rangeFilter.isIgnoreDates());
+				rangeFilter);
 		Log.i(Global.LOG_CONTEXT, "fetchTimeSlicesByDateRange:"  + (System.currentTimeMillis() - performanceMeasureStart) );
 		performanceMeasureStart = System.currentTimeMillis();
 		FilterParameter headerFilter = null;

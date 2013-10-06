@@ -40,8 +40,10 @@ public class FilterParameter implements Serializable, ITimeSliceFilter {
 
 	public FilterParameter setParameter(final FilterParameter source) {
 		if (source != null) {
-			return this.setParameter((ITimeSliceFilter) source).setIgnoreDates(
-					source.isIgnoreDates());
+			return this.setParameter((ITimeSliceFilter) source)
+					.setIgnoreDates(source.isIgnoreDates())
+					.setNotes(source.getNotes())
+					.setNotesNotNull(source.isNotesNotNull());
 		}
 		return this;
 	}

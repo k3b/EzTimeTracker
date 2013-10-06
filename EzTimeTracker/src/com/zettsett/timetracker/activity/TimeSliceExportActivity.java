@@ -26,169 +26,202 @@ import com.zettsett.timetracker.FileUtilities;
 import com.zettsett.timetracker.database.TimeSliceRepository;
 import com.zettsett.timetracker.model.TimeSlice;
 
-public class TimeSliceExportActivity extends Activity implements RadioGroup.OnCheckedChangeListener {
+public class TimeSliceExportActivity extends Activity implements
+		RadioGroup.OnCheckedChangeListener {
 	private static final int GET_START_DATETIME = 0;
 	private static final int GET_END_DATETIME = 1;
 
 	private static final String CSV_LINE_SEPERATOR = "\n";
 	private static final String CSV_FIELD_SEPERATOR = ",";
-	
+
 	private RadioGroup mRadioGroup;
 	private boolean mExportAll = true;
 	private long mFromDate, mToDate;
 	private boolean mEmailData = false;
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setTitle(R.string.export_data_to_csv_file);
-		setContentView(R.layout.time_slice_export_settings);
-		initializeDateRanges();
-		mRadioGroup = (RadioGroup) findViewById(R.id.radio_group_data_export);
-		mRadioGroup.setOnCheckedChangeListener(this);
-		Button exportButton = (Button) findViewById(R.id.button_data_export);
+		this.setTitle(R.string.export_data_to_csv_file);
+		this.setContentView(R.layout.time_slice_export_settings);
+		this.initializeDateRanges();
+		this.mRadioGroup = (RadioGroup) this
+				.findViewById(R.id.radio_group_data_export);
+		this.mRadioGroup.setOnCheckedChangeListener(this);
+		final Button exportButton = (Button) this
+				.findViewById(R.id.button_data_export);
 		exportButton.setOnClickListener(new OnClickListener() {
 			@Override
-			public void onClick(View v) {
-				writeData();
+			public void onClick(final View v) {
+				TimeSliceExportActivity.this.writeData();
 			}
 		});
-		
-		Button fromButton = (Button) findViewById(R.id.button_data_export_from);
+
+		final Button fromButton = (Button) this
+				.findViewById(R.id.button_data_export_from);
 		fromButton.setOnClickListener(new View.OnClickListener() {
 			@Override
-			public void onClick(View v) {
-				showDialog(GET_START_DATETIME);
+			public void onClick(final View v) {
+				TimeSliceExportActivity.this
+						.showDialog(TimeSliceExportActivity.GET_START_DATETIME);
 			}
 		});
-		Button toButton = (Button) findViewById(R.id.button_data_export_to);
+		final Button toButton = (Button) this
+				.findViewById(R.id.button_data_export_to);
 		toButton.setOnClickListener(new View.OnClickListener() {
 			@Override
-			public void onClick(View v) {
-				showDialog(GET_END_DATETIME);
+			public void onClick(final View v) {
+				TimeSliceExportActivity.this
+						.showDialog(TimeSliceExportActivity.GET_END_DATETIME);
 			}
 		});
-		final CheckBox emailCheckBox = (CheckBox) findViewById(R.id.checkbox_data_export_email);
+		final CheckBox emailCheckBox = (CheckBox) this
+				.findViewById(R.id.checkbox_data_export_email);
 		emailCheckBox.setOnClickListener(new View.OnClickListener() {
 			@Override
-			public void onClick(View v) {
-				LinearLayout ll = (LinearLayout) findViewById(R.id.linear_layout_data_export_filename);
+			public void onClick(final View v) {
+				final LinearLayout ll = (LinearLayout) TimeSliceExportActivity.this
+						.findViewById(R.id.linear_layout_data_export_filename);
 				if (emailCheckBox.isChecked()) {
 					ll.setVisibility(View.GONE);
-					mEmailData = true;
+					TimeSliceExportActivity.this.mEmailData = true;
 				} else {
 					ll.setVisibility(View.VISIBLE);
-					mEmailData = false;
+					TimeSliceExportActivity.this.mEmailData = false;
 				}
 			}
 		});
-		assignFromToDateLabels();
+		this.assignFromToDateLabels();
 	}
 
 	private EditText getFilenameEditText() {
-		return (EditText) findViewById(R.id.edit_text_data_export_filename);
+		return (EditText) this
+				.findViewById(R.id.edit_text_data_export_filename);
 	}
 
 	private void initializeDateRanges() {
-		Calendar calendar = new GregorianCalendar();
+		final Calendar calendar = new GregorianCalendar();
 		calendar.setTime(new Date());
 		calendar.set(Calendar.HOUR, 23);
 		calendar.set(Calendar.MINUTE, 59);
-		mToDate = calendar.getTimeInMillis();
+		this.mToDate = calendar.getTimeInMillis();
 		calendar.set(Calendar.HOUR, 0);
 		calendar.set(Calendar.MINUTE, 0);
 		calendar.roll(Calendar.MONTH, false);
-		mFromDate = calendar.getTimeInMillis();
+		this.mFromDate = calendar.getTimeInMillis();
 	}
 
 	private void assignFromToDateLabels() {
-		Button fromButton = (Button) findViewById(R.id.button_data_export_from);
-		String label = String.format(this.getText(R.string.formatStartDate).toString(), 
-				DateTimeFormatter.getInstance().getShortDateStr(mFromDate));
+		final Button fromButton = (Button) this
+				.findViewById(R.id.button_data_export_from);
+		String label = String
+				.format(this.getText(R.string.formatStartDate).toString(),
+						DateTimeFormatter.getInstance().getShortDateStr(
+								this.mFromDate));
 		fromButton.setText(label);
 
-		Button toButton = (Button) findViewById(R.id.button_data_export_to);
-		label = String.format(this.getText(R.string.formatEndDate).toString(), 
-				DateTimeFormatter.getInstance().getShortDateStr(mToDate));
+		final Button toButton = (Button) this
+				.findViewById(R.id.button_data_export_to);
+		label = String.format(this.getText(R.string.formatEndDate).toString(),
+				DateTimeFormatter.getInstance().getShortDateStr(this.mToDate));
 		toButton.setText(label);
 	}
 
-    // define the listener which is called once a user selected the date.
-    private DateSlider.OnDateSetListener mDateTimeSetListenerStart =
-        new DateSlider.OnDateSetListener() {
-            public void onDateSet(DateSlider view, Calendar selectedDate) {
-                // update the dateText view with the corresponding date
-            	mFromDate = selectedDate.getTimeInMillis();
-    			assignFromToDateLabels();
-            }
-    };
+	// define the listener which is called once a user selected the date.
+	private final DateSlider.OnDateSetListener mDateTimeSetListenerStart = new DateSlider.OnDateSetListener() {
+		@Override
+		public void onDateSet(final DateSlider view, final Calendar selectedDate) {
+			// update the dateText view with the corresponding date
+			TimeSliceExportActivity.this.mFromDate = selectedDate
+					.getTimeInMillis();
+			TimeSliceExportActivity.this.assignFromToDateLabels();
+		}
+	};
 
-    // define the listener which is called once a user selected the date.
-    private DateSlider.OnDateSetListener mDateTimeSetListenerEnd =
-        new DateSlider.OnDateSetListener() {
-            public void onDateSet(DateSlider view, Calendar selectedDate) {
-                // update the dateText view with the corresponding date
-            	mToDate = selectedDate.getTimeInMillis();
-    			assignFromToDateLabels();
-            }
-    };
-
-    @Override
-    public Dialog onCreateDialog(int id) {
-        // this method is called after invoking 'showDialog' for the first time
-        // here we initiate the corresponding DateSlideSelector and return the dialog to its caller
-    	
-    	// get today's date and time
-        final Calendar c = Calendar.getInstance();
-        
-        switch (id) {
-        case GET_START_DATETIME:
-        	c.setTimeInMillis(mFromDate);
-            return new DefaultDateSlider(this,mDateTimeSetListenerStart,c);
-        case GET_END_DATETIME:
-        	c.setTimeInMillis(mToDate);
-            return new DefaultDateSlider(this,mDateTimeSetListenerEnd,c);
-        }
-        return null;
-    }
+	// define the listener which is called once a user selected the date.
+	private final DateSlider.OnDateSetListener mDateTimeSetListenerEnd = new DateSlider.OnDateSetListener() {
+		@Override
+		public void onDateSet(final DateSlider view, final Calendar selectedDate) {
+			// update the dateText view with the corresponding date
+			TimeSliceExportActivity.this.mToDate = selectedDate
+					.getTimeInMillis();
+			TimeSliceExportActivity.this.assignFromToDateLabels();
+		}
+	};
 
 	@Override
-	public void onCheckedChanged(RadioGroup group, int checkedId) {
-		TableLayout dateRangeLayout = (TableLayout) findViewById(R.id.table_layout_date_range);
+	public Dialog onCreateDialog(final int id) {
+		// this method is called after invoking 'showDialog' for the first time
+		// here we initiate the corresponding DateSlideSelector and return the
+		// dialog to its caller
+
+		// get today's date and time
+		final Calendar c = Calendar.getInstance();
+
+		switch (id) {
+		case GET_START_DATETIME:
+			c.setTimeInMillis(this.mFromDate);
+			return new DefaultDateSlider(this, this.mDateTimeSetListenerStart,
+					c);
+		case GET_END_DATETIME:
+			c.setTimeInMillis(this.mToDate);
+			return new DefaultDateSlider(this, this.mDateTimeSetListenerEnd, c);
+		}
+		return null;
+	}
+
+	@Override
+	public void onCheckedChanged(final RadioGroup group, final int checkedId) {
+		final TableLayout dateRangeLayout = (TableLayout) this
+				.findViewById(R.id.table_layout_date_range);
 		if (checkedId == R.id.radio_button_data_export_range) {
 			dateRangeLayout.setVisibility(View.VISIBLE);
-			mExportAll = false;
+			this.mExportAll = false;
 		} else {
 			dateRangeLayout.setVisibility(View.GONE);
-			mExportAll = true;
+			this.mExportAll = true;
 		}
 	}
 
 	private void writeData() {
-		TimeSliceRepository mTimeSliceRepository = new TimeSliceRepository(this);
+		final TimeSliceRepository mTimeSliceRepository = new TimeSliceRepository(
+				this);
 		List<TimeSlice> timeSlices;
 
-		FilterParameter filter = new FilterParameter().setStartTime(mFromDate).setEndTime(mToDate);
-		timeSlices = mTimeSliceRepository.fetchTimeSlices(filter, mExportAll);
-		StringBuilder output = new StringBuilder();
-		output.append("Start, End, Category Name, Category Description, Notes").append(CSV_LINE_SEPERATOR);
-		for (TimeSlice aTimeSlice : timeSlices) {
-			output.append(DateTimeFormatter.getInstance().getIsoDateTimeStr(aTimeSlice.getStartTime())).append(CSV_FIELD_SEPERATOR);
-			output.append(DateTimeFormatter.getInstance().getIsoDateTimeStr(aTimeSlice.getEndTime())).append(CSV_FIELD_SEPERATOR);
-			output.append(aTimeSlice.getCategoryName()).append(CSV_FIELD_SEPERATOR);
-			output.append(aTimeSlice.getCategoryDescription()).append(CSV_FIELD_SEPERATOR);
-			output.append(aTimeSlice.getNotes().replace(CSV_LINE_SEPERATOR, " "));
-			output.append(CSV_LINE_SEPERATOR);
+		final FilterParameter filter = new FilterParameter()
+				.setStartTime(this.mFromDate).setEndTime(this.mToDate)
+				.setIgnoreDates(this.mExportAll);
+		timeSlices = mTimeSliceRepository.fetchTimeSlices(filter);
+		final StringBuilder output = new StringBuilder();
+		output.append("Start, End, Category Name, Category Description, Notes")
+				.append(TimeSliceExportActivity.CSV_LINE_SEPERATOR);
+		for (final TimeSlice aTimeSlice : timeSlices) {
+			output.append(
+					DateTimeFormatter.getInstance().getIsoDateTimeStr(
+							aTimeSlice.getStartTime())).append(
+					TimeSliceExportActivity.CSV_FIELD_SEPERATOR);
+			output.append(
+					DateTimeFormatter.getInstance().getIsoDateTimeStr(
+							aTimeSlice.getEndTime())).append(
+					TimeSliceExportActivity.CSV_FIELD_SEPERATOR);
+			output.append(aTimeSlice.getCategoryName()).append(
+					TimeSliceExportActivity.CSV_FIELD_SEPERATOR);
+			output.append(aTimeSlice.getCategoryDescription()).append(
+					TimeSliceExportActivity.CSV_FIELD_SEPERATOR);
+			output.append(aTimeSlice.getNotes().replace(
+					TimeSliceExportActivity.CSV_LINE_SEPERATOR, " "));
+			output.append(TimeSliceExportActivity.CSV_LINE_SEPERATOR);
 		}
-		if (mEmailData) {
-			String appName = getString(R.string.app_name);
-			String subject = String.format(getString(R.string.export_email_subject), appName);
+		if (this.mEmailData) {
+			final String appName = this.getString(R.string.app_name);
+			final String subject = String.format(
+					this.getString(R.string.export_email_subject), appName);
 
-			EmailUtilities.send("", subject, this, output
-					.toString());
+			EmailUtilities.send("", subject, this, output.toString());
 		} else {
-			FileUtilities fileUtil = new FileUtilities(this);
-			fileUtil.write(getFilenameEditText().getText().toString(), output.toString());
+			final FileUtilities fileUtil = new FileUtilities(this);
+			fileUtil.write(this.getFilenameEditText().getText().toString(),
+					output.toString());
 		}
 	}
 }

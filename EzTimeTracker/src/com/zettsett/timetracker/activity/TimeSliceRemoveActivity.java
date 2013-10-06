@@ -27,7 +27,7 @@ public class TimeSliceRemoveActivity extends FilterActivity {
 
 	private void doRemove() {
 		final int itemsDeleted = TimeSliceRepository.deleteForDateRange(
-				this.filter, this.filter.isIgnoreDates());
+				this.filter);
 		final String message = this
 				.getStatusMessage(R.string.format_message_interval_deleted)
 				+ itemsDeleted;
@@ -39,8 +39,7 @@ public class TimeSliceRemoveActivity extends FilterActivity {
 	@Override
 	protected void onOkCLick() {
 		super.onOkCLick();
-		final int count = TimeSliceRepository.getCount(this.filter,
-				this.filter.isIgnoreDates());
+		final int count = TimeSliceRepository.getCount(this.filter);
 
 		if (count <= 0) {
 			final String message = this.getText(R.string.no_items_found)

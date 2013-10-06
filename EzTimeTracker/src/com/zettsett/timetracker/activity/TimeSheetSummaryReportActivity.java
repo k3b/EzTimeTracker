@@ -353,7 +353,7 @@ public class TimeSheetSummaryReportActivity extends Activity implements IReportI
 	private TimeSheetSummaryCalculator loadReportDataStructures() {
 		FilterParameter rangeFilter = mRangeFilter;
 
-		List<TimeSlice> timeSlices = mTimeSliceRepository.fetchTimeSlices(rangeFilter, rangeFilter.isIgnoreDates());
+		List<TimeSlice> timeSlices = mTimeSliceRepository.fetchTimeSlices(rangeFilter);
 		
 		TimeSheetSummaryCalculator summaries = new TimeSheetSummaryCalculator(mReportMode,
 				mReportDateGrouping, timeSlices);
