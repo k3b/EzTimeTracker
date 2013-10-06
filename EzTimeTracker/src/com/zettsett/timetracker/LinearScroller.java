@@ -4,47 +4,47 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.LinearLayout.LayoutParams;
+import android.widget.ScrollView;
 
 public class LinearScroller {
 	public LinearLayout mainLayout;
 	public ViewGroup scrollView;
-	private Context mContext;
+	private final Context mContext;
 	private LayoutParams mLayoutParams;
 
-	public LinearScroller(Context context) {
-		mContext = context;
-		initScrollview();
+	public LinearScroller(final Context context) {
+		this.mContext = context;
+		this.initScrollview();
 	}
 
-	public LinearScroller(Context context, LayoutParams layoutParams) {
-		mContext = context;
-		mLayoutParams = layoutParams;
-		initScrollview();
+	public LinearScroller(final Context context, final LayoutParams layoutParams) {
+		this.mContext = context;
+		this.mLayoutParams = layoutParams;
+		this.initScrollview();
 	}
 
 	public LinearLayout getMainLayout() {
-		return mainLayout;
+		return this.mainLayout;
 	}
 
 	public ScrollView getScrollView() {
-		return (ScrollView)scrollView;
+		return (ScrollView) this.scrollView;
 	}
 
 	public void initScrollview() {
-		mainLayout = new LinearLayout(mContext);
-		mainLayout.setOrientation(LinearLayout.VERTICAL);
-		scrollView = new ScrollView(mContext);
-		if (mLayoutParams != null) {
-			scrollView.addView(mainLayout, mLayoutParams);
+		this.mainLayout = new LinearLayout(this.mContext);
+		this.mainLayout.setOrientation(LinearLayout.VERTICAL);
+		this.scrollView = new ScrollView(this.mContext);
+		if (this.mLayoutParams != null) {
+			this.scrollView.addView(this.mainLayout, this.mLayoutParams);
 		} else {
-			scrollView.addView(mainLayout);
+			this.scrollView.addView(this.mainLayout);
 		}
 	}
 
-	public void addView(View child) {
-		mainLayout.addView(child);
+	public void addView(final View child) {
+		this.mainLayout.addView(child);
 	}
 
 }

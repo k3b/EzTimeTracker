@@ -12,45 +12,43 @@ public class DatabaseContext extends ContextWrapper {
 
 	private static final String DEBUG_CONTEXT = "DatabaseContext";
 
-	public DatabaseContext(Context base) {
+	public DatabaseContext(final Context base) {
 		super(base);
 	}
 
 	@Override
-	public File getDatabasePath(String name) 
-	{
-		File sdcard = Environment.getExternalStorageDirectory();	
-		String dbfile = sdcard.getAbsolutePath() + File.separator+ "databases" + File.separator + name;
-		if (!dbfile.endsWith(".db"))
-		{
-			dbfile += ".db" ;
+	public File getDatabasePath(final String name) {
+		final File sdcard = Environment.getExternalStorageDirectory();
+		String dbfile = sdcard.getAbsolutePath() + File.separator + "databases"
+				+ File.separator + name;
+		if (!dbfile.endsWith(".db")) {
+			dbfile += ".db";
 		}
-		
-		File result = new File(dbfile);
-		
-		if (!result.getParentFile().exists())
-		{
+
+		final File result = new File(dbfile);
+
+		if (!result.getParentFile().exists()) {
 			result.getParentFile().mkdirs();
 		}
 
-		if (Log.isLoggable(DEBUG_CONTEXT, Log.WARN))
-		{
-			Log.w(DEBUG_CONTEXT,
-					"getDatabasePath(" + name + ") = " + result.getAbsolutePath());
+		if (Log.isLoggable(DatabaseContext.DEBUG_CONTEXT, Log.WARN)) {
+			Log.w(DatabaseContext.DEBUG_CONTEXT, "getDatabasePath(" + name
+					+ ") = " + result.getAbsolutePath());
 		}
 
 		return result;
 	}
-	
+
 	@Override
-	public SQLiteDatabase openOrCreateDatabase(String name, int mode, SQLiteDatabase.CursorFactory factory) 
-	{
-		SQLiteDatabase result = SQLiteDatabase.openOrCreateDatabase(getDatabasePath(name), null);
-		// SQLiteDatabase result = super.openOrCreateDatabase(name, mode, factory);
-		if (Log.isLoggable(DEBUG_CONTEXT, Log.WARN))
-		{
-			Log.w(DEBUG_CONTEXT,
-					"openOrCreateDatabase(" + name + ",,) = " + result.getPath());
+	public SQLiteDatabase openOrCreateDatabase(final String name,
+			final int mode, final SQLiteDatabase.CursorFactory factory) {
+		final SQLiteDatabase result = SQLiteDatabase.openOrCreateDatabase(
+				this.getDatabasePath(name), null);
+		// SQLiteDatabase result = super.openOrCreateDatabase(name, mode,
+		// factory);
+		if (Log.isLoggable(DatabaseContext.DEBUG_CONTEXT, Log.WARN)) {
+			Log.w(DatabaseContext.DEBUG_CONTEXT, "openOrCreateDatabase(" + name
+					+ ",,) = " + result.getPath());
 		}
 		return result;
 	}

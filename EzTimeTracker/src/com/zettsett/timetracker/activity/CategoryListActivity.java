@@ -1,17 +1,24 @@
 package com.zettsett.timetracker.activity;
 
-import android.app.*;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.app.ListActivity;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.view.*;
+import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 
 import com.zetter.androidTime.R;
-import com.zettsett.timetracker.database.*;
+import com.zettsett.timetracker.database.TimeSliceCategoryRepsitory;
+import com.zettsett.timetracker.database.TimeSliceRepository;
 import com.zettsett.timetracker.model.TimeSliceCategory;
 
-public class CategoryListActivity extends ListActivity implements ICategorySetter {
+public class CategoryListActivity extends ListActivity implements
+		ICategorySetter {
 	private static final int MENU_ADD_CATEGORY = Menu.FIRST;
 	private static final int EDIT_MENU_ID = Menu.FIRST + 1;
 	private static final int DELETE_MENU_ID = Menu.FIRST + 2;
@@ -21,69 +28,76 @@ public class CategoryListActivity extends ListActivity implements ICategorySette
 			this);
 
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.category_list);
-		registerForContextMenu(getListView());
-		refreshCategoryList();
+		this.setContentView(R.layout.category_list);
+		this.registerForContextMenu(this.getListView());
+		this.refreshCategoryList();
 	}
 
 	private void refreshCategoryList() {
-		setListAdapter(CategoryListAdapterDetailed.createAdapter(this,
-				R.layout.category_list_view_row, true, TimeSliceCategory.NO_CATEGORY, 
+		this.setListAdapter(CategoryListAdapterDetailed.createAdapter(this,
+				R.layout.category_list_view_row, true,
+				TimeSliceCategory.NO_CATEGORY,
 				TimeSliceCategory.MIN_VALID_DATE, "CategoryListActivity"));
 
 	}
 
-	public void setCategory(TimeSliceCategory category) {
+	@Override
+	public void setCategory(final TimeSliceCategory category) {
 		if (category == TimeSliceCategory.NO_CATEGORY) {
-			showCategoryEditDialog(null);
+			this.showCategoryEditDialog(null);
 			return;
 		} else if (category.getRowId() == TimeSliceCategory.NOT_SAVED) {
-			categoryRepository.createTimeSliceCategory(category);
+			this.categoryRepository.createTimeSliceCategory(category);
 		} else {
-			categoryRepository.update(category);
+			this.categoryRepository.update(category);
 		}
-		refreshCategoryList();
+		this.refreshCategoryList();
 	}
 
 	@Override
-	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+	public void onCreateContextMenu(final ContextMenu menu, final View v,
+			final ContextMenuInfo menuInfo) {
 		super.onCreateContextMenu(menu, v, menuInfo);
-		categoryClicked = (TimeSliceCategory) getListView().getItemAtPosition(
-				((AdapterContextMenuInfo) menuInfo).position);
-		
-		if (categoryClicked != null) {
-			menu.setHeaderTitle("" + categoryClicked.getCategoryName());
+		this.categoryClicked = (TimeSliceCategory) this
+				.getListView()
+				.getItemAtPosition(((AdapterContextMenuInfo) menuInfo).position);
+
+		if (this.categoryClicked != null) {
+			menu.setHeaderTitle("" + this.categoryClicked.getCategoryName());
 		}
-		menu.add(0, EDIT_MENU_ID, 0, R.string.cmd_edit);
-		menu.add(0, DELETE_MENU_ID, 0, R.string.cmd_delete);
-		if ((categoryClicked != null) && (categoryClicked != TimeSliceCategory.NO_CATEGORY)) {
-			menu.add(0, REPORT_MENU_ID, 0, R.string.cmd_report);
+		menu.add(0, CategoryListActivity.EDIT_MENU_ID, 0, R.string.cmd_edit);
+		menu.add(0, CategoryListActivity.DELETE_MENU_ID, 0, R.string.cmd_delete);
+		if ((this.categoryClicked != null)
+				&& (this.categoryClicked != TimeSliceCategory.NO_CATEGORY)) {
+			menu.add(0, CategoryListActivity.REPORT_MENU_ID, 0,
+					R.string.cmd_report);
 		}
 	}
 
 	@Override
-	public boolean onContextItemSelected(MenuItem item) {
+	public boolean onContextItemSelected(final MenuItem item) {
 		switch (item.getItemId()) {
 		case EDIT_MENU_ID:
-			if (categoryClicked == TimeSliceCategory.NO_CATEGORY) {
-				showCategoryEditDialog(null);
+			if (this.categoryClicked == TimeSliceCategory.NO_CATEGORY) {
+				this.showCategoryEditDialog(null);
 			} else {
-				showCategoryEditDialog(categoryClicked);
+				this.showCategoryEditDialog(this.categoryClicked);
 			}
 			return true;
 		case DELETE_MENU_ID:
-			TimeSliceRepository timeSliceRepository = new TimeSliceRepository(this);
-			if (timeSliceRepository.categoryHasTimeSlices(categoryClicked)) {
-				showDialog(DELETE_MENU_ID);
+			final TimeSliceRepository timeSliceRepository = new TimeSliceRepository(
+					this);
+			if (timeSliceRepository.categoryHasTimeSlices(this.categoryClicked)) {
+				this.showDialog(CategoryListActivity.DELETE_MENU_ID);
 			} else {
-				categoryRepository.delete(categoryClicked.getRowId());
+				this.categoryRepository.delete(this.categoryClicked.getRowId());
 			}
-			refreshCategoryList();
+			this.refreshCategoryList();
 			return true;
 		case REPORT_MENU_ID:
-			showDetailReport();
+			this.showDetailReport();
 			return true;
 
 		default:
@@ -92,54 +106,58 @@ public class CategoryListActivity extends ListActivity implements ICategorySette
 	}
 
 	private void showDetailReport() {
-		if ((categoryClicked != null) && (categoryClicked != TimeSliceCategory.NO_CATEGORY)) {
-			FilterParameter filter = new FilterParameter()
-				.setCategoryId(categoryClicked.getRowId())
-				.setIgnoreDates(true);
+		if ((this.categoryClicked != null)
+				&& (this.categoryClicked != TimeSliceCategory.NO_CATEGORY)) {
+			final FilterParameter filter = new FilterParameter().setCategoryId(
+					this.categoryClicked.getRowId()).setIgnoreDates(true);
 			TimeSheetDetailReportActivity.showActivity(this, filter);
 		}
 	}
 
 	private CategoryEditDialog edit = null;
-	public void showCategoryEditDialog(TimeSliceCategory category)
-	{
-		if (this.edit == null)
-		{
+
+	public void showCategoryEditDialog(final TimeSliceCategory category) {
+		if (this.edit == null) {
 			this.edit = new CategoryEditDialog(this, this);
 		}
 		this.edit.setCategory(category);
-		showDialog(EDIT_MENU_ID);
+		this.showDialog(CategoryListActivity.EDIT_MENU_ID);
 	}
-	
-	protected Dialog onCreateDialog(int id) {
+
+	@Override
+	protected Dialog onCreateDialog(final int id) {
 		switch (id) {
-			case EDIT_MENU_ID:
-			case MENU_ADD_CATEGORY:
-				return this.edit;
-			case DELETE_MENU_ID:
-				return createDeleteWarningDialog();
+		case EDIT_MENU_ID:
+		case MENU_ADD_CATEGORY:
+			return this.edit;
+		case DELETE_MENU_ID:
+			return this.createDeleteWarningDialog();
 		}
 
-	    return null;
+		return null;
 	}
-	
+
 	private Dialog createDeleteWarningDialog() {
-		final CharSequence[] items = { 
-				getResources().getString(R.string.cmd_delete_confirm), // "Go ahead and delete it.", 
-				getResources().getString(R.string.cmd_delete_cancel), // "Don't delete it.",
-				getResources().getString(R.string.cmd_report)	      // Details
+		final CharSequence[] items = {
+				this.getResources().getString(R.string.cmd_delete_confirm), // "Go ahead and delete it.",
+				this.getResources().getString(R.string.cmd_delete_cancel), // "Don't delete it.",
+				this.getResources().getString(R.string.cmd_report) // Details
 		};
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setTitle(getResources().getString(R.string.cmd_delete_warning)  // "Warning already in use : " 
-				+ categoryClicked.getCategoryName());
+		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setTitle(this.getResources().getString(
+				R.string.cmd_delete_warning) // "Warning already in use : "
+				+ this.categoryClicked.getCategoryName());
 		builder.setItems(items, new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int item) {
+			@Override
+			public void onClick(final DialogInterface dialog, final int item) {
 				if (item == 0) {
-					categoryRepository.delete(categoryClicked.getRowId());
-					refreshCategoryList();
+					CategoryListActivity.this.categoryRepository
+							.delete(CategoryListActivity.this.categoryClicked
+									.getRowId());
+					CategoryListActivity.this.refreshCategoryList();
 				}
 				if (item == 2) {
-					showDetailReport();
+					CategoryListActivity.this.showDetailReport();
 				}
 			}
 		});
@@ -147,17 +165,18 @@ public class CategoryListActivity extends ListActivity implements ICategorySette
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
+	public boolean onCreateOptionsMenu(final Menu menu) {
 		super.onCreateOptionsMenu(menu);
-		menu.add(0, MENU_ADD_CATEGORY, 0, "Create a new category.");
+		menu.add(0, CategoryListActivity.MENU_ADD_CATEGORY, 0,
+				"Create a new category.");
 		return true;
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
+	public boolean onOptionsItemSelected(final MenuItem item) {
 		switch (item.getItemId()) {
 		case MENU_ADD_CATEGORY:
-			showCategoryEditDialog(null);
+			this.showCategoryEditDialog(null);
 			return true;
 		}
 		return super.onOptionsItemSelected(item);

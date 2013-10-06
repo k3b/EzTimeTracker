@@ -9,9 +9,9 @@ import com.zettsett.timetracker.Settings;
 public class SettingsActivity extends PreferenceActivity {
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	protected void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		addPreferencesFromResource(R.xml.preferences);
+		this.addPreferencesFromResource(R.xml.preferences);
 	}
 
 	@Override

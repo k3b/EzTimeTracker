@@ -13,6 +13,7 @@
 * FilterActivity Long press on start/end starts editor with now
 * TimeSliceEditActivity: long press on Start/Stop-time ==> sets to now before editing
 
+
 Version: 2.4 2013-05-11
 * PunchInPunchOutActivity: long press on elapsedTime => shows Detail-report
 

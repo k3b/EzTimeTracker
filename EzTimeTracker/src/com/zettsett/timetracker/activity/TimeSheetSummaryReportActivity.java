@@ -9,15 +9,15 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
 import android.view.Window;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.LinearLayout.LayoutParams;
+import android.widget.TextView;
 
 import com.zetter.androidTime.R;
 import com.zettsett.timetracker.DateTimeFormatter;
@@ -45,7 +45,8 @@ import de.k3b.util.DateTimeUtil;
  * the License.
  * 
  */
-public class TimeSheetSummaryReportActivity extends Activity implements IReportInterface {
+public class TimeSheetSummaryReportActivity extends Activity implements
+		IReportInterface {
 	private static final String SAVED_REPORT_MODE = "reportMode";
 	private static final int MENU_ITEM_GROUP_DAILY = Menu.FIRST;
 	private static final int MENU_ITEM_GROUP_WEEKLY = Menu.FIRST + 1;
@@ -53,7 +54,7 @@ public class TimeSheetSummaryReportActivity extends Activity implements IReportI
 	private static final int MENU_ITEM_GROUP_YARLY = Menu.FIRST + 3;
 	private static final int MENU_ITEM_GROUP_CATEGORY = Menu.FIRST + 4;
 	private static final int MENU_ITEM_REPORT = Menu.FIRST + 5;
-	
+
 	public static final String MENU_ID = "MENU_ID";
 	private static final String SAVED_REPORT_FILTER = "SummaryReportFilter";
 
@@ -74,19 +75,25 @@ public class TimeSheetSummaryReportActivity extends Activity implements IReportI
 	private static FilterParameter mRangeFilter;
 
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		mTimeSliceRepository = new TimeSliceRepository(this);
-		mRangeFilter = ReportFramework.getLastFilter(savedInstanceState, SAVED_REPORT_FILTER, mRangeFilter);
+		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+		this.mTimeSliceRepository = new TimeSliceRepository(this);
+		TimeSheetSummaryReportActivity.mRangeFilter = ReportFramework
+				.getLastFilter(savedInstanceState,
+						TimeSheetSummaryReportActivity.SAVED_REPORT_FILTER,
+						TimeSheetSummaryReportActivity.mRangeFilter);
 
-		mReportFramework = new ReportFramework(this, mRangeFilter);
+		this.mReportFramework = new ReportFramework(this,
+				TimeSheetSummaryReportActivity.mRangeFilter);
 		if (savedInstanceState != null) {
-			mReportDateGrouping = (ReportDateGrouping) savedInstanceState
-					.getSerializable(SAVED_REPORT_GROUPING());
-			mReportMode = (ReportModes) savedInstanceState.getSerializable(SAVED_REPORT_MODE);
+			this.mReportDateGrouping = (ReportDateGrouping) savedInstanceState
+					.getSerializable(this.SAVED_REPORT_GROUPING());
+			this.mReportMode = (ReportModes) savedInstanceState
+					.getSerializable(TimeSheetSummaryReportActivity.SAVED_REPORT_MODE);
 		}
-		loadDataIntoReport(this.getIntent().getIntExtra(TimeSheetSummaryReportActivity.MENU_ID, 0));
+		this.loadDataIntoReport(this.getIntent().getIntExtra(
+				TimeSheetSummaryReportActivity.MENU_ID, 0));
 	}
 
 	protected String SAVED_REPORT_GROUPING() {
@@ -94,47 +101,67 @@ public class TimeSheetSummaryReportActivity extends Activity implements IReportI
 	}
 
 	@Override
-	protected void onSaveInstanceState(Bundle outState) {
-		ReportFramework.setLastFilter(outState, SAVED_REPORT_FILTER, mRangeFilter);		
-		outState.putSerializable(SAVED_REPORT_GROUPING(), mReportDateGrouping);
-		outState.putSerializable(SAVED_REPORT_MODE, mReportMode);
+	protected void onSaveInstanceState(final Bundle outState) {
+		ReportFramework.setLastFilter(outState,
+				TimeSheetSummaryReportActivity.SAVED_REPORT_FILTER,
+				TimeSheetSummaryReportActivity.mRangeFilter);
+		outState.putSerializable(this.SAVED_REPORT_GROUPING(),
+				this.mReportDateGrouping);
+		outState.putSerializable(
+				TimeSheetSummaryReportActivity.SAVED_REPORT_MODE,
+				this.mReportMode);
 	}
 
 	@Override
-	public boolean onPrepareOptionsMenu(Menu menu) {
-		boolean result = super.onCreateOptionsMenu(menu);
+	public boolean onPrepareOptionsMenu(final Menu menu) {
+		final boolean result = super.onCreateOptionsMenu(menu);
 		menu.clear();
-		SubMenu groupDateMenu = menu.addSubMenu(0, Menu.NONE, 0, R.string.menu_select_date_grouping);
-		groupDateMenu.add(0, MENU_ITEM_GROUP_DAILY, 0, R.string.menu_select_date_grouping_daily);
-		groupDateMenu.add(0, MENU_ITEM_GROUP_WEEKLY, 1, R.string.menu_select_date_grouping_weekly);
-		groupDateMenu.add(0, MENU_ITEM_GROUP_MONTHLY, 2, R.string.menu_select_date_grouping_monthly);
-		groupDateMenu.add(0, MENU_ITEM_GROUP_YARLY, 2, R.string.menu_select_date_grouping_yearly);
-		mReportFramework.onPrepareOptionsMenu(menu);
-		if (mReportMode == ReportModes.BY_DATE) {
-			menu.add(0, MENU_ITEM_GROUP_CATEGORY, 1, R.string.menu_switch_to_category_headers);
+		final SubMenu groupDateMenu = menu.addSubMenu(0, Menu.NONE, 0,
+				R.string.menu_select_date_grouping);
+		groupDateMenu.add(0,
+				TimeSheetSummaryReportActivity.MENU_ITEM_GROUP_DAILY, 0,
+				R.string.menu_select_date_grouping_daily);
+		groupDateMenu.add(0,
+				TimeSheetSummaryReportActivity.MENU_ITEM_GROUP_WEEKLY, 1,
+				R.string.menu_select_date_grouping_weekly);
+		groupDateMenu.add(0,
+				TimeSheetSummaryReportActivity.MENU_ITEM_GROUP_MONTHLY, 2,
+				R.string.menu_select_date_grouping_monthly);
+		groupDateMenu.add(0,
+				TimeSheetSummaryReportActivity.MENU_ITEM_GROUP_YARLY, 2,
+				R.string.menu_select_date_grouping_yearly);
+		this.mReportFramework.onPrepareOptionsMenu(menu);
+		if (this.mReportMode == ReportModes.BY_DATE) {
+			menu.add(0,
+					TimeSheetSummaryReportActivity.MENU_ITEM_GROUP_CATEGORY, 1,
+					R.string.menu_switch_to_category_headers);
 		} else {
-			menu.add(0, MENU_ITEM_GROUP_CATEGORY, 1, R.string.menu_switch_to_date_headers);
+			menu.add(0,
+					TimeSheetSummaryReportActivity.MENU_ITEM_GROUP_CATEGORY, 1,
+					R.string.menu_switch_to_date_headers);
 		}
 		return result;
 	}
 
 	@Override
-	public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+	public void onCreateContextMenu(final ContextMenu menu, final View v,
+			final ContextMenuInfo menuInfo) {
 		super.onCreateContextMenu(menu, v, menuInfo);
-		FilterParameter filter = createFilter(v);
+		final FilterParameter filter = this.createFilter(v);
 		if (filter != null) {
-			Log.i(Global.LOG_CONTEXT, "Detailreport: "  + filter );
+			Log.i(Global.LOG_CONTEXT, "Detailreport: " + filter);
 
-			menu.add(0, MENU_ITEM_REPORT, 0, getString(R.string.cmd_report));			
+			menu.add(0, TimeSheetSummaryReportActivity.MENU_ITEM_REPORT, 0,
+					this.getString(R.string.cmd_report));
 		}
 		this.mReportFilter = filter;
 	}
 
 	@Override
-	public boolean onContextItemSelected(MenuItem item) {
+	public boolean onContextItemSelected(final MenuItem item) {
 		switch (item.getItemId()) {
 		case MENU_ITEM_REPORT:
-			showDetailReport();
+			this.showDetailReport();
 			return true;
 
 		default:
@@ -143,239 +170,262 @@ public class TimeSheetSummaryReportActivity extends Activity implements IReportI
 	}
 
 	private void showDetailReport() {
-		if (mReportFilter != null) {
-			TimeSheetDetailReportActivity.showActivity(this, mReportFilter);
+		if (this.mReportFilter != null) {
+			TimeSheetDetailReportActivity
+					.showActivity(this, this.mReportFilter);
 		}
 	}
 
-	private FilterParameter createFilter(View v) {
-		TimeSliceCategory category = getTimeSliceCategory(v);
+	private FilterParameter createFilter(final View v) {
+		TimeSliceCategory category = this.getTimeSliceCategory(v);
 		if (category != null) {
-			FilterParameter filter = new FilterParameter().setCategoryId(category.getRowId());
+			final FilterParameter filter = new FilterParameter()
+					.setCategoryId(category.getRowId());
 			if (this.mReportMode == ReportModes.BY_DATE) {
 				int pos = this.mReportViewList.indexOf(v);
-				while(--pos >= 0) {
-					Long date = getLong(this.mReportViewList.get(pos));
+				while (--pos >= 0) {
+					final Long date = this.getLong(this.mReportViewList
+							.get(pos));
 					if (date != null) {
-						return setFilterDate(filter,this.mReportDateGrouping, date);
+						return this.setFilterDate(filter,
+								this.mReportDateGrouping, date);
 					}
 				}
 			}
 			return filter.setIgnoreDates(true);
 		} else {
-			Long date = getLong(v);
+			final Long date = this.getLong(v);
 			if (date != null) {
-				FilterParameter filter = setFilterDate(new FilterParameter(),this.mReportDateGrouping, date);
+				final FilterParameter filter = this.setFilterDate(
+						new FilterParameter(), this.mReportDateGrouping, date);
 				if (this.mReportMode == ReportModes.BY_CATEGORY) {
 					int pos = this.mReportViewList.indexOf(v);
-					while(--pos >= 0) {
-						category = getTimeSliceCategory(v);
+					while (--pos >= 0) {
+						category = this.getTimeSliceCategory(v);
 						if (category != null) {
 							return filter.setCategoryId(category.getRowId());
 						}
 					}
 				}
 				return filter;
-			} 
+			}
 		}
 		return null;
 	}
 
-	private TimeSliceCategory getTimeSliceCategory(View v) {
-		Object tag = v.getTag();
-		if ((tag != null) && (tag instanceof TimeSliceCategory)){
+	private TimeSliceCategory getTimeSliceCategory(final View v) {
+		final Object tag = v.getTag();
+		if ((tag != null) && (tag instanceof TimeSliceCategory)) {
 			return (TimeSliceCategory) tag;
 		}
 		return null;
 	}
-	
-	private Long getLong(View v) {
-		Object tag = v.getTag();
-		if ((tag != null) && (tag instanceof Long)){
+
+	private Long getLong(final View v) {
+		final Object tag = v.getTag();
+		if ((tag != null) && (tag instanceof Long)) {
 			return (Long) tag;
 		}
 		return null;
 	}
-	
-	private FilterParameter setFilterDate(FilterParameter filterParameter,
-			ReportDateGrouping mReportDateGrouping, Long startDate) {
+
+	private FilterParameter setFilterDate(
+			final FilterParameter filterParameter,
+			final ReportDateGrouping mReportDateGrouping, final Long startDate) {
 		final long start = startDate.longValue();
-		final long end = getEndTime(mReportDateGrouping, start);
+		final long end = this.getEndTime(mReportDateGrouping, start);
 		return filterParameter.setStartTime(start).setEndTime(end);
 	}
 
-	private long getEndTime(ReportDateGrouping mReportDateGrouping,
+	private long getEndTime(final ReportDateGrouping mReportDateGrouping,
 			final long start) {
-		DateTimeUtil dtu = DateTimeFormatter.getInstance();
+		final DateTimeUtil dtu = DateTimeFormatter.getInstance();
 		if (mReportDateGrouping == ReportDateGrouping.DAILY) {
-			return dtu.addDays(start, 1); 
+			return dtu.addDays(start, 1);
 		} else if (mReportDateGrouping == ReportDateGrouping.WEEKLY) {
-			return dtu.addDays(start, 7); 
+			return dtu.addDays(start, 7);
 		} else if (mReportDateGrouping == ReportDateGrouping.MONTHLY) {
-			return dtu.getStartOfMonth(dtu.addDays(start, 31)); 
+			return dtu.getStartOfMonth(dtu.addDays(start, 31));
 		} else if (mReportDateGrouping == ReportDateGrouping.YEARLY) {
-			return dtu.getStartOfYear(dtu.addDays(start, 366)); 
+			return dtu.getStartOfYear(dtu.addDays(start, 366));
 		}
-		
-		throw new IllegalArgumentException("Unknown mReportDateGrouping " + mReportDateGrouping);
+
+		throw new IllegalArgumentException("Unknown mReportDateGrouping "
+				+ mReportDateGrouping);
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
+	public boolean onOptionsItemSelected(final MenuItem item) {
 		switch (item.getItemId()) {
 		case MENU_ITEM_GROUP_DAILY:
-			mReportDateGrouping = ReportDateGrouping.DAILY;
-			loadDataIntoReport(0);
+			this.mReportDateGrouping = ReportDateGrouping.DAILY;
+			this.loadDataIntoReport(0);
 			break;
 		case MENU_ITEM_GROUP_WEEKLY:
-			mReportDateGrouping = ReportDateGrouping.WEEKLY;
-			loadDataIntoReport(0);
+			this.mReportDateGrouping = ReportDateGrouping.WEEKLY;
+			this.loadDataIntoReport(0);
 			break;
 		case MENU_ITEM_GROUP_MONTHLY:
-			mReportDateGrouping = ReportDateGrouping.MONTHLY;
-			loadDataIntoReport(0);
+			this.mReportDateGrouping = ReportDateGrouping.MONTHLY;
+			this.loadDataIntoReport(0);
 			break;
 		case MENU_ITEM_GROUP_YARLY:
-			mReportDateGrouping = ReportDateGrouping.YEARLY;
-			loadDataIntoReport(0);
+			this.mReportDateGrouping = ReportDateGrouping.YEARLY;
+			this.loadDataIntoReport(0);
 			break;
-			
+
 		case MENU_ITEM_GROUP_CATEGORY:
-			if (mReportMode == ReportModes.BY_CATEGORY) {
-				mReportMode = ReportModes.BY_DATE;
+			if (this.mReportMode == ReportModes.BY_CATEGORY) {
+				this.mReportMode = ReportModes.BY_DATE;
 			} else {
-				mReportMode = ReportModes.BY_CATEGORY;
+				this.mReportMode = ReportModes.BY_CATEGORY;
 			}
-			loadDataIntoReport(0);
+			this.loadDataIntoReport(0);
 			break;
 		default:
-			mReportFramework.setReportType(ReportFramework.ReportTypes.SUMMARY);
-			mReportFramework.onOptionsItemSelected(item);
+			this.mReportFramework
+					.setReportType(ReportFramework.ReportTypes.SUMMARY);
+			this.mReportFramework.onOptionsItemSelected(item);
 		}
 		return true;
 	}
 
 	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+	protected void onActivityResult(final int requestCode,
+			final int resultCode, final Intent intent) {
 		super.onActivityResult(requestCode, resultCode, intent);
 		if (intent != null) {
-			mRangeFilter = this.mReportFramework.onActivityResult(intent, mRangeFilter);
-			loadDataIntoReport(0);
+			TimeSheetSummaryReportActivity.mRangeFilter = this.mReportFramework
+					.onActivityResult(intent,
+							TimeSheetSummaryReportActivity.mRangeFilter);
+			this.loadDataIntoReport(0);
 		}
 	}
 
-	public void loadDataIntoReport(int reportType) {
+	@Override
+	public void loadDataIntoReport(final int reportType) {
 		long performanceMeasureStart = System.currentTimeMillis();
 
-		switch (reportType)
-		{
-		    case R.id.summary_day:
-				mReportDateGrouping = ReportDateGrouping.DAILY;
-				mReportMode = ReportModes.BY_DATE;
-				break;
-		    case R.id.summary_month:
-				mReportDateGrouping = ReportDateGrouping.MONTHLY;
-				mReportMode = ReportModes.BY_DATE;
-				break;
-		    case R.id.summary_week:
-				mReportDateGrouping = ReportDateGrouping.WEEKLY;
-				mReportMode = ReportModes.BY_DATE;
-				break;
-		    case R.id.category_day:
-				mReportDateGrouping = ReportDateGrouping.DAILY;
-				mReportMode = ReportModes.BY_CATEGORY;
-				break;
-		    case R.id.category_month:
-				mReportDateGrouping = ReportDateGrouping.MONTHLY;
-				mReportMode = ReportModes.BY_CATEGORY;
-				break;
-		    case R.id.category_week:			
-				mReportDateGrouping = ReportDateGrouping.WEEKLY;
-				mReportMode = ReportModes.BY_CATEGORY;
-				break;
+		switch (reportType) {
+		case R.id.summary_day:
+			this.mReportDateGrouping = ReportDateGrouping.DAILY;
+			this.mReportMode = ReportModes.BY_DATE;
+			break;
+		case R.id.summary_month:
+			this.mReportDateGrouping = ReportDateGrouping.MONTHLY;
+			this.mReportMode = ReportModes.BY_DATE;
+			break;
+		case R.id.summary_week:
+			this.mReportDateGrouping = ReportDateGrouping.WEEKLY;
+			this.mReportMode = ReportModes.BY_DATE;
+			break;
+		case R.id.category_day:
+			this.mReportDateGrouping = ReportDateGrouping.DAILY;
+			this.mReportMode = ReportModes.BY_CATEGORY;
+			break;
+		case R.id.category_month:
+			this.mReportDateGrouping = ReportDateGrouping.MONTHLY;
+			this.mReportMode = ReportModes.BY_CATEGORY;
+			break;
+		case R.id.category_week:
+			this.mReportDateGrouping = ReportDateGrouping.WEEKLY;
+			this.mReportMode = ReportModes.BY_CATEGORY;
+			break;
 		}
-		setContentView(mReportFramework.buildViews());
-		mReportViewList = mReportFramework.initializeTextViewsForExportList();
-		TimeSheetSummaryCalculator reportDataStructure = loadReportDataStructures();
+		this.setContentView(this.mReportFramework.buildViews());
+		this.mReportViewList = this.mReportFramework
+				.initializeTextViewsForExportList();
+		final TimeSheetSummaryCalculator reportDataStructure = this
+				.loadReportDataStructures();
 
-		Log.i(Global.LOG_CONTEXT, "loadReportDataStructures:"  + (System.currentTimeMillis() - performanceMeasureStart) );
+		Log.i(Global.LOG_CONTEXT,
+				"loadReportDataStructures:"
+						+ (System.currentTimeMillis() - performanceMeasureStart));
 		performanceMeasureStart = System.currentTimeMillis();
 
-		Map<String, Map<String, Long>> reportData = reportDataStructure.getReportData();
-		Map<String, Long> dates = reportDataStructure.getDates();
-		Map<String, TimeSliceCategory> categoties = reportDataStructure.getCategoties();
-		for (String header : reportData.keySet()) {
-			Map<String, Long> reportRows = reportData.get(header);
-			TextView headerTextView = new TextView(this);
+		final Map<String, Map<String, Long>> reportData = reportDataStructure
+				.getReportData();
+		final Map<String, Long> dates = reportDataStructure.getDates();
+		final Map<String, TimeSliceCategory> categoties = reportDataStructure
+				.getCategoties();
+		for (final String header : reportData.keySet()) {
+			final Map<String, Long> reportRows = reportData.get(header);
+			final TextView headerTextView = new TextView(this);
 			headerTextView.setText(header);
 			headerTextView.setTextColor(Color.GREEN);
-			if (mReportMode == ReportModes.BY_DATE) {
+			if (this.mReportMode == ReportModes.BY_DATE) {
 				headerTextView.setTag(dates.get(header));
 			} else {
 				headerTextView.setTag(categoties.get(header));
 			}
 
-			mReportViewList.add(headerTextView);
-			registerForContextMenu(headerTextView);
+			this.mReportViewList.add(headerTextView);
+			this.registerForContextMenu(headerTextView);
 
-			mReportFramework.getLinearScroller().addView(headerTextView);
-			LayoutParams layoutParams = new LayoutParams(LayoutParams.FILL_PARENT,
-					LayoutParams.WRAP_CONTENT);
+			this.mReportFramework.getLinearScroller().addView(headerTextView);
+			final LayoutParams layoutParams = new LayoutParams(
+					android.view.ViewGroup.LayoutParams.FILL_PARENT,
+					android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
 			layoutParams.setMargins(0, 5, 0, 5);
-			LinearLayout rowsView = new LinearLayout(this);
+			final LinearLayout rowsView = new LinearLayout(this);
 			rowsView.setOrientation(LinearLayout.VERTICAL);
-			mReportFramework.getLinearScroller().getMainLayout().addView(rowsView, layoutParams);
-			for (String rowCaption : reportRows.keySet()) {
-				long totalTimeInMillis = reportRows.get(rowCaption);
-				TextView rowTextView = new TextView(this);
-				mReportViewList.add(rowTextView);
+			this.mReportFramework.getLinearScroller().getMainLayout()
+					.addView(rowsView, layoutParams);
+			for (final String rowCaption : reportRows.keySet()) {
+				final long totalTimeInMillis = reportRows.get(rowCaption);
+				final TextView rowTextView = new TextView(this);
+				this.mReportViewList.add(rowTextView);
 				rowTextView.setText("    " + rowCaption + ": "
-						+ timeInMillisToText(totalTimeInMillis));
-				if (mReportMode == ReportModes.BY_DATE) {
+						+ this.timeInMillisToText(totalTimeInMillis));
+				if (this.mReportMode == ReportModes.BY_DATE) {
 					rowTextView.setTag(categoties.get(rowCaption));
 				} else {
 					rowTextView.setTag(dates.get(rowCaption));
 				}
-				registerForContextMenu(rowTextView);
+				this.registerForContextMenu(rowTextView);
 				rowsView.addView(rowTextView);
 			}
 		}
-		Log.i(Global.LOG_CONTEXT, "generated report:"  + (System.currentTimeMillis() - performanceMeasureStart) );
+		Log.i(Global.LOG_CONTEXT,
+				"generated report:"
+						+ (System.currentTimeMillis() - performanceMeasureStart));
 		performanceMeasureStart = System.currentTimeMillis();
 	}
-	
+
 	/**
 	 * 
-	 * @return 
-	 * Map<categoryName, Map<startDate.toString(), totalDurationsWithinSubinterval>> or
-	 * Map<startDate.toString(), Map<categoryName, totalDurationsWithinSubinterval>>
+	 * @return Map<categoryName, Map<startDate.toString(),
+	 *         totalDurationsWithinSubinterval>> or Map<startDate.toString(),
+	 *         Map<categoryName, totalDurationsWithinSubinterval>>
 	 */
 	private TimeSheetSummaryCalculator loadReportDataStructures() {
-		FilterParameter rangeFilter = mRangeFilter;
+		final FilterParameter rangeFilter = TimeSheetSummaryReportActivity.mRangeFilter;
 
-		List<TimeSlice> timeSlices = mTimeSliceRepository.fetchTimeSlices(rangeFilter);
-		
-		TimeSheetSummaryCalculator summaries = new TimeSheetSummaryCalculator(mReportMode,
-				mReportDateGrouping, timeSlices);
+		final List<TimeSlice> timeSlices = this.mTimeSliceRepository
+				.fetchTimeSlices(rangeFilter);
+
+		final TimeSheetSummaryCalculator summaries = new TimeSheetSummaryCalculator(
+				this.mReportMode, this.mReportDateGrouping, timeSlices);
 		return summaries;
 	}
 
-	private String timeInMillisToText(long totalTimeInMillis) {
-		long minutes = (totalTimeInMillis / (1000 * 60)) % 60;
-		long hours = totalTimeInMillis / (1000 * 60 * 60);
+	private String timeInMillisToText(final long totalTimeInMillis) {
+		final long minutes = (totalTimeInMillis / (1000 * 60)) % 60;
+		final long hours = totalTimeInMillis / (1000 * 60 * 60);
 		String hoursWord;
 		if (hours == 1) {
-			hoursWord = getString(R.string.hoursWord1);
+			hoursWord = this.getString(R.string.hoursWord1);
 		} else {
-			hoursWord = getString(R.string.hoursWordN);
+			hoursWord = this.getString(R.string.hoursWordN);
 		}
 		String minutesWord;
 		if (minutes == 1) {
-			minutesWord = getString(R.string.minutesWord1);
+			minutesWord = this.getString(R.string.minutesWord1);
 		} else {
-			minutesWord = getString(R.string.minutesWordN);
+			minutesWord = this.getString(R.string.minutesWordN);
 		}
-		String timeString = hours + " " + hoursWord + ", " + minutes + " " + minutesWord;
+		final String timeString = hours + " " + hoursWord + ", " + minutes
+				+ " " + minutesWord;
 		return timeString;
 	}
 }

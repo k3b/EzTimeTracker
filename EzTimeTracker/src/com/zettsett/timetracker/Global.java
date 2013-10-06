@@ -8,13 +8,15 @@ public class Global {
 	public static final String REFRESH_GUI = "com.zettsett.timetracker.action.REFRESH_GUI";
 	public static final String EXTRA_FILTER = "filter";
 	public static final String EXTRA_TIMESLICE = "time_slice";
-	
+
 	public static boolean isDebugEnabled() {
-		return true; //  Log.isLoggable(Global.LOG_CONTEXT, Log.DEBUG); // Log.isLoggable() does not work :-(
+		return true; // Log.isLoggable(Global.LOG_CONTEXT, Log.DEBUG); //
+						// Log.isLoggable() does not work :-(
 	}
 
 	public static boolean isInfoEnabled() {
-		return true; // Log.isLoggable(Global.LOG_CONTEXT, Log.INFO) // Log.isLoggable() does not work :-(
+		return true; // Log.isLoggable(Global.LOG_CONTEXT, Log.INFO) //
+						// Log.isLoggable() does not work :-(
 	}
 
 }

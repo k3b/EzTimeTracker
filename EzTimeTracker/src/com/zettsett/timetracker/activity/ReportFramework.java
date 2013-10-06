@@ -46,7 +46,7 @@ import com.zettsett.timetracker.report.ReprtExportEngine;
  */
 public class ReportFramework implements Serializable {
 	private static final long serialVersionUID = 394933866214361393L;
-	
+
 	private static final int MENU_ITEM_EXPORT_SD = Menu.FIRST + 12;
 	private static final int MENU_ITEM_EXPORT_EMAIL = Menu.FIRST + 13;
 
@@ -54,7 +54,7 @@ public class ReportFramework implements Serializable {
 
 	private final Activity mActivity;
 	private LinearScroller mScrollView;
-	
+
 	private FilterParameter mFilter;
 	private List<TextView> mReportViewList;
 
@@ -64,19 +64,19 @@ public class ReportFramework implements Serializable {
 
 	private ReportTypes reportType;
 
-	ReportFramework(Activity activity, FilterParameter filter) {
+	ReportFramework(final Activity activity, final FilterParameter filter) {
 		super();
-		initializeDateRanges(filter);
+		this.initializeDateRanges(filter);
 		this.mActivity = activity;
 	}
 
-	private void initializeDateRanges(FilterParameter filter) {
-		mFilter = (filter != null) ? filter : new FilterParameter();
+	private void initializeDateRanges(final FilterParameter filter) {
+		this.mFilter = (filter != null) ? filter : new FilterParameter();
 
-		Date currDate = new Date();
+		final Date currDate = new Date();
 		long startTime = this.mFilter.getStartTime();
-		if (startTime  == TimeSlice.NO_TIME_VALUE) {
-			Calendar calendar = new GregorianCalendar();
+		if (startTime == TimeSlice.NO_TIME_VALUE) {
+			final Calendar calendar = new GregorianCalendar();
 			calendar.setTime(currDate);
 			calendar.set(Calendar.HOUR, 0);
 			calendar.set(Calendar.MINUTE, 0);
@@ -89,40 +89,51 @@ public class ReportFramework implements Serializable {
 			}
 		}
 		this.mFilter.setStartTime(startTime);
-		
+
 		long endTime = this.mFilter.getEndTime();
 		if (endTime == TimeSlice.NO_TIME_VALUE) {
-			Calendar calendar = new GregorianCalendar();
+			final Calendar calendar = new GregorianCalendar();
 			calendar.setTime(currDate);
 			endTime = calendar.getTimeInMillis();
-			calendar.roll(Calendar.WEEK_OF_YEAR, true); // += 1 week to see also entries that where made after the programstart.
+			calendar.roll(Calendar.WEEK_OF_YEAR, true); // += 1 week to see also
+														// entries that where
+														// made after the
+														// programstart.
 		}
 		this.mFilter.setEndTime(endTime);
 	}
 
-	public boolean onPrepareOptionsMenu(Menu menu) {
-		boolean result = true;
-		SubMenu exportMenu = menu.addSubMenu(Menu.NONE, Menu.NONE, 2, R.string.menu_export_report);
-		exportMenu.add(Menu.NONE, MENU_ITEM_EXPORT_SD, 1, R.string.menu_export_report_to_sd_card);
-		exportMenu.add(Menu.NONE, MENU_ITEM_EXPORT_EMAIL, 2, R.string.menu_email_report);
-		
-		menu.add(Menu.NONE, MENU_ITEM_SET_FILTER, 2, R.string.menu_filter);
+	public boolean onPrepareOptionsMenu(final Menu menu) {
+		final boolean result = true;
+		final SubMenu exportMenu = menu.addSubMenu(Menu.NONE, Menu.NONE, 2,
+				R.string.menu_export_report);
+		exportMenu.add(Menu.NONE, ReportFramework.MENU_ITEM_EXPORT_SD, 1,
+				R.string.menu_export_report_to_sd_card);
+		exportMenu.add(Menu.NONE, ReportFramework.MENU_ITEM_EXPORT_EMAIL, 2,
+				R.string.menu_email_report);
+
+		menu.add(Menu.NONE, ReportFramework.MENU_ITEM_SET_FILTER, 2,
+				R.string.menu_filter);
 
 		return result;
 	}
 
-	public boolean onOptionsItemSelected(MenuItem item) {
+	public boolean onOptionsItemSelected(final MenuItem item) {
 		switch (item.getItemId()) {
 		case MENU_ITEM_SET_FILTER:
 			ReportFilterActivity.showActivity(this.mActivity, this.mFilter);
 			break;
 		case MENU_ITEM_EXPORT_SD:
-			ReprtExportEngine.exportToSD(getDefaultReportName(), mActivity, ReportOutput.makeFormatter(mReportViewList));
+			ReprtExportEngine.exportToSD(this.getDefaultReportName(),
+					this.mActivity,
+					ReportOutput.makeFormatter(this.mReportViewList));
 			break;
 		case MENU_ITEM_EXPORT_EMAIL:
-			ReportOutput outPutter = ReportOutput.makeFormatter(mReportViewList);
+			final ReportOutput outPutter = ReportOutput
+					.makeFormatter(this.mReportViewList);
 			outPutter.setTerminator("\n");
-			EmailUtilities.send("", getEMailSummaryLine(), mActivity, outPutter.getOutput());
+			EmailUtilities.send("", this.getEMailSummaryLine(), this.mActivity,
+					outPutter.getOutput());
 			break;
 		}
 
@@ -131,106 +142,124 @@ public class ReportFramework implements Serializable {
 
 	private String getDefaultReportName() {
 		String name;
-		if (reportType == ReportTypes.TIMESHEET) {
-			name = mActivity.getString(R.string.default_export_ts_name);
+		if (this.reportType == ReportTypes.TIMESHEET) {
+			name = this.mActivity.getString(R.string.default_export_ts_name);
 		} else {
-			name = mActivity.getString(R.string.default_export_sum_name);
+			name = this.mActivity.getString(R.string.default_export_sum_name);
 		}
 		return name;
 	}
 
 	private String getEMailSummaryLine() {
-		String appName = mActivity.getString(R.string.app_name);
+		final String appName = this.mActivity.getString(R.string.app_name);
 		String summary;
-		if (reportType == ReportTypes.TIMESHEET) {
-			summary = String.format(mActivity.getString(R.string.default_mail_ts_subject), appName);
+		if (this.reportType == ReportTypes.TIMESHEET) {
+			summary = String.format(
+					this.mActivity.getString(R.string.default_mail_ts_subject),
+					appName);
 		} else {
-			summary = String.format(mActivity.getString(R.string.default_mail_sum_subject), appName);
+			summary = String
+					.format(this.mActivity
+							.getString(R.string.default_mail_sum_subject),
+							appName);
 		}
 		return summary;
 
 	}
 
 	LinearScroller getLinearScroller() {
-		return mScrollView;
+		return this.mScrollView;
 	}
 
 	LinearLayout buildViews() {
-		mActivity.setContentView(R.layout.time_slice_report_framework);
-		LinearLayout contentView = (LinearLayout) mActivity.findViewById(R.id.report_frame);
+		this.mActivity.setContentView(R.layout.time_slice_report_framework);
+		final LinearLayout contentView = (LinearLayout) this.mActivity
+				.findViewById(R.id.report_frame);
 		contentView.setOrientation(LinearLayout.VERTICAL);
-		mScrollView = new LinearScroller(mActivity);
-		contentView.addView(mScrollView.getScrollView());
+		this.mScrollView = new LinearScroller(this.mActivity);
+		contentView.addView(this.mScrollView.getScrollView());
 		return contentView;
 	}
 
 	public List<TextView> initializeTextViewsForExportList() {
-		List<TextView> tvList = new ArrayList<TextView>();
-		mReportViewList = tvList;
+		final List<TextView> tvList = new ArrayList<TextView>();
+		this.mReportViewList = tvList;
 		return tvList;
 	}
 
-	public void setReportType(ReportTypes reportType) {
+	public void setReportType(final ReportTypes reportType) {
 		this.reportType = reportType;
 	}
 
 	/**
 	 * retrieves filter from bundle
-	 * @param savedInstanceState : where filter infos are stored
-	 * @param parameterName : the name of the filter. Every context has a different name.
-	 * @param notFoundValue : value returend if not found
+	 * 
+	 * @param savedInstanceState
+	 *            : where filter infos are stored
+	 * @param parameterName
+	 *            : the name of the filter. Every context has a different name.
+	 * @param notFoundValue
+	 *            : value returend if not found
 	 * @return filter or parameterName
 	 */
-	public static FilterParameter getLastFilter(Bundle savedInstanceState, String parameterName, FilterParameter notFoundValue) {
+	public static FilterParameter getLastFilter(
+			final Bundle savedInstanceState, final String parameterName,
+			final FilterParameter notFoundValue) {
 		FilterParameter rangeFilter = null;
 		if (savedInstanceState != null) {
-			Serializable filter = savedInstanceState.getSerializable(parameterName);
-			
-			if (filter instanceof FilterParameter)
+			final Serializable filter = savedInstanceState
+					.getSerializable(parameterName);
+
+			if (filter instanceof FilterParameter) {
 				rangeFilter = (FilterParameter) filter;
+			}
 		}
-		
-		if (rangeFilter == null)
-		{
+
+		if (rangeFilter == null) {
 			rangeFilter = notFoundValue;
 		}
-		
-		if (rangeFilter == null)
-		{
+
+		if (rangeFilter == null) {
 			rangeFilter = new FilterParameter();
 		}
-		
+
 		return rangeFilter;
 	}
 
 	/**
 	 * saves filter to bundle
-	 * @param savedInstanceState : where filter infos are stored
-	 * @param parameterName : the name of the filter. Every context has a different name.
-	 * @param rangeFilter : value to be saved
+	 * 
+	 * @param savedInstanceState
+	 *            : where filter infos are stored
+	 * @param parameterName
+	 *            : the name of the filter. Every context has a different name.
+	 * @param rangeFilter
+	 *            : value to be saved
 	 */
-	public static void setLastFilter(Bundle savedInstanceState, String parameterName, FilterParameter rangeFilter) {
+	public static void setLastFilter(final Bundle savedInstanceState,
+			final String parameterName, final FilterParameter rangeFilter) {
 		savedInstanceState.putSerializable(parameterName, rangeFilter);
 	}
 
-	public static long getFixedEndTime(FilterParameter rangeFilter) {
+	public static long getFixedEndTime(final FilterParameter rangeFilter) {
 		final Calendar c = Calendar.getInstance();
 		c.setTime(new Date(rangeFilter.getEndTime()));
 		c.set(Calendar.HOUR_OF_DAY, 23);
 		c.set(Calendar.MINUTE, 59);
-		long endDate = c.getTimeInMillis();
+		final long endDate = c.getTimeInMillis();
 		return endDate;
 	}
 
-	public FilterParameter onActivityResult(Intent intent,
-			FilterParameter previosRangeFilter) {
-		FilterParameter newRangeFilter = (FilterParameter) intent.getExtras().get(Global.EXTRA_FILTER); 
-		
+	public FilterParameter onActivityResult(final Intent intent,
+			final FilterParameter previosRangeFilter) {
+		FilterParameter newRangeFilter = (FilterParameter) intent.getExtras()
+				.get(Global.EXTRA_FILTER);
+
 		if (newRangeFilter == null) {
 			newRangeFilter = previosRangeFilter;
 		}
 
-		initializeDateRanges(newRangeFilter);
+		this.initializeDateRanges(newRangeFilter);
 		return newRangeFilter;
 	}
 

@@ -15,27 +15,28 @@ import de.k3b.util.DateTimeUtil;
 
 public class TimeSheetSummaryCalculator {
 	private Map<String, Map<String, Long>> summaries;
-	private Map<String, TimeSliceCategory> categoties;
-	private Map<String, Long> dates;
-	
-	public TimeSheetSummaryCalculator(ReportModes mReportMode,
-			ReportDateGrouping mReportDateGrouping, List<TimeSlice> timeSlices)
-	{
+	private final Map<String, TimeSliceCategory> categoties;
+	private final Map<String, Long> dates;
+
+	public TimeSheetSummaryCalculator(final ReportModes mReportMode,
+			final ReportDateGrouping mReportDateGrouping,
+			final List<TimeSlice> timeSlices) {
 		if (mReportMode == ReportModes.BY_DATE) {
-			summaries = new LinkedHashMap<String, Map<String, Long>>();
+			this.summaries = new LinkedHashMap<String, Map<String, Long>>();
 		} else if (mReportMode == ReportModes.BY_DATE) {
-			summaries = new TreeMap<String, Map<String, Long>>();
+			this.summaries = new TreeMap<String, Map<String, Long>>();
 		} else {
-			throw new IllegalArgumentException("Unknown ReportModes " + mReportMode);
+			throw new IllegalArgumentException("Unknown ReportModes "
+					+ mReportMode);
 		}
 
-		categoties = new LinkedHashMap<String, TimeSliceCategory>();
-		dates = new TreeMap<String, Long>();
-		
-		DateTimeUtil dt = DateTimeFormatter.getInstance();
+		this.categoties = new LinkedHashMap<String, TimeSliceCategory>();
+		this.dates = new TreeMap<String, Long>();
 
-		for (TimeSlice aSlice : timeSlices) {
-			long rawStartTime = aSlice.getStartTime();
+		final DateTimeUtil dt = DateTimeFormatter.getInstance();
+
+		for (final TimeSlice aSlice : timeSlices) {
+			final long rawStartTime = aSlice.getStartTime();
 			long currentStartDate;
 			String currentStartDateText;
 
@@ -52,25 +53,27 @@ public class TimeSheetSummaryCalculator {
 				currentStartDate = dt.getStartOfYear(rawStartTime);
 				currentStartDateText = dt.getYearString(currentStartDate);
 			} else {
-				throw new IllegalArgumentException("Unknown ReportDateGrouping " + mReportDateGrouping);
+				throw new IllegalArgumentException(
+						"Unknown ReportDateGrouping " + mReportDateGrouping);
 			}
-			dates.put(currentStartDateText, currentStartDate);
+			this.dates.put(currentStartDateText, currentStartDate);
 
-			String categoryName = aSlice.getCategoryName();
-			categoties.put(categoryName, aSlice.getCategory());
+			final String categoryName = aSlice.getCategoryName();
+			this.categoties.put(categoryName, aSlice.getCategory());
 
-			Map<String, Long> subGroup = getSubMap(mReportMode,
+			final Map<String, Long> subGroup = this.getSubMap(mReportMode,
 					currentStartDateText, categoryName);
-			
-			String reportLine = getReportLine(mReportMode,
+
+			final String reportLine = this.getReportLine(mReportMode,
 					currentStartDateText, categoryName);
-			
-			increment(subGroup, reportLine, aSlice.getEndTime() - rawStartTime);
+
+			TimeSheetSummaryCalculator.increment(subGroup, reportLine,
+					aSlice.getEndTime() - rawStartTime);
 		} // foreach TimeSlice
 	}
 
-	private String getReportLine(ReportModes mReportMode,
-			String currentStartDateText, String categoryName) {
+	private String getReportLine(final ReportModes mReportMode,
+			final String currentStartDateText, final String categoryName) {
 		String reportLine = null;
 		if (mReportMode == ReportModes.BY_DATE) {
 			reportLine = categoryName;
@@ -80,35 +83,44 @@ public class TimeSheetSummaryCalculator {
 		return reportLine;
 	}
 
-	private Map<String, Long> getSubMap(ReportModes mReportMode,
-			String currentStartDateText, String categoryName) {
+	private Map<String, Long> getSubMap(final ReportModes mReportMode,
+			final String currentStartDateText, final String categoryName) {
 		String header;
 		if (mReportMode == ReportModes.BY_DATE) {
 			header = currentStartDateText;
 		} else {
 			header = categoryName;
 		}
-		Map<String, Long> group = summaries.get(header);
+		Map<String, Long> group = this.summaries.get(header);
 		if (group == null) {
 			if (mReportMode == ReportModes.BY_DATE) {
 				group = new TreeMap<String, Long>();
 			} else {
 				group = new LinkedHashMap<String, Long>();
 			}
-			summaries.put(header, group);
+			this.summaries.put(header, group);
 		}
 		return group;
 	}
 
-	private static void increment(Map<String, Long> map, String key, long diffValue) {
+	private static void increment(final Map<String, Long> map,
+			final String key, final long diffValue) {
 		Long timeSum = map.get(key);
 		if (timeSum == null) {
 			timeSum = Long.valueOf(0);
 		}
 		map.put(key, timeSum + diffValue);
 	}
-	
-	public Map<String, Map<String, Long>> getReportData() { return summaries; }
-	public Map<String, TimeSliceCategory> getCategoties() { return categoties; }
-	public Map<String, Long> getDates() { return dates; }
+
+	public Map<String, Map<String, Long>> getReportData() {
+		return this.summaries;
+	}
+
+	public Map<String, TimeSliceCategory> getCategoties() {
+		return this.categoties;
+	}
+
+	public Map<String, Long> getDates() {
+		return this.dates;
+	}
 }

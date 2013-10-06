@@ -22,63 +22,69 @@ public class TimeSliceCategoryRepsitory {
 	private static final String COL_END_TIME = "end_time";
 	private static final String COL_START_TIME = "start_time";
 
-	private static final DatabaseInstance CURRENT_DB_INSTANCE = DatabaseInstance.getCurrentInstance();
+	private static final DatabaseInstance CURRENT_DB_INSTANCE = DatabaseInstance
+			.getCurrentInstance();
 	private final Context context;
-	
-	public TimeSliceCategoryRepsitory(Context context) {
+
+	public TimeSliceCategoryRepsitory(final Context context) {
 		super();
 		this.context = context;
 	}
 
 	private ContentValues timeSliceCategoryContentValuesList(
 			final TimeSliceCategory category) {
-		ContentValues values = new ContentValues();
-		values.put(COL_CATEGORY_NAME, category.getCategoryName());
-		values.put(COL_DESCRIPTION, category.getDescription());
-		
+		final ContentValues values = new ContentValues();
+		values.put(TimeSliceCategoryRepsitory.COL_CATEGORY_NAME,
+				category.getCategoryName());
+		values.put(TimeSliceCategoryRepsitory.COL_DESCRIPTION,
+				category.getDescription());
+
 		if (DatabaseHelper.DATABASE_VERSION >= DatabaseHelper.DATABASE_VERSION_4_CATEGORY_ACTIVE) {
-			values.put(COL_START_TIME, category.getStartTime());
-			values.put(COL_END_TIME, category.getEndTime());
+			values.put(TimeSliceCategoryRepsitory.COL_START_TIME,
+					category.getStartTime());
+			values.put(TimeSliceCategoryRepsitory.COL_END_TIME,
+					category.getEndTime());
 		}
 		return values;
 	}
 
-    public TimeSliceCategory getOrCreateTimeSlice(String name) {
-    	Cursor cur = null;
-    	try
-    	{
-	    	cur = CURRENT_DB_INSTANCE.getDb().query(
-					DatabaseHelper.TIME_SLICE_CATEGORY_TABLE, columnList(),
-					"category_name = ?" , new String[] {name},
-					null, null, null);
+	public TimeSliceCategory getOrCreateTimeSlice(final String name) {
+		Cursor cur = null;
+		try {
+			cur = TimeSliceCategoryRepsitory.CURRENT_DB_INSTANCE.getDb().query(
+					DatabaseHelper.TIME_SLICE_CATEGORY_TABLE,
+					this.columnList(), "category_name = ?",
+					new String[] { name }, null, null, null);
 			if (cur.moveToNext()) {
-				 return this.fillTimeSliceCategoryFromCursor(cur);
+				return this.fillTimeSliceCategoryFromCursor(cur);
 			}
-    	} finally {
-    		if (cur != null)
-    			cur.close();
-    	}
-		
+		} finally {
+			if (cur != null) {
+				cur.close();
+			}
+		}
+
 		return this.createTimeSliceCategoryFromName(name);
-    }
-    
-    /**
-     * Creates new TimeSliceCategory in database.
-     * @return newID generated for dbItem.
-     */
+	}
+
+	/**
+	 * Creates new TimeSliceCategory in database.
+	 * 
+	 * @return newID generated for dbItem.
+	 */
 	public long createTimeSliceCategory(final TimeSliceCategory category) {
 
-		long newID = CURRENT_DB_INSTANCE.getDb().insert(
-				DatabaseHelper.TIME_SLICE_CATEGORY_TABLE, null,
-				timeSliceCategoryContentValuesList(category));
-		category.setRowId((int)newID);
+		final long newID = TimeSliceCategoryRepsitory.CURRENT_DB_INSTANCE
+				.getDb().insert(DatabaseHelper.TIME_SLICE_CATEGORY_TABLE, null,
+						this.timeSliceCategoryContentValuesList(category));
+		category.setRowId((int) newID);
 		return newID;
 	}
 
-	private TimeSliceCategory createTimeSliceCategoryFromName(String name) {
-		TimeSliceCategory category = new TimeSliceCategory();
+	private TimeSliceCategory createTimeSliceCategoryFromName(final String name) {
+		final TimeSliceCategory category = new TimeSliceCategory();
 		category.setCategoryName(name);
-		createTimeSliceCategory(category);
+		this.createTimeSliceCategory(category);
 		return category;
 	}
 
@@ -86,80 +92,102 @@ public class TimeSliceCategoryRepsitory {
 	 * Internal helper that returns all colums supported by dbmodell
 	 */
 	private String[] columnList() {
-		List<String> columns = new ArrayList<String>();
-		columns.add(COL_ID);
-		columns.add(COL_CATEGORY_NAME);
-		columns.add(COL_DESCRIPTION);
-		
+		final List<String> columns = new ArrayList<String>();
+		columns.add(TimeSliceCategoryRepsitory.COL_ID);
+		columns.add(TimeSliceCategoryRepsitory.COL_CATEGORY_NAME);
+		columns.add(TimeSliceCategoryRepsitory.COL_DESCRIPTION);
+
 		if (DatabaseHelper.DATABASE_VERSION >= DatabaseHelper.DATABASE_VERSION_4_CATEGORY_ACTIVE) {
-			columns.add(COL_START_TIME);
-			columns.add(COL_END_TIME);
+			columns.add(TimeSliceCategoryRepsitory.COL_START_TIME);
+			columns.add(TimeSliceCategoryRepsitory.COL_END_TIME);
 		}
 		return columns.toArray(new String[0]);
 	}
 
-	public List<TimeSliceCategory> fetchAllTimeSliceCategories(long currentDateTime, String debugContext) {
+	public List<TimeSliceCategory> fetchAllTimeSliceCategories(
+			final long currentDateTime, final String debugContext) {
 		List<TimeSliceCategory> result = new ArrayList<TimeSliceCategory>();
 		Cursor cur = null;
-		String filter = createCategoryListFilter(currentDateTime);
-		Log.d(Global.LOG_CONTEXT, debugContext + "-TimeSliceCategoryRepsitory.fetchAllTimeSliceCategories(" + filter + ")");
+		final String filter = this.createCategoryListFilter(currentDateTime);
+		Log.d(Global.LOG_CONTEXT, debugContext
+				+ "-TimeSliceCategoryRepsitory.fetchAllTimeSliceCategories("
+				+ filter + ")");
 
-		try
-		{
-			cur = CURRENT_DB_INSTANCE.getDb().query(
-					DatabaseHelper.TIME_SLICE_CATEGORY_TABLE, columnList(), filter,
-					null, null, null, "lower(" + COL_CATEGORY_NAME + ")"); // order by name
+		try {
+			cur = TimeSliceCategoryRepsitory.CURRENT_DB_INSTANCE.getDb().query(
+					DatabaseHelper.TIME_SLICE_CATEGORY_TABLE,
+					this.columnList(),
+					filter,
+					null,
+					null,
+					null,
+					"lower(" + TimeSliceCategoryRepsitory.COL_CATEGORY_NAME
+							+ ")"); // order by name
 			while (cur.moveToNext()) {
-				TimeSliceCategory cat = fillTimeSliceCategoryFromCursor(cur);
+				final TimeSliceCategory cat = this
+						.fillTimeSliceCategoryFromCursor(cur);
 				result.add(cat);
 			}
 		} finally {
-			if (cur != null)
+			if (cur != null) {
 				cur.close();
+			}
 		}
-		
+
 		// Database does not contain categories yet, create them
 		if (result.size() == 0) {
-			createInitialDemoCategoriesFromResources();
-			result = fetchAllTimeSliceCategories(currentDateTime, debugContext); // reload the demo items
+			this.createInitialDemoCategoriesFromResources();
+			result = this.fetchAllTimeSliceCategories(currentDateTime,
+					debugContext); // reload the demo items
 		}
 		return result;
 	}
 
-	private String createCategoryListFilter(long currentDateTime) {
-    	if (currentDateTime != TimeSliceCategory.MIN_VALID_DATE)
-    	{
-    		return "((" + COL_START_TIME + " IS NULL " +
-    				") OR (" + COL_START_TIME + " <= " + currentDateTime +
-    				")) AND ((" + COL_END_TIME + " IS NULL " +
-    				") OR (" + COL_END_TIME + " >= " + currentDateTime +
-    				"))";
-    	}
+	private String createCategoryListFilter(final long currentDateTime) {
+		if (currentDateTime != TimeSliceCategory.MIN_VALID_DATE) {
+			return "((" + TimeSliceCategoryRepsitory.COL_START_TIME
+					+ " IS NULL " + ") OR ("
+					+ TimeSliceCategoryRepsitory.COL_START_TIME + " <= "
+					+ currentDateTime + ")) AND (("
+					+ TimeSliceCategoryRepsitory.COL_END_TIME + " IS NULL "
+					+ ") OR (" + TimeSliceCategoryRepsitory.COL_END_TIME
+					+ " >= " + currentDateTime + "))";
+		}
 		return null;
 	}
 
-	private TimeSliceCategory fillTimeSliceCategoryFromCursor(Cursor cur) {
-		TimeSliceCategory cat = new TimeSliceCategory();
-		if(!cur.isAfterLast()) {
-			cat.setRowId(cur.getInt(cur.getColumnIndexOrThrow(COL_ID)));
-			cat.setCategoryName(cur.getString(cur.getColumnIndex(COL_CATEGORY_NAME)));
-			cat.setDescription(cur.getString(cur.getColumnIndex(COL_DESCRIPTION)));
-			
+	private TimeSliceCategory fillTimeSliceCategoryFromCursor(final Cursor cur) {
+		final TimeSliceCategory cat = new TimeSliceCategory();
+		if (!cur.isAfterLast()) {
+			cat.setRowId(cur.getInt(cur
+					.getColumnIndexOrThrow(TimeSliceCategoryRepsitory.COL_ID)));
+			cat.setCategoryName(cur.getString(cur
+					.getColumnIndex(TimeSliceCategoryRepsitory.COL_CATEGORY_NAME)));
+			cat.setDescription(cur.getString(cur
+					.getColumnIndex(TimeSliceCategoryRepsitory.COL_DESCRIPTION)));
+
 			if (DatabaseHelper.DATABASE_VERSION >= DatabaseHelper.DATABASE_VERSION_4_CATEGORY_ACTIVE) {
-				cat.setStartTime(getLong(cur,COL_START_TIME, TimeSliceCategory.MIN_VALID_DATE));
-				cat.setEndTime(getLong(cur,COL_END_TIME, TimeSliceCategory.MAX_VALID_DATE));
-			}			
+				cat.setStartTime(this.getLong(cur,
+						TimeSliceCategoryRepsitory.COL_START_TIME,
+						TimeSliceCategory.MIN_VALID_DATE));
+				cat.setEndTime(this.getLong(cur,
+						TimeSliceCategoryRepsitory.COL_END_TIME,
+						TimeSliceCategory.MAX_VALID_DATE));
+			}
 		}
 		return cat;
 	}
 
 	/**
 	 * get long value from cursor.
-	 * @param nullValue returned if column is null
+	 * 
+	 * @param nullValue
+	 *            returned if column is null
 	 * @return nullValue if column is null
 	 */
-	private long getLong(Cursor cursor, String columnName, long nullValue) {
-		int colIndex = cursor.getColumnIndexOrThrow(columnName);
+	private long getLong(final Cursor cursor, final String columnName,
+			final long nullValue) {
+		final int colIndex = cursor.getColumnIndexOrThrow(columnName);
 		if (!cursor.isNull(colIndex)) {
 			return cursor.getLong(colIndex);
 		}
@@ -168,16 +196,17 @@ public class TimeSliceCategoryRepsitory {
 
 	/**
 	 * Delete item by rowID.
+	 * 
 	 * @param rowId
 	 * @return true if item found and deleted.
 	 */
 	public boolean delete(final long rowId) {
-		return CURRENT_DB_INSTANCE.getDb().delete(
+		return TimeSliceCategoryRepsitory.CURRENT_DB_INSTANCE.getDb().delete(
 				DatabaseHelper.TIME_SLICE_CATEGORY_TABLE, "_id=" + rowId, null) > 0;
 	}
 
 	public long update(final TimeSliceCategory timeSliceCategory) {
-		return CURRENT_DB_INSTANCE.getDb().update(
+		return TimeSliceCategoryRepsitory.CURRENT_DB_INSTANCE.getDb().update(
 				DatabaseHelper.TIME_SLICE_CATEGORY_TABLE,
 				this.timeSliceCategoryContentValuesList(timeSliceCategory),
 				"_id = " + timeSliceCategory.getRowId(), null);
@@ -186,30 +215,33 @@ public class TimeSliceCategoryRepsitory {
 	public TimeSliceCategory fetchByRowID(final long rowId) throws SQLException {
 
 		Cursor cur = null;
-		
-		try
-		{
-			cur = CURRENT_DB_INSTANCE.getDb().query(true,
-				DatabaseHelper.TIME_SLICE_CATEGORY_TABLE, columnList(),
-				"_id = ?", new String[] {Long.toString(rowId)},  
-				null, null, null, null);
+
+		try {
+			cur = TimeSliceCategoryRepsitory.CURRENT_DB_INSTANCE.getDb().query(
+					true, DatabaseHelper.TIME_SLICE_CATEGORY_TABLE,
+					this.columnList(), "_id = ?",
+					new String[] { Long.toString(rowId) }, null, null, null,
+					null);
 			if ((cur != null) && (cur.moveToFirst())) {
-				return fillTimeSliceCategoryFromCursor(cur);
+				return this.fillTimeSliceCategoryFromCursor(cur);
 			}
 		} finally {
-			if (cur != null)
+			if (cur != null) {
 				cur.close();
+			}
 		}
-		Log.e(Global.LOG_CONTEXT, "Not found : TimeSliceCategoryDBAdapter.fetchByRowID(rowId = " + rowId + ")");
+		Log.e(Global.LOG_CONTEXT,
+				"Not found : TimeSliceCategoryDBAdapter.fetchByRowID(rowId = "
+						+ rowId + ")");
 		return null;
 	}
 
-	
 	private void createInitialDemoCategoriesFromResources() {
-		Resources res = context.getResources();
-		String[] catNames = res.getStringArray(R.array.default_categories);
-		for(String catName : catNames) {
-			createTimeSliceCategoryFromName(catName);
+		final Resources res = this.context.getResources();
+		final String[] catNames = res
+				.getStringArray(R.array.default_categories);
+		for (final String catName : catNames) {
+			this.createTimeSliceCategoryFromName(catName);
 		}
 	}
 

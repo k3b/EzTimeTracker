@@ -12,14 +12,25 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.*;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.widget.*;
+import android.widget.Button;
+import android.widget.Chronometer;
 import android.widget.Chronometer.OnChronometerTickListener;
+import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.zetter.androidTime.R;
-import com.zettsett.timetracker.*;
+import com.zettsett.timetracker.DateTimeFormatter;
+import com.zettsett.timetracker.Global;
+import com.zettsett.timetracker.Settings;
+import com.zettsett.timetracker.TimeTrackerManager;
+import com.zettsett.timetracker.TimeTrackerSessionData;
 import com.zettsett.timetracker.database.TimeSliceCategoryRepsitory;
 import com.zettsett.timetracker.model.TimeSlice;
 import com.zettsett.timetracker.model.TimeSliceCategory;
@@ -39,16 +50,19 @@ import com.zettsett.timetracker.model.TimeSliceCategory;
  * License for the specific language governing permissions and limitations under
  * the License.
  * 
- * GUI to start and/or stop time tracking:
- * Workflow:
- * stopped+start->showSelectCategoryForPunchInDialog->(createNewCategory->)started(now)
- * stopped+long-start->editStartSettings()->started(selected-time, selectedCategory)
+ * GUI to start and/or stop time tracking: Workflow:
+ * stopped+start->showSelectCategoryForPunchInDialog
+ * ->(createNewCategory->)started(now)
+ * stopped+long-start->editStartSettings()->started(selected-time,
+ * selectedCategory)
  * 
- * started+long-start->editStartSettings()->started(selected-time, selectedCategory)
- * started+stop->punchOutClock()->stopped(now)
- * started+start->showSelectCategoryForPunchInDialog->(createNewCategory->)stop(now)+started(now)
+ * started+long-start->editStartSettings()->started(selected-time,
+ * selectedCategory) started+stop->punchOutClock()->stopped(now)
+ * started+start->showSelectCategoryForPunchInDialog
+ * ->(createNewCategory->)stop(now)+started(now)
  */
-public class PunchInPunchOutActivity extends Activity implements OnChronometerTickListener, ICategorySetter {
+public class PunchInPunchOutActivity extends Activity implements
+		OnChronometerTickListener, ICategorySetter {
 	public static final String PREFS_NAME = "TimerPrefs";
 
 	private static final int SELECT_CATAGORY = 0;
@@ -64,436 +78,466 @@ public class PunchInPunchOutActivity extends Activity implements OnChronometerTi
 			this);
 
 	private TimeTrackerSessionData sessionData = new TimeTrackerSessionData();
-	private TimeTrackerManager tracker = null; 
+	private TimeTrackerManager tracker = null;
 
 	private BroadcastReceiver myReceiver = null;
-	
+
 	class _RemoteTimeTrackerReceiver extends BroadcastReceiver {
 		@Override
-		public void onReceive (Context context, Intent intent) {
-			if (Log.isLoggable(Global.LOG_CONTEXT, Log.INFO))
-			{
-				Log.i(Global.LOG_CONTEXT, "PunchInPunchOutActivity.onReceive(intent='" + intent + "')");
+		public void onReceive(final Context context, final Intent intent) {
+			if (Log.isLoggable(Global.LOG_CONTEXT, Log.INFO)) {
+				Log.i(Global.LOG_CONTEXT,
+						"PunchInPunchOutActivity.onReceive(intent='" + intent
+								+ "')");
 			}
-			reloadGui();
+			PunchInPunchOutActivity.this.reloadGui();
 		}
 	}
 
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		if (Global.isDebugEnabled())
-		{
+	public void onCreate(final Bundle savedInstanceState) {
+		if (Global.isDebugEnabled()) {
 			Log.d(Global.LOG_CONTEXT, "PunchInPunchOutActivity()");
 		}
-		
-		super.onCreate(savedInstanceState);
-		//DateTimeFormatter.getInstance().SetFormat(DateFormat.get DateInstance(DateFormat.S));
-		setContentView(R.layout.time_slice_main);
-		this.elapsedTimeDisplay = (TextView) findViewById(R.id.mainViewChronOutput);
-		this.elapsedTimeDisplay.setOnLongClickListener(new View.OnLongClickListener() {
-			
-			@Override
-			public boolean onLongClick(View v) {
-				return startActivity(R.id.details);
-			}
-		});
-		
-		this.notesEditor = (EditText) findViewById(R.id.main_edit_text_notes);
 
-		setupButtons();
+		super.onCreate(savedInstanceState);
+		// DateTimeFormatter.getInstance().SetFormat(DateFormat.get
+		// DateInstance(DateFormat.S));
+		this.setContentView(R.layout.time_slice_main);
+		this.elapsedTimeDisplay = (TextView) this
+				.findViewById(R.id.mainViewChronOutput);
+		this.elapsedTimeDisplay
+				.setOnLongClickListener(new View.OnLongClickListener() {
+
+					@Override
+					public boolean onLongClick(final View v) {
+						return PunchInPunchOutActivity.this
+								.startActivity(R.id.details);
+					}
+				});
+
+		this.notesEditor = (EditText) this
+				.findViewById(R.id.main_edit_text_notes);
+
+		this.setupButtons();
 
 		this.tracker = new TimeTrackerManager(this);
-		Settings.init(getBaseContext());
+		Settings.init(this.getBaseContext());
 
-		reloadGui();
+		this.reloadGui();
 	}
 
 	@Override
 	public void onResume() {
 		super.onResume();
-		Settings.init(getBaseContext());
-		
-		if (myReceiver == null)
-		{
-			myReceiver = new _RemoteTimeTrackerReceiver();
-		    IntentFilter filter = new IntentFilter(Global.REFRESH_GUI);
-			registerReceiver(myReceiver, filter);
+		Settings.init(this.getBaseContext());
+
+		if (this.myReceiver == null) {
+			this.myReceiver = new _RemoteTimeTrackerReceiver();
+			final IntentFilter filter = new IntentFilter(Global.REFRESH_GUI);
+			this.registerReceiver(this.myReceiver, filter);
 		}
-				
-		reloadGui();
+
+		this.reloadGui();
 
 	}
 
 	@Override
 	public void onPause() {
 
-		if (myReceiver != null)
-		{
-			unregisterReceiver(myReceiver);
-			myReceiver = null;
+		if (this.myReceiver != null) {
+			this.unregisterReceiver(this.myReceiver);
+			this.myReceiver = null;
 		}
-	
+
 		this.sessionData.setNotes(this.notesEditor.getText().toString());
 		super.onPause();
-		
-		startStopTimer(true);
-		saveState();
+
+		this.startStopTimer(true);
+		this.saveState();
 	}
 
 	/**
 	 * displays current session-data, start/stop elapsedTimer if necessary
 	 */
-	void reloadGui()
-	{
+	void reloadGui() {
 		Log.d(Global.LOG_CONTEXT, "PunchInPunchOutActivity.refreshGui()");
 
-		sessionData = reloadSessionData();
-		
-		if (!this.tracker.isPunchedIn())
-		{
-			updateElapsedTimeLabel(tracker.getElapsedTimeInMillisecs());
+		this.sessionData = this.reloadSessionData();
+
+		if (!this.tracker.isPunchedIn()) {
+			this.updateElapsedTimeLabel(this.tracker
+					.getElapsedTimeInMillisecs());
 		}
 
-		updateClock(this.tracker.isPunchedIn());
-		showData();
-		updateCategoryAndStartLabel();
+		this.updateClock(this.tracker.isPunchedIn());
+		this.showData();
+		this.updateCategoryAndStartLabel();
 	}
-	
+
 	private void showData() {
-		boolean punchedIn = sessionData.isPunchedIn();
-		notesEditor.setEnabled(punchedIn);
+		final boolean punchedIn = this.sessionData.isPunchedIn();
+		this.notesEditor.setEnabled(punchedIn);
 		if (!punchedIn) {
-			elapsedTimeDisplay.setTextColor(Color.RED);
+			this.elapsedTimeDisplay.setTextColor(Color.RED);
 		} else {
-			elapsedTimeDisplay.setTextColor(Color.GREEN);
+			this.elapsedTimeDisplay.setTextColor(Color.GREEN);
 		}
-		updateChronOutputTextView();
-		getNotesView().setText(sessionData.getNotes());
-		setSelectedTimeSliceCategory(sessionData.getCategory());
+		this.updateChronOutputTextView();
+		this.getNotesView().setText(this.sessionData.getNotes());
+		this.setSelectedTimeSliceCategory(this.sessionData.getCategory());
 	}
 
 	private EditText getNotesView() {
-		return (EditText) findViewById(R.id.main_edit_text_notes);
+		return (EditText) this.findViewById(R.id.main_edit_text_notes);
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
+	public boolean onCreateOptionsMenu(final Menu menu) {
 		super.onCreateOptionsMenu(menu);
 
-	    MenuInflater inflater = getMenuInflater();
-	    inflater.inflate(R.menu.main, menu);
-		return true;	
+		final MenuInflater inflater = this.getMenuInflater();
+		inflater.inflate(R.menu.main, menu);
+		return true;
 	}
 
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
+	public boolean onOptionsItemSelected(final MenuItem item) {
 
-		int itemId = item.getItemId();
-		if (startActivity(itemId))
-		{
+		final int itemId = item.getItemId();
+		if (this.startActivity(itemId)) {
 			return true;
 		} else {
 			switch (itemId) {
-				case R.id.about:
-					showDialog(itemId);
-					return true;
+			case R.id.about:
+				this.showDialog(itemId);
+				return true;
 			}
-	        return super.onOptionsItemSelected(item);
-	    }
+			return super.onOptionsItemSelected(item);
+		}
 	}
 
-	private boolean startActivity(int itemId) {
-		Class<? extends Activity> itemHandler = getMenuIntentHandler(itemId);
-		if (itemHandler != null)
-		{
-			Intent intent = new Intent().setClass(this, itemHandler);
+	private boolean startActivity(final int itemId) {
+		final Class<? extends Activity> itemHandler = this
+				.getMenuIntentHandler(itemId);
+		if (itemHandler != null) {
+			final Intent intent = new Intent().setClass(this, itemHandler);
 			intent.putExtra(TimeSheetSummaryReportActivity.MENU_ID, itemId);
-			startActivity(intent);
+			this.startActivity(intent);
 			return true;
-		} 
+		}
 		return false;
 	}
 
 	private Dialog getAboutDialog() {
-		Context mContext = this;
-		  AlertDialog.Builder alert = new AlertDialog.Builder(mContext);
-	        alert.setTitle(R.string.about_title);
-	        alert.setIcon(R.drawable.icon);
-	        alert.setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
-				
-				@Override
-				public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-					paramDialogInterface.cancel();
-					
-				}
-			});
-		  WebView wv = new WebView(mContext);
-		  String html = getResources().getString(R.string.about_content); // "<html><body>some <b>html</b> here</body></html>";
+		final Context mContext = this;
+		final AlertDialog.Builder alert = new AlertDialog.Builder(mContext);
+		alert.setTitle(R.string.about_title);
+		alert.setIcon(R.drawable.icon);
+		alert.setNeutralButton(R.string.cancel,
+				new DialogInterface.OnClickListener() {
 
-		  Context context = this;
-		  try {
-			String versionName = context.getPackageManager().getPackageInfo (context.getPackageName(), 0).versionName;
+					@Override
+					public void onClick(
+							final DialogInterface paramDialogInterface,
+							final int paramInt) {
+						paramDialogInterface.cancel();
+
+					}
+				});
+		final WebView wv = new WebView(mContext);
+		String html = this.getResources().getString(R.string.about_content); // "<html><body>some <b>html</b> here</body></html>";
+
+		final Context context = this;
+		try {
+			final String versionName = context.getPackageManager()
+					.getPackageInfo(context.getPackageName(), 0).versionName;
 			html = html.replace("$versionName$", versionName);
-		  } catch (NameNotFoundException e) {
-		  }
-		  html = html.replace("$about$", getText(R.string.about_content_about));
-		  
-		  wv.loadData(html, "text/html", "UTF-8");
-		  wv.setVerticalScrollBarEnabled(true);
-		  
-		  WebSettings mWebSettings = wv.getSettings();
-	        mWebSettings.setBuiltInZoomControls(true);
-	        wv.setScrollBarStyle(WebView.SCROLLBARS_OUTSIDE_OVERLAY);
-	        wv.setScrollbarFadingEnabled(false);
-		  
-		  
-		  alert.setView(wv);
-		
-      return alert.create();	
-    }
+		} catch (final NameNotFoundException e) {
+		}
+		html = html.replace("$about$",
+				this.getText(R.string.about_content_about));
 
-	private Class<? extends Activity> getMenuIntentHandler(int item) {
-	    switch (item) {
-	    case R.id.details:
-	        return TimeSheetDetailReportActivity.class;
-	    case R.id.summary_day:
-	    case R.id.summary_month:
-	    case R.id.summary_week:
-	    case R.id.category_day:
-	    case R.id.category_month:
-	    case R.id.category_week:
-	        return TimeSheetSummaryReportActivity.class;
-	    case R.id.categories:
-	        return CategoryListActivity.class;
-	    case R.id.export:
-	        return TimeSliceExportActivity.class;
-	    case R.id.remove:
-	        return TimeSliceRemoveActivity.class;
-	    case R.id.settings:
-	        return SettingsActivity.class;
-	    default:
-	    	return null;
-	    }
+		wv.loadData(html, "text/html", "UTF-8");
+		wv.setVerticalScrollBarEnabled(true);
+
+		final WebSettings mWebSettings = wv.getSettings();
+		mWebSettings.setBuiltInZoomControls(true);
+		wv.setScrollBarStyle(View.SCROLLBARS_OUTSIDE_OVERLAY);
+		wv.setScrollbarFadingEnabled(false);
+
+		alert.setView(wv);
+
+		return alert.create();
+	}
+
+	private Class<? extends Activity> getMenuIntentHandler(final int item) {
+		switch (item) {
+		case R.id.details:
+			return TimeSheetDetailReportActivity.class;
+		case R.id.summary_day:
+		case R.id.summary_month:
+		case R.id.summary_week:
+		case R.id.category_day:
+		case R.id.category_month:
+		case R.id.category_week:
+			return TimeSheetSummaryReportActivity.class;
+		case R.id.categories:
+			return CategoryListActivity.class;
+		case R.id.export:
+			return TimeSliceExportActivity.class;
+		case R.id.remove:
+			return TimeSliceRemoveActivity.class;
+		case R.id.settings:
+			return SettingsActivity.class;
+		default:
+			return null;
+		}
 	}
 
 	private void showSelectCategoryForPunchInDialog() {
-		showDialog(SELECT_CATAGORY);
+		this.showDialog(PunchInPunchOutActivity.SELECT_CATAGORY);
 	}
 
 	private CategoryEditDialog edit = null;
-	public void showCategoryEditDialog(TimeSliceCategory category)
-	{
-		if (this.edit == null)
-		{
+
+	public void showCategoryEditDialog(final TimeSliceCategory category) {
+		if (this.edit == null) {
 			this.edit = new CategoryEditDialog(this, this);
 		}
 		this.edit.setCategory(category);
-		showDialog(CREATE_NEW_CATEGORY);
+		this.showDialog(PunchInPunchOutActivity.CREATE_NEW_CATEGORY);
 	}
-	
-	protected Dialog onCreateDialog(int id) {
+
+	@Override
+	protected Dialog onCreateDialog(final int id) {
 		switch (id) {
-			case SELECT_CATAGORY:
-				return new CategorySelectDialog(this, R.style.PunchDialog, TimeSliceCategory.NO_CATEGORY)
-							.setCategoryCallback(this);
-			case SELECT_CATAGORY_ALL:
-				return new CategorySelectDialog(this, R.style.PunchDialog, TimeSliceCategory.NO_CATEGORY )
-							.setCategoryCallback(this);
-			case CREATE_NEW_CATEGORY:
-				return this.edit;
-			case R.id.about:
-				return this.getAboutDialog();
+		case SELECT_CATAGORY:
+			return new CategorySelectDialog(this, R.style.PunchDialog,
+					TimeSliceCategory.NO_CATEGORY).setCategoryCallback(this);
+		case SELECT_CATAGORY_ALL:
+			return new CategorySelectDialog(this, R.style.PunchDialog,
+					TimeSliceCategory.NO_CATEGORY).setCategoryCallback(this);
+		case CREATE_NEW_CATEGORY:
+			return this.edit;
+		case R.id.about:
+			return this.getAboutDialog();
 		}
 		return null;
 	}
-	
+
 	private void setupButtons() {
-		Button punchInButton = (Button) findViewById(R.id.btnPunchIn);
+		final Button punchInButton = (Button) this
+				.findViewById(R.id.btnPunchIn);
 		punchInButton.setOnClickListener(new View.OnClickListener() {
+			@Override
 			public void onClick(final View view) {
-				showSelectCategoryForPunchInDialog();
+				PunchInPunchOutActivity.this
+						.showSelectCategoryForPunchInDialog();
 			}
 		});
 		punchInButton.setOnLongClickListener(new View.OnLongClickListener() {
 			@Override
-			public boolean onLongClick(View v) {
+			public boolean onLongClick(final View v) {
 				// TODO Auto-generated method stub
-				return editStartSettings();
+				return PunchInPunchOutActivity.this.editStartSettings();
 			}
 		});
-		
-		Button punchOutButton = (Button) findViewById(R.id.btnPunchOut);
+
+		final Button punchOutButton = (Button) this
+				.findViewById(R.id.btnPunchOut);
 		punchOutButton.setOnClickListener(new View.OnClickListener() {
+			@Override
 			public void onClick(final View view) {
-				punchOutClock(TimeTrackerManager.currentTimeMillis());
+				PunchInPunchOutActivity.this.punchOutClock(TimeTrackerManager
+						.currentTimeMillis());
 			}
 		});
 		punchOutButton.setOnLongClickListener(new View.OnLongClickListener() {
 			@Override
-			public boolean onLongClick(View v) {
+			public boolean onLongClick(final View v) {
 				// TODO Auto-generated method stub
-				return editStopSettings();
+				return PunchInPunchOutActivity.this.editStopSettings();
 			}
 		});
-		
+
 	}
 
 	/**
 	 * Called by showSelectCategoryForPunchInDialog
 	 */
 	@Override
-	public void setCategory(TimeSliceCategory selectedCategory) {
-		if (selectedCategory == TimeSliceCategory.NO_CATEGORY)
-		{
-			showCategoryEditDialog(null);
+	public void setCategory(final TimeSliceCategory selectedCategory) {
+		if (selectedCategory == TimeSliceCategory.NO_CATEGORY) {
+			this.showCategoryEditDialog(null);
 		} else {
 			if (selectedCategory.getRowId() == TimeSliceCategory.NOT_SAVED) {
-				timeSliceRepository.createTimeSliceCategory(selectedCategory);
-			} 
-			long elapsedRealtime = TimeTrackerManager.currentTimeMillis();
-			punchInClock(elapsedRealtime, selectedCategory);
+				this.timeSliceRepository
+						.createTimeSliceCategory(selectedCategory);
+			}
+			final long elapsedRealtime = TimeTrackerManager.currentTimeMillis();
+			this.punchInClock(elapsedRealtime, selectedCategory);
 		}
 	}
 
-	private void punchInClock(long elapsedRealtime,
-			TimeSliceCategory selectedCategory) {
-		tracker.punchInClock(selectedCategory, elapsedRealtime);
-		reloadGui();
+	private void punchInClock(final long elapsedRealtime,
+			final TimeSliceCategory selectedCategory) {
+		this.tracker.punchInClock(selectedCategory, elapsedRealtime);
+		this.reloadGui();
 	}
 
-	private void punchOutClock(long elapsedRealtime) {
-		tracker.punchOutClock(elapsedRealtime, this.notesEditor.getText().toString());
-		reloadGui();
+	private void punchOutClock(final long elapsedRealtime) {
+		this.tracker.punchOutClock(elapsedRealtime, this.notesEditor.getText()
+				.toString());
+		this.reloadGui();
 	}
 
-	private void updateElapsedTimeLabel(long elapsedRealtime) {
-		if (elapsedTimeDisplay != null) {
-			elapsedTimeDisplay.setText(DateTimeFormatter.getInstance()
-					.hrColMin(elapsedRealtime, false,true));
+	private void updateElapsedTimeLabel(final long elapsedRealtime) {
+		if (this.elapsedTimeDisplay != null) {
+			this.elapsedTimeDisplay.setText(DateTimeFormatter.getInstance()
+					.hrColMin(elapsedRealtime, false, true));
 		}
 	}
 
-	private void startStopTimer(boolean punchedIn) {
-		Chronometer chronometer = (Chronometer) findViewById(R.id.chron);
-	
-		if (punchedIn)
-		{
+	private void startStopTimer(final boolean punchedIn) {
+		final Chronometer chronometer = (Chronometer) this
+				.findViewById(R.id.chron);
+
+		if (punchedIn) {
 			chronometer.start();
 			chronometer.setOnChronometerTickListener(this);
-			elapsedTimeDisplay.setTextColor(Color.GREEN);			
+			this.elapsedTimeDisplay.setTextColor(Color.GREEN);
 		} else {
 			chronometer.stop();
 			chronometer.setOnChronometerTickListener(null);
-			elapsedTimeDisplay.setTextColor(Color.RED);		
+			this.elapsedTimeDisplay.setTextColor(Color.RED);
 		}
-		updateChronOutputTextView();
+		this.updateChronOutputTextView();
 	}
 
 	private boolean editStartSettings() {
-		if (sessionData != null) { 
-    		TimeSlice editItem = new TimeSlice()
-			.setCategory(sessionData.getCategory())
-			.setEndTime(TimeSliceEditActivity.HIDDEN)
-			.setNotes(TimeSliceEditActivity.HIDDEN_NOTES)
-			.setRowId(32531);
+		if (this.sessionData != null) {
+			final TimeSlice editItem = new TimeSlice()
+					.setCategory(this.sessionData.getCategory())
+					.setEndTime(TimeSliceEditActivity.HIDDEN)
+					.setNotes(TimeSliceEditActivity.HIDDEN_NOTES)
+					.setRowId(32531);
 			// edit already running starttime
-			if (sessionData.isPunchedIn()){
-	    		editItem.setStartTime(sessionData.getStartTime());
+			if (this.sessionData.isPunchedIn()) {
+				editItem.setStartTime(this.sessionData.getStartTime());
 			} else {
-	    		editItem.setStartTime(TimeTrackerManager.currentTimeMillis());
+				editItem.setStartTime(TimeTrackerManager.currentTimeMillis());
 			}
-    		TimeSliceEditActivity.showTimeSliceEditActivity(this, editItem, EDIT_START);
+			TimeSliceEditActivity.showTimeSliceEditActivity(this, editItem,
+					PunchInPunchOutActivity.EDIT_START);
 		}
-		
-		return true;	 // consumed        	
-	} 
+
+		return true; // consumed
+	}
 
 	private boolean editStopSettings() {
-		if ((sessionData != null) && (sessionData.isPunchedIn()))
-    	{
-    		TimeSlice editItem = new TimeSlice()
-    			.setCategory(sessionData.getCategory())
-    			.setStartTime(sessionData.getStartTime())
-    			.setEndTime(TimeTrackerManager.currentTimeMillis())
-    			.setNotes(TimeSliceEditActivity.HIDDEN_NOTES)
-    			.setRowId(32531);
-    		TimeSliceEditActivity.showTimeSliceEditActivity(this, editItem, EDIT_STOP);
-    	}
-		return true;	 // consumed        	
-	} 
+		if ((this.sessionData != null) && (this.sessionData.isPunchedIn())) {
+			final TimeSlice editItem = new TimeSlice()
+					.setCategory(this.sessionData.getCategory())
+					.setStartTime(this.sessionData.getStartTime())
+					.setEndTime(TimeTrackerManager.currentTimeMillis())
+					.setNotes(TimeSliceEditActivity.HIDDEN_NOTES)
+					.setRowId(32531);
+			TimeSliceEditActivity.showTimeSliceEditActivity(this, editItem,
+					PunchInPunchOutActivity.EDIT_STOP);
+		}
+		return true; // consumed
+	}
 
 	/**
 	 * call back from sub-activities
 	 */
 	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+	protected void onActivityResult(final int requestCode,
+			final int resultCode, final Intent intent) {
 		super.onActivityResult(requestCode, resultCode, intent);
-		
-		TimeSlice updatedTimeSlice = getTimeSlice(intent);
-		sessionData = reloadSessionData();
-		if ((sessionData != null) && (updatedTimeSlice != null)) { //  (requestCode == EDIT_START) || (requestCode == EDIT_STOP)) {
 
-			boolean punchedIn = sessionData.isPunchedIn();
-			if ((requestCode == EDIT_START) && !punchedIn) {
-				punchInClock(updatedTimeSlice.getStartTime(), updatedTimeSlice.getCategory());
-				
-			} else if ((requestCode == EDIT_START) && punchedIn) {
-				sessionData
-					.setCategory(updatedTimeSlice.getCategory())
-					.setStartTime(updatedTimeSlice.getStartTime());
-				saveState();
-				reloadGui();
-			} else if ((requestCode == EDIT_STOP) && punchedIn) {
-				sessionData
-				.setCategory(updatedTimeSlice.getCategory())
-				.setStartTime(updatedTimeSlice.getStartTime());
-				saveState();
-				reloadGui();
-				punchOutClock(updatedTimeSlice.getEndTime());
+		final TimeSlice updatedTimeSlice = this.getTimeSlice(intent);
+		this.sessionData = this.reloadSessionData();
+		if ((this.sessionData != null) && (updatedTimeSlice != null)) { // (requestCode
+																		// ==
+																		// EDIT_START)
+																		// ||
+																		// (requestCode
+																		// ==
+																		// EDIT_STOP))
+																		// {
+
+			final boolean punchedIn = this.sessionData.isPunchedIn();
+			if ((requestCode == PunchInPunchOutActivity.EDIT_START)
+					&& !punchedIn) {
+				this.punchInClock(updatedTimeSlice.getStartTime(),
+						updatedTimeSlice.getCategory());
+
+			} else if ((requestCode == PunchInPunchOutActivity.EDIT_START)
+					&& punchedIn) {
+				this.sessionData.setCategory(updatedTimeSlice.getCategory())
+						.setStartTime(updatedTimeSlice.getStartTime());
+				this.saveState();
+				this.reloadGui();
+			} else if ((requestCode == PunchInPunchOutActivity.EDIT_STOP)
+					&& punchedIn) {
+				this.sessionData.setCategory(updatedTimeSlice.getCategory())
+						.setStartTime(updatedTimeSlice.getStartTime());
+				this.saveState();
+				this.reloadGui();
+				this.punchOutClock(updatedTimeSlice.getEndTime());
 			}
 		}
 	}
 
-	private TimeSlice getTimeSlice(Intent intent) {
-		return (intent != null) ? ((TimeSlice) intent.getExtras().get(Global.EXTRA_TIMESLICE)) : null;
+	private TimeSlice getTimeSlice(final Intent intent) {
+		return (intent != null) ? ((TimeSlice) intent.getExtras().get(
+				Global.EXTRA_TIMESLICE)) : null;
 	}
 
 	@Override
-	public void onChronometerTick(Chronometer chron) {
-		updateChronOutputTextView();
+	public void onChronometerTick(final Chronometer chron) {
+		this.updateChronOutputTextView();
 	}
 
-	private void updateClock(boolean isPunchedIn)
-	{
-		startStopTimer(isPunchedIn);
-		if (isPunchedIn)
-		{
-			updateCategoryAndStartLabel();
+	private void updateClock(final boolean isPunchedIn) {
+		this.startStopTimer(isPunchedIn);
+		if (isPunchedIn) {
+			this.updateCategoryAndStartLabel();
 		}
 	}
-	
+
 	private void updateChronOutputTextView() {
-		long elapsed = (!tracker.isPunchedIn()) ? tracker.getElapsedTimeInMillisecs() : (TimeTrackerManager.currentTimeMillis() - sessionData.getStartTime());
-		updateElapsedTimeLabel(elapsed);
+		final long elapsed = (!this.tracker.isPunchedIn()) ? this.tracker
+				.getElapsedTimeInMillisecs() : (TimeTrackerManager
+				.currentTimeMillis() - this.sessionData.getStartTime());
+		this.updateElapsedTimeLabel(elapsed);
 	}
 
 	private void updateCategoryAndStartLabel() {
-		TextView labelTv = (TextView) findViewById(R.id.tvTimeInActivity);
-		if (sessionData != null
-				&& sessionData.getCategory() != null) {
-			String labelCategory = String.format(getText(R.string.format_category).toString(),
-							sessionData.getCategoryName());
+		final TextView labelTv = (TextView) this
+				.findViewById(R.id.tvTimeInActivity);
+		if ((this.sessionData != null)
+				&& (this.sessionData.getCategory() != null)) {
+			final String labelCategory = String.format(
+					this.getText(R.string.format_category).toString(),
+					this.sessionData.getCategoryName());
 			labelTv.setText(labelCategory);
 		} else {
-			labelTv.setText(R.string.label_no_current_activity); 
+			labelTv.setText(R.string.label_no_current_activity);
 		}
-		TextView tvStartTime = (TextView) findViewById(R.id.tvStartTime);
-		String labelStartTime = String.format(getText(R.string.format_start_time_).toString() , sessionData.getStartTimeStr());
+		final TextView tvStartTime = (TextView) this
+				.findViewById(R.id.tvStartTime);
+		final String labelStartTime = String.format(
+				this.getText(R.string.format_start_time_).toString(),
+				this.sessionData.getStartTimeStr());
 		tvStartTime.setText(labelStartTime);
 	}
 
-	private void setSelectedTimeSliceCategory(TimeSliceCategory category) {
-		Spinner catSpinner = (Spinner) findViewById(R.id.MainTimeSliceCategory);
+	private void setSelectedTimeSliceCategory(final TimeSliceCategory category) {
+		final Spinner catSpinner = (Spinner) this
+				.findViewById(R.id.MainTimeSliceCategory);
 		for (int position = 0; position < catSpinner.getCount(); position++) {
 			if (catSpinner.getItemAtPosition(position).equals(category)) {
 				catSpinner.setSelection(position);
@@ -502,11 +546,12 @@ public class PunchInPunchOutActivity extends Activity implements OnChronometerTi
 	}
 
 	private void saveState() {
-		tracker.saveState();
+		this.tracker.saveState();
 	}
-	
+
 	private TimeTrackerSessionData reloadSessionData() {
-		return tracker.reloadSessionData(); // ((TimeTrackerSessionData) getLastNonConfigurationInstance());
+		return this.tracker.reloadSessionData(); // ((TimeTrackerSessionData)
+													// getLastNonConfigurationInstance());
 	}
 
 }

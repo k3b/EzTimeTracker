@@ -8,15 +8,15 @@ import com.zettsett.timetracker.DateTimeFormatter;
 
 public class TimeSlice implements Serializable, ITimeSliceFilter {
 	private static final long serialVersionUID = 6586305797483181442L;
-	
+
 	public static final long NO_TIME_VALUE = 0;
 	public static final int IS_NEW_TIMESLICE = -1;
 
-	private int rowId = IS_NEW_TIMESLICE;
+	private int rowId = TimeSlice.IS_NEW_TIMESLICE;
 
-	private long startTime = NO_TIME_VALUE;
+	private long startTime = TimeSlice.NO_TIME_VALUE;
 
-	private long endTime = NO_TIME_VALUE;
+	private long endTime = TimeSlice.NO_TIME_VALUE;
 
 	private TimeSliceCategory category;
 
@@ -25,113 +25,121 @@ public class TimeSlice implements Serializable, ITimeSliceFilter {
 	private static Calendar calendar = new GregorianCalendar();
 
 	public int getRowId() {
-		return rowId;
+		return this.rowId;
 	}
 
-	public TimeSlice setRowId(int rowId) {
+	public TimeSlice setRowId(final int rowId) {
 		this.rowId = rowId;
 		return this;
 	}
 
 	@Override
 	public long getStartTime() {
-		return startTime;
+		return this.startTime;
 	}
 
-	public TimeSlice setStartTime(long startTime) {
+	public TimeSlice setStartTime(final long startTime) {
 		this.startTime = startTime;
 		return this;
 	}
 
 	public String getStartDateStr() {
-		return DateTimeFormatter.getInstance().getLongDateStr(startTime);
+		return DateTimeFormatter.getInstance().getLongDateStr(this.startTime);
 	}
 
-	public int getStartTimeComponent(int componentId) {
-		calendar.setTimeInMillis(startTime);
-		return calendar.get(componentId);
+	public int getStartTimeComponent(final int componentId) {
+		TimeSlice.calendar.setTimeInMillis(this.startTime);
+		return TimeSlice.calendar.get(componentId);
 	}
 
 	public String getStartTimeStr() {
-		return DateTimeFormatter.getInstance().getTimeString(startTime);
+		return DateTimeFormatter.getInstance().getTimeString(this.startTime);
 	}
 
 	public String getEndTimeStr() {
-		if (startTime == NO_TIME_VALUE) {
+		if (this.startTime == TimeSlice.NO_TIME_VALUE) {
 			return "";
 		} else {
-			return DateTimeFormatter.getInstance().getTimeString(endTime);
+			return DateTimeFormatter.getInstance().getTimeString(this.endTime);
 		}
 	}
 
 	@Override
 	public long getEndTime() {
-		return endTime;
+		return this.endTime;
 	}
 
-	public TimeSlice setEndTime(long endTime) {
+	public TimeSlice setEndTime(final long endTime) {
 		this.endTime = endTime;
 		return this;
 	}
 
 	public long getDurationInMilliseconds() {
-		return endTime - startTime;
+		return this.endTime - this.startTime;
 	}
 
 	@Override
 	public int getCategoryId() {
-		TimeSliceCategory category = getCategory();
-		return (category != null) ? category.getRowId() : TimeSliceCategory.NOT_SAVED;
+		final TimeSliceCategory category = this.getCategory();
+		return (category != null) ? category.getRowId()
+				: TimeSliceCategory.NOT_SAVED;
 	}
 
 	public TimeSliceCategory getCategory() {
-		return category;
+		return this.category;
 	}
 
-	public TimeSlice setCategory(TimeSliceCategory category) {
+	public TimeSlice setCategory(final TimeSliceCategory category) {
 		this.category = category;
 		return this;
 	}
 
 	public String getCategoryName() {
-		return (getCategory() != null) ? getCategory().getCategoryName() : "???";
+		return (this.getCategory() != null) ? this.getCategory()
+				.getCategoryName() : "???";
 	}
 
 	public Object getCategoryDescription() {
-		return (getCategory() != null) ? getCategory().getDescription() : "???";
+		return (this.getCategory() != null) ? this.getCategory()
+				.getDescription() : "???";
 	}
 
 	public String getTitle() {
-		return getCategoryName() + ": " + getStartTimeStr() + " - " + getEndTimeStr();
+		return this.getCategoryName() + ": " + this.getStartTimeStr() + " - "
+				+ this.getEndTimeStr();
 	}
 
 	public String getTitleWithDuration() {
-		return getCategoryName() + ": " 
-				+ getStartTimeStr() + " - " + getEndTimeStr()
-				+ " (" + DateTimeFormatter.getInstance().hrColMin(getDurationInMilliseconds(), true,true) + ")";
+		return this.getCategoryName()
+				+ ": "
+				+ this.getStartTimeStr()
+				+ " - "
+				+ this.getEndTimeStr()
+				+ " ("
+				+ DateTimeFormatter.getInstance().hrColMin(
+						this.getDurationInMilliseconds(), true, true) + ")";
 	}
 
 	public String getNotes() {
-		if (notes != null) {
-			return notes;
+		if (this.notes != null) {
+			return this.notes;
 		} else {
 			return "";
 		}
 	}
 
-	public TimeSlice setNotes(String notes) {
+	public TimeSlice setNotes(final String notes) {
 		this.notes = (notes != null) ? notes.trim() : "";
 		return this;
 	}
 
 	public boolean isPunchedIn() {
-		return (this.getStartTime() != NO_TIME_VALUE) && (this.getEndTime() == NO_TIME_VALUE);
+		return (this.getStartTime() != TimeSlice.NO_TIME_VALUE)
+				&& (this.getEndTime() == TimeSlice.NO_TIME_VALUE);
 	}
 
-	public void load(TimeSlice source)
-	{
-		if (source != null)
-		{
+	public void load(final TimeSlice source) {
+		if (source != null) {
 			this.setRowId(source.getRowId());
 			this.setCategory(source.getCategory());
 			this.setStartTime(source.getStartTime());
@@ -140,7 +148,8 @@ public class TimeSlice implements Serializable, ITimeSliceFilter {
 		}
 	}
 
-	@Override public String toString() {
-		return getTitleWithDuration();
+	@Override
+	public String toString() {
+		return this.getTitleWithDuration();
 	}
 }

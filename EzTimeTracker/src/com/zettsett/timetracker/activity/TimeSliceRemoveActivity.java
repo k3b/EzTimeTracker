@@ -26,8 +26,8 @@ public class TimeSliceRemoveActivity extends FilterActivity {
 	}
 
 	private void doRemove() {
-		final int itemsDeleted = TimeSliceRepository.deleteForDateRange(
-				this.filter);
+		final int itemsDeleted = TimeSliceRepository
+				.deleteForDateRange(this.filter);
 		final String message = this
 				.getStatusMessage(R.string.format_message_interval_deleted)
 				+ itemsDeleted;

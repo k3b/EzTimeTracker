@@ -6,46 +6,47 @@ import android.database.sqlite.SQLiteDatabase;
 import com.zetter.androidTime.R;
 
 /**
- * Singleton database instance.
- * Database is automatically opend on first access
+ * Singleton database instance. Database is automatically opend on first access
  */
 public class DatabaseInstance {
 	private DatabaseHelper mDbHelper;
 	private SQLiteDatabase mDb;
 	private Context mCtx;
 	private static DatabaseInstance currentInstance;
-			
+
 	public static DatabaseInstance getCurrentInstance() {
-		if(currentInstance == null) {
-			DatabaseInstance instance = new DatabaseInstance();
-			currentInstance = instance; 
+		if (DatabaseInstance.currentInstance == null) {
+			final DatabaseInstance instance = new DatabaseInstance();
+			DatabaseInstance.currentInstance = instance;
 		}
-		return currentInstance;
+		return DatabaseInstance.currentInstance;
 	}
 
-	public DatabaseInstance initialize(Context ctx) {
-		currentInstance.mCtx = ctx;
+	public DatabaseInstance initialize(final Context ctx) {
+		DatabaseInstance.currentInstance.mCtx = ctx;
 		return this;
 	}
-	
+
 	public DatabaseInstance close() {
 		try {
-			if (currentInstance.mDb != null) {
-				currentInstance.mDb.close();
-				currentInstance.mDbHelper.close();
+			if (DatabaseInstance.currentInstance.mDb != null) {
+				DatabaseInstance.currentInstance.mDb.close();
+				DatabaseInstance.currentInstance.mDbHelper.close();
 			}
 		} finally {
-			currentInstance.mDb = null;
-			currentInstance.mDbHelper = null;
+			DatabaseInstance.currentInstance.mDb = null;
+			DatabaseInstance.currentInstance.mDbHelper = null;
 		}
 		return this;
 	}
 
 	public SQLiteDatabase getDb() {
-		if(currentInstance.mDb == null || !currentInstance.mDb.isOpen()) {
-			mDbHelper = new DatabaseHelper(mCtx, mCtx.getString(R.string.database_name));
-			mDb = mDbHelper.getWritableDatabase();
+		if ((DatabaseInstance.currentInstance.mDb == null)
+				|| !DatabaseInstance.currentInstance.mDb.isOpen()) {
+			this.mDbHelper = new DatabaseHelper(this.mCtx,
+					this.mCtx.getString(R.string.database_name));
+			this.mDb = this.mDbHelper.getWritableDatabase();
 		}
-		return currentInstance.mDb;
+		return DatabaseInstance.currentInstance.mDb;
 	}
 }

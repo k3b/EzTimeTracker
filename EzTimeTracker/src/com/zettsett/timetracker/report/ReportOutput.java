@@ -14,25 +14,25 @@ public class ReportOutput {
 
 	}
 
-	public static ReportOutput makeFormatter(List<TextView> reportList) {
-		ReportOutput f = new ReportOutput();
+	public static ReportOutput makeFormatter(final List<TextView> reportList) {
+		final ReportOutput f = new ReportOutput();
 		f.reportList = reportList;
 		return f;
 	}
 
 	public String getOutput() {
-		StringBuilder builder = new StringBuilder();
-		if (output == null) {
-			for (TextView view : reportList) {
+		final StringBuilder builder = new StringBuilder();
+		if (this.output == null) {
+			for (final TextView view : this.reportList) {
 				builder.append(view.getText().toString());
-				builder.append(terminator);
+				builder.append(this.terminator);
 			}
-			output = builder.toString();
+			this.output = builder.toString();
 		}
-		return output;
+		return this.output;
 	}
 
-	public void setTerminator(String terminator) {
+	public void setTerminator(final String terminator) {
 		this.terminator = terminator;
 	}
 
