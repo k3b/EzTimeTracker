@@ -1,3 +1,4 @@
+* Fixed appendmode for punched out timeslice if within Settings.minPunchInTreshhold including notes merge.
 * Replaced Settings.minTreshhold with
   * minPunchInTreshhold: New Punchin within same Category if longer away than this (in seconds).Else append to previous.
   * minPunchOutTreshhold: Punchout only if longer than this (in seconds). Else discard.

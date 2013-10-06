@@ -39,29 +39,29 @@ public class TimeSliceRepository {
 
 	/**
 	 * creates a new timeSlice, <br/>
-	 * if distance to last timeslice > Settings.minPunchInTrashhold
+	 * if distance to last timeslice > Settings.minPunchInTrashhold.<br/>
+	 * Else append to previous.
 	 * 
 	 * @param timeSlice
 	 * @return rowid if successfull or -1 if error.
 	 */
 	public long create(final TimeSlice timeSlice) {
-		final long startTime = timeSlice.getStartTime();
+		final long newStartTime = timeSlice.getStartTime();
 		final TimeSlice oldTimeSlice = this
 				.fetchOldestByCategoryAndEndTimeInterval(
 						"create-Find with same category to append to",
 						timeSlice.getCategory(),
-						startTime
+						newStartTime
 								- Settings.getMinPunchInTreshholdInMilliSecs(),
-						startTime);
+						newStartTime);
 
 		if (oldTimeSlice != null) {
-			timeSlice
-					.setStartTime(oldTimeSlice.getStartTime())
-					.setRowId(oldTimeSlice.getRowId())
-					.setNotes(
-							oldTimeSlice.getNotes() + " "
-									+ timeSlice.getNotes());
-
+			timeSlice.setRowId(oldTimeSlice.getRowId()).setNotes(
+					oldTimeSlice.getNotes() + " " + timeSlice.getNotes());
+			final long oldStartTime = oldTimeSlice.getStartTime();
+			if (oldStartTime < newStartTime) {
+				timeSlice.setStartTime(oldStartTime);
+			}
 			if (Global.isDebugEnabled()) {
 				Log.d(Global.LOG_CONTEXT, "create(): merging old timeslice '"
 						+ oldTimeSlice + "' to '" + timeSlice + "'.");
@@ -69,8 +69,9 @@ public class TimeSliceRepository {
 			return (this.update(timeSlice) > 0) ? timeSlice.getRowId() : -1;
 		} else {
 			if (Global.isDebugEnabled()) {
-				Log.d(Global.LOG_CONTEXT, "db-inserting new timeslice '"
-						+ timeSlice + "'.");
+				Log.d(Global.LOG_CONTEXT,
+						"create(): db-inserting new timeslice '" + timeSlice
+								+ "'.");
 			}
 			return TimeSliceRepository.CURRENT_DB_INSTANCE.getDb().insert(
 					DatabaseHelper.TIME_SLICE_TABLE, null,
