@@ -89,7 +89,7 @@ public class CategoryListActivity extends ListActivity implements
 		case DELETE_MENU_ID:
 			final TimeSliceRepository timeSliceRepository = new TimeSliceRepository(
 					this);
-			if (timeSliceRepository.categoryHasTimeSlices(this.categoryClicked)) {
+			if (timeSliceRepository.getCount(this.categoryClicked) > 0) {
 				this.showDialog(CategoryListActivity.DELETE_MENU_ID);
 			} else {
 				this.categoryRepository.delete(this.categoryClicked.getRowId());
@@ -108,8 +108,9 @@ public class CategoryListActivity extends ListActivity implements
 	private void showDetailReport() {
 		if ((this.categoryClicked != null)
 				&& (this.categoryClicked != TimeSliceCategory.NO_CATEGORY)) {
-			final TimeSliceFilterParameter filter = new TimeSliceFilterParameter().setCategoryId(
-					this.categoryClicked.getRowId()).setIgnoreDates(true);
+			final TimeSliceFilterParameter filter = new TimeSliceFilterParameter()
+					.setCategoryId(this.categoryClicked.getRowId())
+					.setIgnoreDates(true);
 			TimeSheetDetailReportActivity.showActivity(this, filter);
 		}
 	}

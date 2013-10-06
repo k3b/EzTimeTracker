@@ -1,6 +1,11 @@
 
 todo
+	alle repository filter methoden testen
+		findTimesliceByCategoryAndEndTimeInterval when add within interval
+		
 	report
+		alle repository methoden auf sqlFilter umstellen?
+			v add(field, operation, value???
 		first line:filter-settings
 		if not data then --no data--
 	summaryReport-ctx-menu-

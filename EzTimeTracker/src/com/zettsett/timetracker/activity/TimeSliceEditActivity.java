@@ -314,7 +314,7 @@ public class TimeSliceEditActivity extends Activity implements ICategorySetter {
 
 	public static void showTimeSliceEditActivity(final Activity parentActivity,
 			final int rowId, final int requestCode) {
-		final TimeSlice timeSlice = TimeSliceRepository.getTimeSliceDBAdapter(
+		final TimeSlice timeSlice = TimeSliceRepository.getDBAdapter(
 				parentActivity).fetchByRowID(rowId);
 		TimeSliceEditActivity.showTimeSliceEditActivity(parentActivity,
 				timeSlice, requestCode);

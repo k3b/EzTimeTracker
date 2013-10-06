@@ -6,9 +6,16 @@
 		android:key="first_category">
 		
 		<EditTextPreference
-			android:key="minTrashholdInSecs"
-			android:summary="Tracking only if longer than this (in seconds)"
-			android:title="Minimum treshhold" 
+			android:key="minPunchInTreshholdInSecs"
+			android:summary="New Punchin within same Category if longer away than this (in seconds). Else append to previous."
+			android:title="Min New Treshhold" 
+			android:defaultValue="1"
+		/>
+		
+		<EditTextPreference
+			android:key="minPunchOutTreshholdInSecs"
+			android:summary="Punchout only if longer than this (in seconds). Else discard."
+			android:title="Min End Treshhold" 
 			android:defaultValue="1"
 		/>
 		

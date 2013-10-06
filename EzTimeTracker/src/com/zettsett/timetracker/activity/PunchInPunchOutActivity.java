@@ -450,7 +450,9 @@ public class PunchInPunchOutActivity extends Activity implements
 	}
 
 	/**
-	 * call back from sub-activities
+	 * Call back from sub-activities.<br/>
+	 * Process Change StartTime (longpress start), Select StopTime befor stop
+	 * (longpress stop)
 	 */
 	@Override
 	protected void onActivityResult(final int requestCode,

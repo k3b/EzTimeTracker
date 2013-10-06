@@ -184,7 +184,7 @@ public class TimeSheetDetailReportActivity extends Activity implements
 		String lastStartDate = "";
 		final TimeSliceFilterParameter rangeFilter = TimeSheetDetailReportActivity.mRangeFilter;
 		final List<TimeSlice> timeSlices = this.mTimeSliceRepository
-				.fetchTimeSlices(rangeFilter);
+				.fetchList(rangeFilter);
 		Log.i(Global.LOG_CONTEXT,
 				"fetchTimeSlicesByDateRange:"
 						+ (System.currentTimeMillis() - performanceMeasureStart));
@@ -284,6 +284,9 @@ public class TimeSheetDetailReportActivity extends Activity implements
 		}
 	}
 
+	/**
+	 * handle edit or changeFilter
+	 */
 	@Override
 	protected void onActivityResult(final int requestCode,
 			final int resultCode, final Intent intent) {
@@ -293,16 +296,19 @@ public class TimeSheetDetailReportActivity extends Activity implements
 					.get(Global.EXTRA_TIMESLICE);
 
 			if (updatedTimeSlice != null) {
+				// after Edit saveNew/updateExisting Timeslice
 				if (updatedTimeSlice.getRowId() == TimeSlice.IS_NEW_TIMESLICE) {
-					this.mTimeSliceRepository.createTimeSlice(updatedTimeSlice);
+					this.mTimeSliceRepository.create(updatedTimeSlice);
 				} else {
-					this.mTimeSliceRepository.updateTimeSlice(updatedTimeSlice);
+					this.mTimeSliceRepository.update(updatedTimeSlice);
 				}
 			} else if (resultCode == ReportFilterActivity.RESULT_FILTER_CHANGED) {
+				// after filter change: remeber new filter
 				TimeSheetDetailReportActivity.mRangeFilter = this.mReportFramework
 						.onActivityResult(intent,
 								TimeSheetDetailReportActivity.mRangeFilter);
 			}
+
 			this.loadDataIntoReport(0);
 		}
 	}

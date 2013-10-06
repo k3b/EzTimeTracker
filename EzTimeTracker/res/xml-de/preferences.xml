@@ -6,12 +6,19 @@
 		android:key="first_category">
 		
 		<EditTextPreference
-			android:key="minTrashholdInSecs"
-			android:summary="Zeitmessung nur wenn mindestens x (in seconds)"
-			android:title="Untergrenze" 
+			android:key="minPunchInTreshholdInSecs"
+			android:summary="Erneute Zeitmessung bei gleicher Category frühstens nach x Sekunden. Sonst an vorhergehende anhängen."
+			android:title="Min neue Buchung" 
 			android:defaultValue="1"
 		/>
-		
+
+		<EditTextPreference
+			android:key="minPunchOutTreshholdInSecs"
+			android:summary="Zeitmessung nur beenden wenn länger als x Sekunden. Sonst verwerfen."
+			android:title="Min Ende Buchung" 
+			android:defaultValue="1"
+		/>
+				
 		<CheckBoxPreference android:key="publicDatabase" 
 			android:defaultValue="false"
 			android:title="Public Database" 

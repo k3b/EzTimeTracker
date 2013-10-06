@@ -6,7 +6,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.zettsett.timetracker.activity.TimeSliceFilterParameter;
-import com.zettsett.timetracker.database.TimeSliceSql.SqlFilter;
+
+import de.k3b.database.SqlFilter;
 
 public class TimeSliceSqlTest {
 	TimeSliceFilterParameter timeSliceFilter;
@@ -73,7 +74,7 @@ public class TimeSliceSqlTest {
 				.createFilter(this.timeSliceFilter);
 
 		Assert.assertEquals(sqlFilter.getDebugMessage("sql"),
-				"notes IS NOT NULL AND notes <> '' ", sqlFilter.sql);
+				"notes IS NOT NULL AND notes <> ''", sqlFilter.sql);
 		Assert.assertNull(sqlFilter.getDebugMessage("args"), sqlFilter.args);
 	}
 
@@ -103,5 +104,7 @@ public class TimeSliceSqlTest {
 		Assert.assertNotNull(sqlFilter.getDebugMessage("sql"), sqlFilter.sql);
 		Assert.assertEquals(sqlFilter.getDebugMessage("args.length"), 4,
 				sqlFilter.args.length);
+
+		System.out.append(sqlFilter.toString());
 	}
 }

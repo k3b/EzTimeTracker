@@ -52,6 +52,11 @@ public class TimeTrackerManager {
 		return this.punchInClock(cat, startDateTime);
 	}
 
+	/**
+	 * Start new punchInSession.<br/>
+	 * 
+	 * @return true if success
+	 */
 	public Boolean punchInClock(final TimeSliceCategory selectedCategory,
 			final long startDateTime) {
 		if (Global.isInfoEnabled() && (selectedCategory != null)) {
@@ -70,7 +75,7 @@ public class TimeTrackerManager {
 		if (!isPunchedIn || hasCategoryChanged) {
 			if (isPunchedIn && hasCategoryChanged) {
 				this.sessionData.setEndTime(startDateTime);
-				this.timeSliceRepository.createTimeSlice(this.sessionData);
+				this.timeSliceRepository.create(this.sessionData);
 			}
 			this.sessionData.beginNewSlice(selectedCategory, startDateTime);
 			this.sessionData.setNotes("");
@@ -89,10 +94,6 @@ public class TimeTrackerManager {
 	}
 
 	public Boolean punchOutClock(final long endDateTime, final String notes) {
-		if (Log.isLoggable(Global.LOG_CONTEXT, Log.INFO)) {
-			Log.i(Global.LOG_CONTEXT, "punchOutClock(" + this.sessionData + ")");
-		}
-
 		if ((notes != null) && (notes.length() > 0)) {
 			this.sessionData.setNotes(notes);
 		}
@@ -101,8 +102,13 @@ public class TimeTrackerManager {
 				&& (this.sessionData.isPunchedIn())) {
 			this.sessionData.setEndTime(endDateTime);
 			if (this.sessionData.getElapsedTimeInMillisecs() > Settings
-					.getMinminTrashholdInMilliSecs()) {
-				this.timeSliceRepository.createTimeSlice(this.sessionData);
+					.getMinPunchOutTreshholdInMilliSecs()) {
+				if (Log.isLoggable(Global.LOG_CONTEXT, Log.INFO)) {
+					Log.i(Global.LOG_CONTEXT, "punchOutClock("
+							+ this.sessionData + ") persisting ...");
+				}
+
+				this.timeSliceRepository.create(this.sessionData);
 				this.saveState();
 				return true;
 			} else {
@@ -111,7 +117,7 @@ public class TimeTrackerManager {
 								+ this.sessionData + ") : elapsed "
 								+ this.sessionData.getElapsedTimeInMillisecs()
 								+ " time smaller than trashhold "
-								+ Settings.getMinminTrashholdInMilliSecs());
+								+ Settings.getMinPunchOutTreshholdInMilliSecs());
 				this.saveState();
 			}
 		} else {

@@ -402,7 +402,7 @@ public class TimeSheetSummaryReportActivity extends Activity implements
 		final TimeSliceFilterParameter rangeFilter = TimeSheetSummaryReportActivity.mRangeFilter;
 
 		final List<TimeSlice> timeSlices = this.mTimeSliceRepository
-				.fetchTimeSlices(rangeFilter);
+				.fetchList(rangeFilter);
 
 		final TimeSheetSummaryCalculator summaries = new TimeSheetSummaryCalculator(
 				this.mReportMode, this.mReportDateGrouping, timeSlices);

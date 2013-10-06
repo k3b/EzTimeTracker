@@ -191,7 +191,7 @@ public class TimeSliceExportActivity extends Activity implements
 		final TimeSliceFilterParameter filter = new TimeSliceFilterParameter()
 				.setStartTime(this.mFromDate).setEndTime(this.mToDate)
 				.setIgnoreDates(this.mExportAll);
-		timeSlices = mTimeSliceRepository.fetchTimeSlices(filter);
+		timeSlices = mTimeSliceRepository.fetchList(filter);
 		final StringBuilder output = new StringBuilder();
 		output.append("Start, End, Category Name, Category Description, Notes")
 				.append(TimeSliceExportActivity.CSV_LINE_SEPERATOR);

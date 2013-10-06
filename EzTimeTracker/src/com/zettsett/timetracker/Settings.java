@@ -7,23 +7,41 @@ import android.util.Log;
 
 public class Settings {
 
-	private static int minTrashholdInSecs = 1;
 	private static boolean publicDatabase = false;
 	private static boolean hideInactiveCategories = false;
+	private static int minPunchOutTreshholdInSecs = 1;
+	private static int minPunchInTreshholdInSecs = 1;
 
 	public static void init(final Context context) {
 		final SharedPreferences prefs = PreferenceManager
 				.getDefaultSharedPreferences(context);
-		Settings.minTrashholdInSecs = Settings.getPrefValue(prefs,
-				"minTrashholdInSecs", Settings.minTrashholdInSecs);
+		Settings.minPunchInTreshholdInSecs = Settings.getPrefValue(prefs,
+				"minPunchInTreshholdInSecs",
+				Settings.minPunchOutTreshholdInSecs);
+		Settings.minPunchOutTreshholdInSecs = Settings.getPrefValue(prefs,
+				"minPunchOutTreshholdInSecs",
+				Settings.minPunchOutTreshholdInSecs);
 		Settings.publicDatabase = Settings.getPrefValue(prefs,
 				"publicDatabase", Settings.publicDatabase);
 		Settings.hideInactiveCategories = Settings.getPrefValue(prefs,
 				"hideInactiveCategories", Settings.hideInactiveCategories);
 	}
 
-	public static long getMinminTrashholdInMilliSecs() {
-		return 1000l * Settings.minTrashholdInSecs;
+	/**
+	 * New Punchin within same Category if longer away than this (in seconds).<br/>
+	 * Else append to previous.
+	 * 
+	 * @return
+	 */
+	public static long getMinPunchInTreshholdInMilliSecs() {
+		return 1000l * Settings.minPunchInTreshholdInSecs;
+	}
+
+	/**
+	 * Punchout only if longer than this (in seconds). Else discard.
+	 */
+	public static long getMinPunchOutTreshholdInMilliSecs() {
+		return 1000l * Settings.minPunchOutTreshholdInSecs;
 	}
 
 	public static boolean getHideInactiveCategories() {
@@ -43,7 +61,7 @@ public class Settings {
 			final String key, final int notFoundValue) {
 		try {
 			return Integer.parseInt(prefs.getString(key,
-					Integer.toString(Settings.minTrashholdInSecs)));
+					Integer.toString(Settings.minPunchOutTreshholdInSecs)));
 		} catch (final ClassCastException ex) {
 			Log.w(Global.LOG_CONTEXT, "getPrefValue-Integer(" + key + ","
 					+ notFoundValue + ") failed: " + ex.getMessage());

@@ -12,10 +12,11 @@ import android.util.Log;
 import com.zettsett.timetracker.Global;
 import com.zettsett.timetracker.Settings;
 import com.zettsett.timetracker.activity.TimeSliceFilterParameter;
-import com.zettsett.timetracker.database.TimeSliceSql.SqlFilter;
 import com.zettsett.timetracker.model.ITimeSliceFilter;
 import com.zettsett.timetracker.model.TimeSlice;
 import com.zettsett.timetracker.model.TimeSliceCategory;
+
+import de.k3b.database.SqlFilter;
 
 public class TimeSliceRepository {
 	private static final DatabaseInstance CURRENT_DB_INSTANCE = DatabaseInstance
@@ -28,8 +29,7 @@ public class TimeSliceRepository {
 		this.categoryRepository = new TimeSliceCategoryRepsitory(context);
 	}
 
-	public static TimeSliceRepository getTimeSliceDBAdapter(
-			final Context context) {
+	public static TimeSliceRepository getDBAdapter(final Context context) {
 		if (TimeSliceRepository.timeSliceRepositorySingleton == null) {
 			TimeSliceRepository.timeSliceRepositorySingleton = new TimeSliceRepository(
 					context);
@@ -37,29 +37,36 @@ public class TimeSliceRepository {
 		return TimeSliceRepository.timeSliceRepositorySingleton;
 	}
 
-	public long createTimeSlice(final TimeSlice timeSlice) {
+	/**
+	 * creates a new timeSlice, <br/>
+	 * if distance to last timeslice > Settings.minPunchInTrashhold
+	 * 
+	 * @param timeSlice
+	 * @return rowid if successfull or -1 if error.
+	 */
+	public long create(final TimeSlice timeSlice) {
 		final long startTime = timeSlice.getStartTime();
 		final TimeSlice oldTimeSlice = this
-				.findTimesliceByCategoryAndEndTimeInterval(
-						"createTimeSlice-Find possible duplicate",
+				.fetchOldestByCategoryAndEndTimeInterval(
+						"create-Find with same category to append to",
 						timeSlice.getCategory(),
-						startTime - Settings.getMinminTrashholdInMilliSecs(),
+						startTime
+								- Settings.getMinPunchInTreshholdInMilliSecs(),
 						startTime);
 
 		if (oldTimeSlice != null) {
-			oldTimeSlice.setEndTime(timeSlice.getEndTime());
-			oldTimeSlice.setNotes(oldTimeSlice.getNotes() + " "
-					+ timeSlice.getNotes());
+			timeSlice
+					.setStartTime(oldTimeSlice.getStartTime())
+					.setRowId(oldTimeSlice.getRowId())
+					.setNotes(
+							oldTimeSlice.getNotes() + " "
+									+ timeSlice.getNotes());
 
 			if (Global.isDebugEnabled()) {
-				Log.d(Global.LOG_CONTEXT, "db-updating exising timeslice '"
-						+ oldTimeSlice + "' from '" + timeSlice + "'.");
+				Log.d(Global.LOG_CONTEXT, "create(): merging old timeslice '"
+						+ oldTimeSlice + "' to '" + timeSlice + "'.");
 			}
-			TimeSliceRepository.CURRENT_DB_INSTANCE.getDb().update(
-					DatabaseHelper.TIME_SLICE_TABLE,
-					this.timeSliceContentValuesList(oldTimeSlice), "_id=?",
-					new String[] { Long.toString(oldTimeSlice.getRowId()) });
-			return oldTimeSlice.getRowId();
+			return (this.update(timeSlice) > 0) ? timeSlice.getRowId() : -1;
 		} else {
 			if (Global.isDebugEnabled()) {
 				Log.d(Global.LOG_CONTEXT, "db-inserting new timeslice '"
@@ -71,7 +78,12 @@ public class TimeSliceRepository {
 		}
 	}
 
-	public long updateTimeSlice(final TimeSlice timeSlice) {
+	/**
+	 * update existing timeslice.
+	 * 
+	 * @return number of affected rows.
+	 */
+	public long update(final TimeSlice timeSlice) {
 		final int result = TimeSliceRepository.CURRENT_DB_INSTANCE.getDb()
 				.update(DatabaseHelper.TIME_SLICE_TABLE,
 						this.timeSliceContentValuesList(timeSlice),
@@ -84,18 +96,7 @@ public class TimeSliceRepository {
 		return result;
 	}
 
-	public boolean delete(final long rowId) {
-		final int result = TimeSliceRepository.CURRENT_DB_INSTANCE.getDb()
-				.delete(DatabaseHelper.TIME_SLICE_TABLE, "_id=" + rowId, null);
-		if (Global.isDebugEnabled()) {
-			Log.d(Global.LOG_CONTEXT, "delete(rowId=" + rowId + ") " + result
-					+ " rows affected");
-		}
-
-		return result > 0;
-	}
-
-	public static int deleteForDateRange(final ITimeSliceFilter timeSliceFilter) {
+	public static int delete(final ITimeSliceFilter timeSliceFilter) {
 		final String context = "deleteForDateRange(" + timeSliceFilter + ") ";
 
 		final SqlFilter sqlFilter = TimeSliceRepository.createFilter(context,
@@ -135,17 +136,16 @@ public class TimeSliceRepository {
 		return null;
 	}
 
-	public List<TimeSlice> fetchTimeSlices(
-			final ITimeSliceFilter timeSliceFilter) {
+	public List<TimeSlice> fetchList(final ITimeSliceFilter timeSliceFilter) {
 		final String debugMessage = "TimeSliceRepository.fetchTimeSlices("
 				+ timeSliceFilter + ")";
 		final SqlFilter sqlFilter = TimeSliceRepository.createFilter(
 				debugMessage, timeSliceFilter);
 
-		return this.fetchTimeSlicesInternal(debugMessage, sqlFilter);
+		return this.fetchListInternal(debugMessage, sqlFilter);
 	}
 
-	private List<TimeSlice> fetchTimeSlicesInternal(final String debugMessage,
+	private List<TimeSlice> fetchListInternal(final String debugMessage,
 			final SqlFilter sqlFilter) {
 
 		final List<TimeSlice> result = new ArrayList<TimeSlice>();
@@ -173,58 +173,34 @@ public class TimeSliceRepository {
 		}
 	}
 
-	private TimeSlice fetchTimeSlice(final String debugMessage,
+	private TimeSlice fetchOldest(final String debugMessage,
 			final SqlFilter sqlFilter) {
-		final List<TimeSlice> result = this.fetchTimeSlicesInternal(
-				debugMessage, sqlFilter);
-		if (result.size() == 0) {
+		final List<TimeSlice> result = this.fetchListInternal(debugMessage,
+				sqlFilter);
+		if (result.size() > 0) {
 			return result.get(0);
 		}
 		return null;
 	}
 
-	public boolean categoryHasTimeSlices(final TimeSliceCategory category)
-			throws SQLException {
-		Cursor cur = null;
-		boolean result = false;
-		try {
-			cur = TimeSliceRepository.CURRENT_DB_INSTANCE.getDb().query(true,
-					DatabaseHelper.TIME_SLICE_TABLE, this.columnList(),
-					TimeSliceSql.COL_CATEGORY_ID + "=?",
-					new String[] { Long.toString(category.getRowId()) }, null,
-					null, null, null);
-			if (cur.moveToNext()) {
-				result = true;
-			}
-			return result;
-		} catch (final Exception ex) {
-			throw new TimeTrackerDBException(
-					"TimeSliceRepository.categoryHasTimeSlices(" + category
-							+ ") ", null, ex);
-		} finally {
-			if (cur != null) {
-				cur.close();
-			}
-			if (Global.isDebugEnabled()) {
-				Log.d(Global.LOG_CONTEXT, "categoryHasTimeSlices(" + category
-						+ ") " + result + " items found");
-			}
-		}
-
-	}
-
-	private TimeSlice findTimesliceByCategoryAndEndTimeInterval(
+	private TimeSlice fetchOldestByCategoryAndEndTimeInterval(
 			final String debugMessage, final TimeSliceCategory category,
 			final long minimumEndDate, final long maximumEndDate) {
 		final TimeSliceFilterParameter timeSliceFilter = new TimeSliceFilterParameter()
 				.setParameter(minimumEndDate, maximumEndDate,
 						category.getRowId());
-		final SqlFilter sqlFilter = TimeSliceRepository.createFilter(
-				debugMessage, timeSliceFilter);
+		final de.k3b.database.SqlFilter sqlFilter = TimeSliceRepository
+				.createFilter(debugMessage, timeSliceFilter);
 		final SqlFilter sqlEndFilter = new SqlFilter(sqlFilter.sql.replace(
 				TimeSliceSql.COL_START_TIME, TimeSliceSql.COL_END_TIME),
 				sqlFilter.args);
-		return this.fetchTimeSlice(debugMessage, sqlEndFilter);
+		return this.fetchOldest(debugMessage, sqlEndFilter);
+	}
+
+	public int getCount(final TimeSliceCategory category) throws SQLException {
+		final ITimeSliceFilter timeSliceFilter = new TimeSliceFilterParameter()
+				.setCategoryId(category.getRowId());
+		return TimeSliceRepository.getCount(timeSliceFilter);
 	}
 
 	/**

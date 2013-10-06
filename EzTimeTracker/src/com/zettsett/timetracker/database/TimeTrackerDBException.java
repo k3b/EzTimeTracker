@@ -1,6 +1,6 @@
 package com.zettsett.timetracker.database;
 
-import com.zettsett.timetracker.database.TimeSliceSql.SqlFilter;
+import de.k3b.database.SqlFilter;
 
 public class TimeTrackerDBException extends RuntimeException {
 	private static final long serialVersionUID = 694973800312220443L;

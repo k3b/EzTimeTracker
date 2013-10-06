@@ -150,6 +150,6 @@ public class TimeSlice implements Serializable, ITimeSliceFilter {
 
 	@Override
 	public String toString() {
-		return this.getTitleWithDuration();
+		return this.getTitleWithDuration() + ":" + this.getNotes();
 	}
 }
