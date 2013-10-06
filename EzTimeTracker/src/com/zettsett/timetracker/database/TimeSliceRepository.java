@@ -137,16 +137,17 @@ public class TimeSliceRepository {
 
 	public List<TimeSlice> fetchTimeSlices(
 			final ITimeSliceFilter timeSliceFilter) {
-		return this.fetchTimeSlicesInternal(
-				"TimeSliceRepository.fetchTimeSlices(" + timeSliceFilter + ")",
-				timeSliceFilter);
+		final String debugMessage = "TimeSliceRepository.fetchTimeSlices("
+				+ timeSliceFilter + ")";
+		final SqlFilter sqlFilter = TimeSliceRepository.createFilter(
+				debugMessage, timeSliceFilter);
+
+		return this.fetchTimeSlicesInternal(debugMessage, sqlFilter);
 	}
 
 	private List<TimeSlice> fetchTimeSlicesInternal(final String debugMessage,
-			final ITimeSliceFilter timeSliceFilter) {
+			final SqlFilter sqlFilter) {
 
-		final SqlFilter sqlFilter = TimeSliceRepository.createFilter(
-				debugMessage, timeSliceFilter);
 		final List<TimeSlice> result = new ArrayList<TimeSlice>();
 		Cursor cur = null;
 		try {
@@ -173,9 +174,9 @@ public class TimeSliceRepository {
 	}
 
 	private TimeSlice fetchTimeSlice(final String debugMessage,
-			final ITimeSliceFilter timeSliceFilter) {
+			final SqlFilter sqlFilter) {
 		final List<TimeSlice> result = this.fetchTimeSlicesInternal(
-				debugMessage, timeSliceFilter);
+				debugMessage, sqlFilter);
 		if (result.size() == 0) {
 			return result.get(0);
 		}
@@ -218,7 +219,12 @@ public class TimeSliceRepository {
 		final TimeSliceFilterParameter timeSliceFilter = new TimeSliceFilterParameter()
 				.setParameter(minimumEndDate, maximumEndDate,
 						category.getRowId());
-		return this.fetchTimeSlice(debugMessage, timeSliceFilter);
+		final SqlFilter sqlFilter = TimeSliceRepository.createFilter(
+				debugMessage, timeSliceFilter);
+		final SqlFilter sqlEndFilter = new SqlFilter(sqlFilter.sql.replace(
+				TimeSliceSql.COL_START_TIME, TimeSliceSql.COL_END_TIME),
+				sqlFilter.args);
+		return this.fetchTimeSlice(debugMessage, sqlEndFilter);
 	}
 
 	/**
@@ -269,7 +275,7 @@ public class TimeSliceRepository {
 		final SqlFilter sqlFilter = TimeSliceRepository.createFilter(context,
 				timeSliceFilter);
 		Cursor cur = null;
-		double result = 0.0;
+		double result = -1.0;
 		try {
 			cur = TimeSliceRepository.CURRENT_DB_INSTANCE.getDb().query(
 					DatabaseHelper.TIME_SLICE_TABLE,
@@ -292,10 +298,7 @@ public class TimeSliceRepository {
 										+ timeSliceFilter + ") = " + result));
 			}
 		}
-		Log.e(Global.LOG_CONTEXT,
-				sqlFilter
-						.getDebugMessage("Not found : TimeSliceRepository.getTotalDurationInHours()"));
-		return 0.0;
+		return result;
 
 	}
 

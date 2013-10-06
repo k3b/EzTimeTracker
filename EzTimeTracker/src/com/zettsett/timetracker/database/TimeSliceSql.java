@@ -26,7 +26,7 @@ class TimeSliceSql {
 	 * helper class because java function cannot return 2 values
 	 */
 	static class SqlFilter {
-		SqlFilter(final String sql, final String[] args) {
+		SqlFilter(final String sql, final String... args) {
 			this.sql = sql;
 			this.args = args;
 		}
@@ -85,13 +85,14 @@ class TimeSliceSql {
 			if (timeSliceFilter != null) {
 				if (timeSliceFilter.isNotesNotNull()) {
 					TimeSliceSql.addAND(sql).append(TimeSliceSql.COL_NOTES)
-							.append(" IS NOT NULL ");
+							.append(" IS NOT NULL AND ")
+							.append(TimeSliceSql.COL_NOTES).append(" <> '' ");
 				} else {
 					final String notes = timeSliceFilter.getNotes();
 					if ((notes != null) && (notes.length() > 0)) {
 						TimeSliceSql.add(sql, filterArgs,
-								TimeSliceSql.COL_NOTES + " LIKE ? ", "%"
-										+ notes + "%", "");
+								TimeSliceSql.COL_NOTES + " LIKE ?", "%" + notes
+										+ "%", "");
 					}
 				}
 			} // if filterParameter
@@ -114,11 +115,11 @@ class TimeSliceSql {
 		if (!ignoreDates) {
 			TimeSliceSql.add(result, filterArgs, TimeSliceSql.COL_START_TIME
 					+ ">= ?", "" + startDate, "" + TimeSlice.NO_TIME_VALUE);
-			TimeSliceSql.add(result, filterArgs, TimeSliceSql.COL_END_TIME
+			TimeSliceSql.add(result, filterArgs, TimeSliceSql.COL_START_TIME
 					+ "<= ?", "" + endDate, "" + TimeSlice.NO_TIME_VALUE);
 		}
 		TimeSliceSql.add(result, filterArgs, TimeSliceSql.COL_CATEGORY_ID
-				+ " = ? ", "" + categoryId, "" + TimeSliceCategory.NOT_SAVED);
+				+ " = ?", "" + categoryId, "" + TimeSliceCategory.NOT_SAVED);
 	}
 
 	private static void add(final StringBuilder result,

@@ -32,7 +32,7 @@ public class TimeSliceSqlTest {
 				.createFilter(this.timeSliceFilter);
 
 		Assert.assertEquals(sqlFilter.getDebugMessage("sql"),
-				"category_id = ? ", sqlFilter.sql);
+				"category_id = ?", sqlFilter.sql);
 		Assert.assertEquals(sqlFilter.getDebugMessage("args.length"), 1,
 				sqlFilter.args.length);
 		Assert.assertEquals(sqlFilter.getDebugMessage("args[0]"), "22",
@@ -56,7 +56,7 @@ public class TimeSliceSqlTest {
 				.createFilter(this.timeSliceFilter);
 
 		Assert.assertEquals(sqlFilter.getDebugMessage("sql"),
-				"start_time>= ? AND end_time<= ?", sqlFilter.sql);
+				"start_time>= ? AND start_time<= ?", sqlFilter.sql);
 		Assert.assertEquals(sqlFilter.getDebugMessage("args.length"), 2,
 				sqlFilter.args.length);
 		Assert.assertEquals(sqlFilter.getDebugMessage("args[0]"), "20010101",
@@ -73,7 +73,7 @@ public class TimeSliceSqlTest {
 				.createFilter(this.timeSliceFilter);
 
 		Assert.assertEquals(sqlFilter.getDebugMessage("sql"),
-				"notes IS NOT NULL ", sqlFilter.sql);
+				"notes IS NOT NULL AND notes <> '' ", sqlFilter.sql);
 		Assert.assertNull(sqlFilter.getDebugMessage("args"), sqlFilter.args);
 	}
 
@@ -84,7 +84,7 @@ public class TimeSliceSqlTest {
 		final SqlFilter sqlFilter = TimeSliceSql
 				.createFilter(this.timeSliceFilter);
 
-		Assert.assertEquals(sqlFilter.getDebugMessage("sql"), "notes LIKE ? ",
+		Assert.assertEquals(sqlFilter.getDebugMessage("sql"), "notes LIKE ?",
 				sqlFilter.sql);
 		Assert.assertEquals(sqlFilter.getDebugMessage("args.length"), 1,
 				sqlFilter.args.length);
