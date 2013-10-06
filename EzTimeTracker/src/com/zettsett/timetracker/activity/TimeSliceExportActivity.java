@@ -188,7 +188,7 @@ public class TimeSliceExportActivity extends Activity implements
 				this);
 		List<TimeSlice> timeSlices;
 
-		final FilterParameter filter = new FilterParameter()
+		final TimeSliceFilterParameter filter = new TimeSliceFilterParameter()
 				.setStartTime(this.mFromDate).setEndTime(this.mToDate)
 				.setIgnoreDates(this.mExportAll);
 		timeSlices = mTimeSliceRepository.fetchTimeSlices(filter);

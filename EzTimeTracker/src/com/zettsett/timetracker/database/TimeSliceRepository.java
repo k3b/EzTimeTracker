@@ -11,16 +11,12 @@ import android.util.Log;
 
 import com.zettsett.timetracker.Global;
 import com.zettsett.timetracker.Settings;
-import com.zettsett.timetracker.activity.FilterParameter;
 import com.zettsett.timetracker.model.ITimeSliceFilter;
 import com.zettsett.timetracker.model.TimeSlice;
 import com.zettsett.timetracker.model.TimeSliceCategory;
 
 public class TimeSliceRepository {
-	private static final String COL_CATEGORY_ID = "category_id";
-	private static final String COL_NOTES = "notes";
-	private static final String COL_END_TIME = "end_time";
-	private static final String COL_START_TIME = "start_time";
+	public static final String[] STRING_ARRAY = new String[0];
 
 	private static final DatabaseInstance CURRENT_DB_INSTANCE = DatabaseInstance
 			.getCurrentInstance();
@@ -79,9 +75,9 @@ public class TimeSliceRepository {
 					true,
 					DatabaseHelper.TIME_SLICE_TABLE,
 					this.columnList(),
-					TimeSliceRepository.COL_CATEGORY_ID + "=? AND "
-							+ TimeSliceRepository.COL_END_TIME + ">=?  AND "
-							+ TimeSliceRepository.COL_END_TIME + "<=?",
+					TimeSliceSql.COL_CATEGORY_ID + "=? AND "
+							+ TimeSliceSql.COL_END_TIME + ">=?  AND "
+							+ TimeSliceSql.COL_END_TIME + "<=?",
 					new String[] { Long.toString(category.getRowId()),
 							Long.toString(minimumEndDate),
 							Long.toString(maximumEndDate) }, null, null, null,
@@ -112,17 +108,20 @@ public class TimeSliceRepository {
 	 * @return
 	 */
 	public static int getCount(final ITimeSliceFilter filterParam) {
-		final String filter = TimeSliceRepository.createFilter(filterParam);
+		final List<String> filterArgs = new ArrayList<String>();
+
+		final String sqlFilter = TimeSliceSql.createFilter(filterParam);
 		Cursor cur = null;
 		try {
-			cur = TimeSliceRepository.CURRENT_DB_INSTANCE.getDb()
-					.query(DatabaseHelper.TIME_SLICE_TABLE,
-							new String[] { "COUNT(*)" }, filter, null, null,
-							null, null);
+			cur = TimeSliceRepository.CURRENT_DB_INSTANCE.getDb().query(
+					DatabaseHelper.TIME_SLICE_TABLE,
+					new String[] { "COUNT(*)" }, sqlFilter,
+					filterArgs.toArray(TimeSliceRepository.STRING_ARRAY), null,
+					null, null);
 			if ((cur != null) && (cur.moveToFirst())) {
 				final int count = cur.getInt(0);
 				Log.d(Global.LOG_CONTEXT, "TimeSliceDBAdapter.getCount("
-						+ filter + ") = " + count);
+						+ sqlFilter + ") = " + count);
 				return count;
 			}
 		} finally {
@@ -131,7 +130,7 @@ public class TimeSliceRepository {
 			}
 		}
 		Log.e(Global.LOG_CONTEXT, "Not found : TimeSliceDBAdapter.getCount("
-				+ filter + ")");
+				+ sqlFilter + ")");
 		return -1;
 
 	}
@@ -143,19 +142,22 @@ public class TimeSliceRepository {
 	 */
 	public static double getTotalDurationInHours(
 			final ITimeSliceFilter filterParam) {
-		final String filter = TimeSliceRepository.createFilter(filterParam);
+		final List<String> filterArgs = new ArrayList<String>();
+
+		final String sqlFilter = TimeSliceSql.createFilter(filterParam);
 		Cursor cur = null;
 		try {
 			cur = TimeSliceRepository.CURRENT_DB_INSTANCE.getDb().query(
 					DatabaseHelper.TIME_SLICE_TABLE,
-					new String[] { "SUM(" + TimeSliceRepository.COL_END_TIME
-							+ "-" + TimeSliceRepository.COL_START_TIME + ")" },
-					filter, null, null, null, null);
+					new String[] { "SUM(" + TimeSliceSql.COL_END_TIME + "-"
+							+ TimeSliceSql.COL_START_TIME + ")" }, sqlFilter,
+					filterArgs.toArray(TimeSliceRepository.STRING_ARRAY), null,
+					null, null);
 			if ((cur != null) && (cur.moveToFirst())) {
 				final double duration = cur.getLong(0) / (1000.0 * 60 * 60);
 				Log.d(Global.LOG_CONTEXT,
-						"TimeSliceDBAdapter.getTotalDurationInHours(" + filter
-								+ ") = " + duration);
+						"TimeSliceDBAdapter.getTotalDurationInHours("
+								+ sqlFilter + ") = " + duration);
 				return duration;
 			}
 		} finally {
@@ -165,7 +167,7 @@ public class TimeSliceRepository {
 		}
 		Log.e(Global.LOG_CONTEXT,
 				"Not found : TimeSliceDBAdapter.getTotalDurationInHours("
-						+ filter + ")");
+						+ sqlFilter + ")");
 		return 0.0;
 
 	}
@@ -176,71 +178,12 @@ public class TimeSliceRepository {
 	}
 
 	public static int deleteForDateRange(final ITimeSliceFilter filterParam) {
-		final String filter = TimeSliceRepository.createFilter(filterParam);
+		final List<String> filterArgs = new ArrayList<String>();
+
+		final String sqlFilter = TimeSliceSql.createFilter(filterParam);
 		return TimeSliceRepository.CURRENT_DB_INSTANCE.getDb().delete(
-				DatabaseHelper.TIME_SLICE_TABLE, filter, null);
-	}
-
-	public static String createFilter(final ITimeSliceFilter filter) {
-		final StringBuilder result = new StringBuilder();
-
-		if (filter != null) {
-			final FilterParameter filterParameter = (filter instanceof FilterParameter) ? (FilterParameter) filter
-					: null;
-			final boolean ignoreDates = (filterParameter == null) ? false
-					: filterParameter.isIgnoreDates();
-
-			TimeSliceRepository.createFilter(result, filter.getStartTime(),
-					filter.getEndTime(), filter.getCategoryId(), ignoreDates);
-
-			if (filterParameter != null) {
-				if (filterParameter.isNotesNotNull()) {
-					TimeSliceRepository.addAND(result)
-							.append(TimeSliceRepository.COL_NOTES)
-							.append(" IS NOT NULL ");
-				} else {
-					final String notes = filterParameter.getNotes();
-					if ((notes != null) && (notes.length() > 0)) {
-						TimeSliceRepository.addAND(result)
-								.append(TimeSliceRepository.COL_NOTES)
-								.append(" like '%").append(notes).append("%'");
-					}
-				}
-			} // if filterParameter
-		} // if not null
-		if (result.length() == 0) {
-			return null;
-		} else {
-			return result.toString();
-		}
-	}
-
-	private static void createFilter(final StringBuilder result,
-			final long startDate, final long endDate, final long categoryId,
-			final boolean ignoreDates) {
-
-		if (!ignoreDates) {
-			TimeSliceRepository.add(result, TimeSliceRepository.COL_START_TIME
-					+ ">=", startDate, TimeSlice.NO_TIME_VALUE);
-			TimeSliceRepository.add(result, TimeSliceRepository.COL_START_TIME
-					+ "<=", endDate, TimeSlice.NO_TIME_VALUE);
-		}
-		TimeSliceRepository.add(result, TimeSliceRepository.COL_CATEGORY_ID
-				+ " =", categoryId, TimeSliceCategory.NOT_SAVED);
-	}
-
-	private static void add(final StringBuilder result, final String field,
-			final long value, final long emptyValue) {
-		if (value != emptyValue) {
-			TimeSliceRepository.addAND(result).append(value);
-		}
-	}
-
-	private static StringBuilder addAND(final StringBuilder result) {
-		if (result.length() > 0) {
-			result.append(" AND ");
-		}
-		return result;
+				DatabaseHelper.TIME_SLICE_TABLE, sqlFilter,
+				filterArgs.toArray(TimeSliceRepository.STRING_ARRAY));
 	}
 
 	public TimeSlice fetchByRowID(final long rowId) throws SQLException {
@@ -270,7 +213,7 @@ public class TimeSliceRepository {
 		try {
 			cur = TimeSliceRepository.CURRENT_DB_INSTANCE.getDb().query(true,
 					DatabaseHelper.TIME_SLICE_TABLE, this.columnList(),
-					TimeSliceRepository.COL_CATEGORY_ID + "=?",
+					TimeSliceSql.COL_CATEGORY_ID + "=?",
 					new String[] { Long.toString(category.getRowId()) }, null,
 					null, null, null);
 			if (cur.moveToNext()) {
@@ -286,13 +229,16 @@ public class TimeSliceRepository {
 	}
 
 	public List<TimeSlice> fetchTimeSlices(final ITimeSliceFilter filterParam) {
-		final String filter = TimeSliceRepository.createFilter(filterParam);
+		final List<String> filterArgs = new ArrayList<String>();
+		final String sqlFilter = TimeSliceSql.createFilter(filterParam);
 		final List<TimeSlice> result = new ArrayList<TimeSlice>();
 		Cursor cur = null;
 		try {
 			cur = TimeSliceRepository.CURRENT_DB_INSTANCE.getDb().query(
-					DatabaseHelper.TIME_SLICE_TABLE, this.columnList(), filter,
-					null, null, null, TimeSliceRepository.COL_START_TIME);
+					DatabaseHelper.TIME_SLICE_TABLE, this.columnList(),
+					sqlFilter,
+					filterArgs.toArray(TimeSliceRepository.STRING_ARRAY), null,
+					null, TimeSliceSql.COL_START_TIME);
 			while (cur.moveToNext()) {
 				final TimeSlice ts = this.fillTimeSliceFromCursor(cur);
 				result.add(ts);
@@ -314,11 +260,11 @@ public class TimeSliceRepository {
 			cur = TimeSliceRepository.CURRENT_DB_INSTANCE.getDb().query(
 					DatabaseHelper.TIME_SLICE_TABLE,
 					this.columnList(),
-					TimeSliceRepository.COL_START_TIME + " >= ? and "
-							+ TimeSliceRepository.COL_START_TIME + " <= ?",
+					TimeSliceSql.COL_START_TIME + " >= ? and "
+							+ TimeSliceSql.COL_START_TIME + " <= ?",
 					new String[] { Long.toString(startDate),
 							Long.toString(endDate) }, null, null,
-					TimeSliceRepository.COL_START_TIME);
+					TimeSliceSql.COL_START_TIME);
 			while (cur.moveToNext()) {
 				final TimeSlice ts = this.fillTimeSliceFromCursor(cur);
 				result.add(ts);
@@ -334,18 +280,18 @@ public class TimeSliceRepository {
 
 	private TimeSlice fillTimeSliceFromCursor(final Cursor cur) {
 		final int categoryID = cur.getInt(cur
-				.getColumnIndexOrThrow(TimeSliceRepository.COL_CATEGORY_ID));
+				.getColumnIndexOrThrow(TimeSliceSql.COL_CATEGORY_ID));
 
 		if (categoryID != 0) {
 			final TimeSlice ts = new TimeSlice();
 			ts.setRowId(cur.getInt(cur.getColumnIndexOrThrow("_id")));
 			ts.setStartTime(cur.getLong(cur
-					.getColumnIndexOrThrow(TimeSliceRepository.COL_START_TIME)));
+					.getColumnIndexOrThrow(TimeSliceSql.COL_START_TIME)));
 			ts.setEndTime(cur.getLong(cur
-					.getColumnIndexOrThrow(TimeSliceRepository.COL_END_TIME)));
+					.getColumnIndexOrThrow(TimeSliceSql.COL_END_TIME)));
 			ts.setCategory(this.categoryRepository.fetchByRowID(categoryID));
 			ts.setNotes(cur.getString(cur
-					.getColumnIndexOrThrow(TimeSliceRepository.COL_NOTES)));
+					.getColumnIndexOrThrow(TimeSliceSql.COL_NOTES)));
 			return ts;
 		}
 
@@ -356,20 +302,19 @@ public class TimeSliceRepository {
 	private String[] columnList() {
 		final List<String> columns = new ArrayList<String>();
 		columns.add("_id");
-		columns.add(TimeSliceRepository.COL_CATEGORY_ID);
-		columns.add(TimeSliceRepository.COL_START_TIME);
-		columns.add(TimeSliceRepository.COL_END_TIME);
-		columns.add(TimeSliceRepository.COL_NOTES);
+		columns.add(TimeSliceSql.COL_CATEGORY_ID);
+		columns.add(TimeSliceSql.COL_START_TIME);
+		columns.add(TimeSliceSql.COL_END_TIME);
+		columns.add(TimeSliceSql.COL_NOTES);
 		return columns.toArray(new String[0]);
 	}
 
 	private ContentValues timeSliceContentValuesList(final TimeSlice timeSlice) {
 		final ContentValues values = new ContentValues();
-		values.put(TimeSliceRepository.COL_CATEGORY_ID,
-				timeSlice.getCategoryId());
-		values.put(TimeSliceRepository.COL_START_TIME, timeSlice.getStartTime());
-		values.put(TimeSliceRepository.COL_END_TIME, timeSlice.getEndTime());
-		values.put(TimeSliceRepository.COL_NOTES, timeSlice.getNotes());
+		values.put(TimeSliceSql.COL_CATEGORY_ID, timeSlice.getCategoryId());
+		values.put(TimeSliceSql.COL_START_TIME, timeSlice.getStartTime());
+		values.put(TimeSliceSql.COL_END_TIME, timeSlice.getEndTime());
+		values.put(TimeSliceSql.COL_NOTES, timeSlice.getNotes());
 		return values;
 	}
 

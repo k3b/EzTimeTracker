@@ -90,7 +90,7 @@ public class TimeSliceRemoveActivity extends FilterActivity {
 	}
 
 	public static void showActivity(final Activity owner,
-			final FilterParameter filter) {
+			final TimeSliceFilterParameter filter) {
 		final Intent intent = new Intent().setClass(owner,
 				TimeSliceRemoveActivity.class);
 		intent.putExtra(Global.EXTRA_FILTER, filter); // item.getItemId());

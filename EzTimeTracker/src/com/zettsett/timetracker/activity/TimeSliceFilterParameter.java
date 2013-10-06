@@ -10,7 +10,7 @@ import com.zettsett.timetracker.model.TimeSliceCategory;
 
 import de.k3b.util.DateTimeUtil;
 
-public class FilterParameter implements Serializable, ITimeSliceFilter {
+public class TimeSliceFilterParameter implements Serializable, ITimeSliceFilter {
 	private static final long serialVersionUID = 6586305797483181492L;
 
 	private boolean ignoreDates = false;
@@ -21,7 +21,7 @@ public class FilterParameter implements Serializable, ITimeSliceFilter {
 
 	private String notes;
 
-	public FilterParameter setParameter(final long startTime,
+	public TimeSliceFilterParameter setParameter(final long startTime,
 			final long endTime, final int categoryId) {
 		this.setStartTime(startTime);
 		this.setEndTime(endTime);
@@ -30,7 +30,7 @@ public class FilterParameter implements Serializable, ITimeSliceFilter {
 		return this;
 	}
 
-	public FilterParameter setParameter(final ITimeSliceFilter source) {
+	public TimeSliceFilterParameter setParameter(final ITimeSliceFilter source) {
 		if (source != null) {
 			return this.setParameter(source.getStartTime(),
 					source.getEndTime(), source.getCategoryId());
@@ -38,7 +38,7 @@ public class FilterParameter implements Serializable, ITimeSliceFilter {
 		return this;
 	}
 
-	public FilterParameter setParameter(final FilterParameter source) {
+	public TimeSliceFilterParameter setParameter(final TimeSliceFilterParameter source) {
 		if (source != null) {
 			return this.setParameter((ITimeSliceFilter) source)
 					.setIgnoreDates(source.isIgnoreDates())
@@ -48,7 +48,7 @@ public class FilterParameter implements Serializable, ITimeSliceFilter {
 		return this;
 	}
 
-	public FilterParameter setIgnoreDates(final boolean mIgnoreDates) {
+	public TimeSliceFilterParameter setIgnoreDates(final boolean mIgnoreDates) {
 		this.ignoreDates = mIgnoreDates;
 		return this;
 	}
@@ -57,7 +57,7 @@ public class FilterParameter implements Serializable, ITimeSliceFilter {
 		return this.ignoreDates;
 	}
 
-	public FilterParameter setStartTime(final long startTime) {
+	public TimeSliceFilterParameter setStartTime(final long startTime) {
 		this.startTime = startTime;
 		return this;
 	}
@@ -67,7 +67,7 @@ public class FilterParameter implements Serializable, ITimeSliceFilter {
 		return this.startTime;
 	}
 
-	public FilterParameter setEndTime(final long endTime) {
+	public TimeSliceFilterParameter setEndTime(final long endTime) {
 		this.endTime = endTime;
 		return this;
 	}
@@ -77,7 +77,7 @@ public class FilterParameter implements Serializable, ITimeSliceFilter {
 		return this.endTime;
 	}
 
-	public FilterParameter setCategoryId(final int categoryId) {
+	public TimeSliceFilterParameter setCategoryId(final int categoryId) {
 		this.categoryId = categoryId;
 		return this;
 	}
@@ -87,7 +87,7 @@ public class FilterParameter implements Serializable, ITimeSliceFilter {
 		return this.categoryId;
 	}
 
-	public FilterParameter setNotesNotNull(final boolean checked) {
+	public TimeSliceFilterParameter setNotesNotNull(final boolean checked) {
 		this.notesNotNull = checked;
 		return this;
 	}
@@ -96,7 +96,7 @@ public class FilterParameter implements Serializable, ITimeSliceFilter {
 		return this.notesNotNull;
 	}
 
-	public FilterParameter setNotes(final String notes) {
+	public TimeSliceFilterParameter setNotes(final String notes) {
 		this.notes = (notes != null) ? notes.trim() : "";
 		return this;
 	}

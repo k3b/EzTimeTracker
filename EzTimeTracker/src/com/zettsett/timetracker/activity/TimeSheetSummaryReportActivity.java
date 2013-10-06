@@ -71,8 +71,8 @@ public class TimeSheetSummaryReportActivity extends Activity implements
 	private ReportDateGrouping mReportDateGrouping = ReportDateGrouping.WEEKLY;
 	private ReportModes mReportMode = ReportModes.BY_DATE;
 	private List<TextView> mReportViewList;
-	private FilterParameter mReportFilter;
-	private static FilterParameter mRangeFilter;
+	private TimeSliceFilterParameter mReportFilter;
+	private static TimeSliceFilterParameter mRangeFilter;
 
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
@@ -147,7 +147,7 @@ public class TimeSheetSummaryReportActivity extends Activity implements
 	public void onCreateContextMenu(final ContextMenu menu, final View v,
 			final ContextMenuInfo menuInfo) {
 		super.onCreateContextMenu(menu, v, menuInfo);
-		final FilterParameter filter = this.createFilter(v);
+		final TimeSliceFilterParameter filter = this.createFilter(v);
 		if (filter != null) {
 			Log.i(Global.LOG_CONTEXT, "Detailreport: " + filter);
 
@@ -176,10 +176,10 @@ public class TimeSheetSummaryReportActivity extends Activity implements
 		}
 	}
 
-	private FilterParameter createFilter(final View v) {
+	private TimeSliceFilterParameter createFilter(final View v) {
 		TimeSliceCategory category = this.getTimeSliceCategory(v);
 		if (category != null) {
-			final FilterParameter filter = new FilterParameter()
+			final TimeSliceFilterParameter filter = new TimeSliceFilterParameter()
 					.setCategoryId(category.getRowId());
 			if (this.mReportMode == ReportModes.BY_DATE) {
 				int pos = this.mReportViewList.indexOf(v);
@@ -196,8 +196,8 @@ public class TimeSheetSummaryReportActivity extends Activity implements
 		} else {
 			final Long date = this.getLong(v);
 			if (date != null) {
-				final FilterParameter filter = this.setFilterDate(
-						new FilterParameter(), this.mReportDateGrouping, date);
+				final TimeSliceFilterParameter filter = this.setFilterDate(
+						new TimeSliceFilterParameter(), this.mReportDateGrouping, date);
 				if (this.mReportMode == ReportModes.BY_CATEGORY) {
 					int pos = this.mReportViewList.indexOf(v);
 					while (--pos >= 0) {
@@ -229,12 +229,12 @@ public class TimeSheetSummaryReportActivity extends Activity implements
 		return null;
 	}
 
-	private FilterParameter setFilterDate(
-			final FilterParameter filterParameter,
+	private TimeSliceFilterParameter setFilterDate(
+			final TimeSliceFilterParameter timeSliceFilterParameter,
 			final ReportDateGrouping mReportDateGrouping, final Long startDate) {
 		final long start = startDate.longValue();
 		final long end = this.getEndTime(mReportDateGrouping, start);
-		return filterParameter.setStartTime(start).setEndTime(end);
+		return timeSliceFilterParameter.setStartTime(start).setEndTime(end);
 	}
 
 	private long getEndTime(final ReportDateGrouping mReportDateGrouping,
@@ -399,7 +399,7 @@ public class TimeSheetSummaryReportActivity extends Activity implements
 	 *         Map<categoryName, totalDurationsWithinSubinterval>>
 	 */
 	private TimeSheetSummaryCalculator loadReportDataStructures() {
-		final FilterParameter rangeFilter = TimeSheetSummaryReportActivity.mRangeFilter;
+		final TimeSliceFilterParameter rangeFilter = TimeSheetSummaryReportActivity.mRangeFilter;
 
 		final List<TimeSlice> timeSlices = this.mTimeSliceRepository
 				.fetchTimeSlices(rangeFilter);

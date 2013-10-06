@@ -75,7 +75,7 @@ public abstract class FilterActivity extends Activity {
 
 	private ArrayAdapter<TimeSliceCategory> allCategoriesAdapter;
 
-	protected FilterParameter filter = null;
+	protected TimeSliceFilterParameter filter = null;
 
 	public FilterActivity(final int idCaption, final int idCmdOk,
 			final int idOnOkResultCode) {
@@ -188,7 +188,7 @@ public abstract class FilterActivity extends Activity {
 	/**
 	 * Loads this from controls from filter.
 	 */
-	private void loadForm(final FilterParameter filter) {
+	private void loadForm(final TimeSliceFilterParameter filter) {
 		CategorySpinner.selectSpinner(this.categorySpinner,
 				this.filter.getCategoryId());
 
@@ -214,7 +214,7 @@ public abstract class FilterActivity extends Activity {
 	/**
 	 * save content of this from controls to filter
 	 */
-	private void saveForm(final FilterParameter filter) {
+	private void saveForm(final TimeSliceFilterParameter filter) {
 		this.filter.setCategoryId(CategorySpinner.getCategoryId(this
 				.getCurrentCategory()));
 
@@ -278,11 +278,11 @@ public abstract class FilterActivity extends Activity {
 		return null;
 	}
 
-	protected static FilterParameter getFilterParameter(final Activity activity) {
-		FilterParameter filter = (FilterParameter) activity.getIntent()
+	protected static TimeSliceFilterParameter getFilterParameter(final Activity activity) {
+		TimeSliceFilterParameter filter = (TimeSliceFilterParameter) activity.getIntent()
 				.getExtras().get(Global.EXTRA_FILTER);
 		if (filter == null) {
-			filter = new FilterParameter();
+			filter = new TimeSliceFilterParameter();
 		}
 		return filter;
 	}

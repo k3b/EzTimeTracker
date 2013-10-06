@@ -55,7 +55,7 @@ public class ReportFramework implements Serializable {
 	private final Activity mActivity;
 	private LinearScroller mScrollView;
 
-	private FilterParameter mFilter;
+	private TimeSliceFilterParameter mFilter;
 	private List<TextView> mReportViewList;
 
 	public enum ReportTypes {
@@ -64,14 +64,14 @@ public class ReportFramework implements Serializable {
 
 	private ReportTypes reportType;
 
-	ReportFramework(final Activity activity, final FilterParameter filter) {
+	ReportFramework(final Activity activity, final TimeSliceFilterParameter filter) {
 		super();
 		this.initializeDateRanges(filter);
 		this.mActivity = activity;
 	}
 
-	private void initializeDateRanges(final FilterParameter filter) {
-		this.mFilter = (filter != null) ? filter : new FilterParameter();
+	private void initializeDateRanges(final TimeSliceFilterParameter filter) {
+		this.mFilter = (filter != null) ? filter : new TimeSliceFilterParameter();
 
 		final Date currDate = new Date();
 		long startTime = this.mFilter.getStartTime();
@@ -202,16 +202,16 @@ public class ReportFramework implements Serializable {
 	 *            : value returend if not found
 	 * @return filter or parameterName
 	 */
-	public static FilterParameter getLastFilter(
+	public static TimeSliceFilterParameter getLastFilter(
 			final Bundle savedInstanceState, final String parameterName,
-			final FilterParameter notFoundValue) {
-		FilterParameter rangeFilter = null;
+			final TimeSliceFilterParameter notFoundValue) {
+		TimeSliceFilterParameter rangeFilter = null;
 		if (savedInstanceState != null) {
 			final Serializable filter = savedInstanceState
 					.getSerializable(parameterName);
 
-			if (filter instanceof FilterParameter) {
-				rangeFilter = (FilterParameter) filter;
+			if (filter instanceof TimeSliceFilterParameter) {
+				rangeFilter = (TimeSliceFilterParameter) filter;
 			}
 		}
 
@@ -220,7 +220,7 @@ public class ReportFramework implements Serializable {
 		}
 
 		if (rangeFilter == null) {
-			rangeFilter = new FilterParameter();
+			rangeFilter = new TimeSliceFilterParameter();
 		}
 
 		return rangeFilter;
@@ -237,11 +237,11 @@ public class ReportFramework implements Serializable {
 	 *            : value to be saved
 	 */
 	public static void setLastFilter(final Bundle savedInstanceState,
-			final String parameterName, final FilterParameter rangeFilter) {
+			final String parameterName, final TimeSliceFilterParameter rangeFilter) {
 		savedInstanceState.putSerializable(parameterName, rangeFilter);
 	}
 
-	public static long getFixedEndTime(final FilterParameter rangeFilter) {
+	public static long getFixedEndTime(final TimeSliceFilterParameter rangeFilter) {
 		final Calendar c = Calendar.getInstance();
 		c.setTime(new Date(rangeFilter.getEndTime()));
 		c.set(Calendar.HOUR_OF_DAY, 23);
@@ -250,9 +250,9 @@ public class ReportFramework implements Serializable {
 		return endDate;
 	}
 
-	public FilterParameter onActivityResult(final Intent intent,
-			final FilterParameter previosRangeFilter) {
-		FilterParameter newRangeFilter = (FilterParameter) intent.getExtras()
+	public TimeSliceFilterParameter onActivityResult(final Intent intent,
+			final TimeSliceFilterParameter previosRangeFilter) {
+		TimeSliceFilterParameter newRangeFilter = (TimeSliceFilterParameter) intent.getExtras()
 				.get(Global.EXTRA_FILTER);
 
 		if (newRangeFilter == null) {

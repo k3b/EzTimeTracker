@@ -81,7 +81,7 @@ public class CategoryEditDialog extends Dialog {
 				CategoryEditDialog.this.saveChangesAndExit(owner);
 				if ((CategoryEditDialog.this.mCategory != null)
 						&& (CategoryEditDialog.this.mCategory != TimeSliceCategory.NO_CATEGORY)) {
-					final FilterParameter filter = new FilterParameter()
+					final TimeSliceFilterParameter filter = new TimeSliceFilterParameter()
 							.setCategoryId(
 									CategoryEditDialog.this.mCategory
 											.getRowId()).setIgnoreDates(true);
@@ -192,7 +192,7 @@ public class CategoryEditDialog extends Dialog {
 	}
 
 	private void showUsage() {
-		final FilterParameter filterParam = new FilterParameter()
+		final TimeSliceFilterParameter filterParam = new TimeSliceFilterParameter()
 				.setCategoryId(this.mCategory.getRowId()).setIgnoreDates(true);
 
 		final int itemCount = TimeSliceRepository.getCount(filterParam);

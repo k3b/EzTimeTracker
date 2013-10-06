@@ -76,8 +76,8 @@ public class TimeSheetDetailReportActivity extends Activity implements
 	private LinearLayout mMainLayout;
 	private TimeSlice mCurrentSelectedTimeSlice;
 	private long mCurrentSelectedDate;
-	private FilterParameter mCurrentSelectionFilter = null;
-	private static FilterParameter mRangeFilter;
+	private TimeSliceFilterParameter mCurrentSelectionFilter = null;
+	private static TimeSliceFilterParameter mRangeFilter;
 
 	private ReportFramework mReportFramework;
 	private List<TextView> mReportViewList;
@@ -86,7 +86,7 @@ public class TimeSheetDetailReportActivity extends Activity implements
 	private String instanceFilter;
 
 	public static void showActivity(final Context parent,
-			final FilterParameter filter) {
+			final TimeSliceFilterParameter filter) {
 		final Intent intent = new Intent().setClass(parent,
 				TimeSheetDetailReportActivity.class);
 
@@ -102,7 +102,7 @@ public class TimeSheetDetailReportActivity extends Activity implements
 		this.mTimeSliceRepository = new TimeSliceRepository(this);
 
 		final Intent intent = this.getIntent();
-		final FilterParameter rangeFilter = (FilterParameter) intent
+		final TimeSliceFilterParameter rangeFilter = (TimeSliceFilterParameter) intent
 				.getExtras().get(
 						TimeSheetDetailReportActivity.SAVED_REPORT_FILTER);
 		if (rangeFilter == null) {
@@ -182,19 +182,19 @@ public class TimeSheetDetailReportActivity extends Activity implements
 
 		this.initScrollview();
 		String lastStartDate = "";
-		final FilterParameter rangeFilter = TimeSheetDetailReportActivity.mRangeFilter;
+		final TimeSliceFilterParameter rangeFilter = TimeSheetDetailReportActivity.mRangeFilter;
 		final List<TimeSlice> timeSlices = this.mTimeSliceRepository
 				.fetchTimeSlices(rangeFilter);
 		Log.i(Global.LOG_CONTEXT,
 				"fetchTimeSlicesByDateRange:"
 						+ (System.currentTimeMillis() - performanceMeasureStart));
 		performanceMeasureStart = System.currentTimeMillis();
-		FilterParameter headerFilter = null;
+		TimeSliceFilterParameter headerFilter = null;
 		for (final TimeSlice aSlice : timeSlices) {
 			if (!lastStartDate.equals(aSlice.getStartDateStr())) {
 				lastStartDate = aSlice.getStartDateStr();
 				final long startTime = aSlice.getStartTime();
-				headerFilter = new FilterParameter().setStartTime(startTime);
+				headerFilter = new TimeSliceFilterParameter().setStartTime(startTime);
 				this.addDateHeaderLine(lastStartDate, headerFilter);
 			}
 
@@ -233,7 +233,7 @@ public class TimeSheetDetailReportActivity extends Activity implements
 	}
 
 	private TextView addDateHeaderLine(final String dateText,
-			final FilterParameter filter) {
+			final TimeSliceFilterParameter filter) {
 		final TextView startDateLine = new TextView(this);
 		startDateLine.setTag(filter);
 		startDateLine.setText(dateText);
@@ -270,13 +270,13 @@ public class TimeSheetDetailReportActivity extends Activity implements
 			this.mCurrentSelectedTimeSlice = (TimeSlice) v.getTag();
 			this.mCurrentSelectedDate = this.mCurrentSelectedTimeSlice
 					.getStartTime();
-		} else if (tag instanceof FilterParameter) {
+		} else if (tag instanceof TimeSliceFilterParameter) {
 			menu.add(0, TimeSheetDetailReportActivity.ADD_MENU_ID, 0,
 					this.getString(R.string.menu_report_add_new_time_interval));
 			menu.add(0, TimeSheetDetailReportActivity.DELETE_MENU_ID, 0,
 					this.getString(R.string.cmd_delete));
 			this.mCurrentSelectedTimeSlice = null;
-			this.mCurrentSelectionFilter = (FilterParameter) v.getTag();
+			this.mCurrentSelectionFilter = (TimeSliceFilterParameter) v.getTag();
 			this.mCurrentSelectedDate = this.mCurrentSelectionFilter
 					.getStartTime();
 		}
@@ -329,9 +329,9 @@ public class TimeSheetDetailReportActivity extends Activity implements
 	}
 
 	private void onCommandDeleteTimeSlice() {
-		FilterParameter parameter;
+		TimeSliceFilterParameter parameter;
 		if (this.mCurrentSelectedTimeSlice != null) {
-			parameter = new FilterParameter().setParameter(
+			parameter = new TimeSliceFilterParameter().setParameter(
 					this.mCurrentSelectedTimeSlice).setEndTime(
 					this.mCurrentSelectedTimeSlice.getStartTime());
 		} else {

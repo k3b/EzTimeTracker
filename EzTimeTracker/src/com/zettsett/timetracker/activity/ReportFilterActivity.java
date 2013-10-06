@@ -15,7 +15,7 @@ public class ReportFilterActivity extends FilterActivity {
 	}
 
 	public static void showActivity(final Activity owner,
-			final FilterParameter filter) {
+			final TimeSliceFilterParameter filter) {
 		final Intent intent = new Intent().setClass(owner,
 				ReportFilterActivity.class);
 		intent.putExtra(Global.EXTRA_FILTER, filter);

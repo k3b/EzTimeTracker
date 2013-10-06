@@ -108,7 +108,7 @@ public class CategoryListActivity extends ListActivity implements
 	private void showDetailReport() {
 		if ((this.categoryClicked != null)
 				&& (this.categoryClicked != TimeSliceCategory.NO_CATEGORY)) {
-			final FilterParameter filter = new FilterParameter().setCategoryId(
+			final TimeSliceFilterParameter filter = new TimeSliceFilterParameter().setCategoryId(
 					this.categoryClicked.getRowId()).setIgnoreDates(true);
 			TimeSheetDetailReportActivity.showActivity(this, filter);
 		}
