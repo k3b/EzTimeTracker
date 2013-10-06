@@ -8,18 +8,35 @@ import android.util.Log;
 import com.zettsett.timetracker.Global;
 import com.zettsett.timetracker.TimeTrackerManager;
 
+/**
+ * Allow other apps to remotly PunchIn/PunchOut via broadcast-url-datastring.<br/>
+ * Supported urls:<br/>
+ * - START:category{:notes}' or<br/>
+ * - STOP{:notes}.<br/>
+ * 
+ * @author EVE
+ * 
+ */
 public class RemoteTimeTrackerBroadcastReceiver extends BroadcastReceiver {
+
+	private static final String USAGE = "Expected datastring '"
+			+ Global.CMD_START + ":category{:notes}' or '" + Global.CMD_STOP
+			+ "{:notes}'.";
 
 	@Override
 	public void onReceive(final Context context, final Intent intent) {
-		if (Log.isLoggable(Global.LOG_CONTEXT, Log.INFO)) {
-			Log.i(Global.LOG_CONTEXT, "onReceive(context='" + context
-					+ "', intent='" + intent + "')");
-		}
+		final String datastring = intent.getDataString();
 
-		final String data = intent.getDataString();
-		if (data != null) {
-			final String[] parts = data.split(":");
+		final String dbgContext = "BroadcastReceiver.onReceive(context='"
+				+ context + "', intent='" + intent + "', datastring='"
+				+ datastring + "')";
+
+		if (datastring != null) {
+			if (Log.isLoggable(Global.LOG_CONTEXT, Log.INFO)) {
+				Log.i(Global.LOG_CONTEXT, dbgContext);
+			}
+
+			final String[] parts = datastring.split(":");
 
 			final String cmd = (parts.length > 1) ? parts[1] : null;
 			final String category = (parts.length > 2) ? parts[2] : null;
@@ -38,9 +55,10 @@ public class RemoteTimeTrackerBroadcastReceiver extends BroadcastReceiver {
 				this.addNotes(mgr, 2, parts);
 				mgr.punchOutClock(elapsedRealtime, "");
 			} else {
-				Log.e(Global.LOG_CONTEXT, "unknown cmd='" + cmd
-						+ "', catrory='" + category + "' in intend='" + intent
-						+ "'");
+				Log.e(Global.LOG_CONTEXT, dbgContext
+						+ " syntaxerror in datastring: cmd='" + cmd
+						+ "', categrory='" + category + "'. "
+						+ RemoteTimeTrackerBroadcastReceiver.USAGE);
 			}
 			mgr.saveState();
 
@@ -49,6 +67,9 @@ public class RemoteTimeTrackerBroadcastReceiver extends BroadcastReceiver {
 
 			context.sendBroadcast(intentRefreshGui);
 
+		} else {
+			Log.e(Global.LOG_CONTEXT, dbgContext + " :no datastring. "
+					+ RemoteTimeTrackerBroadcastReceiver.USAGE);
 		}
 	}
 
