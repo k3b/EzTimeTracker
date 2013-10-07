@@ -222,7 +222,7 @@ public class PunchInPunchOutActivity extends Activity implements
 				.getMenuIntentHandler(itemId);
 		if (itemHandler != null) {
 			final Intent intent = new Intent().setClass(this, itemHandler);
-			intent.putExtra(TimeSheetSummaryReportActivity.MENU_ID, itemId);
+			intent.putExtra(TimeSheetSummaryReportActivity.SAVED_MENU_ID_BUNDLE_NAME, itemId);
 			this.startActivity(intent);
 			return true;
 		}

@@ -57,7 +57,7 @@ public class TimeSheetDetailReportActivity extends Activity implements
 	/**
 	 * Used to transfer optional filter between parent activity and this.
 	 */
-	private static final String SAVED_REPORT_RANGE_FILTER_NAME = "DetailReportFilter";
+	private static final String SAVED_REPORT_RANGE_FILTER_BUNDLE_NAME = "DetailReportFilter";
 
 	// menu ids
 	private static final int EDIT_MENU_ID = Menu.FIRST;
@@ -100,7 +100,7 @@ public class TimeSheetDetailReportActivity extends Activity implements
 	/**
 	 * Used in options-menue for context sensitive delete
 	 */
-	private TimeSliceFilterParameter currentSelectedListItemRangeFilterUsedForDeleteMenu = null;
+	private TimeSliceFilterParameter currentSelectedListItemRangeFilterUsedForMenu = null;
 
 	/**
 	 * Show report with customized filter from SummaryReport-Drilldown and
@@ -118,7 +118,7 @@ public class TimeSheetDetailReportActivity extends Activity implements
 				TimeSheetDetailReportActivity.class);
 
 		intent.putExtra(
-				TimeSheetDetailReportActivity.SAVED_REPORT_RANGE_FILTER_NAME,
+				TimeSheetDetailReportActivity.SAVED_REPORT_RANGE_FILTER_BUNDLE_NAME,
 				filter);
 		context.startActivity(intent);
 	}
@@ -132,14 +132,14 @@ public class TimeSheetDetailReportActivity extends Activity implements
 		final Intent intent = this.getIntent();
 		final TimeSliceFilterParameter rangeFilter = (TimeSliceFilterParameter) intent
 				.getExtras()
-				.get(TimeSheetDetailReportActivity.SAVED_REPORT_RANGE_FILTER_NAME);
+				.get(TimeSheetDetailReportActivity.SAVED_REPORT_RANGE_FILTER_BUNDLE_NAME);
 		if (rangeFilter == null) {
 			// not created with parameter so restore last instance value
 			TimeSheetDetailReportActivity.currentRangeFilter = ReportFramework
 					.getLastFilter(savedInstanceState,
 							this.currentBundelPersistRangeFilterName,
 							TimeSheetDetailReportActivity.currentRangeFilter);
-			this.currentBundelPersistRangeFilterName = TimeSheetDetailReportActivity.SAVED_REPORT_RANGE_FILTER_NAME; // must
+			this.currentBundelPersistRangeFilterName = TimeSheetDetailReportActivity.SAVED_REPORT_RANGE_FILTER_BUNDLE_NAME; // must
 			// als
 			// be
 			// saved
@@ -178,7 +178,7 @@ public class TimeSheetDetailReportActivity extends Activity implements
 			TimeSheetDetailReportActivity.currentRangeFilter = ReportFramework
 					.getLastFilter(
 							outState,
-							TimeSheetDetailReportActivity.SAVED_REPORT_RANGE_FILTER_NAME,
+							TimeSheetDetailReportActivity.SAVED_REPORT_RANGE_FILTER_BUNDLE_NAME,
 							TimeSheetDetailReportActivity.currentRangeFilter);
 		}
 	}
@@ -319,9 +319,9 @@ public class TimeSheetDetailReportActivity extends Activity implements
 			menu.add(0, TimeSheetDetailReportActivity.DELETE_MENU_ID, 0,
 					this.getString(R.string.cmd_delete));
 			this.currentSelectedTimeSliceUsedForMenu = null;
-			this.currentSelectedListItemRangeFilterUsedForDeleteMenu = (TimeSliceFilterParameter) v
+			this.currentSelectedListItemRangeFilterUsedForMenu = (TimeSliceFilterParameter) v
 					.getTag();
-			this.lastSelectedDateUsedForAddMenu = this.currentSelectedListItemRangeFilterUsedForDeleteMenu
+			this.lastSelectedDateUsedForAddMenu = this.currentSelectedListItemRangeFilterUsedForMenu
 					.getStartTime();
 		}
 	}
@@ -386,7 +386,7 @@ public class TimeSheetDetailReportActivity extends Activity implements
 					this.currentSelectedTimeSliceUsedForMenu).setEndTime(
 					this.currentSelectedTimeSliceUsedForMenu.getStartTime());
 		} else {
-			parameter = this.currentSelectedListItemRangeFilterUsedForDeleteMenu;
+			parameter = this.currentSelectedListItemRangeFilterUsedForMenu;
 		}
 		TimeSliceRemoveActivity.showActivity(this, parameter);
 	}
