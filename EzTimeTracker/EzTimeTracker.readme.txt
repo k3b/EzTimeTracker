@@ -5,7 +5,7 @@ todo
 		alle repository methoden auf sqlFilter umstellen?
 			v add(field, operation, value???
 	summaryReport-ctx-menu-
-		delete
+		v delete
 		change category if category selected or parent 
 ?	after report update scroll to last know pos
 	Category detail report from

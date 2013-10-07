@@ -327,7 +327,7 @@ public class TimeSheetDetailReportActivity extends Activity implements
 	}
 
 	/**
-	 * handle edit or changeFilter
+	 * handle result from edit/changeFilter/delete
 	 */
 	@Override
 	protected void onActivityResult(final int requestCode,

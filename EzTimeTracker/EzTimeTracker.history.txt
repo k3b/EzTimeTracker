@@ -5,16 +5,18 @@
 * (DB:5) - VIEW time_slice_report
 * TimeSliceEditActivity: long press on Start/Stop-time ==> sets to now before editing
 * Category
+	* CategoryList-Delete-Warning
 	* CategoryEditDialog with usage infos
 	* (DB:4) - Categorie active/expired: 
 	  * Different display Categoryname if expired as [-- xxx --]
 * TimeSheetXxxxxReport added to top of report: filter-settings and --no data-- if empty 
-	* TimeSheetSummaryReport: added Grouping by year 
+	* TimeSheetSummaryReport: 
+	  * added Grouping by year 
+	  * contextmenu Details (Drilldown ), Delete
+	  
 	* TimeSheetDetailReport from  
 	  * CategoryList-Contextmenue, 
 	  * CategoryEdit-Usage-longpress, 
-	  * CategoryList-Delete-Warning
-	  * TimeSheetSummaryReport-contextmenu (Drilldown )
 	* FilterActivity/FilterParameter new values notes/notesNotNull. redesign
 		* FilterActivity Long press on start/end starts editor with now
 * Settings

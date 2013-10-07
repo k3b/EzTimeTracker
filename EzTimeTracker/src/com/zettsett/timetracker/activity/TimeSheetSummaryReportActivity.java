@@ -76,6 +76,8 @@ public class TimeSheetSummaryReportActivity extends Activity implements
 	private static final int MENU_ITEM_GROUP_CATEGORY = Menu.FIRST + 4;
 	private static final int MENU_ITEM_REPORT = Menu.FIRST + 5;
 
+	private static final int DELETE_MENU_ID = Menu.FIRST + 20;
+
 	// dependent services
 	private ReportFramework reportFramework;
 	private TimeSliceRepository timeSliceRepository;
@@ -177,6 +179,9 @@ public class TimeSheetSummaryReportActivity extends Activity implements
 
 			menu.add(0, TimeSheetSummaryReportActivity.MENU_ITEM_REPORT, 0,
 					this.getString(R.string.cmd_report));
+			menu.add(0, TimeSheetSummaryReportActivity.DELETE_MENU_ID, 0,
+					this.getString(R.string.cmd_delete));
+
 		}
 		this.currentSelectedListItemRangeFilterUsedForMenu = filter;
 	}
@@ -186,6 +191,9 @@ public class TimeSheetSummaryReportActivity extends Activity implements
 		switch (item.getItemId()) {
 		case MENU_ITEM_REPORT:
 			this.showDetailReport();
+			return true;
+		case DELETE_MENU_ID:
+			this.onCommandDeleteTimeSlice();
 			return true;
 
 		default:
@@ -200,11 +208,16 @@ public class TimeSheetSummaryReportActivity extends Activity implements
 		}
 	}
 
+	private void onCommandDeleteTimeSlice() {
+		TimeSliceRemoveActivity.showActivity(this,
+				this.currentSelectedListItemRangeFilterUsedForMenu);
+	}
+
 	private TimeSliceFilterParameter createFilter(final View v) {
 		TimeSliceCategory category = this.getTimeSliceCategory(v);
 		if (category != null) {
-			final TimeSliceFilterParameter filter = new TimeSliceFilterParameter()
-					.setCategoryId(category.getRowId());
+			final TimeSliceFilterParameter filter = this
+					.createDrillDownFilter().setCategoryId(category.getRowId());
 			if (this.reportMode == ReportModes.BY_DATE) {
 				int pos = this.reportViewItemList.indexOf(v);
 				while (--pos >= 0) {
@@ -221,8 +234,8 @@ public class TimeSheetSummaryReportActivity extends Activity implements
 			final Long date = this.getLong(v);
 			if (date != null) {
 				final TimeSliceFilterParameter filter = this.setFilterDate(
-						new TimeSliceFilterParameter(),
-						this.reportDateGrouping, date);
+						this.createDrillDownFilter(), this.reportDateGrouping,
+						date);
 				if (this.reportMode == ReportModes.BY_CATEGORY) {
 					int pos = this.reportViewItemList.indexOf(v);
 					while (--pos >= 0) {
@@ -236,6 +249,12 @@ public class TimeSheetSummaryReportActivity extends Activity implements
 			}
 		}
 		return null;
+	}
+
+	private TimeSliceFilterParameter createDrillDownFilter() {
+		final TimeSliceFilterParameter defaults = TimeSheetSummaryReportActivity.currentRangeFilter;
+		return new TimeSliceFilterParameter().setNotes(defaults.getNotes())
+				.setNotesNotNull(defaults.isNotesNotNull());
 	}
 
 	private TimeSliceCategory getTimeSliceCategory(final View v) {
@@ -315,14 +334,20 @@ public class TimeSheetSummaryReportActivity extends Activity implements
 		return true;
 	}
 
+	/**
+	 * handle result from edit/changeFilter/delete
+	 */
 	@Override
 	protected void onActivityResult(final int requestCode,
 			final int resultCode, final Intent intent) {
 		super.onActivityResult(requestCode, resultCode, intent);
 		if (intent != null) {
-			TimeSheetSummaryReportActivity.currentRangeFilter = this.reportFramework
-					.onActivityResult(intent,
-							TimeSheetSummaryReportActivity.currentRangeFilter);
+			if (resultCode == ReportFilterActivity.RESULT_FILTER_CHANGED) {
+				TimeSheetSummaryReportActivity.currentRangeFilter = this.reportFramework
+						.onActivityResult(
+								intent,
+								TimeSheetSummaryReportActivity.currentRangeFilter);
+			}
 			this.loadDataIntoReport(0);
 		}
 	}
