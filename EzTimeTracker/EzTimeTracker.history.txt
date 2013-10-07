@@ -1,5 +1,6 @@
 * Fixed appendmode for punched out timeslice if within Settings.minPunchInTreshhold including notes merge.
 * Fixed csv-export: hour in iso-date was only 00-11h instead 00-23h
+* Fixed default Report filter is set to now+1week to see timeslices after programstart
 
 * (DB:5) - VIEW time_slice_report
 * TimeSliceEditActivity: long press on Start/Stop-time ==> sets to now before editing

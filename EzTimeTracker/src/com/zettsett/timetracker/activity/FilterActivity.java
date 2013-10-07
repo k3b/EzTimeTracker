@@ -190,32 +190,32 @@ public abstract class FilterActivity extends Activity {
 	 */
 	private void loadForm(final TimeSliceFilterParameter filter) {
 		CategorySpinner.selectSpinner(this.categorySpinner,
-				this.filter.getCategoryId());
+				filter.getCategoryId());
 
 		boolean ignoreDates = filter.isIgnoreDates();
-		if ((this.filter.getEndTime() == TimeSlice.NO_TIME_VALUE)
-				&& (this.filter.getStartTime() == TimeSlice.NO_TIME_VALUE)) {
+		if ((filter.getEndTime() == TimeSlice.NO_TIME_VALUE)
+				&& (filter.getStartTime() == TimeSlice.NO_TIME_VALUE)) {
 			ignoreDates = true;
 		}
 		this.allDatesCheckBox.setChecked(ignoreDates);
 		this.datesContainer.setVisibility(ignoreDates ? View.GONE
 				: View.VISIBLE);
 		this.timeInButton.setText(this.getFormattedTime(
-				R.string.formatStartDate, this.filter.getStartTime(), ""));
+				R.string.formatStartDate, filter.getStartTime(), ""));
 		this.timeOutButton.setText(this.getFormattedTime(
-				R.string.formatEndDate, this.filter.getEndTime(), ""));
+				R.string.formatEndDate, filter.getEndTime(), ""));
 
 		this.notesNotNullCheckBox.setChecked(filter.isNotesNotNull());
 		this.notesEdit.setVisibility(filter.isNotesNotNull() ? View.GONE
 				: View.VISIBLE);
-		filter.setNotes(this.notesEdit.getText().toString());
+		this.notesEdit.setText(filter.getNotes());
 	}
 
 	/**
 	 * save content of this from controls to filter
 	 */
 	private void saveForm(final TimeSliceFilterParameter filter) {
-		this.filter.setCategoryId(CategorySpinner.getCategoryId(this
+		filter.setCategoryId(CategorySpinner.getCategoryId(this
 				.getCurrentCategory()));
 
 		filter.setIgnoreDates(this.allDatesCheckBox.isChecked());
@@ -278,9 +278,10 @@ public abstract class FilterActivity extends Activity {
 		return null;
 	}
 
-	protected static TimeSliceFilterParameter getFilterParameter(final Activity activity) {
-		TimeSliceFilterParameter filter = (TimeSliceFilterParameter) activity.getIntent()
-				.getExtras().get(Global.EXTRA_FILTER);
+	protected static TimeSliceFilterParameter getFilterParameter(
+			final Activity activity) {
+		TimeSliceFilterParameter filter = (TimeSliceFilterParameter) activity
+				.getIntent().getExtras().get(Global.EXTRA_FILTER);
 		if (filter == null) {
 			filter = new TimeSliceFilterParameter();
 		}

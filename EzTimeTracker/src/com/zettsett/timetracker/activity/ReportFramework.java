@@ -50,42 +50,37 @@ public class ReportFramework implements Serializable {
 	ReportFramework(final Activity activity,
 			final TimeSliceFilterParameter filter) {
 		super();
-		this.initializeDateRanges(filter);
+		this.setDefaultsToFilterDatesIfNeccesary(filter);
 		this.activity = activity;
 	}
 
-	private void initializeDateRanges(final TimeSliceFilterParameter filter) {
+	/**
+	 * creates filter if null. Fixes start/end to meaningfull defaults if empty.
+	 */
+	private void setDefaultsToFilterDatesIfNeccesary(
+			final TimeSliceFilterParameter filter) {
 		this.filter = (filter != null) ? filter
 				: new TimeSliceFilterParameter();
 
 		final Date currDate = new Date();
-		long startTime = this.filter.getStartTime();
-		if (startTime == TimeSlice.NO_TIME_VALUE) {
-			final Calendar calendar = new GregorianCalendar();
-			calendar.setTime(currDate);
-			calendar.set(Calendar.HOUR, 0);
-			calendar.set(Calendar.MINUTE, 0);
-			calendar.roll(Calendar.MONTH, false);
-			calendar.roll(Calendar.MONTH, false); // -= 2 months
-			startTime = calendar.getTimeInMillis();
-			if (startTime > currDate.getTime()) {
-				calendar.roll(Calendar.YEAR, false);
-				startTime = calendar.getTimeInMillis();
-			}
-		}
-		this.filter.setStartTime(startTime);
 
-		long endTime = this.filter.getEndTime();
-		if (endTime == TimeSlice.NO_TIME_VALUE) {
+		if (this.filter.getStartTime() == TimeSlice.NO_TIME_VALUE) {
+			// start = now-2months
 			final Calendar calendar = new GregorianCalendar();
 			calendar.setTime(currDate);
-			endTime = calendar.getTimeInMillis();
-			calendar.roll(Calendar.WEEK_OF_YEAR, true); // += 1 week to see also
-														// entries that where
-														// made after the
-														// programstart.
+			calendar.add(Calendar.MONTH, -2);
+			final long startTime = calendar.getTimeInMillis();
+			this.filter.setStartTime(startTime);
 		}
-		this.filter.setEndTime(endTime);
+
+		if (this.filter.getEndTime() == TimeSlice.NO_TIME_VALUE) {
+			// end = now+1week
+			final Calendar calendar = new GregorianCalendar();
+			calendar.setTime(currDate);
+			calendar.add(Calendar.WEEK_OF_YEAR, 1);
+			final long endTime = calendar.getTimeInMillis();
+			this.filter.setEndTime(endTime);
+		}
 	}
 
 	/**
@@ -135,12 +130,12 @@ public class ReportFramework implements Serializable {
 			final TimeSliceFilterParameter previosRangeFilter) {
 		TimeSliceFilterParameter newRangeFilter = (TimeSliceFilterParameter) intent
 				.getExtras().get(Global.EXTRA_FILTER);
-	
+
 		if (newRangeFilter == null) {
 			newRangeFilter = previosRangeFilter;
 		}
-	
-		this.initializeDateRanges(newRangeFilter);
+
+		this.setDefaultsToFilterDatesIfNeccesary(newRangeFilter);
 		return newRangeFilter;
 	}
 
