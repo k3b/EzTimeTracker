@@ -1,25 +1,26 @@
 * Fixed appendmode for punched out timeslice if within Settings.minPunchInTreshhold including notes merge.
-* Replaced Settings.minTreshhold with
-  * minPunchInTreshhold: New Punchin within same Category if longer away than this (in seconds).Else append to previous.
-  * minPunchOutTreshhold: Punchout only if longer than this (in seconds). Else discard.
+* Fixed csv-export: hour in iso-date was only 00-11h instead 00-23h
 
-* FilterActivity/FilterParameter new values notes/notesNotNull. redesign
-* TimeSheetXxxxxReport added to top of report: filter-settings and --no data-- if empty 
-
-* TimeSheetSummaryReport: added Grouping by year 
-* TimeSheetDetailReport from  
-  * CategoryList-Contextmenue, 
-  * CategoryEdit-Usage-longpress, 
-  * CategoryList-Delete-Warning
-  * TimeSheetSummaryReport-contextmenu (Drilldown )
-* CategoryEditDialog with usage infos
-* DB:5 - VIEW time_slice_report
-* DB:4 - Categorie active/expired: 
-  * Different display Categoryname if expired as [-- xxx --]
-  * Expired Categories can be hidden if configured in Options
-* FilterActivity Long press on start/end starts editor with now
+* (DB:5) - VIEW time_slice_report
 * TimeSliceEditActivity: long press on Start/Stop-time ==> sets to now before editing
-
+* Category
+	* CategoryEditDialog with usage infos
+	* (DB:4) - Categorie active/expired: 
+	  * Different display Categoryname if expired as [-- xxx --]
+* TimeSheetXxxxxReport added to top of report: filter-settings and --no data-- if empty 
+	* TimeSheetSummaryReport: added Grouping by year 
+	* TimeSheetDetailReport from  
+	  * CategoryList-Contextmenue, 
+	  * CategoryEdit-Usage-longpress, 
+	  * CategoryList-Delete-Warning
+	  * TimeSheetSummaryReport-contextmenu (Drilldown )
+	* FilterActivity/FilterParameter new values notes/notesNotNull. redesign
+		* FilterActivity Long press on start/end starts editor with now
+* Settings
+	* Replaced Settings.minTreshhold with
+	  * minPunchInTreshhold: New Punchin within same Category if longer away than this (in seconds).Else append to previous.
+	  * minPunchOutTreshhold: Punchout only if longer than this (in seconds). Else discard.
+	* Expired Categories can be hidden if configured in Options
 
 Version: 2.4 2013-05-11
 * PunchInPunchOutActivity: long press on elapsedTime => shows Detail-report

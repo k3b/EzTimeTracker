@@ -54,75 +54,105 @@ import com.zettsett.timetracker.report.IReportInterface;
  */
 public class TimeSheetDetailReportActivity extends Activity implements
 		IReportInterface {
-	public static final String SAVED_REPORT_FILTER = "DetailReportFilter"; // can
-																			// be
-																			// used
-																			// as
-																			// intent-extra
-																			// to
-																			// specify
-																			// a
-																			// different
-																			// filter
+	/**
+	 * Used to transfer optional filter between parent activity and this.
+	 */
+	private static final String SAVED_REPORT_RANGE_FILTER_NAME = "DetailReportFilter";
 
+	// menu ids
 	private static final int EDIT_MENU_ID = Menu.FIRST;
 	private static final int DELETE_MENU_ID = Menu.FIRST + 1;
 	private static final int ADD_MENU_ID = Menu.FIRST + 2;
-	private static final int SHOW_DESC_MENU_ID = Menu.FIRST + 3;
+	private static final int SHOW_NOTES_MENU_ID = Menu.FIRST + 3;
 	private static final int ID_EDIT_TIME_SLICE = Menu.FIRST + 4;
 	private static final int ID_ADD_TIME_SLICE = Menu.FIRST + 5;
 
-	private TimeSliceRepository mTimeSliceRepository;
-	private LinearLayout mMainLayout;
-	private TimeSlice mCurrentSelectedTimeSlice;
-	private long mCurrentSelectedDate;
-	private TimeSliceFilterParameter mCurrentSelectionFilter = null;
-	private static TimeSliceFilterParameter mRangeFilter;
+	// dependent services
+	private TimeSliceRepository timeSliceRepository;
+	private ReportFramework reportFramework;
 
-	private ReportFramework mReportFramework;
-	private List<TextView> mReportViewList;
-	private boolean mShowNotes = true;
+	// form controls
+	private LinearLayout mainLayout;
+	private List<TextView> reportViewItemList;
 
-	private String instanceFilter;
+	// current state
+	private TimeSlice currentSelectedTimeSliceUsedForMenu;
+	private long lastSelectedDateUsedForAddMenu;
 
-	public static void showActivity(final Context parent,
+	/**
+	 * if reportitems should be generated with timeslice-notes or not.<br>
+	 * Toggeld via option-menu
+	 */
+	private boolean showNotes = true;
+
+	/**
+	 * If null do not save changed filter. Else name where current filter should
+	 * be persisted to.
+	 */
+	private String currentBundelPersistRangeFilterName;
+
+	/**
+	 * current range filter used to fill report.<br/>
+	 * static to surwive if this activity is discarded in filter activity.
+	 */
+	private static TimeSliceFilterParameter currentRangeFilter;
+
+	/**
+	 * Used in options-menue for context sensitive delete
+	 */
+	private TimeSliceFilterParameter currentSelectedListItemRangeFilterUsedForDeleteMenu = null;
+
+	/**
+	 * Show report with customized filter from SummaryReport-Drilldown and
+	 * others.<br/>
+	 * Call from mainmenu directly via intent without this method.<br/>
+	 * 
+	 * @param context
+	 *            needed to start this activity from parent activity.
+	 * @param filter
+	 *            customized filter that can be discarded after finish.
+	 */
+	public static void showActivity(final Context context,
 			final TimeSliceFilterParameter filter) {
-		final Intent intent = new Intent().setClass(parent,
+		final Intent intent = new Intent().setClass(context,
 				TimeSheetDetailReportActivity.class);
 
-		intent.putExtra(TimeSheetDetailReportActivity.SAVED_REPORT_FILTER,
+		intent.putExtra(
+				TimeSheetDetailReportActivity.SAVED_REPORT_RANGE_FILTER_NAME,
 				filter);
-		parent.startActivity(intent);
+		context.startActivity(intent);
 	}
 
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
-		this.mTimeSliceRepository = new TimeSliceRepository(this);
+		this.timeSliceRepository = new TimeSliceRepository(this);
 
 		final Intent intent = this.getIntent();
 		final TimeSliceFilterParameter rangeFilter = (TimeSliceFilterParameter) intent
-				.getExtras().get(
-						TimeSheetDetailReportActivity.SAVED_REPORT_FILTER);
+				.getExtras()
+				.get(TimeSheetDetailReportActivity.SAVED_REPORT_RANGE_FILTER_NAME);
 		if (rangeFilter == null) {
-			TimeSheetDetailReportActivity.mRangeFilter = ReportFramework
-					.getLastFilter(savedInstanceState, this.instanceFilter,
-							TimeSheetDetailReportActivity.mRangeFilter);
-			this.instanceFilter = TimeSheetDetailReportActivity.SAVED_REPORT_FILTER; // must
-																						// als
-																						// be
-																						// saved
-																						// for
-																						// next
-																						// time
+			// not created with parameter so restore last instance value
+			TimeSheetDetailReportActivity.currentRangeFilter = ReportFramework
+					.getLastFilter(savedInstanceState,
+							this.currentBundelPersistRangeFilterName,
+							TimeSheetDetailReportActivity.currentRangeFilter);
+			this.currentBundelPersistRangeFilterName = TimeSheetDetailReportActivity.SAVED_REPORT_RANGE_FILTER_NAME; // must
+			// als
+			// be
+			// saved
+			// for
+			// next
+			// time
 		} else {
-			TimeSheetDetailReportActivity.mRangeFilter = rangeFilter;
-			this.instanceFilter = null; // can be discarded
+			TimeSheetDetailReportActivity.currentRangeFilter = rangeFilter;
+			this.currentBundelPersistRangeFilterName = null; // can be discarded
 		}
 
-		this.mReportFramework = new ReportFramework(this,
-				TimeSheetDetailReportActivity.mRangeFilter);
+		this.reportFramework = new ReportFramework(this,
+				TimeSheetDetailReportActivity.currentRangeFilter);
 		this.loadDataIntoReport(0);
 	}
 
@@ -138,25 +168,27 @@ public class TimeSheetDetailReportActivity extends Activity implements
 
 	@Override
 	protected void onSaveInstanceState(final Bundle outState) {
-		if (this.instanceFilter != null) {
+		if (this.currentBundelPersistRangeFilterName != null) {
 			// filter must be saved
-			ReportFramework.setLastFilter(outState, this.instanceFilter,
-					TimeSheetDetailReportActivity.mRangeFilter);
+			ReportFramework.setLastFilter(outState,
+					this.currentBundelPersistRangeFilterName,
+					TimeSheetDetailReportActivity.currentRangeFilter);
 		} else {
 			// current filter should be discarded. Restore previous filter
-			TimeSheetDetailReportActivity.mRangeFilter = ReportFramework
-					.getLastFilter(outState,
-							TimeSheetDetailReportActivity.SAVED_REPORT_FILTER,
-							TimeSheetDetailReportActivity.mRangeFilter);
+			TimeSheetDetailReportActivity.currentRangeFilter = ReportFramework
+					.getLastFilter(
+							outState,
+							TimeSheetDetailReportActivity.SAVED_REPORT_RANGE_FILTER_NAME,
+							TimeSheetDetailReportActivity.currentRangeFilter);
 		}
 	}
 
 	private void initScrollview() {
-		this.setContentView(this.mReportFramework.buildViews());
-		this.mMainLayout = new LinearLayout(this);
-		this.mMainLayout.setOrientation(LinearLayout.VERTICAL);
-		this.mReportFramework.getLinearScroller().addView(this.mMainLayout);
-		this.mReportViewList = this.mReportFramework
+		this.setContentView(this.reportFramework.buildViews());
+		this.mainLayout = new LinearLayout(this);
+		this.mainLayout.setOrientation(LinearLayout.VERTICAL);
+		this.reportFramework.getLinearScroller().addView(this.mainLayout);
+		this.reportViewItemList = this.reportFramework
 				.initializeTextViewsForExportList();
 	}
 
@@ -165,11 +197,11 @@ public class TimeSheetDetailReportActivity extends Activity implements
 	 * will work. post seems to do the trick.
 	 */
 	private void initialScrollToEnd() {
-		this.mReportFramework.getLinearScroller().getScrollView()
+		this.reportFramework.getLinearScroller().getScrollView()
 				.post(new Runnable() {
 					@Override
 					public void run() {
-						TimeSheetDetailReportActivity.this.mReportFramework
+						TimeSheetDetailReportActivity.this.reportFramework
 								.getLinearScroller().getScrollView()
 								.fullScroll(View.FOCUS_DOWN);
 					}
@@ -182,8 +214,8 @@ public class TimeSheetDetailReportActivity extends Activity implements
 
 		this.initScrollview();
 		String lastStartDate = "";
-		final TimeSliceFilterParameter rangeFilter = TimeSheetDetailReportActivity.mRangeFilter;
-		final List<TimeSlice> timeSlices = this.mTimeSliceRepository
+		final TimeSliceFilterParameter rangeFilter = TimeSheetDetailReportActivity.currentRangeFilter;
+		final List<TimeSlice> timeSlices = this.timeSliceRepository
 				.fetchList(rangeFilter);
 		Log.i(Global.LOG_CONTEXT,
 				"fetchTimeSlicesByDateRange:"
@@ -223,7 +255,7 @@ public class TimeSheetDetailReportActivity extends Activity implements
 		final StringBuilder sliceReportText = new StringBuilder();
 		sliceReportText.append("  ").append(aSlice.getTitleWithDuration());
 		final int lineOneEnd = sliceReportText.length();
-		final boolean showNotes = (this.mShowNotes
+		final boolean showNotes = (this.showNotes
 				&& (aSlice.getNotes() != null) && (aSlice.getNotes().length() > 0));
 		if (showNotes) {
 			sliceReportText.append("\n").append("    ")
@@ -237,8 +269,8 @@ public class TimeSheetDetailReportActivity extends Activity implements
 					lineOneEnd, str.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 		}
 		this.registerForContextMenu(sliceReportLine);
-		this.mMainLayout.addView(sliceReportLine);
-		this.mReportViewList.add(sliceReportLine);
+		this.mainLayout.addView(sliceReportLine);
+		this.reportViewItemList.add(sliceReportLine);
 	}
 
 	private TextView addDateHeaderLine(final String dateText,
@@ -261,8 +293,8 @@ public class TimeSheetDetailReportActivity extends Activity implements
 				}
 			});
 		}
-		this.mMainLayout.addView(startDateLine);
-		this.mReportViewList.add(startDateLine);
+		this.mainLayout.addView(startDateLine);
+		this.reportViewItemList.add(startDateLine);
 		return startDateLine;
 	}
 
@@ -278,18 +310,18 @@ public class TimeSheetDetailReportActivity extends Activity implements
 					this.getString(R.string.menu_text_edit));
 			menu.add(0, TimeSheetDetailReportActivity.DELETE_MENU_ID, 0,
 					this.getString(R.string.cmd_delete));
-			this.mCurrentSelectedTimeSlice = (TimeSlice) v.getTag();
-			this.mCurrentSelectedDate = this.mCurrentSelectedTimeSlice
+			this.currentSelectedTimeSliceUsedForMenu = (TimeSlice) v.getTag();
+			this.lastSelectedDateUsedForAddMenu = this.currentSelectedTimeSliceUsedForMenu
 					.getStartTime();
 		} else if (tag instanceof TimeSliceFilterParameter) {
 			menu.add(0, TimeSheetDetailReportActivity.ADD_MENU_ID, 0,
 					this.getString(R.string.menu_report_add_new_time_interval));
 			menu.add(0, TimeSheetDetailReportActivity.DELETE_MENU_ID, 0,
 					this.getString(R.string.cmd_delete));
-			this.mCurrentSelectedTimeSlice = null;
-			this.mCurrentSelectionFilter = (TimeSliceFilterParameter) v
+			this.currentSelectedTimeSliceUsedForMenu = null;
+			this.currentSelectedListItemRangeFilterUsedForDeleteMenu = (TimeSliceFilterParameter) v
 					.getTag();
-			this.mCurrentSelectedDate = this.mCurrentSelectionFilter
+			this.lastSelectedDateUsedForAddMenu = this.currentSelectedListItemRangeFilterUsedForDeleteMenu
 					.getStartTime();
 		}
 	}
@@ -308,15 +340,16 @@ public class TimeSheetDetailReportActivity extends Activity implements
 			if (updatedTimeSlice != null) {
 				// after Edit saveNew/updateExisting Timeslice
 				if (updatedTimeSlice.getRowId() == TimeSlice.IS_NEW_TIMESLICE) {
-					this.mTimeSliceRepository.create(updatedTimeSlice);
+					this.timeSliceRepository.create(updatedTimeSlice);
 				} else {
-					this.mTimeSliceRepository.update(updatedTimeSlice);
+					this.timeSliceRepository.update(updatedTimeSlice);
 				}
 			} else if (resultCode == ReportFilterActivity.RESULT_FILTER_CHANGED) {
 				// after filter change: remeber new filter
-				TimeSheetDetailReportActivity.mRangeFilter = this.mReportFramework
-						.onActivityResult(intent,
-								TimeSheetDetailReportActivity.mRangeFilter);
+				TimeSheetDetailReportActivity.currentRangeFilter = this.reportFramework
+						.onActivityResult(
+								intent,
+								TimeSheetDetailReportActivity.currentRangeFilter);
 			}
 
 			this.loadDataIntoReport(0);
@@ -342,26 +375,26 @@ public class TimeSheetDetailReportActivity extends Activity implements
 
 	private void onCommandEditTimeSlice() {
 		TimeSliceEditActivity.showTimeSliceEditActivity(this,
-				this.mCurrentSelectedTimeSlice,
+				this.currentSelectedTimeSliceUsedForMenu,
 				TimeSheetDetailReportActivity.ID_EDIT_TIME_SLICE);
 	}
 
 	private void onCommandDeleteTimeSlice() {
 		TimeSliceFilterParameter parameter;
-		if (this.mCurrentSelectedTimeSlice != null) {
+		if (this.currentSelectedTimeSliceUsedForMenu != null) {
 			parameter = new TimeSliceFilterParameter().setParameter(
-					this.mCurrentSelectedTimeSlice).setEndTime(
-					this.mCurrentSelectedTimeSlice.getStartTime());
+					this.currentSelectedTimeSliceUsedForMenu).setEndTime(
+					this.currentSelectedTimeSliceUsedForMenu.getStartTime());
 		} else {
-			parameter = this.mCurrentSelectionFilter;
+			parameter = this.currentSelectedListItemRangeFilterUsedForDeleteMenu;
 		}
 		TimeSliceRemoveActivity.showActivity(this, parameter);
 	}
 
 	private void onCommandAddTimeSlice() {
 		final TimeSlice newSlice = new TimeSlice().setStartTime(
-				this.mCurrentSelectedDate)
-				.setEndTime(this.mCurrentSelectedDate);
+				this.lastSelectedDateUsedForAddMenu).setEndTime(
+				this.lastSelectedDateUsedForAddMenu);
 		TimeSliceEditActivity.showTimeSliceEditActivity(this, newSlice,
 				TimeSheetDetailReportActivity.ID_ADD_TIME_SLICE);
 	}
@@ -372,14 +405,14 @@ public class TimeSheetDetailReportActivity extends Activity implements
 		menu.clear();
 		menu.add(0, TimeSheetDetailReportActivity.ADD_MENU_ID, 0,
 				this.getString(R.string.menu_report_add_new_time_interval));
-		if (this.mShowNotes) {
-			menu.add(0, TimeSheetDetailReportActivity.SHOW_DESC_MENU_ID, 0,
+		if (this.showNotes) {
+			menu.add(0, TimeSheetDetailReportActivity.SHOW_NOTES_MENU_ID, 0,
 					this.getString(R.string.menu_report_exclude_notes));
 		} else {
-			menu.add(0, TimeSheetDetailReportActivity.SHOW_DESC_MENU_ID, 0,
+			menu.add(0, TimeSheetDetailReportActivity.SHOW_NOTES_MENU_ID, 0,
 					this.getString(R.string.menu_report_include_notes));
 		}
-		this.mReportFramework.onPrepareOptionsMenu(menu);
+		this.reportFramework.onPrepareOptionsMenu(menu);
 
 		return result;
 	}
@@ -396,18 +429,18 @@ public class TimeSheetDetailReportActivity extends Activity implements
 					TimeSheetDetailReportActivity.ADD_MENU_ID);
 
 			break;
-		case SHOW_DESC_MENU_ID:
-			if (this.mShowNotes) {
-				this.mShowNotes = false;
+		case SHOW_NOTES_MENU_ID:
+			if (this.showNotes) {
+				this.showNotes = false;
 			} else {
-				this.mShowNotes = true;
+				this.showNotes = true;
 			}
 			this.loadDataIntoReport(0);
 			break;
 		default:
-			this.mReportFramework
+			this.reportFramework
 					.setReportType(ReportFramework.ReportTypes.TIMESHEET);
-			this.mReportFramework.onOptionsItemSelected(item);
+			this.reportFramework.onOptionsItemSelected(item);
 		}
 
 		return true;
