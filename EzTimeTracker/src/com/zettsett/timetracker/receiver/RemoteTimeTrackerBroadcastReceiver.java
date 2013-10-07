@@ -19,9 +19,9 @@ import com.zettsett.timetracker.TimeTrackerManager;
  */
 public class RemoteTimeTrackerBroadcastReceiver extends BroadcastReceiver {
 
-	private static final String USAGE = "Expected datastring '"
-			+ Global.CMD_START + ":category{:notes}' or '" + Global.CMD_STOP
-			+ "{:notes}'.";
+	private static final String USAGE = "Expected datastring 'cmd:"
+			+ Global.CMD_START + ":category{:notes}' or 'cmd:"
+			+ Global.CMD_STOP + "{:notes}'.";
 
 	@Override
 	public void onReceive(final Context context, final Intent intent) {

@@ -37,7 +37,16 @@ the sources are hosted in <a
  href="https://github.com/k3b/EzTimeTracker">git
 repository@github.com</a>.<br />
 <br />
-Recent Improvements<br />
+Recent Improvements v2.5<br />
+<ul>
+  <li>Categories can now be marked and visualized as expired. Via settings you decide if you want to see them or not.</li>
+  <li>TimeSheetReports/Deletes can now be filtered by punchin notes`.</li>
+  <li>TimeSheetDetailReport got a contextmenu to show details of the summary or delete items.</li>
+  <li>Immediate punchin with the same category as previos punchout will append to previos to cope accidental punchout by Llama. (See Settings.minPunchInTreshhold.)</li>
+  <li>Punchin with immediate Punchout can be discarded to cope accidental punchin by Llama. (See Settings.minPunchOutTreshhold.)</li>
+</ul> 
+<br />
+Improvements v2.0 - v2.4<br />
 <ul>
   <li>A remote brodcast api allow other android apps to trigger
 EZ Time Tracker events.<br />
@@ -46,6 +55,7 @@ Llama</a> can be used to do Location based time tracking:
 Recording when entering/leaving job/buro.</li>
   <li>German/English localisations, <br />
 Support for culture specific Date/Time formats</li>
+
   <li>Improved CSV export</li>
   <li>Date/Time entry with new <a
  href="http://code.google.com/p/android-dateslider/">Dateslider.</a></li>
