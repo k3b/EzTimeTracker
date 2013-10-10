@@ -5,10 +5,10 @@ import junit.framework.Assert;
 import org.junit.Test;
 
 public class TimeSliceTest {
-	final TimeSlice ts1 = new TimeSlice().setRowId(22).setStartTime(12)
-			.setEndTime(77).setNotes("some Notes");
-	final TimeSlice ts2 = new TimeSlice().setRowId(22).setStartTime(212)
-			.setEndTime(277).setNotes("some more Notes");
+	final TimeSlice ts1 = new TimeSlice(22).setStartTime(12).setEndTime(77)
+			.setNotes("some Notes");
+	final TimeSlice ts2 = new TimeSlice(22).setStartTime(212).setEndTime(277)
+			.setNotes("some more Notes");
 
 	@Test
 	public void shouldBeEqualIfIdEqual() {
@@ -34,7 +34,7 @@ public class TimeSliceTest {
 	public void shouldGetByID() {
 		final TimeSliceSelectedItems items = this
 				.createTimeSliceSelectedItems().add(this.ts1);
-		final TimeSlice found = items.get(this.ts1.getRowId());
+		final IItemWithRowId found = items.get(this.ts1.getRowId());
 		Assert.assertEquals(this.ts1, found);
 	}
 

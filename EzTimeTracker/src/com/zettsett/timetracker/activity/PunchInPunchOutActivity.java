@@ -222,7 +222,9 @@ public class PunchInPunchOutActivity extends Activity implements
 				.getMenuIntentHandler(itemId);
 		if (itemHandler != null) {
 			final Intent intent = new Intent().setClass(this, itemHandler);
-			intent.putExtra(TimeSheetSummaryReportActivity.SAVED_MENU_ID_BUNDLE_NAME, itemId);
+			intent.putExtra(
+					TimeSheetSummaryReportActivity.SAVED_MENU_ID_BUNDLE_NAME,
+					itemId);
 			this.startActivity(intent);
 			return true;
 		}
@@ -417,11 +419,10 @@ public class PunchInPunchOutActivity extends Activity implements
 
 	private boolean editStartSettings() {
 		if (this.sessionData != null) {
-			final TimeSlice editItem = new TimeSlice()
+			final TimeSlice editItem = new TimeSlice(32531)
 					.setCategory(this.sessionData.getCategory())
 					.setEndTime(TimeSliceEditActivity.HIDDEN)
-					.setNotes(TimeSliceEditActivity.HIDDEN_NOTES)
-					.setRowId(32531);
+					.setNotes(TimeSliceEditActivity.HIDDEN_NOTES);
 			// edit already running starttime
 			if (this.sessionData.isPunchedIn()) {
 				editItem.setStartTime(this.sessionData.getStartTime());
@@ -437,12 +438,11 @@ public class PunchInPunchOutActivity extends Activity implements
 
 	private boolean editStopSettings() {
 		if ((this.sessionData != null) && (this.sessionData.isPunchedIn())) {
-			final TimeSlice editItem = new TimeSlice()
+			final TimeSlice editItem = new TimeSlice(32531)
 					.setCategory(this.sessionData.getCategory())
 					.setStartTime(this.sessionData.getStartTime())
 					.setEndTime(TimeTrackerManager.currentTimeMillis())
-					.setNotes(TimeSliceEditActivity.HIDDEN_NOTES)
-					.setRowId(32531);
+					.setNotes(TimeSliceEditActivity.HIDDEN_NOTES);
 			TimeSliceEditActivity.showTimeSliceEditActivity(this, editItem,
 					PunchInPunchOutActivity.EDIT_STOP);
 		}

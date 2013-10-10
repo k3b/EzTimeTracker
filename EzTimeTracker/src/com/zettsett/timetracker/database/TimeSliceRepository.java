@@ -56,8 +56,9 @@ public class TimeSliceRepository {
 						newStartTime);
 
 		if (oldTimeSlice != null) {
-			timeSlice.setRowId(oldTimeSlice.getRowId()).setNotes(
-					oldTimeSlice.getNotes() + " " + timeSlice.getNotes());
+			timeSlice.setNotes(
+					oldTimeSlice.getNotes() + " " + timeSlice.getNotes())
+					.setRowId(oldTimeSlice.getRowId());
 			final long oldStartTime = oldTimeSlice.getStartTime();
 			if (oldStartTime < newStartTime) {
 				timeSlice.setStartTime(oldStartTime);

@@ -6,14 +6,11 @@ import java.util.GregorianCalendar;
 
 import com.zettsett.timetracker.DateTimeFormatter;
 
-public class TimeSlice implements Serializable, ITimeSliceFilter {
+public class TimeSlice extends ItemWithRowId implements Serializable,
+		ITimeSliceFilter, IItemWithRowId {
 	private static final long serialVersionUID = 6586305797483181442L;
 
 	public static final long NO_TIME_VALUE = 0;
-	public static final int IS_NEW_TIMESLICE = -1;
-
-	private int rowId = TimeSlice.IS_NEW_TIMESLICE;
-
 	private long startTime = TimeSlice.NO_TIME_VALUE;
 
 	private long endTime = TimeSlice.NO_TIME_VALUE;
@@ -24,13 +21,13 @@ public class TimeSlice implements Serializable, ITimeSliceFilter {
 
 	private static Calendar calendar = new GregorianCalendar();
 
-	public int getRowId() {
-		return this.rowId;
+	public TimeSlice() {
+
 	}
 
-	public TimeSlice setRowId(final int rowId) {
-		this.rowId = rowId;
-		return this;
+	public TimeSlice(final int rowId) {
+		this.setRowId(rowId);
+
 	}
 
 	@Override
@@ -151,26 +148,6 @@ public class TimeSlice implements Serializable, ITimeSliceFilter {
 	@Override
 	public String toString() {
 		return this.getTitleWithDuration() + ":" + this.getNotes();
-	}
-
-	@Override
-	public int hashCode() {
-		return this.getRowId();
-	}
-
-	@Override
-	public boolean equals(final Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (this.getClass() != obj.getClass()) {
-			return false;
-		}
-
-		return (this.getRowId() == ((TimeSlice) obj).getRowId());
 	}
 
 }

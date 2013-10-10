@@ -19,12 +19,24 @@ public class ReportItem<T> extends TextView implements ISelection<T> {
 
 	@Override
 	public boolean isSelected(final T item) {
+		return this.selection.isSelected(item);
+	}
+
+	@Override
+	public boolean isSelected(final int item) {
 		// TODO Auto-generated method stub
 		return this.selection.isSelected(item);
 	}
 
 	@Override
 	public ISelection<T> setAsSelected(final T item, final boolean value) {
+		this.selected = value;
+		// TODO Auto-generated method stub
+		return this.selection.setAsSelected(item, value);
+	}
+
+	@Override
+	public ISelection<T> setAsSelected(final int item, final boolean value) {
 		this.selected = value;
 		// TODO Auto-generated method stub
 		return this.selection.setAsSelected(item, value);

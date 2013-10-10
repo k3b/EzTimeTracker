@@ -30,10 +30,15 @@ public class TimeSliceSelectedItems implements ISelection<TimeSlice> {
 		return this;
 	}
 
-	public TimeSliceSelectedItems remove(final TimeSlice item) {
+	public TimeSliceSelectedItems remove(final IItemWithRowId item) {
 		if (item != null) {
 			this.items.delete(item.getRowId());
 		}
+		return this;
+	}
+
+	public TimeSliceSelectedItems remove(final int item) {
+		this.items.delete(item);
 		return this;
 	}
 
@@ -42,14 +47,14 @@ public class TimeSliceSelectedItems implements ISelection<TimeSlice> {
 		return this.items.size();
 	}
 
-	public TimeSlice get(final int rowId) {
+	public IItemWithRowId get(final int rowId) {
 		return this.items.get(rowId);
 	}
 
 	@Override
 	public boolean isSelected(final TimeSlice item) {
 		if ((item != null) && (item != TimeSliceSelectedItems.EMPTY)) {
-			final TimeSlice found = this.get(item.getRowId());
+			final IItemWithRowId found = this.get(item.getRowId());
 			if (found != null) {
 				this.add(item);
 				return true;
@@ -59,9 +64,31 @@ public class TimeSliceSelectedItems implements ISelection<TimeSlice> {
 	}
 
 	@Override
+	public boolean isSelected(final int item) {
+		final IItemWithRowId found = this.get(item);
+		if (found != null) {
+			return true;
+		}
+		return false;
+	}
+
+	@Override
 	public ISelection<TimeSlice> setAsSelected(final TimeSlice item,
 			final boolean value) {
 		if ((item != null) && (item != TimeSliceSelectedItems.EMPTY)) {
+			if (value) {
+				this.add(item);
+			} else {
+				this.remove(item);
+			}
+		}
+		return this;
+	}
+
+	@Override
+	public ISelection<TimeSlice> setAsSelected(final int item,
+			final boolean value) {
+		if (item != TimeSliceSelectedItems.EMPTY.getRowId()) {
 			if (value) {
 				this.add(item);
 			} else {
