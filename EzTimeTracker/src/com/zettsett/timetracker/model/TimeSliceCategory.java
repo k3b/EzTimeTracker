@@ -4,7 +4,9 @@ import java.io.Serializable;
 
 import com.zettsett.timetracker.DateTimeFormatter;
 
-public class TimeSliceCategory implements Serializable,
+import de.k3b.common.ItemWithRowId;
+
+public class TimeSliceCategory extends ItemWithRowId implements Serializable,
 		Comparable<TimeSliceCategory> {
 	private static final long serialVersionUID = 4899523432240132519L;
 
@@ -16,8 +18,6 @@ public class TimeSliceCategory implements Serializable,
 	public static final long MAX_VALID_DATE = Long.MAX_VALUE;
 
 	private static long currentDateTime = TimeSliceCategory.MIN_VALID_DATE;
-
-	private int rowId = TimeSliceCategory.NOT_SAVED;
 
 	private String categoryName;
 
@@ -34,14 +34,6 @@ public class TimeSliceCategory implements Serializable,
 	public TimeSliceCategory(final int id, final String name) {
 		this.setRowId(id);
 		this.setCategoryName(name);
-	}
-
-	public int getRowId() {
-		return this.rowId;
-	}
-
-	public void setRowId(final int rowId) {
-		this.rowId = rowId;
 	}
 
 	public String getCategoryName() {
