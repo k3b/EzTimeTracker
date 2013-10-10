@@ -152,4 +152,25 @@ public class TimeSlice implements Serializable, ITimeSliceFilter {
 	public String toString() {
 		return this.getTitleWithDuration() + ":" + this.getNotes();
 	}
+
+	@Override
+	public int hashCode() {
+		return this.getRowId();
+	}
+
+	@Override
+	public boolean equals(final Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (this.getClass() != obj.getClass()) {
+			return false;
+		}
+
+		return (this.getRowId() == ((TimeSlice) obj).getRowId());
+	}
+
 }

@@ -1,22 +1,21 @@
 
 todo
+	bug: category edit start/enddate wenn wert ist (noch) leer 
+
+	multi-selection display for report with actions: change category, delete, merge, sort by date/category for detailreport
+	multi-selection display for category with actions: delete,merge
+
+
+
+
 	report
-		bug detail-report-filter: notes is lost
 		alle repository methoden auf sqlFilter umstellen?
 			v add(field, operation, value???
 	summaryReport-ctx-menu-
 		v delete
 		change category if category selected or parent 
 ?	after report update scroll to last know pos
-	Category detail report from
-		v category list
-		v category edit via long press usage
-		v category delete if references are found
-		v summary report
-		
-		v remove obselte timeslice getXxxAsString
-		v filter by (notes)
-	2.5
+	2.6
 =================
 
 	delete items with category-filter
