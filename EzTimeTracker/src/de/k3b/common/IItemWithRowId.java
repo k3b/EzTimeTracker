@@ -1,4 +1,4 @@
-package com.zettsett.timetracker.model;
+package de.k3b.common;
 
 public interface IItemWithRowId {
 

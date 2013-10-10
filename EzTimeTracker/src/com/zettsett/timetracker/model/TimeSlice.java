@@ -6,6 +6,9 @@ import java.util.GregorianCalendar;
 
 import com.zettsett.timetracker.DateTimeFormatter;
 
+import de.k3b.common.IItemWithRowId;
+import de.k3b.common.ItemWithRowId;
+
 public class TimeSlice extends ItemWithRowId implements Serializable,
 		ITimeSliceFilter, IItemWithRowId {
 	private static final long serialVersionUID = 6586305797483181442L;

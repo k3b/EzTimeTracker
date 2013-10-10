@@ -1,6 +1,7 @@
 package com.zettsett.timetracker.model;
 
 import android.util.SparseArray;
+import de.k3b.common.IItemWithRowId;
 import de.k3b.common.ISelection;
 
 public class TimeSliceSelectedItems implements ISelection<TimeSlice> {

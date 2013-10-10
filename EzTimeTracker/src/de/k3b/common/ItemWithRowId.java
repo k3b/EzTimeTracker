@@ -1,4 +1,4 @@
-package com.zettsett.timetracker.model;
+package de.k3b.common;
 
 public class ItemWithRowId implements IItemWithRowId {
 	public static final int IS_NEW_TIMESLICE = -1;

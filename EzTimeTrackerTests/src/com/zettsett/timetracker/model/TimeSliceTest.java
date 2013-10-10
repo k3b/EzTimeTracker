@@ -4,6 +4,8 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
+import de.k3b.common.IItemWithRowId;
+
 public class TimeSliceTest {
 	final TimeSlice ts1 = new TimeSlice(22).setStartTime(12).setEndTime(77)
 			.setNotes("some Notes");
