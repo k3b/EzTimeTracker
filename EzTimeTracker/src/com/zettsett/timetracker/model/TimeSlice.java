@@ -13,7 +13,11 @@ public class TimeSlice extends ItemWithRowId implements Serializable,
 		ITimeSliceFilter, IItemWithRowId {
 	private static final long serialVersionUID = 6586305797483181442L;
 
+	public static final TimeSlice EMPTY = new TimeSlice(
+			TimeSlice.IS_NEW_TIMESLICE);
+
 	public static final long NO_TIME_VALUE = 0;
+
 	private long startTime = TimeSlice.NO_TIME_VALUE;
 
 	private long endTime = TimeSlice.NO_TIME_VALUE;

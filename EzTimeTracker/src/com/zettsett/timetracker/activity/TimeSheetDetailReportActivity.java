@@ -27,10 +27,11 @@ import com.zetter.androidTime.R;
 import com.zettsett.timetracker.Global;
 import com.zettsett.timetracker.database.TimeSliceRepository;
 import com.zettsett.timetracker.model.TimeSlice;
-import com.zettsett.timetracker.model.TimeSliceSelectedItems;
 import com.zettsett.timetracker.report.IReportInterface;
 
 import de.k3b.common.ISelection;
+import de.k3b.common.ItemWithRowId;
+import de.k3b.common.SelectedItemsWithRowId;
 import de.k3b.widgets.ReportItem;
 
 /*
@@ -82,7 +83,8 @@ public class TimeSheetDetailReportActivity extends Activity implements
 	// current state
 	private TimeSlice currentSelectedTimeSliceUsedForMenu;
 	private long lastSelectedDateUsedForAddMenu;
-	private final ISelection<TimeSlice> selection = new TimeSliceSelectedItems();
+	private final ISelection<TimeSlice> selection = new SelectedItemsWithRowId<TimeSlice>(
+			TimeSlice.EMPTY);
 	/**
 	 * if reportitems should be generated with timeslice-notes or not.<br>
 	 * Toggeld via option-menu
@@ -349,7 +351,7 @@ public class TimeSheetDetailReportActivity extends Activity implements
 
 			if (updatedTimeSlice != null) {
 				// after Edit saveNew/updateExisting Timeslice
-				if (updatedTimeSlice.getRowId() == TimeSlice.IS_NEW_TIMESLICE) {
+				if (updatedTimeSlice.getRowId() == ItemWithRowId.IS_NEW_TIMESLICE) {
 					this.timeSliceRepository.create(updatedTimeSlice);
 				} else {
 					this.timeSliceRepository.update(updatedTimeSlice);

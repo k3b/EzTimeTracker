@@ -1,11 +1,14 @@
-package com.zettsett.timetracker.model;
+package de.k3b.common;
 
 import android.util.SparseArray;
-import de.k3b.common.IItemWithRowId;
-import de.k3b.common.ISelection;
 
-public class TimeSliceSelectedItems implements ISelection<TimeSlice> {
-	public static final TimeSlice EMPTY = new TimeSlice();
+public class SelectedItemsWithRowId<E extends IItemWithRowId> implements
+		ISelection<E> {
+	public final E EMPTY;
+
+	public SelectedItemsWithRowId(final E empty) {
+		this.EMPTY = empty;
+	}
 
 	/**
 	 * Do not use SparseArray<TimeSlice> because it is android only so j2se
@@ -15,30 +18,30 @@ public class TimeSliceSelectedItems implements ISelection<TimeSlice> {
 	// private final Map<Integer, TimeSlice> items = new HashMap<Integer,
 	// TimeSlice>();
 
-	private final SparseArray<TimeSlice> items = new SparseArray<TimeSlice>();
+	private final SparseArray<E> items = new SparseArray<E>();
 
-	public TimeSliceSelectedItems add(final TimeSlice item) {
+	public SelectedItemsWithRowId<E> add(final E item) {
 		if (item != null) {
 			this.items.put(item.getRowId(), item);
 		}
 		return this;
 	}
 
-	public TimeSliceSelectedItems add(final int item) {
-		if (item != TimeSlice.IS_NEW_TIMESLICE) {
-			this.items.put(item, TimeSliceSelectedItems.EMPTY);
+	public SelectedItemsWithRowId<E> add(final int item) {
+		if (item != ItemWithRowId.IS_NEW_TIMESLICE) {
+			this.items.put(item, this.EMPTY);
 		}
 		return this;
 	}
 
-	public TimeSliceSelectedItems remove(final IItemWithRowId item) {
+	public SelectedItemsWithRowId<E> remove(final IItemWithRowId item) {
 		if (item != null) {
 			this.items.delete(item.getRowId());
 		}
 		return this;
 	}
 
-	public TimeSliceSelectedItems remove(final int item) {
+	public SelectedItemsWithRowId<E> remove(final int item) {
 		this.items.delete(item);
 		return this;
 	}
@@ -53,8 +56,8 @@ public class TimeSliceSelectedItems implements ISelection<TimeSlice> {
 	}
 
 	@Override
-	public boolean isSelected(final TimeSlice item) {
-		if ((item != null) && (item != TimeSliceSelectedItems.EMPTY)) {
+	public boolean isSelected(final E item) {
+		if ((item != null) && (item != this.EMPTY)) {
 			final IItemWithRowId found = this.get(item.getRowId());
 			if (found != null) {
 				this.add(item);
@@ -74,9 +77,8 @@ public class TimeSliceSelectedItems implements ISelection<TimeSlice> {
 	}
 
 	@Override
-	public ISelection<TimeSlice> setAsSelected(final TimeSlice item,
-			final boolean value) {
-		if ((item != null) && (item != TimeSliceSelectedItems.EMPTY)) {
+	public ISelection<E> setAsSelected(final E item, final boolean value) {
+		if ((item != null) && (item != this.EMPTY)) {
 			if (value) {
 				this.add(item);
 			} else {
@@ -87,9 +89,8 @@ public class TimeSliceSelectedItems implements ISelection<TimeSlice> {
 	}
 
 	@Override
-	public ISelection<TimeSlice> setAsSelected(final int item,
-			final boolean value) {
-		if (item != TimeSliceSelectedItems.EMPTY.getRowId()) {
+	public ISelection<E> setAsSelected(final int item, final boolean value) {
+		if (item != this.EMPTY.getRowId()) {
 			if (value) {
 				this.add(item);
 			} else {

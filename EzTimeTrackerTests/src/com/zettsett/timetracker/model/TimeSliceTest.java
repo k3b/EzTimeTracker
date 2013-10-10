@@ -5,6 +5,7 @@ import junit.framework.Assert;
 import org.junit.Test;
 
 import de.k3b.common.IItemWithRowId;
+import de.k3b.common.SelectedItemsWithRowId;
 
 public class TimeSliceTest {
 	final TimeSlice ts1 = new TimeSlice(22).setStartTime(12).setEndTime(77)
@@ -19,14 +20,14 @@ public class TimeSliceTest {
 
 	@Test
 	public void shouldNotStoreDuplicates() {
-		final TimeSliceSelectedItems items = this
+		final SelectedItemsWithRowId<TimeSlice> items = this
 				.createTimeSliceSelectedItems().add(this.ts1).add(this.ts2);
 		Assert.assertEquals(1, items.size());
 	}
 
 	@Test
 	public void shouldNotStoreDuplicatesWithID() {
-		final TimeSliceSelectedItems items = this
+		final SelectedItemsWithRowId<?> items = this
 				.createTimeSliceSelectedItems().add(this.ts1)
 				.add(this.ts2.getRowId());
 		Assert.assertEquals(1, items.size());
@@ -34,13 +35,13 @@ public class TimeSliceTest {
 
 	@Test
 	public void shouldGetByID() {
-		final TimeSliceSelectedItems items = this
+		final SelectedItemsWithRowId<TimeSlice> items = this
 				.createTimeSliceSelectedItems().add(this.ts1);
 		final IItemWithRowId found = items.get(this.ts1.getRowId());
 		Assert.assertEquals(this.ts1, found);
 	}
 
-	private TimeSliceSelectedItems createTimeSliceSelectedItems() {
-		return new TimeSliceSelectedItems();
+	private SelectedItemsWithRowId<TimeSlice> createTimeSliceSelectedItems() {
+		return new SelectedItemsWithRowId<TimeSlice>(TimeSlice.EMPTY);
 	}
 }

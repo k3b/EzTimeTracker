@@ -7,7 +7,7 @@ import de.k3b.common.ISelection;
 public class ReportItem<T> extends TextView implements ISelection<T> {
 
 	private final ISelection<T> selection;
-	private boolean selected;
+	private boolean selected = false;
 
 	public ReportItem(final Context context, final ISelection<T> selection) {
 		super(context);
@@ -20,6 +20,11 @@ public class ReportItem<T> extends TextView implements ISelection<T> {
 	@Override
 	public boolean isSelected(final T item) {
 		return this.selection.isSelected(item);
+	}
+
+	@Override
+	public boolean isSelected() {
+		return this.selected;
 	}
 
 	@Override

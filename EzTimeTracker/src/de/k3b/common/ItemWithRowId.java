@@ -3,6 +3,9 @@ package de.k3b.common;
 public class ItemWithRowId implements IItemWithRowId {
 	public static final int IS_NEW_TIMESLICE = -1;
 
+	public static final ItemWithRowId EMPTY = new ItemWithRowId()
+			.setRowId(ItemWithRowId.IS_NEW_TIMESLICE);
+
 	private int rowId = ItemWithRowId.IS_NEW_TIMESLICE;
 
 	/*
