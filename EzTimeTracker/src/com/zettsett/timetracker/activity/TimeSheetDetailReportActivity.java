@@ -27,7 +27,11 @@ import com.zetter.androidTime.R;
 import com.zettsett.timetracker.Global;
 import com.zettsett.timetracker.database.TimeSliceRepository;
 import com.zettsett.timetracker.model.TimeSlice;
+import com.zettsett.timetracker.model.TimeSliceSelectedItems;
 import com.zettsett.timetracker.report.IReportInterface;
+
+import de.k3b.common.ISelection;
+import de.k3b.widgets.ReportItem;
 
 /*
  * Copyright 2010 Eric Zetterbaum ezetter@gmail.com
@@ -78,7 +82,7 @@ public class TimeSheetDetailReportActivity extends Activity implements
 	// current state
 	private TimeSlice currentSelectedTimeSliceUsedForMenu;
 	private long lastSelectedDateUsedForAddMenu;
-
+	private final ISelection<TimeSlice> selection = new TimeSliceSelectedItems();
 	/**
 	 * if reportitems should be generated with timeslice-notes or not.<br>
 	 * Toggeld via option-menu
@@ -250,7 +254,7 @@ public class TimeSheetDetailReportActivity extends Activity implements
 	}
 
 	private void addTimeSliceLine(final TimeSlice aSlice) {
-		final TextView sliceReportLine = new TextView(this);
+		final ReportItem<TimeSlice> sliceReportLine = this.createReportItem();
 		sliceReportLine.setTag(aSlice);
 		final StringBuilder sliceReportText = new StringBuilder();
 		sliceReportText.append("  ").append(aSlice.getTitleWithDuration());
@@ -273,9 +277,13 @@ public class TimeSheetDetailReportActivity extends Activity implements
 		this.reportViewItemList.add(sliceReportLine);
 	}
 
-	private TextView addDateHeaderLine(final String dateText,
+	private ReportItem<TimeSlice> createReportItem() {
+		return new ReportItem<TimeSlice>(this, this.selection);
+	}
+
+	private ReportItem<TimeSlice> addDateHeaderLine(final String dateText,
 			final TimeSliceFilterParameter filter, final int color) {
-		final TextView startDateLine = new TextView(this);
+		final ReportItem<TimeSlice> startDateLine = this.createReportItem();
 		startDateLine.setText(dateText);
 		startDateLine.setTextColor(color);
 		if (filter != null) {
@@ -285,9 +293,11 @@ public class TimeSheetDetailReportActivity extends Activity implements
 				@Override
 				public boolean onTouch(final View view, final MotionEvent event) {
 					if (event.getAction() == MotionEvent.ACTION_DOWN) {
-						((TextView) view).setTextColor(Color.rgb(0, 128, 0));
+						((ReportItem<TimeSlice>) view).setTextColor(Color.rgb(
+								0, 128, 0));
 					} else if (event.getAction() == MotionEvent.ACTION_UP) {
-						((TextView) view).setTextColor(Color.GREEN);
+						((ReportItem<TimeSlice>) view)
+								.setTextColor(Color.GREEN);
 					}
 					return false;
 				}

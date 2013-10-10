@@ -1,8 +1,9 @@
 package com.zettsett.timetracker.model;
 
 import android.util.SparseArray;
+import de.k3b.common.ISelection;
 
-public class TimeSliceSelectedItems {
+public class TimeSliceSelectedItems implements ISelection<TimeSlice> {
 	public static final TimeSlice EMPTY = new TimeSlice();
 
 	/**
@@ -29,6 +30,13 @@ public class TimeSliceSelectedItems {
 		return this;
 	}
 
+	public TimeSliceSelectedItems remove(final TimeSlice item) {
+		if (item != null) {
+			this.items.delete(item.getRowId());
+		}
+		return this;
+	}
+
 	public int size() {
 		// TODO Auto-generated method stub
 		return this.items.size();
@@ -37,4 +45,30 @@ public class TimeSliceSelectedItems {
 	public TimeSlice get(final int rowId) {
 		return this.items.get(rowId);
 	}
+
+	@Override
+	public boolean isSelected(final TimeSlice item) {
+		if ((item != null) && (item != TimeSliceSelectedItems.EMPTY)) {
+			final TimeSlice found = this.get(item.getRowId());
+			if (found != null) {
+				this.add(item);
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public ISelection<TimeSlice> setAsSelected(final TimeSlice item,
+			final boolean value) {
+		if ((item != null) && (item != TimeSliceSelectedItems.EMPTY)) {
+			if (value) {
+				this.add(item);
+			} else {
+				this.remove(item);
+			}
+		}
+		return this;
+	}
+
 }

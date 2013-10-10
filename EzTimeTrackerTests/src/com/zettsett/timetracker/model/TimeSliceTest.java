@@ -11,19 +11,19 @@ public class TimeSliceTest {
 			.setEndTime(277).setNotes("some more Notes");
 
 	@Test
-	public void ShouldBeEqualIfIdEqual() {
+	public void shouldBeEqualIfIdEqual() {
 		Assert.assertEquals(this.ts1, this.ts2);
 	}
 
 	@Test
-	public void ShouldNotStoreDuplicates() {
+	public void shouldNotStoreDuplicates() {
 		final TimeSliceSelectedItems items = this
 				.createTimeSliceSelectedItems().add(this.ts1).add(this.ts2);
 		Assert.assertEquals(1, items.size());
 	}
 
 	@Test
-	public void ShouldNotStoreDuplicatesWithID() {
+	public void shouldNotStoreDuplicatesWithID() {
 		final TimeSliceSelectedItems items = this
 				.createTimeSliceSelectedItems().add(this.ts1)
 				.add(this.ts2.getRowId());
@@ -31,7 +31,7 @@ public class TimeSliceTest {
 	}
 
 	@Test
-	public void ShouldGetByID() {
+	public void shouldGetByID() {
 		final TimeSliceSelectedItems items = this
 				.createTimeSliceSelectedItems().add(this.ts1);
 		final TimeSlice found = items.get(this.ts1.getRowId());
