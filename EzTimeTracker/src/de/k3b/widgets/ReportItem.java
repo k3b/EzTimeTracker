@@ -1,25 +1,17 @@
 package de.k3b.widgets;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.widget.TextView;
-import de.k3b.common.ISelection;
+import de.k3b.common.IItemWithRowId;
 
-public class ReportItem<T> extends TextView implements ISelection<T> {
+public class ReportItem<T extends IItemWithRowId> extends TextView {
 
-	private final ISelection<T> selection;
 	private boolean selected = false;
+	private T item;
 
-	public ReportItem(final Context context, final ISelection<T> selection) {
+	public ReportItem(final Context context) {
 		super(context);
-		if (selection == null) {
-			throw new IllegalArgumentException("ISelection<T>");
-		}
-		this.selection = selection;
-	}
-
-	@Override
-	public boolean isSelected(final T item) {
-		return this.selection.isSelected(item);
 	}
 
 	@Override
@@ -27,24 +19,9 @@ public class ReportItem<T> extends TextView implements ISelection<T> {
 		return this.selected;
 	}
 
-	@Override
-	public boolean isSelected(final int item) {
-		// TODO Auto-generated method stub
-		return this.selection.isSelected(item);
-	}
-
-	@Override
-	public ISelection<T> setAsSelected(final T item, final boolean value) {
+	public ReportItem<T> setAsSelected(final boolean value) {
 		this.selected = value;
-		// TODO Auto-generated method stub
-		return this.selection.setAsSelected(item, value);
+		this.setBackgroundColor((value) ? Color.DKGRAY : Color.BLACK);
+		return this;
 	}
-
-	@Override
-	public ISelection<T> setAsSelected(final int item, final boolean value) {
-		this.selected = value;
-		// TODO Auto-generated method stub
-		return this.selection.setAsSelected(item, value);
-	}
-
 }

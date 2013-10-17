@@ -29,9 +29,7 @@ import com.zettsett.timetracker.database.TimeSliceRepository;
 import com.zettsett.timetracker.model.TimeSlice;
 import com.zettsett.timetracker.report.IReportInterface;
 
-import de.k3b.common.ISelection;
 import de.k3b.common.ItemWithRowId;
-import de.k3b.common.SelectedItemsWithRowId;
 import de.k3b.widgets.ReportItem;
 
 /*
@@ -83,8 +81,6 @@ public class TimeSheetDetailReportActivity extends Activity implements
 	// current state
 	private TimeSlice currentSelectedTimeSliceUsedForMenu;
 	private long lastSelectedDateUsedForAddMenu;
-	private final ISelection<TimeSlice> selection = new SelectedItemsWithRowId<TimeSlice>(
-			TimeSlice.EMPTY);
 	/**
 	 * if reportitems should be generated with timeslice-notes or not.<br>
 	 * Toggeld via option-menu
@@ -280,7 +276,7 @@ public class TimeSheetDetailReportActivity extends Activity implements
 	}
 
 	private ReportItem<TimeSlice> createReportItem() {
-		return new ReportItem<TimeSlice>(this, this.selection);
+		return new ReportItem<TimeSlice>(this);
 	}
 
 	private ReportItem<TimeSlice> addDateHeaderLine(final String dateText,
