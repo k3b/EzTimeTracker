@@ -7,6 +7,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
+import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.zettsett.timetracker.Global;
@@ -219,7 +220,8 @@ public class TimeSliceRepository {
 		Cursor cur = null;
 		int result = -1;
 		try {
-			cur = TimeSliceRepository.CURRENT_DB_INSTANCE.getDb().query(
+			SQLiteDatabase db = TimeSliceRepository.CURRENT_DB_INSTANCE.getDb();
+			cur = db.query(
 					DatabaseHelper.TIME_SLICE_TABLE,
 					new String[] { "COUNT(*)" }, sqlFilter.sql, sqlFilter.args,
 					null, null, null);

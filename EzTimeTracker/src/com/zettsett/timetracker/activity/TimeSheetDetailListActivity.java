@@ -232,11 +232,45 @@ public class TimeSheetDetailListActivity extends ListActivity implements
 
 	@Override
 	public boolean onContextItemSelected(final MenuItem item) {
-		boolean result = this.onMenuItemSelected(item);
-		if (!result) {
-			result = super.onContextItemSelected(item);
+		switch (item.getItemId()) {
+		case EDIT_MENU_ID:
+			this.onCommandEditTimeSlice();
+			return true;
+		case DELETE_MENU_ID:
+			this.onCommandDeleteTimeSlice();
+			return true;
+		case ADD_MENU_ID:
+			this.onCommandAddTimeSlice();
+			return true;
+		default:
+			return super.onContextItemSelected(item);
 		}
-		return result;
+	}
+
+	private void onCommandEditTimeSlice() {
+		TimeSliceEditActivity.showTimeSliceEditActivity(this,
+				this.currentSelectedTimeSliceUsedForMenu,
+				TimeSheetDetailListActivity.ID_EDIT_TIME_SLICE);
+	}
+
+	private void onCommandDeleteTimeSlice() {
+		TimeSliceFilterParameter parameter;
+		if (this.currentSelectedTimeSliceUsedForMenu != null) {
+			parameter = new TimeSliceFilterParameter().setParameter(
+					this.currentSelectedTimeSliceUsedForMenu).setEndTime(
+					this.currentSelectedTimeSliceUsedForMenu.getStartTime());
+		} else {
+			parameter = this.currentSelectedListItemRangeFilterUsedForMenu;
+		}
+		TimeSliceRemoveActivity.showActivity(this, parameter);
+	}
+
+	private void onCommandAddTimeSlice() {
+		final TimeSlice newSlice = new TimeSlice().setStartTime(
+				this.lastSelectedDateUsedForAddMenu).setEndTime(
+				this.lastSelectedDateUsedForAddMenu);
+		TimeSliceEditActivity.showTimeSliceEditActivity(this, newSlice,
+				TimeSheetDetailListActivity.ID_ADD_TIME_SLICE);
 	}
 
 	private boolean onMenuItemSelected(final MenuItem item) {

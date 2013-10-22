@@ -41,7 +41,7 @@ public class SqlFilterBuilder {
 
 	public SqlFilter toFilter() {
 		if (this.sql.length() == 0) {
-			return null;
+			return new SqlFilter(null, null);
 		} else {
 			return new SqlFilter(this.sql.toString(),
 					(this.filterArgs.size() == 0) ? null : this.filterArgs
