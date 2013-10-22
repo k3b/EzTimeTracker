@@ -4,7 +4,13 @@
         android:layout_width="0dip"
         android:layout_weight="1"
         android:layout_height="fill_parent">
-	<TextView android:id="@+id/category_list_view_name_field" android:layout_width="fill_parent"
-		android:layout_height="0dip" android:layout_weight="1" android:textSize="20sp"
-		android:gravity="center_vertical" android:background="#756a5acd" android:textColor="#FFFFFF"/>
+
+	<TextView
+	    android:id="@+id/name"
+	    android:layout_width="fill_parent"
+	    android:layout_height="0dip"
+	    android:layout_weight="1"
+	    android:gravity="center_vertical"
+	    android:textColor="#00FF00"
+	    android:textSize="20sp" />
 </LinearLayout>

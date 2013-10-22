@@ -203,7 +203,7 @@ public class TimeSheetSummaryReportActivity extends Activity implements
 
 	private void showDetailReport() {
 		if (this.currentSelectedListItemRangeFilterUsedForMenu != null) {
-			TimeSheetDetailReportActivity.showActivity(this,
+			TimeSheetDetailListActivity.showActivity(this,
 					this.currentSelectedListItemRangeFilterUsedForMenu);
 		}
 	}

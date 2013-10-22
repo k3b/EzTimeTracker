@@ -111,7 +111,7 @@ public class CategoryListActivity extends ListActivity implements
 			final TimeSliceFilterParameter filter = new TimeSliceFilterParameter()
 					.setCategoryId(this.categoryClicked.getRowId())
 					.setIgnoreDates(true);
-			TimeSheetDetailReportActivity.showActivity(this, filter);
+			TimeSheetDetailListActivity.showActivity(this, filter);
 		}
 	}
 

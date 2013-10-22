@@ -50,7 +50,7 @@ public class CategorySelectDialog extends Dialog {
 				.currentTimeMillis() : TimeSliceCategory.MIN_VALID_DATE;
 
 		return CategoryListAdapterDetailed.createAdapter(this.getContext(),
-				R.layout.time_slice_list_view_row, false,
+				R.layout.name_list_view_row, false,
 				this.newItemPlaceholder, currentDateTime,
 				"CategorySelectDialog");
 	}

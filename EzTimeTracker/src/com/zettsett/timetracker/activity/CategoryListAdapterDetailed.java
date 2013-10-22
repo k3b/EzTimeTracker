@@ -99,19 +99,18 @@ public class CategoryListAdapterDetailed extends
 			view = vi.inflate(this.viewId, null);
 
 			if ((this.itemHight == 0) && (this.withDescription)) {
-				this.itemHight = view.findViewById(
-						R.id.category_list_view_description_field).getHeight();
+				this.itemHight = view.findViewById(R.id.description)
+						.getHeight();
 
 			}
 		}
 		final TimeSliceCategory category = this.items.get(position);
 		if (category != null) {
-			final TextView nameView = (TextView) view
-					.findViewById(R.id.category_list_view_name_field);
+			final TextView nameView = (TextView) view.findViewById(R.id.name);
 			final TextView descriptionView = (TextView) view
-					.findViewById(R.id.category_list_view_description_field);
+					.findViewById(R.id.description);
 			final TextView activeView = (TextView) view
-					.findViewById(R.id.category_list_view_active_field);
+					.findViewById(R.id.active);
 
 			if (this.withDescription) {
 				this.setContent(descriptionView, this.descriptionPrefix,

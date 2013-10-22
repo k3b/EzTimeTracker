@@ -85,7 +85,7 @@ public class CategoryEditDialog extends Dialog {
 							.setCategoryId(
 									CategoryEditDialog.this.mCategory
 											.getRowId()).setIgnoreDates(true);
-					TimeSheetDetailReportActivity.showActivity(context, filter);
+					TimeSheetDetailListActivity.showActivity(context, filter);
 				}
 				return true;
 			}

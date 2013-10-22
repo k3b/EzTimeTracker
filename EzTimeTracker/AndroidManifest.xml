@@ -18,7 +18,7 @@
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
 		</activity>
-		<activity android:name="com.zettsett.timetracker.activity.TimeSheetDetailReportActivity"/>
+		<activity android:name="com.zettsett.timetracker.activity.TimeSheetDetailListActivity"/>
 		<activity android:name="com.zettsett.timetracker.activity.CategoryListActivity"/>
 		<activity android:name="com.zettsett.timetracker.activity.TimeSheetSummaryReportActivity"/>
 		<activity android:name="com.zettsett.timetracker.activity.TimeSliceEditActivity"
