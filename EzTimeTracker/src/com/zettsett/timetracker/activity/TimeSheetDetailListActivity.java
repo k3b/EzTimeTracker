@@ -117,7 +117,16 @@ public class TimeSheetDetailListActivity extends ListActivity implements
 		this.reportFramework = new ReportFramework(this,
 				TimeSheetDetailListActivity.currentRangeFilter);
 		this.loadDataIntoReport(0);
-		// this.registerForContextMenu(this.getListView());
+		// scroll to end
+		this.getListView().post(new Runnable() {
+			@Override
+			public void run() {
+				// Select the last row so it will scroll into view...
+				TimeSheetDetailListActivity.this.getListView().setSelection(
+						TimeSheetDetailListActivity.this.getListView()
+								.getCount() - 1);
+			}
+		});
 	}
 
 	@Override

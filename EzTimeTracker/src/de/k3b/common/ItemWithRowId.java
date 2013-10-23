@@ -1,6 +1,10 @@
 package de.k3b.common;
 
-public class ItemWithRowId implements IItemWithRowId {
+import java.io.Serializable;
+
+public class ItemWithRowId implements IItemWithRowId, Serializable {
+	private static final long serialVersionUID = 6586305797483181444L;
+
 	public static final int IS_NEW_TIMESLICE = -1;
 
 	public static final ItemWithRowId EMPTY = new ItemWithRowId()
