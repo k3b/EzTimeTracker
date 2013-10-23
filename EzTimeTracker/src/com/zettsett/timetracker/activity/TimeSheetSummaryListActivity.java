@@ -3,7 +3,7 @@ package com.zettsett.timetracker.activity;
 import java.util.List;
 import java.util.Map;
 
-import android.app.Activity;
+import android.app.ListActivity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -14,7 +14,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
-import android.view.Window;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
@@ -31,23 +30,7 @@ import com.zettsett.timetracker.report.IReportInterface;
 
 import de.k3b.util.DateTimeUtil;
 
-/**
- * Copyright 2010 Eric Zetterbaum ezetter@gmail.com
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not
- * use this file except in compliance with the License. You may obtain a copy of
- * the License at
- * 
- * http://www.apache.org/licenses/LICENSE-2.0
- * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
- * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
- * License for the specific language governing permissions and limitations under
- * the License.
- * 
- */
-public class TimeSheetSummaryReportActivity extends Activity implements
+public class TimeSheetSummaryListActivity extends ListActivity implements
 		IReportInterface {
 	/**
 	 * Used to transfer optional report-type from parent activity to this.
@@ -97,24 +80,35 @@ public class TimeSheetSummaryReportActivity extends Activity implements
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+		this.setContentView(R.layout.time_slice_list);
 		this.timeSliceRepository = new TimeSliceRepository(this);
-		TimeSheetSummaryReportActivity.currentRangeFilter = ReportFramework
+		TimeSheetSummaryListActivity.currentRangeFilter = ReportFramework
 				.getLastFilter(
 						savedInstanceState,
-						TimeSheetSummaryReportActivity.SAVED_REPORT_RANGE_FILTER_BUNDLE_NAME,
-						TimeSheetSummaryReportActivity.currentRangeFilter);
+						TimeSheetSummaryListActivity.SAVED_REPORT_RANGE_FILTER_BUNDLE_NAME,
+						TimeSheetSummaryListActivity.currentRangeFilter);
 
 		this.reportFramework = new ReportFramework(this,
-				TimeSheetSummaryReportActivity.currentRangeFilter);
+				TimeSheetSummaryListActivity.currentRangeFilter);
 		if (savedInstanceState != null) {
 			this.reportDateGrouping = (ReportDateGrouping) savedInstanceState
-					.getSerializable(TimeSheetSummaryReportActivity.SAVED_REPORT_GROUPING_BUNDLE_NAME);
+					.getSerializable(TimeSheetSummaryListActivity.SAVED_REPORT_GROUPING_BUNDLE_NAME);
 			this.reportMode = (ReportModes) savedInstanceState
-					.getSerializable(TimeSheetSummaryReportActivity.SAVED_REPORT_MODE);
+					.getSerializable(TimeSheetSummaryListActivity.SAVED_REPORT_MODE);
 		}
 		this.loadDataIntoReport(this.getIntent().getIntExtra(
-				TimeSheetSummaryReportActivity.SAVED_MENU_ID_BUNDLE_NAME, 0));
+				TimeSheetSummaryListActivity.SAVED_MENU_ID_BUNDLE_NAME, 0));
+
+		// scroll to end
+		this.getListView().post(new Runnable() {
+			@Override
+			public void run() {
+				// Select the last row so it will scroll into view...
+				TimeSheetSummaryListActivity.this.getListView().setSelection(
+						TimeSheetSummaryListActivity.this.getListView()
+								.getCount() - 1);
+			}
+		});
 	}
 
 	@Override
@@ -122,14 +116,13 @@ public class TimeSheetSummaryReportActivity extends Activity implements
 		ReportFramework
 				.setLastFilter(
 						outState,
-						TimeSheetSummaryReportActivity.SAVED_REPORT_RANGE_FILTER_BUNDLE_NAME,
-						TimeSheetSummaryReportActivity.currentRangeFilter);
+						TimeSheetSummaryListActivity.SAVED_REPORT_RANGE_FILTER_BUNDLE_NAME,
+						TimeSheetSummaryListActivity.currentRangeFilter);
 		outState.putSerializable(
-				TimeSheetSummaryReportActivity.SAVED_REPORT_GROUPING_BUNDLE_NAME,
+				TimeSheetSummaryListActivity.SAVED_REPORT_GROUPING_BUNDLE_NAME,
 				this.reportDateGrouping);
 		outState.putSerializable(
-				TimeSheetSummaryReportActivity.SAVED_REPORT_MODE,
-				this.reportMode);
+				TimeSheetSummaryListActivity.SAVED_REPORT_MODE, this.reportMode);
 	}
 
 	@Override
@@ -139,26 +132,24 @@ public class TimeSheetSummaryReportActivity extends Activity implements
 		final SubMenu groupDateMenu = menu.addSubMenu(0, Menu.NONE, 0,
 				R.string.menu_select_date_grouping);
 		groupDateMenu.add(0,
-				TimeSheetSummaryReportActivity.MENU_ITEM_GROUP_DAILY, 0,
+				TimeSheetSummaryListActivity.MENU_ITEM_GROUP_DAILY, 0,
 				R.string.menu_select_date_grouping_daily);
 		groupDateMenu.add(0,
-				TimeSheetSummaryReportActivity.MENU_ITEM_GROUP_WEEKLY, 1,
+				TimeSheetSummaryListActivity.MENU_ITEM_GROUP_WEEKLY, 1,
 				R.string.menu_select_date_grouping_weekly);
 		groupDateMenu.add(0,
-				TimeSheetSummaryReportActivity.MENU_ITEM_GROUP_MONTHLY, 2,
+				TimeSheetSummaryListActivity.MENU_ITEM_GROUP_MONTHLY, 2,
 				R.string.menu_select_date_grouping_monthly);
 		groupDateMenu.add(0,
-				TimeSheetSummaryReportActivity.MENU_ITEM_GROUP_YARLY, 2,
+				TimeSheetSummaryListActivity.MENU_ITEM_GROUP_YARLY, 2,
 				R.string.menu_select_date_grouping_yearly);
 		this.reportFramework.onPrepareOptionsMenu(menu);
 		if (this.reportMode == ReportModes.BY_DATE) {
-			menu.add(0,
-					TimeSheetSummaryReportActivity.MENU_ITEM_GROUP_CATEGORY, 1,
-					R.string.menu_switch_to_category_headers);
+			menu.add(0, TimeSheetSummaryListActivity.MENU_ITEM_GROUP_CATEGORY,
+					1, R.string.menu_switch_to_category_headers);
 		} else {
-			menu.add(0,
-					TimeSheetSummaryReportActivity.MENU_ITEM_GROUP_CATEGORY, 1,
-					R.string.menu_switch_to_date_headers);
+			menu.add(0, TimeSheetSummaryListActivity.MENU_ITEM_GROUP_CATEGORY,
+					1, R.string.menu_switch_to_date_headers);
 		}
 		return result;
 	}
@@ -171,9 +162,9 @@ public class TimeSheetSummaryReportActivity extends Activity implements
 		if (filter != null) {
 			Log.i(Global.LOG_CONTEXT, "Detailreport: " + filter);
 
-			menu.add(0, TimeSheetSummaryReportActivity.MENU_ITEM_REPORT, 0,
+			menu.add(0, TimeSheetSummaryListActivity.MENU_ITEM_REPORT, 0,
 					this.getString(R.string.cmd_report));
-			menu.add(0, TimeSheetSummaryReportActivity.DELETE_MENU_ID, 0,
+			menu.add(0, TimeSheetSummaryListActivity.DELETE_MENU_ID, 0,
 					this.getString(R.string.cmd_delete));
 
 		}
@@ -246,7 +237,7 @@ public class TimeSheetSummaryReportActivity extends Activity implements
 	}
 
 	private TimeSliceFilterParameter createDrillDownFilter() {
-		final TimeSliceFilterParameter defaults = TimeSheetSummaryReportActivity.currentRangeFilter;
+		final TimeSliceFilterParameter defaults = TimeSheetSummaryListActivity.currentRangeFilter;
 		return new TimeSliceFilterParameter().setNotes(defaults.getNotes())
 				.setNotesNotNull(defaults.isNotesNotNull());
 	}
@@ -337,10 +328,9 @@ public class TimeSheetSummaryReportActivity extends Activity implements
 		super.onActivityResult(requestCode, resultCode, intent);
 		if (intent != null) {
 			if (resultCode == ReportFilterActivity.RESULT_FILTER_CHANGED) {
-				TimeSheetSummaryReportActivity.currentRangeFilter = this.reportFramework
-						.onActivityResult(
-								intent,
-								TimeSheetSummaryReportActivity.currentRangeFilter);
+				TimeSheetSummaryListActivity.currentRangeFilter = this.reportFramework
+						.onActivityResult(intent,
+								TimeSheetSummaryListActivity.currentRangeFilter);
 			}
 			this.loadDataIntoReport(0);
 		}
@@ -351,10 +341,6 @@ public class TimeSheetSummaryReportActivity extends Activity implements
 		long performanceMeasureStart = System.currentTimeMillis();
 
 		this.setReportType(reportType);
-
-		this.setContentView(this.reportFramework.buildViews());
-		this.reportViewItemList = this.reportFramework
-				.initializeTextViewsForExportList();
 
 		final TimeSheetSummaryCalculator reportDataStructure = this
 				.loadReportDataStructures();
@@ -407,7 +393,7 @@ public class TimeSheetSummaryReportActivity extends Activity implements
 	 *         Map<categoryName, totalDurationsWithinSubinterval>>
 	 */
 	private TimeSheetSummaryCalculator loadReportDataStructures() {
-		final TimeSliceFilterParameter rangeFilter = TimeSheetSummaryReportActivity.currentRangeFilter;
+		final TimeSliceFilterParameter rangeFilter = TimeSheetSummaryListActivity.currentRangeFilter;
 
 		final List<TimeSlice> timeSlices = this.timeSliceRepository
 				.fetchList(rangeFilter);
@@ -424,8 +410,9 @@ public class TimeSheetSummaryReportActivity extends Activity implements
 		final Map<String, Long> dates = reportDataStructure.getDates();
 		final Map<String, TimeSliceCategory> categoties = reportDataStructure
 				.getCategoties();
+
 		this.addDateHeaderLine(
-				TimeSheetSummaryReportActivity.currentRangeFilter.toString(),
+				TimeSheetSummaryListActivity.currentRangeFilter.toString(),
 				Color.YELLOW);
 		int itemCount = 0;
 		for (final String header : reportData.keySet()) {

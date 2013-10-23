@@ -25,6 +25,9 @@ import com.zettsett.timetracker.report.IReportInterface;
 import de.k3b.common.ItemWithRowId;
 import de.k3b.util.DateTimeUtil;
 
+/**
+ * Detail report grouped by date with optional date-filter
+ */
 public class TimeSheetDetailListActivity extends ListActivity implements
 		IReportInterface {
 	/**
