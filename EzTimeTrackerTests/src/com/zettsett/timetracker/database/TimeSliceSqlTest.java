@@ -21,7 +21,9 @@ public class TimeSliceSqlTest {
 	public void ShouldFormatEmpty() {
 		final SqlFilter sqlFilter = this.createFilter();
 
-		Assert.assertNull(sqlFilter);
+		Assert.assertNotNull("sqlFilter", sqlFilter);
+		Assert.assertNull("sqlFilter.args", sqlFilter.args);
+		Assert.assertNull("sqlFilter.sql", sqlFilter.sql);
 	}
 
 	@Test
@@ -44,7 +46,9 @@ public class TimeSliceSqlTest {
 				.setIgnoreDates(true);
 		final SqlFilter sqlFilter = this.createFilter();
 
-		Assert.assertNull(sqlFilter);
+		Assert.assertNotNull("sqlFilter", sqlFilter);
+		Assert.assertNull("sqlFilter.args", sqlFilter.args);
+		Assert.assertNull("sqlFilter.sql", sqlFilter.sql);
 	}
 
 	@Test
