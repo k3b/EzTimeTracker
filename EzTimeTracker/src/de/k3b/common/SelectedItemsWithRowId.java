@@ -47,7 +47,6 @@ public class SelectedItemsWithRowId<E extends IItemWithRowId> implements
 	}
 
 	public int size() {
-		// TODO Auto-generated method stub
 		return this.items.size();
 	}
 

@@ -93,8 +93,6 @@ public class TimeSliceEditActivity extends Activity implements ICategorySetter {
 						@Override
 						public void onNothingSelected(
 								final AdapterView<?> paramAdapterView) {
-							// TODO Auto-generated method stub
-
 						}
 					});
 		} else {

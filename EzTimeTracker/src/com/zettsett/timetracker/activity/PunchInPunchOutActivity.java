@@ -341,7 +341,6 @@ public class PunchInPunchOutActivity extends Activity implements
 		punchInButton.setOnLongClickListener(new View.OnLongClickListener() {
 			@Override
 			public boolean onLongClick(final View v) {
-				// TODO Auto-generated method stub
 				return PunchInPunchOutActivity.this.editStartSettings();
 			}
 		});
@@ -358,7 +357,6 @@ public class PunchInPunchOutActivity extends Activity implements
 		punchOutButton.setOnLongClickListener(new View.OnLongClickListener() {
 			@Override
 			public boolean onLongClick(final View v) {
-				// TODO Auto-generated method stub
 				return PunchInPunchOutActivity.this.editStopSettings();
 			}
 		});
