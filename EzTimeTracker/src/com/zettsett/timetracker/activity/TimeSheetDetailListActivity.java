@@ -214,12 +214,20 @@ public class TimeSheetDetailListActivity extends ListActivity implements
 					this.getString(R.string.cmd_delete));
 			this.currentSelectedTimeSliceUsedForMenu = null;
 			this.lastSelectedDateUsedForAddMenu = (Long) tag;
-			this.currentSelectedListItemRangeFilterUsedForMenu = new TimeSliceFilterParameter()
+			this.currentSelectedListItemRangeFilterUsedForMenu = this
+					.createDrillDownFilter()
 					.setStartTime(this.lastSelectedDateUsedForAddMenu)
 					.setEndTime(
 							DateTimeFormatter.getInstance().addDays(
 									this.lastSelectedDateUsedForAddMenu, 1));
 		}
+	}
+
+	private TimeSliceFilterParameter createDrillDownFilter() {
+		final TimeSliceFilterParameter defaults = TimeSheetDetailListActivity.currentRangeFilter;
+		return new TimeSliceFilterParameter().setNotes(defaults.getNotes())
+				.setNotesNotNull(defaults.isNotesNotNull())
+				.setCategoryId(defaults.getCategoryId());
 	}
 
 	private void addMenuItems(final Menu menu) {
@@ -268,9 +276,12 @@ public class TimeSheetDetailListActivity extends ListActivity implements
 	private void onCommandDeleteTimeSlice() {
 		TimeSliceFilterParameter parameter;
 		if (this.currentSelectedTimeSliceUsedForMenu != null) {
-			parameter = new TimeSliceFilterParameter().setParameter(
-					this.currentSelectedTimeSliceUsedForMenu).setEndTime(
-					this.currentSelectedTimeSliceUsedForMenu.getStartTime());
+			parameter = this
+					.createDrillDownFilter()
+					.setParameter(this.currentSelectedTimeSliceUsedForMenu)
+					.setEndTime(
+							this.currentSelectedTimeSliceUsedForMenu
+									.getStartTime());
 		} else {
 			parameter = this.currentSelectedListItemRangeFilterUsedForMenu;
 		}
@@ -281,6 +292,10 @@ public class TimeSheetDetailListActivity extends ListActivity implements
 		final TimeSlice newSlice = new TimeSlice().setStartTime(
 				this.lastSelectedDateUsedForAddMenu).setEndTime(
 				this.lastSelectedDateUsedForAddMenu);
+		if (this.currentSelectedTimeSliceUsedForMenu != null) {
+			newSlice.setCategory(this.currentSelectedTimeSliceUsedForMenu
+					.getCategory());
+		}
 		TimeSliceEditActivity.showTimeSliceEditActivity(this, newSlice,
 				TimeSheetDetailListActivity.ID_ADD_TIME_SLICE);
 	}

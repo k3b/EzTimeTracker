@@ -9,8 +9,6 @@
 	<string name="default_export_data_name">data_export.csv</string>
 	<string name="export_directory">EZ_time_tracker</string>
 		    
-	<string name="about_title">About EZ Time Tracker</string>
-	<string name="about_title_condensed">About</string>
 	<string name="about_content_xxx"><![CDATA[
 ]]></string>
 
@@ -26,22 +24,28 @@ EZ Time Tracker up to Version
 1.6 was developed in 2010 by <a
  href="http://zettsetttech.blogspot.com/">Eric
 Z</a>, <br />
-the sources are hosted in <a
+the sources are hosted at <a
  href="http://eztimetracker.googlecode.com/svn/trunk/">svn
 repository@googlecode.com</a>.<br />
 <br />
 Since 2012&nbsp;<a
  href="https://github.com/k3b/EzTimeTracker/wiki">EZ Time
 Tracker</a> is developed by k3b,<br />
-the sources are hosted in <a
+the sources are hosted at <a
  href="https://github.com/k3b/EzTimeTracker">git
 repository@github.com</a>.<br />
 <br />
-Recent Improvements v2.5<br />
+Improvements v2.5.8 2013-10-24<br />
+<ul>
+  <li>fixed crash in detailreport by category and in create new.</li>
+  <li>reimplemented DetailReport.</li>
+</ul>
+<br />
+Improvements v2.5 2013-10-07<br />
 <ul>
   <li>Categories can now be marked and visualized as expired. Via settings you decide if you want to see them or not.</li>
-  <li>TimeSheetReports/Deletes can now be filtered by punchin notes`.</li>
-  <li>TimeSheetDetailReport got a contextmenu to show details of the summary or delete items.</li>
+  <li>TimeSheetReports/Deletes can now be filtered by punchin notes.</li>
+  <li>TimeSheetDetailReport gets a contextmenuitem to show details of the summary or in the delete items show wich items would be affected.</li>
   <li>Immediate punchin with the same category as previos punchout will append to previos to cope accidental punchout by Llama. (See Settings.minPunchInTreshhold.)</li>
   <li>Punchin with immediate Punchout can be discarded to cope accidental punchin by Llama. (See Settings.minPunchOutTreshhold.)</li>
 </ul> 
@@ -67,14 +71,14 @@ can access it.</li>
 <h2>Links</h2>
 <ul>
   <li>Source
-code in svn repository@googlecode.com of original EZ Time Tracker
+code at svn repository@googlecode.com of original EZ Time Tracker
 Version 1.6 <br />
     <a href="http://eztimetracker.googlecode.com/svn/trunk/">http://eztimetracker.googlecode.com/svn/trunk/</a></li>
   <li>Eric
 Z-s Homepage of EZ Time Tracker<br />
     <a href="http://zettsetttech.blogspot.com/">http://zettsetttech.blogspot.com/</a></li>
   <li>source
-code of current version of EZ Time Tracker in git repository@github.com<br />
+code of current version of EZ Time Tracker at git repository@github.com<br />
     <a href="https://github.com/k3b/EzTimeTracker">https://github.com/k3b/EzTimeTracker</a></li>
   <li>Homepage of new EzTimeTracker<br />
     <a href="https://github.com/k3b/EzTimeTracker/wiki">https://github.com/k3b/EzTimeTracker/wiki</a>

@@ -110,8 +110,11 @@
 	
 	<string name="message_no_data">Keine Daten gefunden.</string>
 	
+	<string name="about_title">Info über EZ Time Tracker</string>
+	<string name="about_title_condensed">Info</string>
+		
 	<string name="about_content_about">"<![CDATA[
-<h2>About</h2>
+<h2>Info</h2>
 <a href="https://github.com/k3b/EzTimeTracker/wiki">EZ
 Time Tracker</a>&nbsp;ist eine Android App zur Zeiterfassung 
 mit selbstdefinierten Aktivit&auml;ten/Kategorien. <br />
@@ -125,7 +128,7 @@ auch als Text-Datei exportiert oder als EMail versendet werden.<br />
 <br />
 Die Zeiterfassungs-Rohdaten k&ouml;nnen als Csv-Datei auf der 
 sd-Speicherkarte abgelegt , oder mit Hilfe eines SqLite-Datenbankprogramms
-über die Datenbank-View 'time_slice_report' weiter ausgewertet werden.<br />
+ &uuml;ber die Datenbank-View 'time_slice_report' weiter ausgewertet werden.<br />
 <br />
 <a href="http://kebabapps.blogspot.com/search/label/Llama">Android
 Llama</a> + <a

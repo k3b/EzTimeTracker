@@ -1,6 +1,13 @@
 
 todo
-	bug: category edit start/enddate wenn wert ist (noch) leer 
+	bug: 
+		v neue Buchung mit default-category
+		v add timeslice aus detail-report => Absturz
+		v Detail-Filter does not inherit notes/category from parent-filter
+		v typo in about=>Info
+		to android?
+	release 2.5.8 2013-10-24
+	
 
 	multi-selection display for report with actions: change category, delete, merge, sort by date/category for detailreport
 	multi-selection display for category with actions: delete,merge
