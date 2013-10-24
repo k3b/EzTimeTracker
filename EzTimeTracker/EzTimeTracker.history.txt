@@ -1,5 +1,6 @@
 v2.5.8/DB5 2013-10-24
-* fixed crash Detailreport by Category
+* fixed crash detailreport by Category
+* fixed summaryreport by category: context-filter category+super date for drilldown/delete
 * reimplemented DetailReport.
 
 v2.5/DB5 2013-10-07

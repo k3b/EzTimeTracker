@@ -38,6 +38,7 @@ repository@github.com</a>.<br />
 Improvements v2.5.8 2013-10-24<br />
 <ul>
   <li>fixed crash in detailreport by category and in create new.</li>
+  <li>fixed summaryreport by category: context-filter category+super date for drilldown/delete.</li>
   <li>reimplemented DetailReport.</li>
 </ul>
 <br />

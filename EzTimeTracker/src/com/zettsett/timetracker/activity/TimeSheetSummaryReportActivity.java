@@ -90,7 +90,7 @@ public class TimeSheetSummaryReportActivity extends Activity implements
 	private ReportModes reportMode = ReportModes.BY_DATE;
 
 	/**
-	 * Used in options-menue for context sensitive DrillDownMenue
+	 * Used in options/context-menue for context sensitive DrillDownMenue
 	 */
 	private TimeSliceFilterParameter currentSelectedListItemRangeFilterUsedForMenu;
 
@@ -167,7 +167,8 @@ public class TimeSheetSummaryReportActivity extends Activity implements
 	public void onCreateContextMenu(final ContextMenu menu, final View v,
 			final ContextMenuInfo menuInfo) {
 		super.onCreateContextMenu(menu, v, menuInfo);
-		final TimeSliceFilterParameter filter = this.createFilter(v);
+		final TimeSliceFilterParameter filter = this
+				.createFilterFromViewItemTag(v);
 		if (filter != null) {
 			Log.i(Global.LOG_CONTEXT, "Detailreport: " + filter);
 
@@ -207,42 +208,73 @@ public class TimeSheetSummaryReportActivity extends Activity implements
 				this.currentSelectedListItemRangeFilterUsedForMenu);
 	}
 
-	private TimeSliceFilterParameter createFilter(final View v) {
-		TimeSliceCategory category = this.getTimeSliceCategory(v);
-		if (category != null) {
-			final TimeSliceFilterParameter filter = this
-					.createDrillDownFilter().setCategoryId(category.getRowId());
-			if (this.reportMode == ReportModes.BY_DATE) {
-				int pos = this.reportViewItemList.indexOf(v);
-				while (--pos >= 0) {
-					final Long date = this.getLong(this.reportViewItemList
-							.get(pos));
-					if (date != null) {
-						return this.setFilterDate(filter,
-								this.reportDateGrouping, date);
-					}
-				}
-			}
-			return filter.setIgnoreDates(true);
-		} else {
-			final Long date = this.getLong(v);
-			if (date != null) {
-				final TimeSliceFilterParameter filter = this.setFilterDate(
-						this.createDrillDownFilter(), this.reportDateGrouping,
-						date);
-				if (this.reportMode == ReportModes.BY_CATEGORY) {
-					int pos = this.reportViewItemList.indexOf(v);
+	/**
+	 * Calculates filter from view item tags
+	 * 
+	 * @param reportItemView
+	 * @return filter
+	 */
+	private TimeSliceFilterParameter createFilterFromViewItemTag(
+			final View reportItemView) {
+		TimeSliceFilterParameter filter = null;
+		String context = "";
+		try {
+			TimeSliceCategory category = this
+					.getTimeSliceCategory(reportItemView);
+			if (category != null) {
+				filter = this.createDrillDownFilter().setCategoryId(
+						category.getRowId());
+				if (this.reportMode == ReportModes.BY_DATE) {
+					int pos = this.reportViewItemList.indexOf(reportItemView);
 					while (--pos >= 0) {
-						category = this.getTimeSliceCategory(v);
-						if (category != null) {
-							return filter.setCategoryId(category.getRowId());
+						final Long date = this.getLong(this.reportViewItemList
+								.get(pos));
+						if (date != null) {
+							context = "ReportModes.BY_DATE category + super date";
+							return this.setFilterDate(filter,
+									this.reportDateGrouping, date);
 						}
 					}
+					context = "ReportModes.BY_DATE category. no super date";
+				} else {
+					context = "ReportModes.BY_CATEGORY category";
 				}
-				return filter;
+
+				return filter.setIgnoreDates(true);
+			} else {
+				final Long date = this.getLong(reportItemView);
+				if (date != null) {
+					filter = this.setFilterDate(this.createDrillDownFilter(),
+							this.reportDateGrouping, date);
+					if (this.reportMode == ReportModes.BY_CATEGORY) {
+						int pos = this.reportViewItemList
+								.indexOf(reportItemView);
+						while (--pos >= 0) {
+							category = this
+									.getTimeSliceCategory(this.reportViewItemList
+											.get(pos));
+							if (category != null) {
+								context = "ReportModes.BY_CATEGORY date + super category";
+								return filter
+										.setCategoryId(category.getRowId());
+							}
+						}
+						context = "ReportModes.BY_CATEGORY date. no super category";
+					} else {
+						context = "ReportModes.BY_DATE date";
+					}
+					return filter;
+				}
+			}
+			context = "Neither category nor date selected";
+			filter = null;
+			return filter;
+		} finally {
+			if (Global.isDebugEnabled()) {
+				Log.d(Global.LOG_CONTEXT, "createFilterFromViewItemTag("
+						+ context + ") :" + filter);
 			}
 		}
-		return null;
 	}
 
 	private TimeSliceFilterParameter createDrillDownFilter() {

@@ -56,7 +56,7 @@
 	<string name="hoursWordN">Stunden</string>	
 	<string name="minutesWord1">Minute</string>	
 	<string name="minutesWordN">Minuten</string>	
-	<string name="menu_select_date_grouping">Gruppierung Datum</string>	
+	<string name="menu_select_date_grouping">Gruppierung Datumsintervall ...</string>	
 	<string name="menu_select_date_grouping_daily">&#8230; nach Tag</string>	
 	<string name="menu_select_date_grouping_weekly">&#8230; nach Woche</string>	
 	<string name="menu_select_date_grouping_monthly">&#8230; nach Monat</string>	

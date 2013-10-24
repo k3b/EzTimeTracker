@@ -1,6 +1,9 @@
 
 todo
 	bug: 
+		v summary by category context-filter cat+date without cat
+		v summary by dat context-filter date+cat ok
+		
 		v neue Buchung mit default-category
 		v add timeslice aus detail-report => Absturz
 		v Detail-Filter does not inherit notes/category from parent-filter
