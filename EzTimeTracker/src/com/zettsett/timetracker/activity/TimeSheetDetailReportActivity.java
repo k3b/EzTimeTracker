@@ -219,10 +219,12 @@ public class TimeSheetDetailReportActivity extends Activity implements
 		final TimeSliceFilterParameter rangeFilter = TimeSheetDetailReportActivity.currentRangeFilter;
 		final List<TimeSlice> timeSlices = this.timeSliceRepository
 				.fetchList(rangeFilter);
-		Log.i(Global.LOG_CONTEXT,
-				"fetchTimeSlicesByDateRange:"
-						+ (System.currentTimeMillis() - performanceMeasureStart));
-		performanceMeasureStart = System.currentTimeMillis();
+		if (Global.isInfoEnabled()) {
+			Log.i(Global.LOG_CONTEXT,
+					"fetchTimeSlicesByDateRange:"
+							+ (System.currentTimeMillis() - performanceMeasureStart));
+			performanceMeasureStart = System.currentTimeMillis();
+		}
 		this.addDateHeaderLine(rangeFilter.toString(), null, Color.YELLOW);
 		TimeSliceFilterParameter headerFilter = null;
 		int itemCount = 0;
@@ -245,9 +247,11 @@ public class TimeSheetDetailReportActivity extends Activity implements
 			this.addDateHeaderLine(this.getString(R.string.message_no_data),
 					null, Color.YELLOW);
 		}
-		Log.i(Global.LOG_CONTEXT,
-				"addTimeSliceLine:"
-						+ (System.currentTimeMillis() - performanceMeasureStart));
+		if (Global.isInfoEnabled()) {
+			Log.i(Global.LOG_CONTEXT,
+					"addTimeSliceLine:"
+							+ (System.currentTimeMillis() - performanceMeasureStart));
+		}
 		this.initialScrollToEnd();
 	}
 

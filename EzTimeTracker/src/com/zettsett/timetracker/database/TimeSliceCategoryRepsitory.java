@@ -109,10 +109,12 @@ public class TimeSliceCategoryRepsitory {
 		List<TimeSliceCategory> result = new ArrayList<TimeSliceCategory>();
 		Cursor cur = null;
 		final String filter = this.createCategoryListFilter(currentDateTime);
-		Log.d(Global.LOG_CONTEXT, debugContext
-				+ "-TimeSliceCategoryRepsitory.fetchAllTimeSliceCategories("
-				+ filter + ")");
-
+		if (Global.isDebugEnabled()) {
+			Log.d(Global.LOG_CONTEXT,
+					debugContext
+							+ "-TimeSliceCategoryRepsitory.fetchAllTimeSliceCategories("
+							+ filter + ")");
+		}
 		try {
 			cur = TimeSliceCategoryRepsitory.CURRENT_DB_INSTANCE.getDb().query(
 					DatabaseHelper.TIME_SLICE_CATEGORY_TABLE,

@@ -31,8 +31,8 @@ public class DatabaseContext extends ContextWrapper {
 			result.getParentFile().mkdirs();
 		}
 
-		if (Log.isLoggable(DatabaseContext.DEBUG_CONTEXT, Log.WARN)) {
-			Log.w(DatabaseContext.DEBUG_CONTEXT, "getDatabasePath(" + name
+		if (Log.isLoggable(DatabaseContext.DEBUG_CONTEXT, Log.INFO)) {
+			Log.i(DatabaseContext.DEBUG_CONTEXT, "getDatabasePath(" + name
 					+ ") = " + result.getAbsolutePath());
 		}
 
@@ -46,8 +46,8 @@ public class DatabaseContext extends ContextWrapper {
 				this.getDatabasePath(name), null);
 		// SQLiteDatabase result = super.openOrCreateDatabase(name, mode,
 		// factory);
-		if (Log.isLoggable(DatabaseContext.DEBUG_CONTEXT, Log.WARN)) {
-			Log.w(DatabaseContext.DEBUG_CONTEXT, "openOrCreateDatabase(" + name
+		if (Log.isLoggable(DatabaseContext.DEBUG_CONTEXT, Log.INFO)) {
+			Log.i(DatabaseContext.DEBUG_CONTEXT, "openOrCreateDatabase(" + name
 					+ ",,) = " + result.getPath());
 		}
 		return result;

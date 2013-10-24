@@ -29,6 +29,7 @@ public class TimeTrackerManager {
 	public void saveState() {
 		if (Global.isDebugEnabled()) {
 			this.sessionData.updateCount++;
+
 			Log.d(Global.LOG_CONTEXT, "saveState('" + this.sessionData + "')");
 		}
 		this.context.deleteFile("curr_state");
@@ -84,7 +85,9 @@ public class TimeTrackerManager {
 			return true;
 		}
 
-		Log.i(Global.LOG_CONTEXT, "punchInClock(): nothing to do");
+		if (Global.isInfoEnabled()) {
+			Log.i(Global.LOG_CONTEXT, "punchInClock(): nothing to do");
+		}
 		return false;
 	}
 
@@ -103,7 +106,7 @@ public class TimeTrackerManager {
 			this.sessionData.setEndTime(endDateTime);
 			if (this.sessionData.getElapsedTimeInMillisecs() > Settings
 					.getMinPunchOutTreshholdInMilliSecs()) {
-				if (Log.isLoggable(Global.LOG_CONTEXT, Log.INFO)) {
+				if (Global.isInfoEnabled()) {
 					Log.i(Global.LOG_CONTEXT, "punchOutClock("
 							+ this.sessionData + ") persisting ...");
 				}
@@ -121,8 +124,10 @@ public class TimeTrackerManager {
 				this.saveState();
 			}
 		} else {
-			Log.i(Global.LOG_CONTEXT, "punchOutClock(" + this.sessionData
-					+ ") : not punched in or category not set.");
+			if (Global.isInfoEnabled()) {
+				Log.i(Global.LOG_CONTEXT, "punchOutClock(" + this.sessionData
+						+ ") : not punched in or category not set.");
+			}
 		}
 		return false;
 	}

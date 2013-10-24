@@ -85,7 +85,7 @@ public class PunchInPunchOutActivity extends Activity implements
 	class _RemoteTimeTrackerReceiver extends BroadcastReceiver {
 		@Override
 		public void onReceive(final Context context, final Intent intent) {
-			if (Log.isLoggable(Global.LOG_CONTEXT, Log.INFO)) {
+			if (Global.isInfoEnabled()) {
 				Log.i(Global.LOG_CONTEXT,
 						"PunchInPunchOutActivity.onReceive(intent='" + intent
 								+ "')");
@@ -161,7 +161,9 @@ public class PunchInPunchOutActivity extends Activity implements
 	 * displays current session-data, start/stop elapsedTimer if necessary
 	 */
 	void reloadGui() {
-		Log.d(Global.LOG_CONTEXT, "PunchInPunchOutActivity.refreshGui()");
+		if (Global.isDebugEnabled()) {
+			Log.d(Global.LOG_CONTEXT, "PunchInPunchOutActivity.refreshGui()");
+		}
 
 		this.sessionData = this.reloadSessionData();
 

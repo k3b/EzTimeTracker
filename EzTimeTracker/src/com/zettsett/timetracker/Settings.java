@@ -12,6 +12,9 @@ public class Settings {
 	private static int minPunchOutTreshholdInSecs = 1;
 	private static int minPunchInTreshholdInSecs = 1;
 
+	private static boolean isDebugEnabled = false;
+	private static boolean isInfoEnabled = false;
+
 	public static void init(final Context context) {
 		final SharedPreferences prefs = PreferenceManager
 				.getDefaultSharedPreferences(context);
@@ -25,6 +28,11 @@ public class Settings {
 				"publicDatabase", Settings.publicDatabase);
 		Settings.hideInactiveCategories = Settings.getPrefValue(prefs,
 				"hideInactiveCategories", Settings.hideInactiveCategories);
+
+		Global.setInfoEnabled(Settings.getPrefValue(prefs, "isInfoEnabled",
+				Global.isInfoEnabled()));
+		Global.setDebugEnabled(Settings.getPrefValue(prefs, "isDebugEnabled",
+				Global.isDebugEnabled()));
 	}
 
 	/**

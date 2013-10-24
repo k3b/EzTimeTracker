@@ -28,6 +28,18 @@
 			android:defaultValue="false"
 			android:title="Kategorien nur aktulelle" 
 			android:summary="Unter Startlist gibt es nur aktive Kategorien." />
-
+	</PreferenceCategory>
+		
+	<PreferenceCategory 
+		android:title="Fehlersuche"
+		android:key="second_category">
+		<CheckBoxPreference android:key="isInfoEnabled" 
+			android:defaultValue="false"
+			android:title="Info loggen" 
+			android:summary="LogCat Protokoll mit Info Meldungen." />
+		<CheckBoxPreference android:key="isDebugEnabled" 
+			android:defaultValue="false"
+			android:title="Debug loggen" 
+			android:summary="LogCat Protokoll mit Debug Meldungen." />
 	</PreferenceCategory>
 </PreferenceScreen>

@@ -332,23 +332,29 @@ public class TimeSheetDetailListActivity extends ListActivity implements
 		final TimeSliceFilterParameter rangeFilter = TimeSheetDetailListActivity.currentRangeFilter;
 		final List<TimeSlice> timeSlices = this.timeSliceRepository
 				.fetchList(rangeFilter);
-		Log.i(Global.LOG_CONTEXT,
-				"fetchTimeSlicesByDateRange:"
-						+ (System.currentTimeMillis() - performanceMeasureStart));
-		performanceMeasureStart = System.currentTimeMillis();
+		if (Global.isInfoEnabled()) {
+			Log.i(Global.LOG_CONTEXT,
+					"fetchTimeSlicesByDateRange:"
+							+ (System.currentTimeMillis() - performanceMeasureStart));
+			performanceMeasureStart = System.currentTimeMillis();
+		}
 
 		this.setTitle(rangeFilter.toString());
 
 		final List<Object> items = this.loadData(timeSlices);
-		Log.i(Global.LOG_CONTEXT, "Convert Data:"
-				+ (System.currentTimeMillis() - performanceMeasureStart));
-		performanceMeasureStart = System.currentTimeMillis();
-
+		if (Global.isInfoEnabled()) {
+			Log.i(Global.LOG_CONTEXT,
+					"Convert Data:"
+							+ (System.currentTimeMillis() - performanceMeasureStart));
+			performanceMeasureStart = System.currentTimeMillis();
+		}
 		this.setListAdapter(new TimeSheetDetailReportAdapter(this, items,
 				this.showNotes));
-		Log.i(Global.LOG_CONTEXT,
-				"Create adapter:"
-						+ (System.currentTimeMillis() - performanceMeasureStart));
+		if (Global.isInfoEnabled()) {
+			Log.i(Global.LOG_CONTEXT,
+					"Create adapter:"
+							+ (System.currentTimeMillis() - performanceMeasureStart));
+		}
 	}
 
 	private List<Object> loadData(final List<TimeSlice> timeSlices) {

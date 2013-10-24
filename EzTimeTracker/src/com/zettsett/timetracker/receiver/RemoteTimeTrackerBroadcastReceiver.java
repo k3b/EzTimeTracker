@@ -32,7 +32,7 @@ public class RemoteTimeTrackerBroadcastReceiver extends BroadcastReceiver {
 				+ datastring + "')";
 
 		if (datastring != null) {
-			if (Log.isLoggable(Global.LOG_CONTEXT, Log.INFO)) {
+			if (Global.isInfoEnabled()) {
 				Log.i(Global.LOG_CONTEXT, dbgContext);
 			}
 

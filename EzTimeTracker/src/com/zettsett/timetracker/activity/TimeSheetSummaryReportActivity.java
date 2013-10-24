@@ -170,8 +170,9 @@ public class TimeSheetSummaryReportActivity extends Activity implements
 		final TimeSliceFilterParameter filter = this
 				.createFilterFromViewItemTag(v);
 		if (filter != null) {
-			Log.i(Global.LOG_CONTEXT, "Detailreport: " + filter);
-
+			if (Global.isInfoEnabled()) {
+				Log.i(Global.LOG_CONTEXT, "Detailreport: " + filter);
+			}
 			menu.add(0, TimeSheetSummaryReportActivity.MENU_ITEM_REPORT, 0,
 					this.getString(R.string.cmd_report));
 			menu.add(0, TimeSheetSummaryReportActivity.DELETE_MENU_ID, 0,
@@ -391,16 +392,20 @@ public class TimeSheetSummaryReportActivity extends Activity implements
 		final TimeSheetSummaryCalculator reportDataStructure = this
 				.loadReportDataStructures();
 
-		Log.i(Global.LOG_CONTEXT,
-				"loadReportDataStructures:"
-						+ (System.currentTimeMillis() - performanceMeasureStart));
-		performanceMeasureStart = System.currentTimeMillis();
+		if (Global.isInfoEnabled()) {
+			Log.i(Global.LOG_CONTEXT,
+					"loadReportDataStructures:"
+							+ (System.currentTimeMillis() - performanceMeasureStart));
+			performanceMeasureStart = System.currentTimeMillis();
+		}
 
 		this.loadDataIntoReport(reportDataStructure);
-		Log.i(Global.LOG_CONTEXT,
-				"generated report:"
-						+ (System.currentTimeMillis() - performanceMeasureStart));
-		performanceMeasureStart = System.currentTimeMillis();
+		if (Global.isInfoEnabled()) {
+			Log.i(Global.LOG_CONTEXT,
+					"generated report:"
+							+ (System.currentTimeMillis() - performanceMeasureStart));
+			performanceMeasureStart = System.currentTimeMillis();
+		}
 	}
 
 	private void setReportType(final int reportType) {

@@ -220,9 +220,9 @@ public class TimeSliceRepository {
 		Cursor cur = null;
 		int result = -1;
 		try {
-			SQLiteDatabase db = TimeSliceRepository.CURRENT_DB_INSTANCE.getDb();
-			cur = db.query(
-					DatabaseHelper.TIME_SLICE_TABLE,
+			final SQLiteDatabase db = TimeSliceRepository.CURRENT_DB_INSTANCE
+					.getDb();
+			cur = db.query(DatabaseHelper.TIME_SLICE_TABLE,
 					new String[] { "COUNT(*)" }, sqlFilter.sql, sqlFilter.args,
 					null, null, null);
 			if ((cur != null) && (cur.moveToFirst())) {
@@ -329,10 +329,11 @@ public class TimeSliceRepository {
 
 		final String context = "TimeSliceRepository.createFilter("
 				+ debugContext + "," + timeSliceFilter + ")";
-		Log.d(Global.LOG_CONTEXT,
-				(sqlFilter != null) ? sqlFilter.getDebugMessage(context)
-						: context);
-
+		if (Global.isDebugEnabled()) {
+			Log.d(Global.LOG_CONTEXT,
+					(sqlFilter != null) ? sqlFilter.getDebugMessage(context)
+							: context);
+		}
 		return sqlFilter;
 	}
 }
