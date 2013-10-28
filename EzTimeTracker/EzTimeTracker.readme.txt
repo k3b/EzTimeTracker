@@ -1,9 +1,9 @@
 
 todo
 	detail-report:
-		notes as multiline
-		after refresh scroll to last known selection
-		make selection visible <selector>....
+		v notes as multiline
+		v after refresh scroll to last known selection
+		v make selection visible <selector>....
 
 release 2.5.8 2013-10-24
 	
