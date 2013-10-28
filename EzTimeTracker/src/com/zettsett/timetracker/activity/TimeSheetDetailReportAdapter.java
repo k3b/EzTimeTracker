@@ -29,17 +29,29 @@ public class TimeSheetDetailReportAdapter extends ArrayAdapter<Object> {
 		this.showNotes = showNotes;
 	}
 
+	private View createItemView(final int resource, final View convertView,
+			final ViewGroup parent) {
+
+		if ((convertView != null) && (convertView.getId() == resource)) {
+			return convertView;
+		}
+
+		final LayoutInflater layoutInflater = (LayoutInflater) this
+				.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		final View itemView = layoutInflater.inflate(resource, null);
+		itemView.setId(resource);
+		return itemView;
+	}
+
 	@Override
 	public View getView(final int position, final View convertView,
 			final ViewGroup parent) {
 		final Object obj = this.getItem(position);
-		final LayoutInflater layoutInflater = (LayoutInflater) this
-				.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
 		View itemView = convertView;
 		if (obj.getClass().isAssignableFrom(Long.class)) {
-			itemView = layoutInflater.inflate(R.layout.header_list_view_row,
-					null);
+			itemView = this.createItemView(R.layout.header_list_view_row,
+					convertView, parent);
 			this.setupDateItemView((Long) obj, itemView);
 			((Activity) this.getContext()).registerForContextMenu(itemView);
 		} else if (obj.getClass().isAssignableFrom(TimeSlice.class)) {
@@ -49,11 +61,12 @@ public class TimeSheetDetailReportAdapter extends ArrayAdapter<Object> {
 					.length() > 0));
 
 			if (showNotes) {
-				itemView = layoutInflater.inflate(
-						R.layout.name_description_list_view_row, null);
+				itemView = this.createItemView(
+						R.layout.name_description_list_view_row, convertView,
+						parent);
 			} else {
-				itemView = layoutInflater.inflate(R.layout.name_list_view_row,
-						null);
+				itemView = this.createItemView(R.layout.name_list_view_row,
+						convertView, parent);
 			}
 
 			this.setupTimeSliceItemView(aSlice, showNotes, itemView);

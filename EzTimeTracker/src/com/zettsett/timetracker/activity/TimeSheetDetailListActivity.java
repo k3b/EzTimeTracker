@@ -14,6 +14,7 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ListView;
 
 import com.zetter.androidTime.R;
 import com.zettsett.timetracker.DateTimeFormatter;
@@ -50,6 +51,7 @@ public class TimeSheetDetailListActivity extends ListActivity implements
 	// current state
 	private TimeSlice currentSelectedTimeSliceUsedForMenu;
 	private long lastSelectedDateUsedForAddMenu;
+
 	/**
 	 * if reportitems should be generated with timeslice-notes or not.<br>
 	 * Toggeld via option-menu
@@ -120,16 +122,6 @@ public class TimeSheetDetailListActivity extends ListActivity implements
 		this.reportFramework = new ReportFramework(this,
 				TimeSheetDetailListActivity.currentRangeFilter);
 		this.loadDataIntoReport(0);
-		// scroll to end
-		this.getListView().post(new Runnable() {
-			@Override
-			public void run() {
-				// Select the last row so it will scroll into view...
-				TimeSheetDetailListActivity.this.getListView().setSelection(
-						TimeSheetDetailListActivity.this.getListView()
-								.getCount() - 1);
-			}
-		});
 	}
 
 	@Override
@@ -192,11 +184,12 @@ public class TimeSheetDetailListActivity extends ListActivity implements
 			final ContextMenuInfo menuInfo) {
 		super.onCreateContextMenu(menu, v, menuInfo);
 
-		// final ListView listView = this.getListView();
-		// final View selectedView = listView.getSelectedView();
-		// final Object tag = (selectedView != null) ? selectedView.getTag()
-		// : listView.getFocusedChild();
 		final Object tag = v.getTag();
+
+		final ListView listView = this.getListView();
+		final Object si = listView.getSelectedItem();
+		final int sip = listView.getSelectedItemPosition();
+
 		if (tag instanceof TimeSlice) {
 			menu.add(0, TimeSheetDetailListActivity.ADD_MENU_ID, 0,
 					this.getString(R.string.menu_report_add_new_time_interval));
@@ -247,7 +240,7 @@ public class TimeSheetDetailListActivity extends ListActivity implements
 	@Override
 	public boolean onOptionsItemSelected(final MenuItem item) {
 		this.onMenuItemSelected(item);
-		return true;
+		return super.onContextItemSelected(item);
 	}
 
 	@Override
@@ -328,6 +321,7 @@ public class TimeSheetDetailListActivity extends ListActivity implements
 	@Override
 	public void loadDataIntoReport(final int reportType) {
 		long performanceMeasureStart = System.currentTimeMillis();
+		final long globalPerformanceMeasureStart = performanceMeasureStart;
 
 		final TimeSliceFilterParameter rangeFilter = TimeSheetDetailListActivity.currentRangeFilter;
 		final List<TimeSlice> timeSlices = this.timeSliceRepository
@@ -339,26 +333,70 @@ public class TimeSheetDetailListActivity extends ListActivity implements
 			performanceMeasureStart = System.currentTimeMillis();
 		}
 
-		this.setTitle(rangeFilter.toString());
-
-		final List<Object> items = this.loadData(timeSlices);
+		final List<Object> listItems = this.loadData(timeSlices);
 		if (Global.isInfoEnabled()) {
 			Log.i(Global.LOG_CONTEXT,
 					"Convert Data:"
 							+ (System.currentTimeMillis() - performanceMeasureStart));
 			performanceMeasureStart = System.currentTimeMillis();
 		}
-		this.setListAdapter(new TimeSheetDetailReportAdapter(this, items,
+
+		final int newSelection = this.convertLastSelection(this.getListView(),
+				listItems);
+
+		this.setListAdapter(new TimeSheetDetailReportAdapter(this, listItems,
 				this.showNotes));
 		if (Global.isInfoEnabled()) {
 			Log.i(Global.LOG_CONTEXT,
 					"Create adapter:"
 							+ (System.currentTimeMillis() - performanceMeasureStart));
 		}
+
+		final float loadTime = 0.0001f * (System.currentTimeMillis() - globalPerformanceMeasureStart);
+		this.setTitle(rangeFilter.toString() + " (" + timeSlices.size() + "/"
+				+ String.format("%.1f", loadTime) + " sec)");
+
+		// scroll to end
+		this.getListView().post(new Runnable() {
+			@Override
+			public void run() {
+				// Select the last row so it will scroll into view...
+				TimeSheetDetailListActivity.this.getListView().setSelection(
+						newSelection);
+			}
+		});
+
+	}
+
+	/**
+	 * gets data from first visible item and locates it in newListItems.
+	 * 
+	 * @return last item pos if not found
+	 */
+	private int convertLastSelection(final ListView listView,
+			final List<Object> newListItems) {
+		// get old first visible item infos
+		final int oldItemCount = listView.getCount();
+		if (oldItemCount == 0) {
+			return newListItems.size() - 1;
+		}
+		final int lastListViewTopPos = listView.getFirstVisiblePosition();
+		final Object lastListViewTopItem = listView
+				.getItemAtPosition(lastListViewTopPos);
+
+		// translate to newListItems position
+		int newSelection = (lastListViewTopItem == null) ? -1 : newListItems
+				.indexOf(lastListViewTopItem);
+		if (newSelection == -1) {
+			newSelection = lastListViewTopPos;
+		}
+		if (newSelection >= newListItems.size()) {
+			newSelection = newListItems.size() - 1;
+		}
+		return newSelection;
 	}
 
 	private List<Object> loadData(final List<TimeSlice> timeSlices) {
-		int itemCount = 0;
 		long lastStartDate = 0;
 
 		final DateTimeUtil formatter = DateTimeFormatter.getInstance();
@@ -374,7 +412,6 @@ public class TimeSheetDetailListActivity extends ListActivity implements
 			}
 
 			items.add(aSlice);
-			itemCount++;
 		}
 
 		return items;
