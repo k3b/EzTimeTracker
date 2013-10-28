@@ -74,7 +74,7 @@ public class TimeSheetDetailReportAdapter extends ArrayAdapter<Object> {
 	}
 
 	private void setItemContent(final Long obj, final View v) {
-		final String value = DateTimeFormatter.getInstance().getShortDateStr(
+		final String value = DateTimeFormatter.getInstance().getLongDateStr(
 				obj.longValue());
 		final TextView nameView = (TextView) v.findViewById(R.id.name);
 		nameView.setText(value);
