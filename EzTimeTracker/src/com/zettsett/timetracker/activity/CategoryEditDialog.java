@@ -222,15 +222,21 @@ public class CategoryEditDialog extends Dialog {
 
 		switch (id) {
 		case GET_START_DATETIME:
-			c.setTimeInMillis(this.mCategory.getStartTime());
+			final long startTime = this.mCategory.getStartTime();
+			c.setTimeInMillis((startTime == TimeSliceCategory.MIN_VALID_DATE) ? TimeTrackerManager
+					.currentTimeMillis() : startTime);
 			return new AlternativeDateSlider(this.getContext(),
 					this.mDateTimeSetListenerStart, c);
+
 		case GET_START_DATETIME_NOW:
 			c.setTimeInMillis(TimeTrackerManager.currentTimeMillis());
 			return new AlternativeDateSlider(this.getContext(),
 					this.mDateTimeSetListenerStart, c);
+
 		case GET_END_DATETIME:
-			c.setTimeInMillis(this.mCategory.getEndTime());
+			final long endTime = this.mCategory.getEndTime();
+			c.setTimeInMillis((endTime == TimeSliceCategory.MAX_VALID_DATE) ? TimeTrackerManager
+					.currentTimeMillis() : endTime);
 			return new AlternativeDateSlider(this.getContext(),
 					this.mDateTimeSetListenerEnd, c);
 		case GET_END_DATETIME_NOW:
