@@ -14,6 +14,7 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListView;
 
 import com.zetter.androidTime.R;
@@ -100,6 +101,7 @@ public class TimeSheetDetailListActivity extends ListActivity implements
 	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		this.setContentView(R.layout.time_slice_list);
+		this.registerForContextMenu(this.getListView());
 
 		this.timeSliceRepository = new TimeSliceRepository(this);
 
@@ -184,7 +186,8 @@ public class TimeSheetDetailListActivity extends ListActivity implements
 			final ContextMenuInfo menuInfo) {
 		super.onCreateContextMenu(menu, v, menuInfo);
 
-		final Object tag = v.getTag();
+		final Object tag = this.getListView().getItemAtPosition(
+				((AdapterContextMenuInfo) menuInfo).position);
 
 		final ListView listView = this.getListView();
 		final Object si = listView.getSelectedItem();

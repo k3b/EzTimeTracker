@@ -2,7 +2,6 @@ package com.zettsett.timetracker.activity;
 
 import java.util.List;
 
-import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,20 +28,6 @@ public class TimeSheetDetailReportAdapter extends ArrayAdapter<Object> {
 		this.showNotes = showNotes;
 	}
 
-	private View createItemView(final int resource, final View convertView,
-			final ViewGroup parent) {
-
-		if ((convertView != null) && (convertView.getId() == resource)) {
-			return convertView;
-		}
-
-		final LayoutInflater layoutInflater = (LayoutInflater) this
-				.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		final View itemView = layoutInflater.inflate(resource, null);
-		itemView.setId(resource);
-		return itemView;
-	}
-
 	@Override
 	public View getView(final int position, final View convertView,
 			final ViewGroup parent) {
@@ -52,8 +37,7 @@ public class TimeSheetDetailReportAdapter extends ArrayAdapter<Object> {
 		if (obj.getClass().isAssignableFrom(Long.class)) {
 			itemView = this.createItemView(R.layout.header_list_view_row,
 					convertView, parent);
-			this.setupDateItemView((Long) obj, itemView);
-			((Activity) this.getContext()).registerForContextMenu(itemView);
+			this.setItemContent((Long) obj, itemView);
 		} else if (obj.getClass().isAssignableFrom(TimeSlice.class)) {
 			final TimeSlice aSlice = (TimeSlice) obj;
 			final boolean showNotes = (this.showNotes
@@ -69,14 +53,27 @@ public class TimeSheetDetailReportAdapter extends ArrayAdapter<Object> {
 						convertView, parent);
 			}
 
-			this.setupTimeSliceItemView(aSlice, showNotes, itemView);
-			((Activity) this.getContext()).registerForContextMenu(itemView);
+			this.setItemContent(aSlice, showNotes, itemView);
 		}
 
 		return itemView;
 	}
 
-	private void setupDateItemView(final Long obj, final View v) {
+	private View createItemView(final int resource, final View convertView,
+			final ViewGroup parent) {
+
+		if ((convertView != null) && (convertView.getId() == resource)) {
+			return convertView;
+		}
+
+		final LayoutInflater layoutInflater = (LayoutInflater) this
+				.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		final View itemView = layoutInflater.inflate(resource, null);
+		itemView.setId(resource);
+		return itemView;
+	}
+
+	private void setItemContent(final Long obj, final View v) {
 		final String value = DateTimeFormatter.getInstance().getShortDateStr(
 				obj.longValue());
 		final TextView nameView = (TextView) v.findViewById(R.id.name);
@@ -84,7 +81,7 @@ public class TimeSheetDetailReportAdapter extends ArrayAdapter<Object> {
 		v.setTag(obj);
 	}
 
-	private void setupTimeSliceItemView(final TimeSlice aSlice,
+	private void setItemContent(final TimeSlice aSlice,
 			final boolean showNotes, final View v) {
 		final String value = aSlice.getTitleWithDuration();
 		final TextView nameView = (TextView) v.findViewById(R.id.name);
