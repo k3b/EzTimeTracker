@@ -83,41 +83,55 @@ public class CategoryListAdapterDetailed extends
 	@Override
 	public View getView(final int position, final View convertView,
 			final ViewGroup parent) {
-		View view = convertView;
-		if (view == null) {
-			final LayoutInflater vi = (LayoutInflater) this.getContext()
-					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			view = vi.inflate(this.viewId, null);
+		final TimeSliceCategory obj = this.getItem(position);
 
-			if ((this.itemHight == 0) && (this.withDescription)) {
-				this.itemHight = view.findViewById(R.id.description)
-						.getHeight();
-
-			}
+		View itemView = convertView;
+		if (itemView == null) {
+			itemView = this.createItemView();
 		}
-		final TimeSliceCategory category = this.getItem(position);
-		if (category != null) {
-			final TextView nameView = (TextView) view.findViewById(R.id.name);
-			final TextView descriptionView = (TextView) view
+
+		this.setItemContent(itemView, obj);
+		return itemView;
+	}
+
+	private View createItemView() {
+		View itemView;
+		final LayoutInflater vi = (LayoutInflater) this.getContext()
+				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		itemView = vi.inflate(this.viewId, null);
+
+		if ((this.itemHight == 0) && (this.withDescription)) {
+			this.itemHight = itemView.findViewById(R.id.description)
+					.getHeight();
+
+		}
+		return itemView;
+	}
+
+	private void setItemContent(final View itemView, final TimeSliceCategory obj) {
+		if (obj != null) {
+			final TextView nameView = (TextView) itemView
+					.findViewById(R.id.name);
+			final TextView descriptionView = (TextView) itemView
 					.findViewById(R.id.description);
-			final TextView activeView = (TextView) view
+			final TextView activeView = (TextView) itemView
 					.findViewById(R.id.active);
 
 			if (this.withDescription) {
-				this.setContent(descriptionView, this.descriptionPrefix,
-						category.getDescription());
-				this.setContent(activeView, "", category.getActiveDate());
-				this.setContent(nameView, this.namePrefix, category.toString());
+				this.setTextViewContent(descriptionView,
+						this.descriptionPrefix, obj.getDescription());
+				this.setTextViewContent(activeView, "", obj.getActiveDate());
+				this.setTextViewContent(nameView, this.namePrefix,
+						obj.toString());
 			} else {
-				this.setContent(descriptionView, "", null);
-				this.setContent(activeView, "", null);
-				this.setContent(nameView, "", category.toString());
+				this.setTextViewContent(descriptionView, "", null);
+				this.setTextViewContent(activeView, "", null);
+				this.setTextViewContent(nameView, "", obj.toString());
 			}
 		}
-		return view;
 	}
 
-	private void setContent(final TextView view, final String prefix,
+	private void setTextViewContent(final TextView view, final String prefix,
 			final String text) {
 		if (view != null) {
 			if (this.itemHight == 0) {
