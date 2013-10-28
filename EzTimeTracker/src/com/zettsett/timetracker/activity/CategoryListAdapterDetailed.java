@@ -22,8 +22,6 @@ public class CategoryListAdapterDetailed extends
 	 */
 	public static final int NO_CATEGORY = -1;
 
-	private final Context context;
-
 	/**
 	 * false means short disply only with categoryname but witout description
 	 */
@@ -43,11 +41,6 @@ public class CategoryListAdapterDetailed extends
 	 * Prefex to be prepended befor each category description
 	 */
 	private final String descriptionPrefix;
-
-	/**
-	 * Items that are displayed in the adapter
-	 */
-	private final List<TimeSliceCategory> items;
 
 	/**
 	 * Workaround for recycled Items: Sometimes Text is not visible because
@@ -78,8 +71,6 @@ public class CategoryListAdapterDetailed extends
 			final int textViewResourceId, final List<TimeSliceCategory> items,
 			final boolean withDescription) {
 		super(context, textViewResourceId, items);
-		this.items = items;
-		this.context = context;
 		this.withDescription = withDescription;
 		this.viewId = textViewResourceId;
 		this.namePrefix = context.getString(R.string.category_name) + " ";
@@ -94,7 +85,7 @@ public class CategoryListAdapterDetailed extends
 			final ViewGroup parent) {
 		View view = convertView;
 		if (view == null) {
-			final LayoutInflater vi = (LayoutInflater) this.context
+			final LayoutInflater vi = (LayoutInflater) this.getContext()
 					.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			view = vi.inflate(this.viewId, null);
 
@@ -104,7 +95,7 @@ public class CategoryListAdapterDetailed extends
 
 			}
 		}
-		final TimeSliceCategory category = this.items.get(position);
+		final TimeSliceCategory category = this.getItem(position);
 		if (category != null) {
 			final TextView nameView = (TextView) view.findViewById(R.id.name);
 			final TextView descriptionView = (TextView) view
