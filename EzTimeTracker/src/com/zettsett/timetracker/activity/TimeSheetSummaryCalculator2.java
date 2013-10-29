@@ -6,12 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import android.content.Context;
-
-import com.zetter.androidTime.R;
 import com.zettsett.timetracker.DateTimeFormatter;
 import com.zettsett.timetracker.model.TimeSlice;
-import com.zettsett.timetracker.model.TimeSliceCategory;
 
 import de.k3b.util.DateTimeUtil;
 
@@ -22,10 +18,6 @@ import de.k3b.util.DateTimeUtil;
  * 
  */
 public class TimeSheetSummaryCalculator2 {
-	public enum ReportDateGrouping {
-		DAILY, WEEKLY, MONTHLY, YEARLY
-	}
-
 	public enum ReportModes {
 		BY_DATE, BY_CATEGORY
 	}
@@ -39,48 +31,11 @@ public class TimeSheetSummaryCalculator2 {
 			result.add(superKey);
 			final Map<Object, Long> subMap = summary.get(superKey);
 			for (final Object subKey : subMap.keySet()) {
-				result.add(new ReportItemWithDuration(subKey, subMap.get(subKey)));
+				result.add(new ReportItemWithDuration(subKey, subMap
+						.get(subKey)));
 			}
 		}
 		return result.toArray();
-	}
-
-	public String toString(final Object item,
-			final ReportDateGrouping reportDateGrouping, final Context context) {
-		if (item instanceof Long) {
-			return this.getDateGroupText2(reportDateGrouping, (Long) item);
-		} else if (item instanceof TimeSliceCategory) {
-			return ((TimeSliceCategory) item).getCategoryName();
-		} else if (item instanceof ReportItemWithDuration) {
-			final ReportItemWithDuration reportItemWithDuration = (ReportItemWithDuration) item;
-
-			return "  "
-					+ this.toString(reportItemWithDuration.subKey, reportDateGrouping,
-							context) + ": "
-					+ this.timeInMillisToText(context, reportItemWithDuration.duration);
-		}
-		throw new IllegalArgumentException("Unknown item type " + item);
-	}
-
-	private String timeInMillisToText(final Context context,
-			final long totalTimeInMillis) {
-		final long minutes = (totalTimeInMillis / (1000 * 60)) % 60;
-		final long hours = totalTimeInMillis / (1000 * 60 * 60);
-		String hoursWord;
-		if (hours == 1) {
-			hoursWord = context.getString(R.string.hoursWord1);
-		} else {
-			hoursWord = context.getString(R.string.hoursWordN);
-		}
-		String minutesWord;
-		if (minutes == 1) {
-			minutesWord = context.getString(R.string.minutesWord1);
-		} else {
-			minutesWord = context.getString(R.string.minutesWordN);
-		}
-		final String timeString = hours + " " + hoursWord + ", " + minutes
-				+ " " + minutesWord;
-		return timeString;
 	}
 
 	/**
@@ -129,29 +84,6 @@ public class TimeSheetSummaryCalculator2 {
 			aSlice.getEndTime() - rawStartTime);
 		} // foreach TimeSlice
 		return summaries;
-	}
-
-	private String getDateGroupText2(
-			final ReportDateGrouping reportDateGrouping,
-			final long currentStartDate) {
-		String currentStartDateText;
-		if (reportDateGrouping == ReportDateGrouping.DAILY) {
-			currentStartDateText = TimeSheetSummaryCalculator2.dt
-					.getLongDateStr(currentStartDate);
-		} else if (reportDateGrouping == ReportDateGrouping.WEEKLY) {
-			currentStartDateText = TimeSheetSummaryCalculator2.dt
-					.getWeekStr(currentStartDate);
-		} else if (reportDateGrouping == ReportDateGrouping.MONTHLY) {
-			currentStartDateText = TimeSheetSummaryCalculator2.dt
-					.getMonthStr(currentStartDate);
-		} else if (reportDateGrouping == ReportDateGrouping.YEARLY) {
-			currentStartDateText = TimeSheetSummaryCalculator2.dt
-					.getYearString(currentStartDate);
-		} else {
-			throw new IllegalArgumentException("Unknown ReportDateGrouping "
-					+ reportDateGrouping);
-		}
-		return currentStartDateText;
 	}
 
 	private long getDateGroup(final ReportDateGrouping reportDateGrouping,

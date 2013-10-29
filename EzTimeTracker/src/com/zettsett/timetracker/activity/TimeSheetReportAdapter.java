@@ -10,23 +10,36 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.zetter.androidTime.R;
-import com.zettsett.timetracker.DateTimeFormatter;
 import com.zettsett.timetracker.model.TimeSlice;
 import com.zettsett.timetracker.model.TimeSliceCategory;
 
 /**
- * Contains header items of type Long as date or TimeSliceCategory and detail
- * items of type TimeSlice or ReportItemWithDuration.<br/>
+ * Contains header items of type Long as date or TimeSliceCategory<br />
+ * and detail items of type TimeSlice or ReportItemWithDuration.<br/>
  * 
  * This class was inspired by http://stackoverflow.com/questions/3825377 .<br/>
  */
 public class TimeSheetReportAdapter extends ArrayAdapter<Object> {
 
 	private final boolean showNotes;
+	private final ReportDateGrouping reportDateGrouping;
 
 	public TimeSheetReportAdapter(final Context context,
 			final List<Object> objects, final boolean showNotes) {
+		this(context, objects, showNotes, ReportDateGrouping.DAILY);
+	}
+
+	public TimeSheetReportAdapter(final Context context,
+			final List<Object> objects,
+			final ReportDateGrouping reportDateGrouping) {
+		this(context, objects, false, reportDateGrouping);
+	}
+
+	private TimeSheetReportAdapter(final Context context,
+			final List<Object> objects, final boolean showNotes,
+			final ReportDateGrouping reportDateGrouping) {
 		super(context, 0, objects);
+		this.reportDateGrouping = reportDateGrouping;
 		this.showNotes = showNotes;
 	}
 
@@ -88,7 +101,7 @@ public class TimeSheetReportAdapter extends ArrayAdapter<Object> {
 		return itemView;
 	}
 
-	private String getValue(final Object obj) {
+	private String getValueGeneric(final Object obj) {
 		if (obj.getClass().isAssignableFrom(TimeSlice.class)) {
 			return this.getValue((TimeSlice) obj);
 		} else if (obj.getClass().isAssignableFrom(TimeSliceCategory.class)) {
@@ -103,8 +116,25 @@ public class TimeSheetReportAdapter extends ArrayAdapter<Object> {
 		}
 	}
 
-	private String getValue(final Long obj) {
-		return DateTimeFormatter.getInstance().getLongDateStr(obj.longValue());
+	private String getValue(final long obj) {
+		String currentStartDateText;
+		if (this.reportDateGrouping == ReportDateGrouping.DAILY) {
+			currentStartDateText = TimeSheetSummaryCalculator2.dt
+					.getLongDateStr(obj);
+		} else if (this.reportDateGrouping == ReportDateGrouping.WEEKLY) {
+			currentStartDateText = TimeSheetSummaryCalculator2.dt
+					.getWeekStr(obj);
+		} else if (this.reportDateGrouping == ReportDateGrouping.MONTHLY) {
+			currentStartDateText = TimeSheetSummaryCalculator2.dt
+					.getMonthStr(obj);
+		} else if (this.reportDateGrouping == ReportDateGrouping.YEARLY) {
+			currentStartDateText = TimeSheetSummaryCalculator2.dt
+					.getYearString(obj);
+		} else {
+			throw new IllegalArgumentException("Unknown ReportDateGrouping "
+					+ this.reportDateGrouping);
+		}
+		return currentStartDateText;
 	}
 
 	private String getValue(final TimeSlice obj) {
@@ -116,7 +146,7 @@ public class TimeSheetReportAdapter extends ArrayAdapter<Object> {
 	}
 
 	private String getValue(final ReportItemWithDuration obj) {
-		return this.getValue(obj.subKey) + " "
+		return this.getValueGeneric(obj.subKey) + ": "
 				+ this.timeInMillisToText(obj.duration);
 	}
 
@@ -142,7 +172,7 @@ public class TimeSheetReportAdapter extends ArrayAdapter<Object> {
 
 	private void setItemContent(final View view, final Object obj) {
 		final TextView nameView = (TextView) view.findViewById(R.id.name);
-		nameView.setText(this.getValue(obj));
+		nameView.setText(this.getValueGeneric(obj));
 		view.setTag(obj);
 	}
 }
