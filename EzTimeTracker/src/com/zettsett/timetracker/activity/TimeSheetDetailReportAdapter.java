@@ -62,10 +62,6 @@ public class TimeSheetDetailReportAdapter extends ArrayAdapter<Object> {
 	private View createItemView(final int resource, final View convertView,
 			final ViewGroup parent) {
 
-		if ((convertView != null) && (convertView.getId() == resource)) {
-			return convertView;
-		}
-
 		final LayoutInflater layoutInflater = (LayoutInflater) this
 				.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		final View itemView = layoutInflater.inflate(resource, null);

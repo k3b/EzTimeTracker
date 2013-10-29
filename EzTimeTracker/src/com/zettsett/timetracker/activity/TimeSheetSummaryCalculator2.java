@@ -147,7 +147,7 @@ public class TimeSheetSummaryCalculator2 {
 		String currentStartDateText;
 		if (reportDateGrouping == ReportDateGrouping.DAILY) {
 			currentStartDateText = TimeSheetSummaryCalculator2.dt
-					.getShortDateStr(currentStartDate);
+					.getLongDateStr(currentStartDate);
 		} else if (reportDateGrouping == ReportDateGrouping.WEEKLY) {
 			currentStartDateText = TimeSheetSummaryCalculator2.dt
 					.getWeekStr(currentStartDate);

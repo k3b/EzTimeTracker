@@ -60,11 +60,11 @@ public class TimeSheetSummaryCalculator {
 		for (final TimeSlice aSlice : timeSlices) {
 			final long rawStartTime = aSlice.getStartTime();
 
-			long currentStartDate = getDateGroup(reportDateGrouping,
+			final long currentStartDate = this.getDateGroup(reportDateGrouping,
 					rawStartTime);
 
-			String currentStartDateText = getDateGroupText(reportDateGrouping,
-					currentStartDate);
+			final String currentStartDateText = this.getDateGroupText(
+					reportDateGrouping, currentStartDate);
 
 			this.dates.put(currentStartDateText, currentStartDate);
 
@@ -83,11 +83,11 @@ public class TimeSheetSummaryCalculator {
 	}
 
 	private String getDateGroupText(
-			final ReportDateGrouping reportDateGrouping, long currentStartDate) {
+			final ReportDateGrouping reportDateGrouping,
+			final long currentStartDate) {
 		String currentStartDateText;
 		if (reportDateGrouping == ReportDateGrouping.DAILY) {
-			currentStartDateText = this.dt
-					.getShortDateStr(currentStartDate);
+			currentStartDateText = this.dt.getLongDateStr(currentStartDate);
 		} else if (reportDateGrouping == ReportDateGrouping.WEEKLY) {
 			currentStartDateText = this.dt.getWeekStr(currentStartDate);
 		} else if (reportDateGrouping == ReportDateGrouping.MONTHLY) {
@@ -95,8 +95,8 @@ public class TimeSheetSummaryCalculator {
 		} else if (reportDateGrouping == ReportDateGrouping.YEARLY) {
 			currentStartDateText = this.dt.getYearString(currentStartDate);
 		} else {
-			throw new IllegalArgumentException(
-					"Unknown ReportDateGrouping " + reportDateGrouping);
+			throw new IllegalArgumentException("Unknown ReportDateGrouping "
+					+ reportDateGrouping);
 		}
 		return currentStartDateText;
 	}
@@ -113,8 +113,8 @@ public class TimeSheetSummaryCalculator {
 		} else if (reportDateGrouping == ReportDateGrouping.YEARLY) {
 			currentStartDate = this.dt.getStartOfYear(rawStartTime);
 		} else {
-			throw new IllegalArgumentException(
-					"Unknown ReportDateGrouping " + reportDateGrouping);
+			throw new IllegalArgumentException("Unknown ReportDateGrouping "
+					+ reportDateGrouping);
 		}
 		return currentStartDate;
 	}
