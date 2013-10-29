@@ -347,7 +347,7 @@ public class TimeSheetDetailListActivity extends ListActivity implements
 		final int newSelection = this.convertLastSelection(this.getListView(),
 				listItems);
 
-		this.setListAdapter(new TimeSheetDetailReportAdapter(this, listItems,
+		this.setListAdapter(new TimeSheetReportAdapter(this, listItems,
 				this.showNotes));
 		if (Global.isInfoEnabled()) {
 			Log.i(Global.LOG_CONTEXT,

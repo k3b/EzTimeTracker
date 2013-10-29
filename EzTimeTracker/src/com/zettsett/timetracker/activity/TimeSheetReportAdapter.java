@@ -1,0 +1,148 @@
+package com.zettsett.timetracker.activity;
+
+import java.util.List;
+
+import android.content.Context;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.TextView;
+
+import com.zetter.androidTime.R;
+import com.zettsett.timetracker.DateTimeFormatter;
+import com.zettsett.timetracker.model.TimeSlice;
+import com.zettsett.timetracker.model.TimeSliceCategory;
+
+/**
+ * Contains header items of type Long as date or TimeSliceCategory and detail
+ * items of type TimeSlice or ReportItemWithDuration.<br/>
+ * 
+ * This class was inspired by http://stackoverflow.com/questions/3825377 .<br/>
+ */
+public class TimeSheetReportAdapter extends ArrayAdapter<Object> {
+
+	private final boolean showNotes;
+
+	public TimeSheetReportAdapter(final Context context,
+			final List<Object> objects, final boolean showNotes) {
+		super(context, 0, objects);
+		this.showNotes = showNotes;
+	}
+
+	@Override
+	public View getView(final int position, final View convertView,
+			final ViewGroup parent) {
+		final Object obj = this.getItem(position);
+
+		View itemView = convertView;
+		if (obj.getClass().isAssignableFrom(Long.class)) {
+			itemView = this.createItemView(R.layout.header_list_view_row,
+					convertView, parent);
+			this.setItemContent(itemView, obj);
+		} else if (obj.getClass().isAssignableFrom(TimeSliceCategory.class)) {
+			itemView = this.createItemView(R.layout.header_list_view_row,
+					convertView, parent);
+
+			this.setItemContent(itemView, obj);
+		} else if (obj.getClass()
+				.isAssignableFrom(ReportItemWithDuration.class)) {
+			itemView = this.createItemView(R.layout.name_list_view_row,
+					convertView, parent);
+
+			this.setItemContent(itemView, obj);
+		} else if (obj.getClass().isAssignableFrom(TimeSlice.class)) {
+			final TimeSlice aSlice = (TimeSlice) obj;
+			final boolean showNotes = (this.showNotes
+					&& (aSlice.getNotes() != null) && (aSlice.getNotes()
+					.length() > 0));
+
+			if (showNotes) {
+				itemView = this.createItemView(
+						R.layout.name_description_list_view_row, convertView,
+						parent);
+			} else {
+				itemView = this.createItemView(R.layout.name_list_view_row,
+						convertView, parent);
+			}
+			this.setItemContent(itemView, aSlice);
+			if (showNotes) {
+				final TextView descriptionView = (TextView) itemView
+						.findViewById(R.id.description);
+				if (descriptionView != null) {
+					descriptionView.setText(aSlice.getNotes());
+				}
+			}
+		}
+
+		return itemView;
+	}
+
+	private View createItemView(final int resource, final View convertView,
+			final ViewGroup parent) {
+
+		final LayoutInflater layoutInflater = (LayoutInflater) this
+				.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+		final View itemView = layoutInflater.inflate(resource, null);
+		itemView.setId(resource);
+		return itemView;
+	}
+
+	private String getValue(final Object obj) {
+		if (obj.getClass().isAssignableFrom(TimeSlice.class)) {
+			return this.getValue((TimeSlice) obj);
+		} else if (obj.getClass().isAssignableFrom(TimeSliceCategory.class)) {
+			return this.getValue((TimeSliceCategory) obj);
+		} else if (obj.getClass().isAssignableFrom(Long.class)) {
+			return this.getValue((Long) obj);
+		} else if (obj.getClass()
+				.isAssignableFrom(ReportItemWithDuration.class)) {
+			return this.getValue((ReportItemWithDuration) obj);
+		} else {
+			return "";
+		}
+	}
+
+	private String getValue(final Long obj) {
+		return DateTimeFormatter.getInstance().getLongDateStr(obj.longValue());
+	}
+
+	private String getValue(final TimeSlice obj) {
+		return obj.getTitleWithDuration();
+	}
+
+	private String getValue(final TimeSliceCategory obj) {
+		return obj.getCategoryName();
+	}
+
+	private String getValue(final ReportItemWithDuration obj) {
+		return this.getValue(obj.subKey) + " "
+				+ this.timeInMillisToText(obj.duration);
+	}
+
+	private String timeInMillisToText(final long totalTimeInMillis) {
+		final long minutes = (totalTimeInMillis / (1000 * 60)) % 60;
+		final long hours = totalTimeInMillis / (1000 * 60 * 60);
+		String hoursWord;
+		if (hours == 1) {
+			hoursWord = this.getContext().getString(R.string.hoursWord1);
+		} else {
+			hoursWord = this.getContext().getString(R.string.hoursWordN);
+		}
+		String minutesWord;
+		if (minutes == 1) {
+			minutesWord = this.getContext().getString(R.string.minutesWord1);
+		} else {
+			minutesWord = this.getContext().getString(R.string.minutesWordN);
+		}
+		final String timeString = hours + " " + hoursWord + ", " + minutes
+				+ " " + minutesWord;
+		return timeString;
+	}
+
+	private void setItemContent(final View view, final Object obj) {
+		final TextView nameView = (TextView) view.findViewById(R.id.name);
+		nameView.setText(this.getValue(obj));
+		view.setTag(obj);
+	}
+}

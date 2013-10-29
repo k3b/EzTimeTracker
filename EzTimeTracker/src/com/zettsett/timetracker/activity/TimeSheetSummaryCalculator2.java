@@ -30,16 +30,6 @@ public class TimeSheetSummaryCalculator2 {
 		BY_DATE, BY_CATEGORY
 	}
 
-	public class Duration {
-		public final Object subKey;
-		public final long duration;
-
-		public Duration(final Object subKey, final long duration) {
-			this.subKey = subKey;
-			this.duration = duration;
-		}
-	}
-
 	final static DateTimeUtil dt = DateTimeFormatter.getInstance();
 
 	public Object[] toArray(final Map<Object, Map<Object, Long>> summary) {
@@ -49,7 +39,7 @@ public class TimeSheetSummaryCalculator2 {
 			result.add(superKey);
 			final Map<Object, Long> subMap = summary.get(superKey);
 			for (final Object subKey : subMap.keySet()) {
-				result.add(new Duration(subKey, subMap.get(subKey)));
+				result.add(new ReportItemWithDuration(subKey, subMap.get(subKey)));
 			}
 		}
 		return result.toArray();
@@ -61,13 +51,13 @@ public class TimeSheetSummaryCalculator2 {
 			return this.getDateGroupText2(reportDateGrouping, (Long) item);
 		} else if (item instanceof TimeSliceCategory) {
 			return ((TimeSliceCategory) item).getCategoryName();
-		} else if (item instanceof Duration) {
-			final Duration duration = (Duration) item;
+		} else if (item instanceof ReportItemWithDuration) {
+			final ReportItemWithDuration reportItemWithDuration = (ReportItemWithDuration) item;
 
 			return "  "
-					+ this.toString(duration.subKey, reportDateGrouping,
+					+ this.toString(reportItemWithDuration.subKey, reportDateGrouping,
 							context) + ": "
-					+ this.timeInMillisToText(context, duration.duration);
+					+ this.timeInMillisToText(context, reportItemWithDuration.duration);
 		}
 		throw new IllegalArgumentException("Unknown item type " + item);
 	}
