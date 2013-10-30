@@ -1,11 +1,9 @@
 package com.zettsett.timetracker.activity;
 
 import java.util.List;
-import java.util.Map;
 
 import android.app.ListActivity;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -14,15 +12,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
 import android.view.View;
-import android.widget.LinearLayout;
-import android.widget.LinearLayout.LayoutParams;
-import android.widget.TextView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.ListView;
 
 import com.zetter.androidTime.R;
 import com.zettsett.timetracker.DateTimeFormatter;
 import com.zettsett.timetracker.Global;
-import com.zettsett.timetracker.activity.TimeSheetSummaryCalculator.ReportDateGrouping;
-import com.zettsett.timetracker.activity.TimeSheetSummaryCalculator.ReportModes;
+import com.zettsett.timetracker.activity.TimeSheetSummaryCalculator2.ReportModes;
 import com.zettsett.timetracker.database.TimeSliceRepository;
 import com.zettsett.timetracker.model.TimeSlice;
 import com.zettsett.timetracker.model.TimeSliceCategory;
@@ -59,9 +55,6 @@ public class TimeSheetSummaryListActivity extends ListActivity implements
 	private ReportFramework reportFramework;
 	private TimeSliceRepository timeSliceRepository;
 
-	// form controls
-	private List<TextView> reportViewItemList;
-
 	// current state
 	/**
 	 * current range filter used to fill report.<br/>
@@ -81,6 +74,7 @@ public class TimeSheetSummaryListActivity extends ListActivity implements
 	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		this.setContentView(R.layout.time_slice_list);
+		this.registerForContextMenu(this.getListView());
 		this.timeSliceRepository = new TimeSliceRepository(this);
 		TimeSheetSummaryListActivity.currentRangeFilter = ReportFramework
 				.getLastFilter(
@@ -155,136 +149,6 @@ public class TimeSheetSummaryListActivity extends ListActivity implements
 	}
 
 	@Override
-	public void onCreateContextMenu(final ContextMenu menu, final View v,
-			final ContextMenuInfo menuInfo) {
-		super.onCreateContextMenu(menu, v, menuInfo);
-		final TimeSliceFilterParameter filter = this.createFilter(v);
-		if (filter != null) {
-			if (Global.isInfoEnabled()) {
-				Log.i(Global.LOG_CONTEXT, "Detailreport: " + filter);
-			}
-			menu.add(0, TimeSheetSummaryListActivity.MENU_ITEM_REPORT, 0,
-					this.getString(R.string.cmd_report));
-			menu.add(0, TimeSheetSummaryListActivity.DELETE_MENU_ID, 0,
-					this.getString(R.string.cmd_delete));
-
-		}
-		this.currentSelectedListItemRangeFilterUsedForMenu = filter;
-	}
-
-	@Override
-	public boolean onContextItemSelected(final MenuItem item) {
-		switch (item.getItemId()) {
-		case MENU_ITEM_REPORT:
-			this.showDetailReport();
-			return true;
-		case DELETE_MENU_ID:
-			this.onCommandDeleteTimeSlice();
-			return true;
-
-		default:
-			return super.onContextItemSelected(item);
-		}
-	}
-
-	private void showDetailReport() {
-		if (this.currentSelectedListItemRangeFilterUsedForMenu != null) {
-			TimeSheetDetailListActivity.showActivity(this,
-					this.currentSelectedListItemRangeFilterUsedForMenu);
-		}
-	}
-
-	private void onCommandDeleteTimeSlice() {
-		TimeSliceRemoveActivity.showActivity(this,
-				this.currentSelectedListItemRangeFilterUsedForMenu);
-	}
-
-	private TimeSliceFilterParameter createFilter(final View v) {
-		TimeSliceCategory category = this.getTimeSliceCategory(v);
-		if (category != null) {
-			final TimeSliceFilterParameter filter = this
-					.createDrillDownFilter().setCategoryId(category.getRowId());
-			if (this.reportMode == ReportModes.BY_DATE) {
-				int pos = this.reportViewItemList.indexOf(v);
-				while (--pos >= 0) {
-					final Long date = this.getLong(this.reportViewItemList
-							.get(pos));
-					if (date != null) {
-						return this.setFilterDate(filter,
-								this.reportDateGrouping, date);
-					}
-				}
-			}
-			return filter.setIgnoreDates(true);
-		} else {
-			final Long date = this.getLong(v);
-			if (date != null) {
-				final TimeSliceFilterParameter filter = this.setFilterDate(
-						this.createDrillDownFilter(), this.reportDateGrouping,
-						date);
-				if (this.reportMode == ReportModes.BY_CATEGORY) {
-					int pos = this.reportViewItemList.indexOf(v);
-					while (--pos >= 0) {
-						category = this.getTimeSliceCategory(v);
-						if (category != null) {
-							return filter.setCategoryId(category.getRowId());
-						}
-					}
-				}
-				return filter;
-			}
-		}
-		return null;
-	}
-
-	private TimeSliceFilterParameter createDrillDownFilter() {
-		final TimeSliceFilterParameter defaults = TimeSheetSummaryListActivity.currentRangeFilter;
-		return new TimeSliceFilterParameter().setNotes(defaults.getNotes())
-				.setNotesNotNull(defaults.isNotesNotNull());
-	}
-
-	private TimeSliceCategory getTimeSliceCategory(final View v) {
-		final Object tag = v.getTag();
-		if ((tag != null) && (tag instanceof TimeSliceCategory)) {
-			return (TimeSliceCategory) tag;
-		}
-		return null;
-	}
-
-	private Long getLong(final View v) {
-		final Object tag = v.getTag();
-		if ((tag != null) && (tag instanceof Long)) {
-			return (Long) tag;
-		}
-		return null;
-	}
-
-	private TimeSliceFilterParameter setFilterDate(
-			final TimeSliceFilterParameter timeSliceFilterParameter,
-			final ReportDateGrouping mReportDateGrouping, final Long startDate) {
-		final long start = startDate.longValue();
-		final long end = this.getEndTime(mReportDateGrouping, start);
-		return timeSliceFilterParameter.setStartTime(start).setEndTime(end);
-	}
-
-	private long getEndTime(final ReportDateGrouping mReportDateGrouping,
-			final long start) {
-		final DateTimeUtil dtu = DateTimeFormatter.getInstance();
-		if (mReportDateGrouping == ReportDateGrouping.DAILY) {
-			return dtu.addDays(start, 1);
-		} else if (mReportDateGrouping == ReportDateGrouping.WEEKLY) {
-			return dtu.addDays(start, 7);
-		} else if (mReportDateGrouping == ReportDateGrouping.MONTHLY) {
-			return dtu.getStartOfMonth(dtu.addDays(start, 31));
-		} else if (mReportDateGrouping == ReportDateGrouping.YEARLY) {
-			return dtu.getStartOfYear(dtu.addDays(start, 366));
-		}
-
-		throw new IllegalArgumentException("Unknown reportDateGrouping "
-				+ mReportDateGrouping);
-	}
-
-	@Override
 	public boolean onOptionsItemSelected(final MenuItem item) {
 		switch (item.getItemId()) {
 		case MENU_ITEM_GROUP_DAILY:
@@ -320,31 +184,180 @@ public class TimeSheetSummaryListActivity extends ListActivity implements
 		return true;
 	}
 
-	/**
-	 * handle result from edit/changeFilter/delete
-	 */
 	@Override
-	protected void onActivityResult(final int requestCode,
-			final int resultCode, final Intent intent) {
-		super.onActivityResult(requestCode, resultCode, intent);
-		if (intent != null) {
-			if (resultCode == ReportFilterActivity.RESULT_FILTER_CHANGED) {
-				TimeSheetSummaryListActivity.currentRangeFilter = this.reportFramework
-						.onActivityResult(intent,
-								TimeSheetSummaryListActivity.currentRangeFilter);
+	public void onCreateContextMenu(final ContextMenu menu, final View v,
+			final ContextMenuInfo menuInfo) {
+		super.onCreateContextMenu(menu, v, menuInfo);
+		final int position = ((AdapterContextMenuInfo) menuInfo).position;
+
+		final TimeSliceFilterParameter filter = this.createFilter(position);
+		if (filter != null) {
+			if (Global.isInfoEnabled()) {
+				Log.i(Global.LOG_CONTEXT, "Detailreport: " + filter);
 			}
-			this.loadDataIntoReport(0);
+			menu.add(0, TimeSheetSummaryListActivity.MENU_ITEM_REPORT, 0,
+					this.getString(R.string.cmd_report));
+			menu.add(0, TimeSheetSummaryListActivity.DELETE_MENU_ID, 0,
+					this.getString(R.string.cmd_delete));
+
 		}
+		this.currentSelectedListItemRangeFilterUsedForMenu = filter;
+	}
+
+	private Object getItemAtPosition(final int position) {
+		final Object item = this.getListView().getItemAtPosition(position);
+		if (item.getClass().isAssignableFrom(ReportItemWithDuration.class)) {
+			return ((ReportItemWithDuration) item).subKey;
+		}
+		return item;
+	}
+
+	@Override
+	public boolean onContextItemSelected(final MenuItem item) {
+		switch (item.getItemId()) {
+		case MENU_ITEM_REPORT:
+			this.showDetailReport();
+			return true;
+		case DELETE_MENU_ID:
+			this.onCommandDeleteTimeSlice();
+			return true;
+
+		default:
+			return super.onContextItemSelected(item);
+		}
+	}
+
+	private void showDetailReport() {
+		if (this.currentSelectedListItemRangeFilterUsedForMenu != null) {
+			TimeSheetDetailListActivity.showActivity(this,
+					this.currentSelectedListItemRangeFilterUsedForMenu);
+		}
+	}
+
+	private void onCommandDeleteTimeSlice() {
+		TimeSliceRemoveActivity.showActivity(this,
+				this.currentSelectedListItemRangeFilterUsedForMenu);
+	}
+
+	private TimeSliceFilterParameter createFilter(final int position) {
+		TimeSliceFilterParameter filter = null;
+		String context = "";
+		try {
+			TimeSliceCategory category = this.getTimeSliceCategory(position);
+			if (category != null) {
+				filter = this.createDrillDownFilter().setCategoryId(
+						category.getRowId());
+				if (this.reportMode == ReportModes.BY_DATE) {
+					int pos = position;
+					while (--pos >= 0) {
+						final Long date = this.getLong(pos);
+						if (date != null) {
+							context = "ReportModes.BY_DATE category + super date";
+							return this.setFilterDate(filter,
+									this.reportDateGrouping, date);
+						}
+					}
+					context = "ReportModes.BY_DATE category. no super date";
+				} else {
+					context = "ReportModes.BY_CATEGORY category";
+				}
+
+				return filter.setIgnoreDates(true);
+			} else {
+				final Long date = this.getLong(position);
+				if (date != null) {
+					filter = this.setFilterDate(this.createDrillDownFilter(),
+							this.reportDateGrouping, date);
+					if (this.reportMode == ReportModes.BY_CATEGORY) {
+						int pos = position;
+						while (--pos >= 0) {
+							category = this.getTimeSliceCategory(pos);
+							if (category != null) {
+								context = "ReportModes.BY_CATEGORY date + super category";
+								return filter
+										.setCategoryId(category.getRowId());
+							}
+						}
+						context = "ReportModes.BY_CATEGORY date. no super category";
+					} else {
+						context = "ReportModes.BY_DATE date";
+					}
+					return filter;
+				}
+			}
+			context = "Neither category nor date selected";
+			filter = null;
+			return filter;
+		} finally {
+			if (Global.isDebugEnabled()) {
+				Log.d(Global.LOG_CONTEXT, "createFilterFromViewItemTag("
+						+ context + ") :" + filter);
+			}
+		}
+	}
+
+	private TimeSliceFilterParameter createDrillDownFilter() {
+		final TimeSliceFilterParameter defaults = TimeSheetSummaryListActivity.currentRangeFilter;
+		return new TimeSliceFilterParameter().setNotes(defaults.getNotes())
+				.setNotesNotNull(defaults.isNotesNotNull());
+	}
+
+	private TimeSliceCategory getTimeSliceCategory(final int position) {
+		final Object tag = this.getItemAtPosition(position);
+		if ((tag != null) && (tag instanceof TimeSliceCategory)) {
+			return (TimeSliceCategory) tag;
+		}
+		return null;
+	}
+
+	private Long getLong(final int position) {
+		final Object tag = this.getItemAtPosition(position);
+		if ((tag != null) && (tag instanceof Long)) {
+			return (Long) tag;
+		}
+		return null;
+	}
+
+	private TimeSliceFilterParameter setFilterDate(
+			final TimeSliceFilterParameter timeSliceFilterParameter,
+			final ReportDateGrouping mReportDateGrouping, final Long startDate) {
+		final long start = startDate.longValue();
+		final long end = this.getEndTime(mReportDateGrouping, start);
+		return timeSliceFilterParameter.setStartTime(start).setEndTime(end);
+	}
+
+	private long getEndTime(final ReportDateGrouping mReportDateGrouping,
+			final long start) {
+		final DateTimeUtil dtu = DateTimeFormatter.getInstance();
+		if (mReportDateGrouping == ReportDateGrouping.DAILY) {
+			return dtu.addDays(start, 1);
+		} else if (mReportDateGrouping == ReportDateGrouping.WEEKLY) {
+			return dtu.addDays(start, 7);
+		} else if (mReportDateGrouping == ReportDateGrouping.MONTHLY) {
+			return dtu.getStartOfMonth(dtu.addDays(start, 31));
+		} else if (mReportDateGrouping == ReportDateGrouping.YEARLY) {
+			return dtu.getStartOfYear(dtu.addDays(start, 366));
+		}
+
+		throw new IllegalArgumentException("Unknown reportDateGrouping "
+				+ mReportDateGrouping);
 	}
 
 	@Override
 	public void loadDataIntoReport(final int reportType) {
 		long performanceMeasureStart = System.currentTimeMillis();
+		final long globalPerformanceMeasureStart = performanceMeasureStart;
 
 		this.setReportType(reportType);
 
-		final TimeSheetSummaryCalculator reportDataStructure = this
-				.loadReportDataStructures();
+		final TimeSliceFilterParameter rangeFilter = TimeSheetSummaryListActivity.currentRangeFilter;
+
+		final List<TimeSlice> timeSlices = this.timeSliceRepository
+				.fetchList(rangeFilter);
+
+		final List<Object> listItems = TimeSheetSummaryCalculator2.loadData(
+				this.reportMode, this.reportDateGrouping, timeSlices);
+
 		if (Global.isInfoEnabled()) {
 			Log.i(Global.LOG_CONTEXT,
 					"loadReportDataStructures:"
@@ -352,14 +365,31 @@ public class TimeSheetSummaryListActivity extends ListActivity implements
 			performanceMeasureStart = System.currentTimeMillis();
 		}
 
-		this.loadDataIntoReport(reportDataStructure);
+		final int newSelection = this.convertLastSelection(this.getListView(),
+				listItems);
 
+		this.setListAdapter(new TimeSheetReportAdapter(this, listItems,
+				this.reportDateGrouping));
 		if (Global.isInfoEnabled()) {
 			Log.i(Global.LOG_CONTEXT,
-					"generated report:"
+					"Create adapter:"
 							+ (System.currentTimeMillis() - performanceMeasureStart));
-			performanceMeasureStart = System.currentTimeMillis();
 		}
+
+		final float loadTime = 0.0001f * (System.currentTimeMillis() - globalPerformanceMeasureStart);
+		this.setTitle(rangeFilter.toString() + " (" + timeSlices.size() + "/"
+				+ String.format("%.1f", loadTime) + " sec)");
+
+		// scroll to end
+		this.getListView().post(new Runnable() {
+			@Override
+			public void run() {
+				// Select the last row so it will scroll into view...
+				TimeSheetSummaryListActivity.this.getListView().setSelection(
+						newSelection);
+			}
+		});
+
 	}
 
 	private void setReportType(final int reportType) {
@@ -392,104 +422,48 @@ public class TimeSheetSummaryListActivity extends ListActivity implements
 	}
 
 	/**
+	 * gets data from first visible item and locates it in newListItems.
 	 * 
-	 * @return Map<categoryName, Map<startDate.toString(),
-	 *         totalDurationsWithinSubinterval>> or Map<startDate.toString(),
-	 *         Map<categoryName, totalDurationsWithinSubinterval>>
+	 * @return last item pos if not found
 	 */
-	private TimeSheetSummaryCalculator loadReportDataStructures() {
-		final TimeSliceFilterParameter rangeFilter = TimeSheetSummaryListActivity.currentRangeFilter;
+	private int convertLastSelection(final ListView listView,
+			final List<Object> newListItems) {
+		// get old first visible item infos
+		final int oldItemCount = listView.getCount();
+		if (oldItemCount == 0) {
+			return newListItems.size() - 1;
+		}
+		final int lastListViewTopPos = listView.getFirstVisiblePosition();
+		final Object lastListViewTopItem = listView
+				.getItemAtPosition(lastListViewTopPos);
 
-		final List<TimeSlice> timeSlices = this.timeSliceRepository
-				.fetchList(rangeFilter);
-
-		final TimeSheetSummaryCalculator summaries = new TimeSheetSummaryCalculator(
-				this.reportMode, this.reportDateGrouping, timeSlices);
-		return summaries;
+		// translate to newListItems position
+		int newSelection = (lastListViewTopItem == null) ? -1 : newListItems
+				.indexOf(lastListViewTopItem);
+		if (newSelection == -1) {
+			newSelection = lastListViewTopPos;
+		}
+		if (newSelection >= newListItems.size()) {
+			newSelection = newListItems.size() - 1;
+		}
+		return newSelection;
 	}
 
-	private void loadDataIntoReport(
-			final TimeSheetSummaryCalculator reportDataStructure) {
-		final Map<String, Map<String, Long>> reportData = reportDataStructure
-				.getReportData();
-		final Map<String, Long> dates = reportDataStructure.getDates();
-		final Map<String, TimeSliceCategory> categoties = reportDataStructure
-				.getCategoties();
-
-		this.addDateHeaderLine(
-				TimeSheetSummaryListActivity.currentRangeFilter.toString(),
-				Color.YELLOW);
-		int itemCount = 0;
-		for (final String header : reportData.keySet()) {
-			final Map<String, Long> reportRows = reportData.get(header);
-
-			final TextView headerTextView = this.addDateHeaderLine(header,
-					Color.GREEN);
-			if (this.reportMode == ReportModes.BY_DATE) {
-				headerTextView.setTag(dates.get(header));
-			} else {
-				headerTextView.setTag(categoties.get(header));
+	/**
+	 * handle result from edit/changeFilter/delete
+	 */
+	@Override
+	protected void onActivityResult(final int requestCode,
+			final int resultCode, final Intent intent) {
+		super.onActivityResult(requestCode, resultCode, intent);
+		if (intent != null) {
+			if (resultCode == ReportFilterActivity.RESULT_FILTER_CHANGED) {
+				TimeSheetSummaryListActivity.currentRangeFilter = this.reportFramework
+						.onActivityResult(intent,
+								TimeSheetSummaryListActivity.currentRangeFilter);
 			}
-
-			this.registerForContextMenu(headerTextView);
-			final LayoutParams layoutParams = new LayoutParams(
-					android.view.ViewGroup.LayoutParams.FILL_PARENT,
-					android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
-			layoutParams.setMargins(0, 5, 0, 5);
-			final LinearLayout rowsView = new LinearLayout(this);
-			rowsView.setOrientation(LinearLayout.VERTICAL);
-			this.reportFramework.getLinearScroller().getMainLayout()
-					.addView(rowsView, layoutParams);
-			for (final String rowCaption : reportRows.keySet()) {
-				final long totalTimeInMillis = reportRows.get(rowCaption);
-				final TextView rowTextView = new TextView(this);
-				this.reportViewItemList.add(rowTextView);
-				rowTextView.setText("    " + rowCaption + ": "
-						+ this.timeInMillisToText(totalTimeInMillis));
-				if (this.reportMode == ReportModes.BY_DATE) {
-					rowTextView.setTag(categoties.get(rowCaption));
-				} else {
-					rowTextView.setTag(dates.get(rowCaption));
-				}
-				this.registerForContextMenu(rowTextView);
-				rowsView.addView(rowTextView);
-			}
-			itemCount++;
-		}
-
-		if (itemCount == 0) {
-			this.addDateHeaderLine(this.getString(R.string.message_no_data),
-					Color.YELLOW);
+			this.loadDataIntoReport(0);
 		}
 	}
 
-	private TextView addDateHeaderLine(final String header, final int color) {
-		final TextView headerTextView = new TextView(this);
-		headerTextView.setText(header);
-		headerTextView.setTextColor(color);
-		this.reportViewItemList.add(headerTextView);
-
-		this.reportFramework.getLinearScroller().addView(headerTextView);
-		return headerTextView;
-	}
-
-	private String timeInMillisToText(final long totalTimeInMillis) {
-		final long minutes = (totalTimeInMillis / (1000 * 60)) % 60;
-		final long hours = totalTimeInMillis / (1000 * 60 * 60);
-		String hoursWord;
-		if (hours == 1) {
-			hoursWord = this.getString(R.string.hoursWord1);
-		} else {
-			hoursWord = this.getString(R.string.hoursWordN);
-		}
-		String minutesWord;
-		if (minutes == 1) {
-			minutesWord = this.getString(R.string.minutesWord1);
-		} else {
-			minutesWord = this.getString(R.string.minutesWordN);
-		}
-		final String timeString = hours + " " + hoursWord + ", " + minutes
-				+ " " + minutesWord;
-		return timeString;
-	}
 }

@@ -78,6 +78,21 @@ public class DateTimeUtilTests {
 	}
 
 	@Test
+	public void ShouldTruncateWeek() {
+		long truncated = this.dtu.getStartOfWeek(this.testDateNewYear2013);
+		Assert.assertEquals("Sylvester", "2012-12-29T00:00:00+0100",
+				this.dtu.getIsoDateTimeStr(truncated));
+
+		truncated = this.dtu.getStartOfWeek(truncated);
+		Assert.assertEquals("should not change", "2012-12-29T00:00:00+0100",
+				this.dtu.getIsoDateTimeStr(truncated));
+
+		truncated = this.dtu.getStartOfWeek(this.dtu.addDays(truncated, 6));
+		Assert.assertEquals("date+6", "2012-12-29T00:00:00+0100",
+				this.dtu.getIsoDateTimeStr(truncated));
+	}
+
+	@Test
 	public void ShouldAddDays() {
 		final long resultSylvester = this.dtu.addDays(
 				this.testDateSylvester2013, 365);

@@ -24,7 +24,7 @@ public class TimeSheetSummaryCalculator2 {
 
 	final static DateTimeUtil dt = DateTimeFormatter.getInstance();
 
-	public Object[] toArray(final Map<Object, Map<Object, Long>> summary) {
+	public List<Object> toList(final Map<Object, Map<Object, Long>> summary) {
 		final ArrayList<Object> result = new ArrayList<Object>();
 
 		for (final Object superKey : summary.keySet()) {
@@ -35,7 +35,7 @@ public class TimeSheetSummaryCalculator2 {
 						.get(subKey)));
 			}
 		}
-		return result.toArray();
+		return result;
 	}
 
 	/**
@@ -148,5 +148,14 @@ public class TimeSheetSummaryCalculator2 {
 			timeSum = Long.valueOf(0);
 		}
 		map.put(key, timeSum + diffValue);
+	}
+
+	public static List<Object> loadData(final ReportModes reportMode,
+			final ReportDateGrouping reportDateGrouping,
+			final List<TimeSlice> timeSlices) {
+		final TimeSheetSummaryCalculator2 summaries = new TimeSheetSummaryCalculator2();
+		final Map<Object, Map<Object, Long>> map = summaries.createSummaryMap(
+				reportMode, reportDateGrouping, timeSlices);
+		return summaries.toList(map);
 	}
 }

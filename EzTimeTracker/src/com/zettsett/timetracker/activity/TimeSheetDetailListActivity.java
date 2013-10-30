@@ -143,35 +143,6 @@ public class TimeSheetDetailListActivity extends ListActivity implements
 		}
 	}
 
-	/**
-	 * handle result from edit/changeFilter/delete
-	 */
-	@Override
-	protected void onActivityResult(final int requestCode,
-			final int resultCode, final Intent intent) {
-		super.onActivityResult(requestCode, resultCode, intent);
-		if (intent != null) {
-			final TimeSlice updatedTimeSlice = (TimeSlice) intent.getExtras()
-					.get(Global.EXTRA_TIMESLICE);
-
-			if (updatedTimeSlice != null) {
-				// after Edit saveNew/updateExisting Timeslice
-				if (updatedTimeSlice.getRowId() == ItemWithRowId.IS_NEW_TIMESLICE) {
-					this.timeSliceRepository.create(updatedTimeSlice);
-				} else {
-					this.timeSliceRepository.update(updatedTimeSlice);
-				}
-			} else if (resultCode == ReportFilterActivity.RESULT_FILTER_CHANGED) {
-				// after filter change: remeber new filter
-				TimeSheetDetailListActivity.currentRangeFilter = this.reportFramework
-						.onActivityResult(intent,
-								TimeSheetDetailListActivity.currentRangeFilter);
-			}
-
-			this.loadDataIntoReport(0);
-		}
-	}
-
 	@Override
 	public boolean onPrepareOptionsMenu(final Menu menu) {
 		final boolean result = super.onCreateOptionsMenu(menu);
@@ -179,6 +150,12 @@ public class TimeSheetDetailListActivity extends ListActivity implements
 		this.addMenuItems(menu);
 
 		return result;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(final MenuItem item) {
+		this.onMenuItemSelected(item);
+		return super.onContextItemSelected(item);
 	}
 
 	@Override
@@ -190,8 +167,6 @@ public class TimeSheetDetailListActivity extends ListActivity implements
 				((AdapterContextMenuInfo) menuInfo).position);
 
 		final ListView listView = this.getListView();
-		final Object si = listView.getSelectedItem();
-		final int sip = listView.getSelectedItemPosition();
 
 		if (tag instanceof TimeSlice) {
 			menu.add(0, TimeSheetDetailListActivity.ADD_MENU_ID, 0,
@@ -238,12 +213,6 @@ public class TimeSheetDetailListActivity extends ListActivity implements
 					this.getString(R.string.menu_report_include_notes));
 		}
 		this.reportFramework.onPrepareOptionsMenu(menu);
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(final MenuItem item) {
-		this.onMenuItemSelected(item);
-		return super.onContextItemSelected(item);
 	}
 
 	@Override
@@ -418,5 +387,34 @@ public class TimeSheetDetailListActivity extends ListActivity implements
 		}
 
 		return items;
+	}
+
+	/**
+	 * handle result from edit/changeFilter/delete
+	 */
+	@Override
+	protected void onActivityResult(final int requestCode,
+			final int resultCode, final Intent intent) {
+		super.onActivityResult(requestCode, resultCode, intent);
+		if (intent != null) {
+			final TimeSlice updatedTimeSlice = (TimeSlice) intent.getExtras()
+					.get(Global.EXTRA_TIMESLICE);
+
+			if (updatedTimeSlice != null) {
+				// after Edit saveNew/updateExisting Timeslice
+				if (updatedTimeSlice.getRowId() == ItemWithRowId.IS_NEW_TIMESLICE) {
+					this.timeSliceRepository.create(updatedTimeSlice);
+				} else {
+					this.timeSliceRepository.update(updatedTimeSlice);
+				}
+			} else if (resultCode == ReportFilterActivity.RESULT_FILTER_CHANGED) {
+				// after filter change: remeber new filter
+				TimeSheetDetailListActivity.currentRangeFilter = this.reportFramework
+						.onActivityResult(intent,
+								TimeSheetDetailListActivity.currentRangeFilter);
+			}
+
+			this.loadDataIntoReport(0);
+		}
 	}
 }

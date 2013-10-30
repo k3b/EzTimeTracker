@@ -177,7 +177,7 @@ public class DateTimeUtil {
 
 	public long getStartOfWeek(final long dateTime) {
 		final Calendar cal = this.getStartOfDayCal(dateTime);
-		final int offset = cal.get(Calendar.DAY_OF_WEEK);
+		final int offset = cal.get(Calendar.DAY_OF_WEEK) % 7;
 
 		if (offset > 0) {
 			cal.add(Calendar.DAY_OF_MONTH, -offset);

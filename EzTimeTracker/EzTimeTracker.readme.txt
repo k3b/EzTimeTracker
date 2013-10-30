@@ -1,9 +1,6 @@
 
 todo
-	detail-report:
-		v notes as multiline
-		v after refresh scroll to last known selection
-		v make selection visible <selector>....
+v	neuer summary report: gruppe nach woche falsches datum in tag? (war auch schon im alten report)
 
 release 2.5.8 2013-10-24
 	

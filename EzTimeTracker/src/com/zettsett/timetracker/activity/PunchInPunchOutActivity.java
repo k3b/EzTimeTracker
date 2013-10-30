@@ -225,7 +225,7 @@ public class PunchInPunchOutActivity extends Activity implements
 		if (itemHandler != null) {
 			final Intent intent = new Intent().setClass(this, itemHandler);
 			intent.putExtra(
-					TimeSheetSummaryReportActivity.SAVED_MENU_ID_BUNDLE_NAME,
+					TimeSheetSummaryListActivity.SAVED_MENU_ID_BUNDLE_NAME,
 					itemId);
 			this.startActivity(intent);
 			return true;
@@ -285,7 +285,7 @@ public class PunchInPunchOutActivity extends Activity implements
 		case R.id.category_day:
 		case R.id.category_month:
 		case R.id.category_week:
-			return TimeSheetSummaryReportActivity.class;
+			return TimeSheetSummaryListActivity.class;
 		case R.id.categories:
 			return CategoryListActivity.class;
 		case R.id.export:
