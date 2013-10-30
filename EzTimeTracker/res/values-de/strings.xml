@@ -79,6 +79,8 @@
 	<string name="no_categories">Zur Zeit sind noch keine Kategorien definiert.</string>
 	    	    	
 	<string name="cmd_edit">Bearbeiten</string>	
+	<string name="cmd_edit_category">Kategorie bearbeiten</string>	
+	
 	<string name="choose_filename">Eingabe Dateiname:</string>
 	<string name="format_message_successfully_saved_file">Erfolgreich gespeichert unter \'%1$s\'</string>
 	<string name="format_error_saved_file">Speichern unter \'%1$s\' auf SD gescheitert: %2$s</string>

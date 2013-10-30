@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import android.app.Dialog;
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
@@ -20,8 +21,10 @@ import android.widget.ListView;
 import com.zetter.androidTime.R;
 import com.zettsett.timetracker.DateTimeFormatter;
 import com.zettsett.timetracker.Global;
+import com.zettsett.timetracker.database.TimeSliceCategoryRepsitory;
 import com.zettsett.timetracker.database.TimeSliceRepository;
 import com.zettsett.timetracker.model.TimeSlice;
+import com.zettsett.timetracker.model.TimeSliceCategory;
 import com.zettsett.timetracker.report.IReportInterface;
 
 import de.k3b.common.ItemWithRowId;
@@ -31,7 +34,7 @@ import de.k3b.util.DateTimeUtil;
  * Detail report grouped by date with optional date-filter
  */
 public class TimeSheetDetailListActivity extends ListActivity implements
-		IReportInterface {
+		IReportInterface, ICategorySetter {
 	/**
 	 * Used to transfer optional filter between parent activity and this.
 	 */
@@ -44,9 +47,13 @@ public class TimeSheetDetailListActivity extends ListActivity implements
 	private static final int SHOW_NOTES_MENU_ID = Menu.FIRST + 3;
 	private static final int ID_EDIT_TIME_SLICE = Menu.FIRST + 4;
 	private static final int ID_ADD_TIME_SLICE = Menu.FIRST + 5;
+	private static final int MENU_ITEM_EDIT_CATEGORY = Menu.FIRST + 6;
 
 	// dependent services
 	private TimeSliceRepository timeSliceRepository;
+	private final TimeSliceCategoryRepsitory categoryRepository = new TimeSliceCategoryRepsitory(
+			this);
+
 	private ReportFramework reportFramework;
 
 	// current state
@@ -175,6 +182,10 @@ public class TimeSheetDetailListActivity extends ListActivity implements
 					this.getString(R.string.menu_text_edit));
 			menu.add(0, TimeSheetDetailListActivity.DELETE_MENU_ID, 0,
 					this.getString(R.string.cmd_delete));
+
+			menu.add(0, TimeSheetDetailListActivity.MENU_ITEM_EDIT_CATEGORY, 0,
+					this.getString(R.string.cmd_edit_category));
+
 			this.currentSelectedTimeSliceUsedForMenu = (TimeSlice) tag;
 			this.lastSelectedDateUsedForAddMenu = this.currentSelectedTimeSliceUsedForMenu
 					.getStartTime();
@@ -227,6 +238,9 @@ public class TimeSheetDetailListActivity extends ListActivity implements
 		case ADD_MENU_ID:
 			this.onCommandAddTimeSlice();
 			return true;
+		case MENU_ITEM_EDIT_CATEGORY:
+			this.onCommandEditCategory();
+			return true;
 		default:
 			return super.onContextItemSelected(item);
 		}
@@ -251,6 +265,40 @@ public class TimeSheetDetailListActivity extends ListActivity implements
 			parameter = this.currentSelectedListItemRangeFilterUsedForMenu;
 		}
 		TimeSliceRemoveActivity.showActivity(this, parameter);
+	}
+
+	private void onCommandEditCategory() {
+		if (this.edit == null) {
+			this.edit = new CategoryEditDialog(this, this);
+		}
+		this.edit.setCategory(this.currentSelectedTimeSliceUsedForMenu
+				.getCategory());
+		this.showDialog(TimeSheetDetailListActivity.MENU_ITEM_EDIT_CATEGORY);
+	}
+
+	private CategoryEditDialog edit = null;
+
+	/**
+	 * Result from edit dialog
+	 */
+	@Override
+	public void setCategory(final TimeSliceCategory category) {
+		if (category.getRowId() == TimeSliceCategory.NOT_SAVED) {
+			this.categoryRepository.createTimeSliceCategory(category);
+		} else {
+			this.categoryRepository.update(category);
+		}
+		this.loadDataIntoReport(0);
+	}
+
+	@Override
+	protected Dialog onCreateDialog(final int id) {
+		switch (id) {
+		case MENU_ITEM_EDIT_CATEGORY:
+			return this.edit;
+		}
+
+		return null;
 	}
 
 	private void onCommandAddTimeSlice() {

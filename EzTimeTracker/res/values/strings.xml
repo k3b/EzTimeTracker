@@ -78,7 +78,8 @@
 	<string name="no_categories">There are no categories defined yet.</string>
 
 	<string name="cmd_edit">Edit</string>	
-		
+	<string name="cmd_edit_category">Edit Category</string>	
+			
 	<string name="report_title_categories">Categories</string>
 	<string name="report_title_condensed_categories">Categories</string>
 	<string name="report_title_export">Export Data</string>
