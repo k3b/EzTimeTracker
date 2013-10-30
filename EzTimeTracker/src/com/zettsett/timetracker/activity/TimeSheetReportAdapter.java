@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.zetter.androidTime.R;
+import com.zettsett.timetracker.TimeTrackerManager;
 import com.zettsett.timetracker.model.TimeSlice;
 import com.zettsett.timetracker.model.TimeSliceCategory;
 
@@ -41,6 +42,9 @@ public class TimeSheetReportAdapter extends ArrayAdapter<Object> {
 		super(context, 0, objects);
 		this.reportDateGrouping = reportDateGrouping;
 		this.showNotes = showNotes;
+
+		TimeSliceCategory.setCurrentDateTime(TimeTrackerManager
+				.currentTimeMillis());
 	}
 
 	@Override
@@ -142,7 +146,7 @@ public class TimeSheetReportAdapter extends ArrayAdapter<Object> {
 	}
 
 	private String getValue(final TimeSliceCategory obj) {
-		return obj.getCategoryName();
+		return obj.toString(); // .getCategoryName();
 	}
 
 	private String getValue(final ReportItemWithDuration obj) {
