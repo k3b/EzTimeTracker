@@ -1,7 +1,8 @@
-v2.5.8/DB5 2013-10-24
+v2.5.929 2013-10-30
 * fixed crash detailreport by Category
 * fixed summaryreport by category: context-filter category+super date for drilldown/delete
-* reimplemented DetailReport.
+* reimplemented DetailReport/SummaryReport.
+* Edit cateory from report
 * Added global settings Diagnostics : LogCat Debug[X]/Info[X]
 
 v2.5/DB5 2013-10-07

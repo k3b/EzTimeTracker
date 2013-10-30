@@ -16,8 +16,8 @@ release 2.5.8 2013-10-24
 			v add(field, operation, value???
 	summaryReport-ctx-menu-
 		v delete
-		change category if category selected or parent 
-?	after report update scroll to last know pos
+		v change category if category selected or parent 
+v	after report update scroll to last know pos
 	2.6
 =================
 
