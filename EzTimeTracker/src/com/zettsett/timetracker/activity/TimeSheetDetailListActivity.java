@@ -324,10 +324,6 @@ public class TimeSheetDetailListActivity extends ListActivity implements
 							+ (System.currentTimeMillis() - performanceMeasureStart));
 		}
 
-		final float loadTime = 0.0001f * (System.currentTimeMillis() - globalPerformanceMeasureStart);
-		this.setTitle(rangeFilter.toString() + " (" + timeSlices.size() + "/"
-				+ String.format("%.1f", loadTime) + " sec)");
-
 		// scroll to end
 		this.getListView().post(new Runnable() {
 			@Override
@@ -335,6 +331,14 @@ public class TimeSheetDetailListActivity extends ListActivity implements
 				// Select the last row so it will scroll into view...
 				TimeSheetDetailListActivity.this.getListView().setSelection(
 						newSelection);
+				final float loadTime = 0.0001f * (System.currentTimeMillis() - globalPerformanceMeasureStart);
+				TimeSheetDetailListActivity.this.setTitle(rangeFilter
+						.toString()
+						+ " ("
+						+ timeSlices.size()
+						+ "/"
+						+ String.format("%.1f", loadTime) + " sec)");
+
 			}
 		});
 

@@ -376,10 +376,6 @@ public class TimeSheetSummaryListActivity extends ListActivity implements
 							+ (System.currentTimeMillis() - performanceMeasureStart));
 		}
 
-		final float loadTime = 0.0001f * (System.currentTimeMillis() - globalPerformanceMeasureStart);
-		this.setTitle(rangeFilter.toString() + " (" + timeSlices.size() + "/"
-				+ String.format("%.1f", loadTime) + " sec)");
-
 		// scroll to end
 		this.getListView().post(new Runnable() {
 			@Override
@@ -387,6 +383,13 @@ public class TimeSheetSummaryListActivity extends ListActivity implements
 				// Select the last row so it will scroll into view...
 				TimeSheetSummaryListActivity.this.getListView().setSelection(
 						newSelection);
+				final float loadTime = 0.0001f * (System.currentTimeMillis() - globalPerformanceMeasureStart);
+				TimeSheetSummaryListActivity.this.setTitle(rangeFilter
+						.toString()
+						+ " ("
+						+ timeSlices.size()
+						+ "/"
+						+ String.format("%.1f", loadTime) + " sec)");
 			}
 		});
 
