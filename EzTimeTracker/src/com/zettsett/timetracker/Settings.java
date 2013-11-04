@@ -12,9 +12,6 @@ public class Settings {
 	private static int minPunchOutTreshholdInSecs = 1;
 	private static int minPunchInTreshholdInSecs = 1;
 
-	private static boolean isDebugEnabled = false;
-	private static boolean isInfoEnabled = false;
-
 	public static void init(final Context context) {
 		final SharedPreferences prefs = PreferenceManager
 				.getDefaultSharedPreferences(context);

@@ -173,8 +173,6 @@ public class TimeSheetDetailListActivity extends ListActivity implements
 		final Object tag = this.getListView().getItemAtPosition(
 				((AdapterContextMenuInfo) menuInfo).position);
 
-		final ListView listView = this.getListView();
-
 		if (tag instanceof TimeSlice) {
 			menu.add(0, TimeSheetDetailListActivity.ADD_MENU_ID, 0,
 					this.getString(R.string.menu_report_add_new_time_interval));
@@ -188,7 +186,7 @@ public class TimeSheetDetailListActivity extends ListActivity implements
 
 			this.currentSelectedTimeSliceUsedForMenu = (TimeSlice) tag;
 			this.lastSelectedDateUsedForAddMenu = this.currentSelectedTimeSliceUsedForMenu
-					.getStartTime();
+					.getEndTime();
 		} else if (tag instanceof Long) {
 			menu.add(0, TimeSheetDetailListActivity.ADD_MENU_ID, 0,
 					this.getString(R.string.menu_report_add_new_time_interval));

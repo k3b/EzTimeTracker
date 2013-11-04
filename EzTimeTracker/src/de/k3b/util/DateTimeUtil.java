@@ -22,12 +22,13 @@ public class DateTimeUtil {
 	final private static java.text.DateFormat longDateformatter = new SimpleDateFormat(
 			"E "
 					+ ((SimpleDateFormat) DateTimeUtil.shortDateformatter)
-							.toPattern());
+							.toPattern(),
+			Locale.GERMANY);
 	final private static java.text.DateFormat isoDateTimeformatter = new SimpleDateFormat(
-			"yyyy-MM-dd'T'HH:mm:ssZ");
+			"yyyy-MM-dd'T'HH:mm:ssZ", Locale.GERMANY);
 
 	final private static java.text.DateFormat monthformatter = new SimpleDateFormat(
-			"MMMM yyyy");
+			"MMMM yyyy", Locale.GERMANY);
 
 	private long noTimeValue = TimeSlice.NO_TIME_VALUE;
 

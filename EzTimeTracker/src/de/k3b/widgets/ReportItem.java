@@ -8,7 +8,6 @@ import de.k3b.common.IItemWithRowId;
 public class ReportItem<T extends IItemWithRowId> extends TextView {
 
 	private boolean selected = false;
-	private T item;
 
 	public ReportItem(final Context context) {
 		super(context);

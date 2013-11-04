@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	package="com.zetter.androidTime" 
-    android:versionName="2.5.929 2013-10-30" 
-    android:versionCode="29"
+    android:versionName="2.5.930 2013-11-04" 
+    android:versionCode="30"
 	android:installLocation="preferExternal"
 	>
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission>
 	<uses-sdk android:minSdkVersion="6" android:targetSdkVersion="6" />
 		    
-	<application android:icon="@drawable/icon" android:label="@string/app_name">
+	<application android:icon="@drawable/icon" android:label="@string/app_name" android:allowBackup="false">
 
 		<activity android:label="@string/app_name"
 			android:name="com.zettsett.timetracker.activity.PunchInPunchOutActivity"

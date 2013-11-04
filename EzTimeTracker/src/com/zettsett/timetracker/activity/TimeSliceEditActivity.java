@@ -199,6 +199,12 @@ public class TimeSliceEditActivity extends Activity implements ICategorySetter {
 			// update the dateText view with the corresponding date
 			TimeSliceEditActivity.this.timeSlice.setStartTime(selectedDate
 					.getTimeInMillis());
+			if (TimeSliceEditActivity.this.timeSlice.getStartTime() > TimeSliceEditActivity.this.timeSlice
+					.getEndTime()) {
+				TimeSliceEditActivity.this.timeSlice
+						.setEndTime(TimeSliceEditActivity.this.timeSlice
+								.getStartTime());
+			}
 			TimeSliceEditActivity.this.setTimeTexts();
 		}
 	};
@@ -210,6 +216,13 @@ public class TimeSliceEditActivity extends Activity implements ICategorySetter {
 			// update the dateText view with the corresponding date
 			TimeSliceEditActivity.this.timeSlice.setEndTime(selectedDate
 					.getTimeInMillis());
+			if (TimeSliceEditActivity.this.timeSlice.getStartTime() > TimeSliceEditActivity.this.timeSlice
+					.getEndTime()) {
+				TimeSliceEditActivity.this.timeSlice
+						.setStartTime(TimeSliceEditActivity.this.timeSlice
+								.getEndTime());
+			}
+
 			TimeSliceEditActivity.this.setTimeTexts();
 		}
 	};
