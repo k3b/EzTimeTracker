@@ -71,6 +71,8 @@
 	<string name="punch_in">"Start"</string>
 	<string name="punch_out">"Stop"</string>
 	<string name="notes">Bemerkungen:</string>
+	<string name="category_name">Kategorie:</string>
+	<string name="category_description">Beschreibung:</string>
 	<string name="cmd_save">Speichern</string>
 	<string name="file_name">Datei Name:</string>
 	<string name="cmd_save_file">Datei speichern</string>
