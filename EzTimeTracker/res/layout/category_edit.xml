@@ -1,65 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="match_parent"
     android:orientation="vertical" >
-
+    <View android:id="@+id/strut"
+        android:layout_width="0dp"
+        android:layout_height="0dp" 
+        android:layout_centerHorizontal="true"/>
 	<TextView
 	    android:id="@+id/category_usage"
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
 	    android:text="@string/category_usage_format"
-	    android:textSize="16sp" >
-</TextView>
-    <TextView android:text="@string/category_name" android:layout_width="wrap_content"
-		 android:layout_height="wrap_content"></TextView>
+	    android:textSize="16sp" />
+    <TextView 
+	    android:id="@+id/category_name"
+        android:text="@string/category_name" 
+        android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_below="@+id/category_usage"
+		/>
 
 	<EditText
 	    android:id="@+id/edit_time_category_name_field"
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
+	    android:layout_below="@+id/category_name"
 	    android:inputType="textCapWords"
-	    android:text="" >
-</EditText>
-	<TextView android:text="@string/category_description"
-		android:layout_width="wrap_content" android:layout_height="wrap_content" />
+	    android:text="" />
+	<TextView 
+	    android:id="@+id/category_description"
+	    android:text="@string/category_description"
+		android:layout_width="wrap_content" 
+		android:layout_height="wrap_content" 
+		android:layout_below="@+id/edit_time_category_name_field"
+		/>
 
 	<EditText
 	    android:id="@+id/edit_time_category_desc_field"
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
+	    android:layout_below="@+id/category_description"
 	    android:inputType="textCapSentences"
-	    android:text="" >
-	</EditText>
+	    android:text="" />
 
-	<LinearLayout
-	    android:layout_width="wrap_content"
+	<Button
+	    android:id="@+id/EditTimeIn"
+	    android:layout_width="150dp"
 	    android:layout_height="wrap_content"
-	    android:orientation="horizontal" >
-	
-		<Button
-		    android:id="@+id/EditTimeIn"
-		    android:layout_width="wrap_content"
-		    android:layout_height="wrap_content"
-		    android:text="@string/formatStartDate"
-		    android:textSize="14sp" />
+	    android:layout_below="@+id/edit_time_category_desc_field"
+	    android:text="@string/formatStartDate"
+	    android:textSize="14sp" />
 
-		<Button
-		    android:id="@+id/EditTimeOut"
-		    android:layout_width="wrap_content"
-		    android:layout_height="wrap_content"
-		    android:text="@string/formatEndDate"
-		    android:textSize="14sp" >
-		</Button>
-	</LinearLayout>
-	<LinearLayout
-			android:layout_width="wrap_content" 
-			android:layout_height="wrap_content" android:orientation="horizontal">
-		<Button android:text="@string/cmd_save" android:id="@+id/edit_time_category_save_button"
-			android:layout_width="wrap_content" android:layout_height="wrap_content"
-			 android:textSize="20sp"></Button>
-		<Button android:text="@string/cmd_cancel" android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:textSize="20sp"
-			android:id="@+id/edit_time_category_cancel_button" android:layout_gravity="left"/>
-	</LinearLayout>
-</LinearLayout>
+	<Button
+	    android:id="@+id/EditTimeOut"
+	    android:layout_width="150dp"
+	    android:layout_height="wrap_content"
+	    android:layout_below="@+id/edit_time_category_desc_field"
+	    android:layout_toRightOf="@+id/EditTimeIn"
+	    android:text="@string/formatEndDate"
+	    android:textSize="14sp" />
+
+	<Button 
+	    android:id="@+id/edit_time_category_save_button"
+	    android:text="@string/cmd_save" 
+		android:layout_width="wrap_content" 
+		android:layout_height="wrap_content"
+	    android:layout_below="@+id/EditTimeIn"
+        android:layout_alignLeft="@+id/EditTimeIn"
+        android:layout_alignRight="@+id/EditTimeIn"
+		android:textSize="20sp"/>
+	<Button 
+		android:id="@+id/edit_time_category_cancel_button" 
+	    android:text="@string/cmd_cancel" 
+	    android:layout_width="wrap_content"
+		android:layout_height="wrap_content" 
+	    android:layout_below="@+id/EditTimeIn"
+	    android:layout_toRightOf="@+id/edit_time_category_save_button"	
+        android:layout_alignLeft="@+id/EditTimeOut"
+        android:layout_alignRight="@+id/EditTimeOut"	    	    
+		android:textSize="20sp"
+		android:layout_gravity="left"/>
+</RelativeLayout>
