@@ -33,16 +33,6 @@ public class CategoryListAdapterDetailed extends
 	private final int viewId;
 
 	/**
-	 * Prefex to be prepended before each category name
-	 */
-	private final String namePrefix;
-
-	/**
-	 * Prefex to be prepended befor each category description
-	 */
-	private final String descriptionPrefix;
-
-	/**
 	 * Workaround for recycled Items: Sometimes Text is not visible because
 	 * previous ItemHeight==0 is sometimes remembered.
 	 */
@@ -73,9 +63,6 @@ public class CategoryListAdapterDetailed extends
 		super(context, textViewResourceId, items);
 		this.withDescription = withDescription;
 		this.viewId = textViewResourceId;
-		this.namePrefix = context.getString(R.string.category_name) + " ";
-		this.descriptionPrefix = context
-				.getString(R.string.category_description) + " ";
 		TimeSliceCategory.setCurrentDateTime(TimeTrackerManager
 				.currentTimeMillis());
 	}
@@ -118,27 +105,24 @@ public class CategoryListAdapterDetailed extends
 					.findViewById(R.id.active);
 
 			if (this.withDescription) {
-				this.setTextViewContent(descriptionView,
-						this.descriptionPrefix, obj.getDescription());
-				this.setTextViewContent(activeView, "", obj.getActiveDate());
-				this.setTextViewContent(nameView, this.namePrefix,
-						obj.toString());
+				this.setTextViewContent(descriptionView, obj.getDescription());
+				this.setTextViewContent(activeView, obj.getActiveDate());
+				this.setTextViewContent(nameView, obj.toString());
 			} else {
-				this.setTextViewContent(descriptionView, "", null);
-				this.setTextViewContent(activeView, "", null);
-				this.setTextViewContent(nameView, "", obj.toString());
+				this.setTextViewContent(descriptionView, null);
+				this.setTextViewContent(activeView, null);
+				this.setTextViewContent(nameView, obj.toString());
 			}
 		}
 	}
 
-	private void setTextViewContent(final TextView view, final String prefix,
-			final String text) {
+	private void setTextViewContent(final TextView view, final String text) {
 		if (view != null) {
 			if (this.itemHight == 0) {
 				this.itemHight = view.getHeight();
 			}
 			if ((text != null) && (text.length() > 0)) {
-				view.setText(prefix + text);
+				view.setText(text);
 				if (this.itemHight == 0) {
 					this.itemHight = view.getHeight();
 				}

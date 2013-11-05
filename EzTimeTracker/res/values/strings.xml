@@ -70,8 +70,6 @@
 	<string name="punch_in">"Punch In"</string>
 	<string name="punch_out">"Punch Out"</string>
 	<string name="notes">Notes:</string>
-	<string name="category_name">Category:</string>
-	<string name="category_description">Description:</string>
 	<string name="cmd_save"> Save </string>
 	<string name="file_name">File Name:</string>
 	<string name="cmd_save_file">Save File</string>
