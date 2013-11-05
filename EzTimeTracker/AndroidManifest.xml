@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	package="com.zetter.androidTime" 
-    android:versionName="2.5.930 2013-11-04" 
-    android:versionCode="30"
+    android:versionName="2.5.931 2013-11-05" 
+    android:versionCode="31"
 	android:installLocation="preferExternal"
 	>
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission>

@@ -1,6 +1,7 @@
 package com.zettsett.timetracker.activity;
 
 import java.util.List;
+import java.util.Locale;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -151,27 +152,37 @@ public class TimeSheetReportAdapter extends ArrayAdapter<Object> {
 
 	private String getValue(final ReportItemWithDuration obj) {
 		return this.getValueGeneric(obj.subKey) + ": "
-				+ this.timeInMillisToText(obj.duration);
+				+ this.timeInMillisToText(obj.duration, false);
 	}
 
-	private String timeInMillisToText(final long totalTimeInMillis) {
+	private String timeInMillisToText(final long totalTimeInMillis,
+			final boolean longVersion) {
 		final long minutes = (totalTimeInMillis / (1000 * 60)) % 60;
 		final long hours = totalTimeInMillis / (1000 * 60 * 60);
+
 		String hoursWord;
 		if (hours == 1) {
 			hoursWord = this.getContext().getString(R.string.hoursWord1);
 		} else {
 			hoursWord = this.getContext().getString(R.string.hoursWordN);
 		}
-		String minutesWord;
-		if (minutes == 1) {
-			minutesWord = this.getContext().getString(R.string.minutesWord1);
-		} else {
-			minutesWord = this.getContext().getString(R.string.minutesWordN);
+
+		if (longVersion) {
+			String minutesWord;
+
+			if (minutes == 1) {
+				minutesWord = this.getContext()
+						.getString(R.string.minutesWord1);
+			} else {
+				minutesWord = this.getContext()
+						.getString(R.string.minutesWordN);
+			}
+			final String timeString = hours + " " + hoursWord + ", " + minutes
+					+ " " + minutesWord;
+			return timeString;
 		}
-		final String timeString = hours + " " + hoursWord + ", " + minutes
-				+ " " + minutesWord;
-		return timeString;
+		return String.format(Locale.GERMANY, " %1$d %3$s %2$02d", hours,
+				minutes, hoursWord);
 	}
 
 	private void setItemContent(final View view, final Object obj) {
