@@ -11,21 +11,32 @@ import android.util.Log;
 
 import com.zettsett.timetracker.Global;
 
-public class SessionDataPersistance<T extends Serializable> {
-	private static final String STATE_COOKY_NAME = "curr_state";
-
+/**
+ * Persists session state to local file
+ * 
+ * @param <T>
+ *            Datatype to be persisted
+ */
+public class SessionDataPersistance<T extends Serializable> implements
+		ISessionDataPersistance<T> {
+	private final String sessionFileName;
 	private final Context context;
 
 	public SessionDataPersistance(final Context context) {
-		this.context = context;
+		this(context, "curr_state");
 	}
 
+	public SessionDataPersistance(final Context context, final String fileName) {
+		this.context = context;
+		this.sessionFileName = fileName;
+	}
+
+	@Override
 	public void save(final T sessionData) {
-		this.context.deleteFile(SessionDataPersistance.STATE_COOKY_NAME);
+		this.context.deleteFile(this.sessionFileName);
 		try {
 			final ObjectOutputStream out = new ObjectOutputStream(
-					this.context.openFileOutput(
-							SessionDataPersistance.STATE_COOKY_NAME, 0));
+					this.context.openFileOutput(this.sessionFileName, 0));
 			out.writeObject(sessionData);
 			out.close();
 		} catch (final IOException e) {
@@ -33,6 +44,7 @@ public class SessionDataPersistance<T extends Serializable> {
 		}
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public T load() {
 		ObjectInputStream in = null;
@@ -40,7 +52,7 @@ public class SessionDataPersistance<T extends Serializable> {
 		try {
 			final String[] fileList = this.context.fileList();
 			for (final String fileName : fileList) {
-				if (fileName.equals(SessionDataPersistance.STATE_COOKY_NAME)) {
+				if (fileName.equals(this.sessionFileName)) {
 					in = new ObjectInputStream(
 							this.context.openFileInput(fileName));
 					sessionData = (T) in.readObject();

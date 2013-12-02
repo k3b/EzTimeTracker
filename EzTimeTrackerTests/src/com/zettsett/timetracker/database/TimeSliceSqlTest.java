@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import com.zettsett.timetracker.activity.TimeSliceFilterParameter;
 
-import de.k3b.database.SqlFilter;
+import de.k3b.android.database.SqlFilter;
 
 public class TimeSliceSqlTest {
 	TimeSliceFilterParameter timeSliceFilter;

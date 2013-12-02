@@ -7,7 +7,7 @@ import android.util.Log;
 
 import com.zettsett.timetracker.model.TimeSliceCategory;
 
-import de.k3b.database.DatabaseContext;
+import de.k3b.android.database.DatabaseContext;
 
 /**
  * Encapsulation of the Database create/open/close/upgrade

@@ -1,4 +1,4 @@
-package de.k3b.database;
+package de.k3b.android.database;
 
 /**
  * helper class because java function cannot return 2 values

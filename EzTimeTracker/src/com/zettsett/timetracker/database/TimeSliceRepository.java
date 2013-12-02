@@ -17,7 +17,7 @@ import com.zettsett.timetracker.model.ITimeSliceFilter;
 import com.zettsett.timetracker.model.TimeSlice;
 import com.zettsett.timetracker.model.TimeSliceCategory;
 
-import de.k3b.database.SqlFilter;
+import de.k3b.android.database.SqlFilter;
 
 public class TimeSliceRepository {
 	private static final DatabaseInstance CURRENT_DB_INSTANCE = DatabaseInstance
@@ -192,7 +192,7 @@ public class TimeSliceRepository {
 		final TimeSliceFilterParameter timeSliceFilter = new TimeSliceFilterParameter()
 				.setParameter(minimumEndDate, maximumEndDate,
 						category.getRowId());
-		final de.k3b.database.SqlFilter sqlFilter = TimeSliceRepository
+		final de.k3b.android.database.SqlFilter sqlFilter = TimeSliceRepository
 				.createFilter(debugMessage, timeSliceFilter);
 		final SqlFilter sqlEndFilter = new SqlFilter(sqlFilter.sql.replace(
 				TimeSliceSql.COL_START_TIME, TimeSliceSql.COL_END_TIME),

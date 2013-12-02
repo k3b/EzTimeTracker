@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -34,6 +33,8 @@ import com.zettsett.timetracker.TimeTrackerSessionData;
 import com.zettsett.timetracker.database.TimeSliceCategoryRepsitory;
 import com.zettsett.timetracker.model.TimeSlice;
 import com.zettsett.timetracker.model.TimeSliceCategory;
+
+import de.k3b.android.GuiUtil;
 
 /**
  * Copyright 2010 Eric Zetterbaum ezetter@gmail.com
@@ -253,12 +254,11 @@ public class PunchInPunchOutActivity extends Activity implements
 		String html = this.getResources().getString(R.string.about_content); // "<html><body>some <b>html</b> here</body></html>";
 
 		final Context context = this;
-		try {
-			final String versionName = context.getPackageManager()
-					.getPackageInfo(context.getPackageName(), 0).versionName;
+		final String versionName = GuiUtil.getAppVersionName(context);
+		if (versionName != null) {
 			html = html.replace("$versionName$", versionName);
-		} catch (final NameNotFoundException e) {
 		}
+
 		html = html.replace("$about$",
 				this.getText(R.string.about_content_about));
 
@@ -548,7 +548,7 @@ public class PunchInPunchOutActivity extends Activity implements
 	}
 
 	private void saveState() {
-		this.tracker.saveState();
+		this.tracker.saveSessionData();
 	}
 
 	private TimeTrackerSessionData reloadSessionData() {

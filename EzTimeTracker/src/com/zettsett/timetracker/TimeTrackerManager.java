@@ -7,33 +7,51 @@ import com.zettsett.timetracker.database.TimeSliceCategoryRepsitory;
 import com.zettsett.timetracker.database.TimeSliceRepository;
 import com.zettsett.timetracker.model.TimeSliceCategory;
 
+import de.k3b.util.ISessionDataPersistance;
 import de.k3b.util.SessionDataPersistance;
 
+/**
+ * Gui independant api-implementation to execute timetracking.<br/>
+ * (punchIn, punchOut, save/reloadSessionData).<br/>
+ * Used by GUI and BroadcastReceiver.
+ * 
+ */
 public class TimeTrackerManager {
-
-	private final Context context;
-	private SessionDataPersistance<TimeTrackerSessionData> timeTrackerSessionDataPersistance = null;
 	private final TimeSliceRepository timeSliceRepository;
 	private final TimeSliceCategoryRepsitory timeSliceCategoryRepository;
-	private final TimeTrackerSessionData sessionData = new TimeTrackerSessionData();
+
+	private final TimeTrackerSessionData sessionData;
+	private final ISessionDataPersistance<TimeTrackerSessionData> timeTrackerSessionDataPersistance;
 
 	public TimeTrackerManager(final Context context) {
-		this.context = context;
-		this.timeTrackerSessionDataPersistance = new SessionDataPersistance<TimeTrackerSessionData>(
-				context);
-		this.timeSliceRepository = new TimeSliceRepository(context);
-		this.timeSliceCategoryRepository = new TimeSliceCategoryRepsitory(
-				context);
+		// poor man's dependency injection
+		this(new SessionDataPersistance<TimeTrackerSessionData>(context),
+				new TimeSliceRepository(context),
+				new TimeSliceCategoryRepsitory(context),
+				new TimeTrackerSessionData());
 	}
 
-	public void saveState() {
+	/**
+	 * Internal constructor used by tests to allow mocking of the child
+	 * components.
+	 */
+	TimeTrackerManager(
+			final ISessionDataPersistance<TimeTrackerSessionData> sessionDataPersistance,
+			final TimeSliceRepository timeSliceRepository,
+			final TimeSliceCategoryRepsitory timeSliceCategoryRepsitory,
+			final TimeTrackerSessionData sessionData) {
+		this.sessionData = sessionData;
+		this.timeTrackerSessionDataPersistance = sessionDataPersistance;
+		this.timeSliceRepository = timeSliceRepository;
+		this.timeSliceCategoryRepository = timeSliceCategoryRepsitory;
+	}
+
+	public void saveSessionData() {
 		if (Global.isDebugEnabled()) {
 			this.sessionData.updateCount++;
 
 			Log.d(Global.LOG_CONTEXT, "saveState('" + this.sessionData + "')");
 		}
-		this.context.deleteFile("curr_state");
-
 		this.timeTrackerSessionDataPersistance.save(this.sessionData);
 	}
 
@@ -80,7 +98,7 @@ public class TimeTrackerManager {
 			}
 			this.sessionData.beginNewSlice(selectedCategory, startDateTime);
 			this.sessionData.setNotes("");
-			this.saveState();
+			this.saveSessionData();
 
 			return true;
 		}
@@ -112,7 +130,7 @@ public class TimeTrackerManager {
 				}
 
 				this.timeSliceRepository.create(this.sessionData);
-				this.saveState();
+				this.saveSessionData();
 				return true;
 			} else {
 				Log.w(Global.LOG_CONTEXT,
@@ -121,7 +139,7 @@ public class TimeTrackerManager {
 								+ this.sessionData.getElapsedTimeInMillisecs()
 								+ " time smaller than trashhold "
 								+ Settings.getMinPunchOutTreshholdInMilliSecs());
-				this.saveState();
+				this.saveSessionData();
 			}
 		} else {
 			if (Global.isInfoEnabled()) {

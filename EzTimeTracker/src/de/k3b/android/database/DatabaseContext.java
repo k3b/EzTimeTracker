@@ -1,4 +1,4 @@
-package de.k3b.database;
+package de.k3b.android.database;
 
 import java.io.File;
 

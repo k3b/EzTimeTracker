@@ -60,7 +60,7 @@ public class RemoteTimeTrackerBroadcastReceiver extends BroadcastReceiver {
 						+ "', categrory='" + category + "'. "
 						+ RemoteTimeTrackerBroadcastReceiver.USAGE);
 			}
-			mgr.saveState();
+			mgr.saveSessionData();
 
 			final Intent intentRefreshGui = new Intent();
 			intentRefreshGui.setAction(Global.REFRESH_GUI);

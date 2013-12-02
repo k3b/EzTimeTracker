@@ -5,8 +5,8 @@ import com.zettsett.timetracker.model.ITimeSliceFilter;
 import com.zettsett.timetracker.model.TimeSlice;
 import com.zettsett.timetracker.model.TimeSliceCategory;
 
-import de.k3b.database.SqlFilter;
-import de.k3b.database.SqlFilterBuilder;
+import de.k3b.android.database.SqlFilter;
+import de.k3b.android.database.SqlFilterBuilder;
 
 /**
  * TimeSlice dependent sql with no dependencies to android.<br/>
