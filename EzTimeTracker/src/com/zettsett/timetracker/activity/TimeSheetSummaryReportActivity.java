@@ -22,6 +22,7 @@ import android.widget.TextView;
 import com.zetter.androidTime.R;
 import com.zettsett.timetracker.DateTimeFormatter;
 import com.zettsett.timetracker.Global;
+import com.zettsett.timetracker.Settings;
 import com.zettsett.timetracker.activity.TimeSheetSummaryCalculator.ReportDateGrouping;
 import com.zettsett.timetracker.activity.TimeSheetSummaryCalculator.ReportModes;
 import com.zettsett.timetracker.database.TimeSliceRepository;
@@ -98,7 +99,8 @@ public class TimeSheetSummaryReportActivity extends Activity implements
 	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
-		this.timeSliceRepository = new TimeSliceRepository(this);
+		this.timeSliceRepository = new TimeSliceRepository(this,
+				Settings.isPublicDatabase());
 		TimeSheetSummaryReportActivity.currentRangeFilter = ReportFramework
 				.getLastFilter(
 						savedInstanceState,

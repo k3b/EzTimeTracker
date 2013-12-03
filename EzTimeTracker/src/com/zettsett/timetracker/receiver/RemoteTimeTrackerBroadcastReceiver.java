@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.zettsett.timetracker.Global;
+import com.zettsett.timetracker.Settings;
 import com.zettsett.timetracker.TimeTrackerManager;
 
 /**
@@ -41,7 +42,8 @@ public class RemoteTimeTrackerBroadcastReceiver extends BroadcastReceiver {
 			final String cmd = (parts.length > 1) ? parts[1] : null;
 			final String category = (parts.length > 2) ? parts[2] : null;
 
-			final TimeTrackerManager mgr = new TimeTrackerManager(context);
+			Settings.init(context); // if gui is not active
+			final TimeTrackerManager mgr = new TimeTrackerManager(context, Settings.isPublicDatabase());
 			mgr.reloadSessionData();
 			if (Global.CMD_START.equalsIgnoreCase(cmd) && (category != null)
 					&& (category.length() > 0)) {

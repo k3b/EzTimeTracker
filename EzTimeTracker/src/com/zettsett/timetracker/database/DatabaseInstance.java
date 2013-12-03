@@ -15,12 +15,12 @@ import de.k3b.android.database.DatabaseContext;
 public class DatabaseInstance {
 	private static int lastInstanceNo = 0;
 	private int instanceNo = 0;
-	private static DatabaseInstance currentInstance;
+	private static DatabaseInstance DB;
 
 	private DatabaseHelper mDbHelper;
 	private SQLiteDatabase mDb;
 	private Context ctx;
-	private Boolean publicDir = null;
+	private boolean publicDir = true;
 	private String dbName = null;
 
 	@Override
@@ -32,32 +32,21 @@ public class DatabaseInstance {
 	}
 
 	public static DatabaseInstance getCurrentInstance() {
-		if (DatabaseInstance.currentInstance == null) {
+		if (DatabaseInstance.DB == null) {
 			final DatabaseInstance instance = new DatabaseInstance();
 			DatabaseInstance.lastInstanceNo++;
-			DatabaseInstance.currentInstance = instance;
+			DatabaseInstance.DB = instance;
 			instance.instanceNo = DatabaseInstance.lastInstanceNo;
 			if (Global.isDebugEnabled()) {
 				Log.d(Global.LOG_CONTEXT, instance.toString() + ".create()");
 			}
 		}
-		return DatabaseInstance.currentInstance;
+		return DatabaseInstance.DB;
 	}
 
-	public DatabaseInstance initialize(final Context ctx) {
-		this.ctx = ctx;
-		if (this.dbName == null) {
-			this.dbName = ctx.getString(R.string.database_name);
-		}
-
-		if (this.publicDir == null) {
-			this.publicDir = true;
-		}
-
-		if (Global.isDebugEnabled()) {
-			Log.d(Global.LOG_CONTEXT, this.toString() + ".initialized from ctx");
-		}
-		return this;
+	public DatabaseInstance initialize(final Context ctx,
+			final Boolean publicDir) {
+		return this.initialize(ctx, publicDir, null);
 	}
 
 	/**
@@ -66,10 +55,22 @@ public class DatabaseInstance {
 	public DatabaseInstance initialize(final Context ctx,
 			final Boolean publicDir, final String dbName) {
 		this.ctx = ctx;
-		this.publicDir = publicDir;
-		this.dbName = dbName;
+
+		if (dbName != null) {
+			this.dbName = dbName;
+		}
+
+		if (this.dbName == null) {
+			this.dbName = ctx.getString(R.string.database_name);
+		}
+
+		if ((publicDir != null) && (this.publicDir != publicDir.booleanValue())) {
+			this.close();
+			this.publicDir = publicDir.booleanValue();
+		}
+
 		if (Global.isDebugEnabled()) {
-			Log.d(Global.LOG_CONTEXT, this.toString() + ".initialized full");
+			Log.d(Global.LOG_CONTEXT, this.toString() + ".initialized");
 		}
 		return this;
 	}

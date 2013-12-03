@@ -30,6 +30,7 @@ import com.zettsett.timetracker.Global;
 import com.zettsett.timetracker.Settings;
 import com.zettsett.timetracker.TimeTrackerManager;
 import com.zettsett.timetracker.TimeTrackerSessionData;
+import com.zettsett.timetracker.database.DatabaseInstance;
 import com.zettsett.timetracker.database.TimeSliceCategoryRepsitory;
 import com.zettsett.timetracker.model.TimeSlice;
 import com.zettsett.timetracker.model.TimeSliceCategory;
@@ -122,7 +123,7 @@ public class PunchInPunchOutActivity extends Activity implements
 
 		this.setupButtons();
 
-		this.tracker = new TimeTrackerManager(this);
+		this.tracker = new TimeTrackerManager(this, Settings.isPublicDatabase());
 		Settings.init(this.getBaseContext());
 
 		this.reloadGui();
@@ -132,6 +133,10 @@ public class PunchInPunchOutActivity extends Activity implements
 	public void onResume() {
 		super.onResume();
 		Settings.init(this.getBaseContext());
+
+		// databasetype might have changed in settings
+		DatabaseInstance.getCurrentInstance().initialize(this.getBaseContext(),
+				Settings.isPublicDatabase());
 
 		if (this.myReceiver == null) {
 			this.myReceiver = new _RemoteTimeTrackerReceiver();

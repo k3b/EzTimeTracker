@@ -23,10 +23,10 @@ public class TimeTrackerManager {
 	private final TimeTrackerSessionData sessionData;
 	private final ISessionDataPersistance<TimeTrackerSessionData> timeTrackerSessionDataPersistance;
 
-	public TimeTrackerManager(final Context context) {
+	public TimeTrackerManager(final Context context, final Boolean publicDir) {
 		// poor man's dependency injection
 		this(new SessionDataPersistance<TimeTrackerSessionData>(context),
-				new TimeSliceRepository(context),
+				new TimeSliceRepository(context, publicDir),
 				new TimeSliceCategoryRepsitory(context),
 				new TimeTrackerSessionData());
 	}

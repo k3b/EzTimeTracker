@@ -54,7 +54,7 @@ public class TimeTrackerManagerTest extends AndroidTestCase {
 				"TestDB_");
 
 		this.sut = new TimeTrackerManager(this.sessionDataPersistance,
-				new TimeSliceRepository(this.ctx),
+				new TimeSliceRepository(this.ctx, Boolean.TRUE),
 				new TimeSliceCategoryRepsitory(this.ctx),
 				new TimeTrackerSessionData());
 
@@ -87,6 +87,43 @@ public class TimeTrackerManagerTest extends AndroidTestCase {
 		this.sut.punchInClock(this.testCategoryName, this.addMinutes(1));
 		this.sut.punchOutClock(this.addMinutes(10), "");
 		Assert.assertEquals(1,
+				TimeSliceRepository.getCount((ITimeSliceFilter) null));
+	}
+
+	public void testPunchInOutDiscard() {
+		this.sut.punchInClock(this.testCategoryName, this.addMinutes(1));
+		this.sut.punchOutClock(this.addMinutes(1), "");
+		Assert.assertEquals(0,
+				TimeSliceRepository.getCount((ITimeSliceFilter) null));
+	}
+
+	public void testPunchInOut5Append1() {
+		this.sut.punchInClock(this.testCategoryName, this.addMinutes(1));
+		this.sut.punchOutClock(this.addMinutes(5), "");
+		this.sut.punchInClock(this.testCategoryName, this.addMinutes(1));
+		this.sut.punchOutClock(this.addMinutes(1), "");
+		this.sut.punchInClock(this.testCategoryName, this.addMinutes(1));
+		this.sut.punchOutClock(this.addMinutes(1), "");
+		this.sut.punchInClock(this.testCategoryName, this.addMinutes(1));
+		this.sut.punchOutClock(this.addMinutes(1), "");
+		this.sut.punchInClock(this.testCategoryName, this.addMinutes(1));
+		this.sut.punchOutClock(this.addMinutes(1), "");
+		Assert.assertEquals(1,
+				TimeSliceRepository.getCount((ITimeSliceFilter) null));
+	}
+
+	public void testPunchInOut5Discard() {
+		this.sut.punchInClock(this.testCategoryName, this.addMinutes(1));
+		this.sut.punchOutClock(this.addMinutes(1), "");
+		this.sut.punchInClock(this.testCategoryName, this.addMinutes(1));
+		this.sut.punchOutClock(this.addMinutes(1), "");
+		this.sut.punchInClock(this.testCategoryName, this.addMinutes(1));
+		this.sut.punchOutClock(this.addMinutes(1), "");
+		this.sut.punchInClock(this.testCategoryName, this.addMinutes(1));
+		this.sut.punchOutClock(this.addMinutes(1), "");
+		this.sut.punchInClock(this.testCategoryName, this.addMinutes(1));
+		this.sut.punchOutClock(this.addMinutes(1), "");
+		Assert.assertEquals(0,
 				TimeSliceRepository.getCount((ITimeSliceFilter) null));
 	}
 

@@ -19,6 +19,7 @@ import android.widget.ListView;
 import com.zetter.androidTime.R;
 import com.zettsett.timetracker.DateTimeFormatter;
 import com.zettsett.timetracker.Global;
+import com.zettsett.timetracker.Settings;
 import com.zettsett.timetracker.activity.TimeSheetSummaryCalculator2.ReportModes;
 import com.zettsett.timetracker.database.TimeSliceCategoryRepsitory;
 import com.zettsett.timetracker.database.TimeSliceRepository;
@@ -57,7 +58,7 @@ public class TimeSheetSummaryListActivity extends ListActivity implements
 	// dependent services
 	private ReportFramework reportFramework;
 	private final TimeSliceRepository timeSliceRepository = new TimeSliceRepository(
-			this);
+			this, Settings.isPublicDatabase());
 
 	private final TimeSliceCategoryRepsitory categoryRepository = new TimeSliceCategoryRepsitory(
 			this);
@@ -213,8 +214,8 @@ public class TimeSheetSummaryListActivity extends ListActivity implements
 
 		this.currentSelectedCategory = this.getTimeSliceCategory(position);
 		if (this.currentSelectedCategory != null) {
-			menu.add(0, TimeSheetSummaryListActivity.MENU_ITEM_EDIT_CATEGORY, 0,
-					this.getString(R.string.cmd_edit_category));
+			menu.add(0, TimeSheetSummaryListActivity.MENU_ITEM_EDIT_CATEGORY,
+					0, this.getString(R.string.cmd_edit_category));
 		}
 	}
 

@@ -35,8 +35,6 @@ public class Settings {
 	/**
 	 * New Punchin within same Category if longer away than this (in seconds).<br/>
 	 * Else append to previous.
-	 * 
-	 * @return
 	 */
 	public static long getMinPunchInTreshholdInMilliSecs() {
 		return 1000l * Settings.minPunchInTreshholdInSecs;
@@ -59,6 +57,10 @@ public class Settings {
 
 	public static boolean getHideInactiveCategories() {
 		return Settings.hideInactiveCategories;
+	}
+
+	public static boolean isPublicDatabase() {
+		return Settings.publicDatabase;
 	}
 
 	/**

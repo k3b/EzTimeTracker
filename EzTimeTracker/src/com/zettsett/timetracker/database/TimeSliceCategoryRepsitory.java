@@ -22,7 +22,7 @@ public class TimeSliceCategoryRepsitory {
 	private static final String COL_END_TIME = "end_time";
 	private static final String COL_START_TIME = "start_time";
 
-	private static final DatabaseInstance CURRENT_DB_INSTANCE = DatabaseInstance
+	private static final DatabaseInstance DB = DatabaseInstance
 			.getCurrentInstance();
 	private final Context context;
 
@@ -51,7 +51,7 @@ public class TimeSliceCategoryRepsitory {
 	public TimeSliceCategory getOrCreateTimeSlice(final String name) {
 		Cursor cur = null;
 		try {
-			cur = TimeSliceCategoryRepsitory.CURRENT_DB_INSTANCE.getDb().query(
+			cur = TimeSliceCategoryRepsitory.DB.getWritableDatabase().query(
 					DatabaseHelper.TIME_SLICE_CATEGORY_TABLE,
 					this.columnList(), "category_name = ?",
 					new String[] { name }, null, null, null);
@@ -74,8 +74,8 @@ public class TimeSliceCategoryRepsitory {
 	 */
 	public long createTimeSliceCategory(final TimeSliceCategory category) {
 
-		final long newID = TimeSliceCategoryRepsitory.CURRENT_DB_INSTANCE
-				.getDb().insert(DatabaseHelper.TIME_SLICE_CATEGORY_TABLE, null,
+		final long newID = TimeSliceCategoryRepsitory.DB
+				.getWritableDatabase().insert(DatabaseHelper.TIME_SLICE_CATEGORY_TABLE, null,
 						this.timeSliceCategoryContentValuesList(category));
 		category.setRowId((int) newID);
 		return newID;
@@ -116,7 +116,7 @@ public class TimeSliceCategoryRepsitory {
 							+ filter + ")");
 		}
 		try {
-			cur = TimeSliceCategoryRepsitory.CURRENT_DB_INSTANCE.getDb().query(
+			cur = TimeSliceCategoryRepsitory.DB.getWritableDatabase().query(
 					DatabaseHelper.TIME_SLICE_CATEGORY_TABLE,
 					this.columnList(),
 					filter,
@@ -203,12 +203,12 @@ public class TimeSliceCategoryRepsitory {
 	 * @return true if item found and deleted.
 	 */
 	public boolean delete(final long rowId) {
-		return TimeSliceCategoryRepsitory.CURRENT_DB_INSTANCE.getDb().delete(
+		return TimeSliceCategoryRepsitory.DB.getWritableDatabase().delete(
 				DatabaseHelper.TIME_SLICE_CATEGORY_TABLE, "_id=" + rowId, null) > 0;
 	}
 
 	public long update(final TimeSliceCategory timeSliceCategory) {
-		return TimeSliceCategoryRepsitory.CURRENT_DB_INSTANCE.getDb().update(
+		return TimeSliceCategoryRepsitory.DB.getWritableDatabase().update(
 				DatabaseHelper.TIME_SLICE_CATEGORY_TABLE,
 				this.timeSliceCategoryContentValuesList(timeSliceCategory),
 				"_id = " + timeSliceCategory.getRowId(), null);
@@ -219,7 +219,7 @@ public class TimeSliceCategoryRepsitory {
 		Cursor cur = null;
 
 		try {
-			cur = TimeSliceCategoryRepsitory.CURRENT_DB_INSTANCE.getDb().query(
+			cur = TimeSliceCategoryRepsitory.DB.getWritableDatabase().query(
 					true, DatabaseHelper.TIME_SLICE_CATEGORY_TABLE,
 					this.columnList(), "_id = ?",
 					new String[] { Long.toString(rowId) }, null, null, null,

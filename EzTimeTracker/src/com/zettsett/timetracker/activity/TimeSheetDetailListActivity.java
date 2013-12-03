@@ -21,6 +21,7 @@ import android.widget.ListView;
 import com.zetter.androidTime.R;
 import com.zettsett.timetracker.DateTimeFormatter;
 import com.zettsett.timetracker.Global;
+import com.zettsett.timetracker.Settings;
 import com.zettsett.timetracker.database.TimeSliceCategoryRepsitory;
 import com.zettsett.timetracker.database.TimeSliceRepository;
 import com.zettsett.timetracker.model.TimeSlice;
@@ -110,7 +111,8 @@ public class TimeSheetDetailListActivity extends ListActivity implements
 		this.setContentView(R.layout.time_slice_list);
 		this.registerForContextMenu(this.getListView());
 
-		this.timeSliceRepository = new TimeSliceRepository(this);
+		this.timeSliceRepository = new TimeSliceRepository(this,
+				Settings.isPublicDatabase());
 
 		final Intent intent = this.getIntent();
 		final TimeSliceFilterParameter rangeFilter = (TimeSliceFilterParameter) intent

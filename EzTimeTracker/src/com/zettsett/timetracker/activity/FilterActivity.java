@@ -19,6 +19,7 @@ import com.googlecode.android.widgets.DateSlider.DateTimeMinuteSlider;
 import com.zetter.androidTime.R;
 import com.zettsett.timetracker.DateTimeFormatter;
 import com.zettsett.timetracker.Global;
+import com.zettsett.timetracker.Settings;
 import com.zettsett.timetracker.TimeTrackerManager;
 import com.zettsett.timetracker.database.DatabaseInstance;
 import com.zettsett.timetracker.model.TimeSlice;
@@ -32,7 +33,7 @@ public abstract class FilterActivity extends Activity {
 	private static final int GET_END_DATETIME_NOW = 2;
 	private static final int GET_START_DATETIME_NOW = 3;
 
-	private static final DatabaseInstance CURRENT_DB_INSTANCE = DatabaseInstance
+	private static final DatabaseInstance DB = DatabaseInstance
 			.getCurrentInstance();
 
 	// define the listener which is called once a user selected the date.
@@ -90,7 +91,7 @@ public abstract class FilterActivity extends Activity {
 
 		this.filter = FilterActivity.getFilterParameter(this);
 
-		FilterActivity.CURRENT_DB_INSTANCE.initialize(this);
+		FilterActivity.DB.initialize(this, Settings.isPublicDatabase());
 
 		this.setContentView(R.layout.time_slice_filter);
 		this.setTitle(this.idCaption);

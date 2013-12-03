@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 
 import com.zetter.androidTime.R;
+import com.zettsett.timetracker.Settings;
 import com.zettsett.timetracker.database.TimeSliceCategoryRepsitory;
 import com.zettsett.timetracker.database.TimeSliceRepository;
 import com.zettsett.timetracker.model.TimeSliceCategory;
@@ -88,7 +89,7 @@ public class CategoryListActivity extends ListActivity implements
 			return true;
 		case DELETE_MENU_ID:
 			final TimeSliceRepository timeSliceRepository = new TimeSliceRepository(
-					this);
+					this, Settings.isPublicDatabase());
 			if (timeSliceRepository.getCount(this.categoryClicked) > 0) {
 				this.showDialog(CategoryListActivity.DELETE_MENU_ID);
 			} else {

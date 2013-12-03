@@ -23,6 +23,7 @@ import com.zetter.androidTime.R;
 import com.zettsett.timetracker.DateTimeFormatter;
 import com.zettsett.timetracker.EmailUtilities;
 import com.zettsett.timetracker.FileUtilities;
+import com.zettsett.timetracker.Settings;
 import com.zettsett.timetracker.database.TimeSliceRepository;
 import com.zettsett.timetracker.model.TimeSlice;
 
@@ -185,7 +186,7 @@ public class TimeSliceExportActivity extends Activity implements
 
 	private void writeData() {
 		final TimeSliceRepository mTimeSliceRepository = new TimeSliceRepository(
-				this);
+				this, Settings.isPublicDatabase());
 		List<TimeSlice> timeSlices;
 
 		final TimeSliceFilterParameter filter = new TimeSliceFilterParameter()
