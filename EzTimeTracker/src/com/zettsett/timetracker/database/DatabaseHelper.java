@@ -7,8 +7,6 @@ import android.util.Log;
 
 import com.zettsett.timetracker.model.TimeSliceCategory;
 
-import de.k3b.android.database.DatabaseContext;
-
 /**
  * Encapsulation of the Database create/open/close/upgrade
  */
@@ -23,8 +21,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 	public static final String TIME_SLICE_TABLE = "time_slice";
 
 	DatabaseHelper(final Context context, final String databaseName) {
-		super(new DatabaseContext(context), databaseName, null,
-				DatabaseHelper.DATABASE_VERSION);
+		super(context, databaseName, null, DatabaseHelper.DATABASE_VERSION);
 	}
 
 	@Override

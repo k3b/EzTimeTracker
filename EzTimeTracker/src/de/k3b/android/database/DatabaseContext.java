@@ -9,7 +9,6 @@ import android.os.Environment;
 import android.util.Log;
 
 public class DatabaseContext extends ContextWrapper {
-
 	private static final String DEBUG_CONTEXT = "DatabaseContext";
 
 	public DatabaseContext(final Context base) {

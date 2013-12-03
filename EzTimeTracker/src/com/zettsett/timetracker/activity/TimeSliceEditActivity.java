@@ -23,7 +23,6 @@ import com.zettsett.timetracker.Global;
 import com.zettsett.timetracker.Settings;
 import com.zettsett.timetracker.TimeTrackerManager;
 import com.zettsett.timetracker.database.TimeSliceCategoryRepsitory;
-import com.zettsett.timetracker.database.TimeSliceRepository;
 import com.zettsett.timetracker.model.TimeSlice;
 import com.zettsett.timetracker.model.TimeSliceCategory;
 
@@ -321,14 +320,6 @@ public class TimeSliceEditActivity extends Activity implements ICategorySetter {
 		} else {
 			this.timeSlice.setCategory(newCategory);
 		}
-	}
-
-	public static void showTimeSliceEditActivity(final Activity parentActivity,
-			final int rowId, final int requestCode) {
-		final TimeSlice timeSlice = TimeSliceRepository.getDBAdapter(
-				parentActivity).fetchByRowID(rowId);
-		TimeSliceEditActivity.showTimeSliceEditActivity(parentActivity,
-				timeSlice, requestCode);
 	}
 
 	private static TimeSliceCategory lastCategory = TimeSliceCategory.NO_CATEGORY;

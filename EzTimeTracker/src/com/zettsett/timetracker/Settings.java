@@ -15,9 +15,9 @@ public class Settings {
 	public static void init(final Context context) {
 		final SharedPreferences prefs = PreferenceManager
 				.getDefaultSharedPreferences(context);
-		Settings.minPunchInTreshholdInSecs = Settings.getPrefValue(prefs,
-				"minPunchInTreshholdInSecs",
-				Settings.minPunchOutTreshholdInSecs);
+		Settings.minPunchInTreshholdInSecs = Settings
+				.getPrefValue(prefs, "minPunchInTreshholdInSecs",
+						Settings.minPunchInTreshholdInSecs);
 		Settings.minPunchOutTreshholdInSecs = Settings.getPrefValue(prefs,
 				"minPunchOutTreshholdInSecs",
 				Settings.minPunchOutTreshholdInSecs);
@@ -42,11 +42,19 @@ public class Settings {
 		return 1000l * Settings.minPunchInTreshholdInSecs;
 	}
 
+	public static void setMinPunchInTreshholdInMilliSecs(final long value) {
+		Settings.minPunchInTreshholdInSecs = (int) (value / 1000l);
+	}
+
 	/**
 	 * Punchout only if longer than this (in seconds). Else discard.
 	 */
 	public static long getMinPunchOutTreshholdInMilliSecs() {
 		return 1000l * Settings.minPunchOutTreshholdInSecs;
+	}
+
+	public static void setMinPunchOutTreshholdInMilliSecs(final long value) {
+		Settings.minPunchOutTreshholdInSecs = (int) (value / 1000l);
 	}
 
 	public static boolean getHideInactiveCategories() {
@@ -66,7 +74,7 @@ public class Settings {
 			final String key, final int notFoundValue) {
 		try {
 			return Integer.parseInt(prefs.getString(key,
-					Integer.toString(Settings.minPunchOutTreshholdInSecs)));
+					Integer.toString(notFoundValue)));
 		} catch (final ClassCastException ex) {
 			Log.w(Global.LOG_CONTEXT, "getPrefValue-Integer(" + key + ","
 					+ notFoundValue + ") failed: " + ex.getMessage());
