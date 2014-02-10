@@ -24,8 +24,7 @@ import com.zettsett.timetracker.report.ReprtExportEngine;
 /**
  * Common Handling for Report-Generation and display.
  */
-abstract class ReportFramework extends ListActivity
-{
+abstract class BaseReportListActivity extends ListActivity {
 	private static final int MENU_ITEM_EXPORT_SD = Menu.FIRST + 12;
 	private static final int MENU_ITEM_EXPORT_EMAIL = Menu.FIRST + 13;
 	private static final int MENU_ITEM_SET_FILTER = Menu.FIRST + 21;
@@ -36,12 +35,12 @@ abstract class ReportFramework extends ListActivity
 	 */
 	protected TimeSliceFilterParameter currentRangeFilter;
 
-	protected ReportDateGrouping reportDateGrouping = ReportDateGrouping.DAILY;
+	private ReportDateGrouping reportDateGrouping = ReportDateGrouping.DAILY;
 
 	/**
 	 * creates filter if null. Fixes start/end to meaningfull defaults if empty.
 	 */
-	public ReportFramework setDefaultsToFilterDatesIfNeccesary(
+	protected BaseReportListActivity setDefaultsToFilterDatesIfNeccesary(
 			final TimeSliceFilterParameter filter) {
 		this.currentRangeFilter = (filter != null) ? filter
 				: new TimeSliceFilterParameter();
@@ -76,12 +75,13 @@ abstract class ReportFramework extends ListActivity
 		final boolean result = true;
 		final SubMenu exportMenu = menu.addSubMenu(Menu.NONE, Menu.NONE, 2,
 				R.string.menu_export_report);
-		exportMenu.add(Menu.NONE, ReportFramework.MENU_ITEM_EXPORT_SD, 1,
-				R.string.menu_export_report_to_sd_card);
-		exportMenu.add(Menu.NONE, ReportFramework.MENU_ITEM_EXPORT_EMAIL, 2,
+		exportMenu.add(Menu.NONE, BaseReportListActivity.MENU_ITEM_EXPORT_SD,
+				1, R.string.menu_export_report_to_sd_card);
+		exportMenu.add(Menu.NONE,
+				BaseReportListActivity.MENU_ITEM_EXPORT_EMAIL, 2,
 				R.string.menu_email_report);
 
-		menu.add(Menu.NONE, ReportFramework.MENU_ITEM_SET_FILTER, 2,
+		menu.add(Menu.NONE, BaseReportListActivity.MENU_ITEM_SET_FILTER, 2,
 				R.string.menu_filter);
 
 		return result;
@@ -98,14 +98,16 @@ abstract class ReportFramework extends ListActivity
 			break;
 		case MENU_ITEM_EXPORT_SD:
 			ReprtExportEngine.exportToSD(this.getDefaultReportName(), this,
-					ReportOutput.makeFormatter(this.loadData(),
-							new ReportItemFormatterEx(this,
-									this.reportDateGrouping)));
+					ReportOutput.makeFormatter(
+							this.loadData(),
+							new ReportItemFormatterEx(this, this
+									.getReportDateGrouping())));
 			break;
 		case MENU_ITEM_EXPORT_EMAIL:
-			final ReportOutput outPutter = ReportOutput.makeFormatter(this
-					.loadData(), new ReportItemFormatterEx(this,
-					this.reportDateGrouping));
+			final ReportOutput outPutter = ReportOutput.makeFormatter(
+					this.loadData(),
+					new ReportItemFormatterEx(this, this
+							.getReportDateGrouping()));
 			outPutter.setLineTerminator("\n");
 			EmailUtilities.send("", this.getEMailSummaryLine(), this,
 					outPutter.getOutput());
@@ -148,7 +150,7 @@ abstract class ReportFramework extends ListActivity
 	 * 
 	 * @return filter or parameterName
 	 */
-	public static TimeSliceFilterParameter getLastFilter(final Object owner,
+	protected static TimeSliceFilterParameter getLastFilter(final Object owner,
 			final Bundle savedInstanceState, final String parameterBundleName,
 			final TimeSliceFilterParameter notFoundValue) {
 		TimeSliceFilterParameter rangeFilter = null;
@@ -170,8 +172,8 @@ abstract class ReportFramework extends ListActivity
 		}
 		if (Global.isDebugEnabled()) {
 			Log.d(Global.LOG_CONTEXT, owner.getClass().getSimpleName()
-					+ " > ReportFramework.getLastFilter(" + parameterBundleName
-					+ ") = '" + rangeFilter + "'");
+					+ " > BaseReportListActivity.getLastFilter("
+					+ parameterBundleName + ") = '" + rangeFilter + "'");
 		}
 
 		return rangeFilter;
@@ -187,28 +189,24 @@ abstract class ReportFramework extends ListActivity
 	 * @param rangeFilter
 	 *            : value to be saved
 	 */
-	public void setLastFilter(final Bundle savedInstanceState,
+	protected void setLastFilter(final Bundle savedInstanceState,
 			final String parameterBundleName,
 			final TimeSliceFilterParameter rangeFilter) {
 		if (Global.isDebugEnabled()) {
 			Log.d(Global.LOG_CONTEXT, this.getClass().getSimpleName()
-					+ " > ReportFramework.setLastFilter(" + parameterBundleName
-					+ "='" + rangeFilter + "')");
+					+ " > BaseReportListActivity.setLastFilter("
+					+ parameterBundleName + "='" + rangeFilter + "')");
 		}
 		savedInstanceState.putSerializable(parameterBundleName, rangeFilter);
 	}
 
-	/**
-	 * @return endtime with time set to 23:59 from rangeFilter
-	 */
-	public static long getFixedEndTime(
-			final TimeSliceFilterParameter rangeFilter) {
-		final Calendar c = Calendar.getInstance();
-		c.setTime(new Date(rangeFilter.getEndTime()));
-		c.set(Calendar.HOUR_OF_DAY, 23);
-		c.set(Calendar.MINUTE, 59);
-		final long endDate = c.getTimeInMillis();
-		return endDate;
+	protected void setReportDateGrouping(
+			final ReportDateGrouping reportDateGrouping) {
+		this.reportDateGrouping = reportDateGrouping;
+	}
+
+	protected ReportDateGrouping getReportDateGrouping() {
+		return this.reportDateGrouping;
 	}
 
 }

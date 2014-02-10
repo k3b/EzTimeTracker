@@ -28,7 +28,7 @@ import com.zettsett.timetracker.report.IReportInterface;
 
 import de.k3b.util.DateTimeUtil;
 
-public class TimeSheetSummaryListActivity extends ReportFramework implements
+public class TimeSheetSummaryListActivity extends BaseReportListActivity implements
 		IReportInterface, ICategorySetter {
 	/**
 	 * Used to transfer optional report-type from parent activity to this.
@@ -76,7 +76,7 @@ public class TimeSheetSummaryListActivity extends ReportFramework implements
 		super.onCreate(savedInstanceState);
 		this.setContentView(R.layout.time_slice_list);
 		this.registerForContextMenu(this.getListView());
-		this.currentRangeFilter = ReportFramework
+		this.currentRangeFilter = BaseReportListActivity
 				.getLastFilter(
 						this,
 						savedInstanceState,
@@ -86,8 +86,8 @@ public class TimeSheetSummaryListActivity extends ReportFramework implements
 		this.setDefaultsToFilterDatesIfNeccesary(this.currentRangeFilter);
 
 		if (savedInstanceState != null) {
-			this.reportDateGrouping = (ReportDateGrouping) savedInstanceState
-					.getSerializable(TimeSheetSummaryListActivity.SAVED_REPORT_GROUPING_BUNDLE_NAME);
+			this.setReportDateGrouping((ReportDateGrouping) savedInstanceState
+					.getSerializable(TimeSheetSummaryListActivity.SAVED_REPORT_GROUPING_BUNDLE_NAME));
 			this.reportMode = (ReportModes) savedInstanceState
 					.getSerializable(TimeSheetSummaryListActivity.SAVED_REPORT_MODE);
 		}
@@ -114,7 +114,7 @@ public class TimeSheetSummaryListActivity extends ReportFramework implements
 				this.currentRangeFilter);
 		outState.putSerializable(
 				TimeSheetSummaryListActivity.SAVED_REPORT_GROUPING_BUNDLE_NAME,
-				this.reportDateGrouping);
+				this.getReportDateGrouping());
 		outState.putSerializable(
 				TimeSheetSummaryListActivity.SAVED_REPORT_MODE, this.reportMode);
 	}
@@ -152,19 +152,19 @@ public class TimeSheetSummaryListActivity extends ReportFramework implements
 	public boolean onOptionsItemSelected(final MenuItem item) {
 		switch (item.getItemId()) {
 		case MENU_ITEM_GROUP_DAILY:
-			this.reportDateGrouping = ReportDateGrouping.DAILY;
+			this.setReportDateGrouping(ReportDateGrouping.DAILY);
 			this.loadDataIntoReport(0);
 			break;
 		case MENU_ITEM_GROUP_WEEKLY:
-			this.reportDateGrouping = ReportDateGrouping.WEEKLY;
+			this.setReportDateGrouping(ReportDateGrouping.WEEKLY);
 			this.loadDataIntoReport(0);
 			break;
 		case MENU_ITEM_GROUP_MONTHLY:
-			this.reportDateGrouping = ReportDateGrouping.MONTHLY;
+			this.setReportDateGrouping(ReportDateGrouping.MONTHLY);
 			this.loadDataIntoReport(0);
 			break;
 		case MENU_ITEM_GROUP_YARLY:
-			this.reportDateGrouping = ReportDateGrouping.YEARLY;
+			this.setReportDateGrouping(ReportDateGrouping.YEARLY);
 			this.loadDataIntoReport(0);
 			break;
 
@@ -293,7 +293,7 @@ public class TimeSheetSummaryListActivity extends ReportFramework implements
 						if (date != null) {
 							context = "ReportModes.BY_DATE currentSelectedCategory + super date";
 							return this.setFilterDate(filter,
-									this.reportDateGrouping, date);
+									this.getReportDateGrouping(), date);
 						}
 					}
 					context = "ReportModes.BY_DATE currentSelectedCategory. no super date";
@@ -306,7 +306,7 @@ public class TimeSheetSummaryListActivity extends ReportFramework implements
 				final Long date = this.getLong(position);
 				if (date != null) {
 					filter = this.setFilterDate(this.createDrillDownFilter(),
-							this.reportDateGrouping, date);
+							this.getReportDateGrouping(), date);
 					if (this.reportMode == ReportModes.BY_CATEGORY) {
 						int pos = position;
 						while (--pos >= 0) {
@@ -392,7 +392,7 @@ public class TimeSheetSummaryListActivity extends ReportFramework implements
 				.fetchList(rangeFilter);
 
 		final List<Object> listItems = TimeSheetSummaryCalculator2.loadData(
-				this.reportMode, this.reportDateGrouping, timeSlices);
+				this.reportMode, this.getReportDateGrouping(), timeSlices);
 
 		if (Global.isInfoEnabled()) {
 			Log.i(Global.LOG_CONTEXT,
@@ -416,7 +416,7 @@ public class TimeSheetSummaryListActivity extends ReportFramework implements
 				listItems);
 
 		this.setListAdapter(new TimeSheetReportAdapter(this, listItems,
-				this.reportDateGrouping));
+				this.getReportDateGrouping()));
 		if (Global.isInfoEnabled()) {
 			Log.i(Global.LOG_CONTEXT,
 					"Create adapter:"
@@ -446,27 +446,27 @@ public class TimeSheetSummaryListActivity extends ReportFramework implements
 	private void setReportType(final int reportType) {
 		switch (reportType) {
 		case R.id.summary_day:
-			this.reportDateGrouping = ReportDateGrouping.DAILY;
+			this.setReportDateGrouping(ReportDateGrouping.DAILY);
 			this.reportMode = ReportModes.BY_DATE;
 			break;
 		case R.id.summary_month:
-			this.reportDateGrouping = ReportDateGrouping.MONTHLY;
+			this.setReportDateGrouping(ReportDateGrouping.MONTHLY);
 			this.reportMode = ReportModes.BY_DATE;
 			break;
 		case R.id.summary_week:
-			this.reportDateGrouping = ReportDateGrouping.WEEKLY;
+			this.setReportDateGrouping(ReportDateGrouping.WEEKLY);
 			this.reportMode = ReportModes.BY_DATE;
 			break;
 		case R.id.category_day:
-			this.reportDateGrouping = ReportDateGrouping.DAILY;
+			this.setReportDateGrouping(ReportDateGrouping.DAILY);
 			this.reportMode = ReportModes.BY_CATEGORY;
 			break;
 		case R.id.category_month:
-			this.reportDateGrouping = ReportDateGrouping.MONTHLY;
+			this.setReportDateGrouping(ReportDateGrouping.MONTHLY);
 			this.reportMode = ReportModes.BY_CATEGORY;
 			break;
 		case R.id.category_week:
-			this.reportDateGrouping = ReportDateGrouping.WEEKLY;
+			this.setReportDateGrouping(ReportDateGrouping.WEEKLY);
 			this.reportMode = ReportModes.BY_CATEGORY;
 			break;
 		}

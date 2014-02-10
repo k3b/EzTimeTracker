@@ -33,7 +33,7 @@ import de.k3b.util.DateTimeUtil;
 /**
  * Detail report grouped by date with optional date-filter
  */
-public class TimeSheetDetailListActivity extends ReportFramework implements
+public class TimeSheetDetailListActivity extends BaseReportListActivity implements
 		IReportInterface, ICategorySetter {
 	/**
 	 * Used to transfer optional filter between parent activity and this.
@@ -124,7 +124,7 @@ public class TimeSheetDetailListActivity extends ReportFramework implements
 			}
 
 			// not created with parameter so restore last instance value
-			this.currentRangeFilter = ReportFramework.getLastFilter(this,
+			this.currentRangeFilter = BaseReportListActivity.getLastFilter(this,
 					savedInstanceState,
 					this.currentBundelPersistRangeFilterName,
 					this.currentRangeFilter);
@@ -159,7 +159,7 @@ public class TimeSheetDetailListActivity extends ReportFramework implements
 					this.currentRangeFilter);
 		} else {
 			// current filter should be discarded. Restore previous filter
-			this.currentRangeFilter = ReportFramework
+			this.currentRangeFilter = BaseReportListActivity
 					.getLastFilter(
 							this,
 							outState,
