@@ -1,7 +1,6 @@
 package com.zettsett.timetracker.activity;
 
 import java.util.List;
-import java.util.Locale;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -24,7 +23,7 @@ import com.zettsett.timetracker.model.TimeSliceCategory;
 public class TimeSheetReportAdapter extends ArrayAdapter<Object> {
 
 	private final boolean showNotes;
-	private final ReportDateGrouping reportDateGrouping;
+	private final ReportItemFormatter formatter;
 
 	public TimeSheetReportAdapter(final Context context,
 			final List<Object> objects, final boolean showNotes) {
@@ -41,8 +40,9 @@ public class TimeSheetReportAdapter extends ArrayAdapter<Object> {
 			final List<Object> objects, final boolean showNotes,
 			final ReportDateGrouping reportDateGrouping) {
 		super(context, 0, objects);
-		this.reportDateGrouping = reportDateGrouping;
 		this.showNotes = showNotes;
+
+		this.formatter = new ReportItemFormatter(context, reportDateGrouping);
 
 		TimeSliceCategory.setCurrentDateTime(TimeTrackerManager
 				.currentTimeMillis());
@@ -106,88 +106,9 @@ public class TimeSheetReportAdapter extends ArrayAdapter<Object> {
 		return itemView;
 	}
 
-	private String getValueGeneric(final Object obj) {
-		if (obj.getClass().isAssignableFrom(TimeSlice.class)) {
-			return this.getValue((TimeSlice) obj);
-		} else if (obj.getClass().isAssignableFrom(TimeSliceCategory.class)) {
-			return this.getValue((TimeSliceCategory) obj);
-		} else if (obj.getClass().isAssignableFrom(Long.class)) {
-			return this.getValue((Long) obj);
-		} else if (obj.getClass()
-				.isAssignableFrom(ReportItemWithDuration.class)) {
-			return this.getValue((ReportItemWithDuration) obj);
-		} else {
-			return "";
-		}
-	}
-
-	private String getValue(final long obj) {
-		String currentStartDateText;
-		if (this.reportDateGrouping == ReportDateGrouping.DAILY) {
-			currentStartDateText = TimeSheetSummaryCalculator2.dt
-					.getLongDateStr(obj);
-		} else if (this.reportDateGrouping == ReportDateGrouping.WEEKLY) {
-			currentStartDateText = TimeSheetSummaryCalculator2.dt
-					.getWeekStr(obj);
-		} else if (this.reportDateGrouping == ReportDateGrouping.MONTHLY) {
-			currentStartDateText = TimeSheetSummaryCalculator2.dt
-					.getMonthStr(obj);
-		} else if (this.reportDateGrouping == ReportDateGrouping.YEARLY) {
-			currentStartDateText = TimeSheetSummaryCalculator2.dt
-					.getYearString(obj);
-		} else {
-			throw new IllegalArgumentException("Unknown ReportDateGrouping "
-					+ this.reportDateGrouping);
-		}
-		return currentStartDateText;
-	}
-
-	private String getValue(final TimeSlice obj) {
-		return obj.getTitleWithDuration();
-	}
-
-	private String getValue(final TimeSliceCategory obj) {
-		return obj.toString(); // .getCategoryName();
-	}
-
-	private String getValue(final ReportItemWithDuration obj) {
-		return this.getValueGeneric(obj.subKey) + ": "
-				+ this.timeInMillisToText(obj.duration, false);
-	}
-
-	private String timeInMillisToText(final long totalTimeInMillis,
-			final boolean longVersion) {
-		final long minutes = (totalTimeInMillis / (1000 * 60)) % 60;
-		final long hours = totalTimeInMillis / (1000 * 60 * 60);
-
-		String hoursWord;
-		if (hours == 1) {
-			hoursWord = this.getContext().getString(R.string.hoursWord1);
-		} else {
-			hoursWord = this.getContext().getString(R.string.hoursWordN);
-		}
-
-		if (longVersion) {
-			String minutesWord;
-
-			if (minutes == 1) {
-				minutesWord = this.getContext()
-						.getString(R.string.minutesWord1);
-			} else {
-				minutesWord = this.getContext()
-						.getString(R.string.minutesWordN);
-			}
-			final String timeString = hours + " " + hoursWord + ", " + minutes
-					+ " " + minutesWord;
-			return timeString;
-		}
-		return String.format(Locale.GERMANY, " %1$d %3$s %2$02d", hours,
-				minutes, hoursWord);
-	}
-
 	private void setItemContent(final View view, final Object obj) {
 		final TextView nameView = (TextView) view.findViewById(R.id.name);
-		nameView.setText(this.getValueGeneric(obj));
+		nameView.setText(this.formatter.getValueGeneric(obj));
 		view.setTag(obj);
 	}
 }

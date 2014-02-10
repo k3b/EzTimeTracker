@@ -13,7 +13,6 @@ public interface ISessionDataPersistance<T extends Serializable> {
 
 	public abstract void save(final T sessionData);
 
-	@SuppressWarnings("unchecked")
 	public abstract T load();
 
 }

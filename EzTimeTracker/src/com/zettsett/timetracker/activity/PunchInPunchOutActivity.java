@@ -283,7 +283,7 @@ public class PunchInPunchOutActivity extends Activity implements
 	private Class<? extends Activity> getMenuIntentHandler(final int item) {
 		switch (item) {
 		case R.id.details:
-			return TimeSheetDetailListActivity.class; // TimeSheetDetailReportActivity.class;
+			return TimeSheetDetailListActivity.class;
 		case R.id.summary_day:
 		case R.id.summary_month:
 		case R.id.summary_week:

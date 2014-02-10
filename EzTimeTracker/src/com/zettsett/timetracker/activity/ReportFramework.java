@@ -1,25 +1,22 @@
 package com.zettsett.timetracker.activity;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-import android.app.Activity;
+import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.SubMenu;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.zetter.androidTime.R;
 import com.zettsett.timetracker.EmailUtilities;
 import com.zettsett.timetracker.Global;
-import com.zettsett.timetracker.LinearScroller;
 import com.zettsett.timetracker.model.TimeSlice;
 import com.zettsett.timetracker.report.ReportOutput;
 import com.zettsett.timetracker.report.ReprtExportEngine;
@@ -27,65 +24,54 @@ import com.zettsett.timetracker.report.ReprtExportEngine;
 /**
  * Common Handling for Report-Generation and display.
  */
-public class ReportFramework implements Serializable {
-	private static final long serialVersionUID = 394933866214361393L;
-
+abstract class ReportFramework extends ListActivity
+{
 	private static final int MENU_ITEM_EXPORT_SD = Menu.FIRST + 12;
 	private static final int MENU_ITEM_EXPORT_EMAIL = Menu.FIRST + 13;
 	private static final int MENU_ITEM_SET_FILTER = Menu.FIRST + 21;
 
-	public enum ReportTypes {
-		TIMESHEET, SUMMARY
-	};
-
-	// gui elements
-	private final Activity activity;
-	private LinearScroller scrollView;
-	private List<TextView> reportViewListItems;
-
 	// current state
-	private TimeSliceFilterParameter filter;
-	private ReportTypes reportType;
+	/**
+	 * current range filter used to fill report.<br/>
+	 */
+	protected TimeSliceFilterParameter currentRangeFilter;
 
-	ReportFramework(final Activity activity,
-			final TimeSliceFilterParameter filter) {
-		super();
-		this.setDefaultsToFilterDatesIfNeccesary(filter);
-		this.activity = activity;
-	}
+	protected ReportDateGrouping reportDateGrouping = ReportDateGrouping.DAILY;
 
 	/**
 	 * creates filter if null. Fixes start/end to meaningfull defaults if empty.
 	 */
-	private void setDefaultsToFilterDatesIfNeccesary(
+	public ReportFramework setDefaultsToFilterDatesIfNeccesary(
 			final TimeSliceFilterParameter filter) {
-		this.filter = (filter != null) ? filter
+		this.currentRangeFilter = (filter != null) ? filter
 				: new TimeSliceFilterParameter();
 
 		final Date currDate = new Date();
 
-		if (this.filter.getStartTime() == TimeSlice.NO_TIME_VALUE) {
+		if (this.currentRangeFilter.getStartTime() == TimeSlice.NO_TIME_VALUE) {
 			// start = now-2months
 			final Calendar calendar = new GregorianCalendar();
 			calendar.setTime(currDate);
 			calendar.add(Calendar.MONTH, -2);
 			final long startTime = calendar.getTimeInMillis();
-			this.filter.setStartTime(startTime);
+			this.currentRangeFilter.setStartTime(startTime);
 		}
 
-		if (this.filter.getEndTime() == TimeSlice.NO_TIME_VALUE) {
+		if (this.currentRangeFilter.getEndTime() == TimeSlice.NO_TIME_VALUE) {
 			// end = now+1week
 			final Calendar calendar = new GregorianCalendar();
 			calendar.setTime(currDate);
 			calendar.add(Calendar.WEEK_OF_YEAR, 1);
 			final long endTime = calendar.getTimeInMillis();
-			this.filter.setEndTime(endTime);
+			this.currentRangeFilter.setEndTime(endTime);
 		}
+		return this;
 	}
 
 	/**
 	 * called by parent Report Action to append common menuitem.
 	 */
+	@Override
 	public boolean onPrepareOptionsMenu(final Menu menu) {
 		final boolean result = true;
 		final SubMenu exportMenu = menu.addSubMenu(Menu.NONE, Menu.NONE, 2,
@@ -104,21 +90,24 @@ public class ReportFramework implements Serializable {
 	/**
 	 * called by parent Report Action to do process common menuactions.
 	 */
+	@Override
 	public boolean onOptionsItemSelected(final MenuItem item) {
 		switch (item.getItemId()) {
 		case MENU_ITEM_SET_FILTER:
-			ReportFilterActivity.showActivity(this.activity, this.filter);
+			ReportFilterActivity.showActivity(this, this.currentRangeFilter);
 			break;
 		case MENU_ITEM_EXPORT_SD:
-			ReprtExportEngine.exportToSD(this.getDefaultReportName(),
-					this.activity,
-					ReportOutput.makeFormatter(this.reportViewListItems));
+			ReprtExportEngine.exportToSD(this.getDefaultReportName(), this,
+					ReportOutput.makeFormatter(this.loadData(),
+							new ReportItemFormatterEx(this,
+									this.reportDateGrouping)));
 			break;
 		case MENU_ITEM_EXPORT_EMAIL:
-			final ReportOutput outPutter = ReportOutput
-					.makeFormatter(this.reportViewListItems);
-			outPutter.setTerminator("\n");
-			EmailUtilities.send("", this.getEMailSummaryLine(), this.activity,
+			final ReportOutput outPutter = ReportOutput.makeFormatter(this
+					.loadData(), new ReportItemFormatterEx(this,
+					this.reportDateGrouping));
+			outPutter.setLineTerminator("\n");
+			EmailUtilities.send("", this.getEMailSummaryLine(), this,
 					outPutter.getOutput());
 			break;
 		}
@@ -139,69 +128,27 @@ public class ReportFramework implements Serializable {
 		return newRangeFilter;
 	}
 
-	private String getDefaultReportName() {
-		String name;
-		if (this.reportType == ReportTypes.TIMESHEET) {
-			name = this.activity.getString(R.string.default_export_ts_name);
-		} else {
-			name = this.activity.getString(R.string.default_export_sum_name);
-		}
-		return name;
-	}
+	abstract protected String getDefaultReportName();
 
-	private String getEMailSummaryLine() {
-		final String appName = this.activity.getString(R.string.app_name);
-		String summary;
-		if (this.reportType == ReportTypes.TIMESHEET) {
-			summary = String.format(
-					this.activity.getString(R.string.default_mail_ts_subject),
-					appName);
-		} else {
-			summary = String.format(
-					this.activity.getString(R.string.default_mail_sum_subject),
-					appName);
-		}
-		return summary;
+	abstract protected String getEMailSummaryLine();
 
-	}
-
-	LinearScroller getLinearScroller() {
-		return this.scrollView;
-	}
-
-	LinearLayout buildViews() {
-		this.activity.setContentView(R.layout.time_slice_report_framework);
-		final LinearLayout contentView = (LinearLayout) this.activity
-				.findViewById(R.id.report_frame);
-		contentView.setOrientation(LinearLayout.VERTICAL);
-		this.scrollView = new LinearScroller(this.activity);
-		contentView.addView(this.scrollView.getScrollView());
-		return contentView;
-	}
-
-	public List<TextView> initializeTextViewsForExportList() {
-		final List<TextView> tvList = new ArrayList<TextView>();
-		this.reportViewListItems = tvList;
-		return tvList;
-	}
-
-	public ReportFramework setReportType(final ReportTypes reportType) {
-		this.reportType = reportType;
-		return this;
-	}
+	abstract protected List<Object> loadData();
 
 	/**
 	 * retrieves filter from bundle
 	 * 
+	 * @param owner
+	 *            TODO
 	 * @param savedInstanceState
 	 *            : where filter infos are stored
 	 * @param parameterBundleName
 	 *            : the name of the filter. Every context has a different name.
 	 * @param notFoundValue
 	 *            : value returend if not found
+	 * 
 	 * @return filter or parameterName
 	 */
-	public static TimeSliceFilterParameter getLastFilter(
+	public static TimeSliceFilterParameter getLastFilter(final Object owner,
 			final Bundle savedInstanceState, final String parameterBundleName,
 			final TimeSliceFilterParameter notFoundValue) {
 		TimeSliceFilterParameter rangeFilter = null;
@@ -221,6 +168,11 @@ public class ReportFramework implements Serializable {
 		if (rangeFilter == null) {
 			rangeFilter = new TimeSliceFilterParameter();
 		}
+		if (Global.isDebugEnabled()) {
+			Log.d(Global.LOG_CONTEXT, owner.getClass().getSimpleName()
+					+ " > ReportFramework.getLastFilter(" + parameterBundleName
+					+ ") = '" + rangeFilter + "'");
+		}
 
 		return rangeFilter;
 	}
@@ -235,9 +187,14 @@ public class ReportFramework implements Serializable {
 	 * @param rangeFilter
 	 *            : value to be saved
 	 */
-	public static void setLastFilter(final Bundle savedInstanceState,
+	public void setLastFilter(final Bundle savedInstanceState,
 			final String parameterBundleName,
 			final TimeSliceFilterParameter rangeFilter) {
+		if (Global.isDebugEnabled()) {
+			Log.d(Global.LOG_CONTEXT, this.getClass().getSimpleName()
+					+ " > ReportFramework.setLastFilter(" + parameterBundleName
+					+ "='" + rangeFilter + "')");
+		}
 		savedInstanceState.putSerializable(parameterBundleName, rangeFilter);
 	}
 

@@ -2,38 +2,40 @@ package com.zettsett.timetracker.report;
 
 import java.util.List;
 
-import android.widget.TextView;
+import com.zettsett.timetracker.activity.ReportItemFormatterEx;
 
 public class ReportOutput {
 
-	private List<TextView> reportList;
+	private List<Object> reportList;
 	private String output;
-	private String terminator = "\r\n";
+	private ReportItemFormatterEx formatter;
 
 	private ReportOutput() {
 
 	}
 
-	public static ReportOutput makeFormatter(final List<TextView> reportList) {
+	public static ReportOutput makeFormatter(final List<Object> reportList,
+			final ReportItemFormatterEx formatter) {
 		final ReportOutput f = new ReportOutput();
 		f.reportList = reportList;
+		f.formatter = formatter;
 		return f;
 	}
 
 	public String getOutput() {
-		final StringBuilder builder = new StringBuilder();
 		if (this.output == null) {
-			for (final TextView view : this.reportList) {
-				builder.append(view.getText().toString());
-				builder.append(this.terminator);
+			final StringBuilder builder = new StringBuilder();
+			for (final Object reportItem : this.reportList) {
+				builder.append(this.formatter.getValueGeneric(reportItem));
 			}
 			this.output = builder.toString();
 		}
 		return this.output;
 	}
 
-	public void setTerminator(final String terminator) {
-		this.terminator = terminator;
+	public ReportOutput setLineTerminator(final String lineTerminator) {
+		this.formatter.setLineTerminator(lineTerminator);
+		return this;
 	}
 
 }

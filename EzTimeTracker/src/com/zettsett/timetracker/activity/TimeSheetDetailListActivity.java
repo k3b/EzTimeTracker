@@ -5,7 +5,6 @@ import java.util.Calendar;
 import java.util.List;
 
 import android.app.Dialog;
-import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -34,7 +33,7 @@ import de.k3b.util.DateTimeUtil;
 /**
  * Detail report grouped by date with optional date-filter
  */
-public class TimeSheetDetailListActivity extends ListActivity implements
+public class TimeSheetDetailListActivity extends ReportFramework implements
 		IReportInterface, ICategorySetter {
 	/**
 	 * Used to transfer optional filter between parent activity and this.
@@ -55,8 +54,6 @@ public class TimeSheetDetailListActivity extends ListActivity implements
 	private final TimeSliceCategoryRepsitory categoryRepository = new TimeSliceCategoryRepsitory(
 			this);
 
-	private ReportFramework reportFramework;
-
 	// current state
 	private TimeSlice currentSelectedTimeSliceUsedForMenu;
 	private long lastSelectedDateUsedForAddMenu;
@@ -72,12 +69,6 @@ public class TimeSheetDetailListActivity extends ListActivity implements
 	 * be persisted to.
 	 */
 	private String currentBundelPersistRangeFilterName;
-
-	/**
-	 * current range filter used to fill report.<br/>
-	 * static to surwive if this activity is discarded in filter activity.
-	 */
-	private static TimeSliceFilterParameter currentRangeFilter;
 
 	/**
 	 * Used in options-menue for context sensitive delete
@@ -96,6 +87,14 @@ public class TimeSheetDetailListActivity extends ListActivity implements
 	 */
 	public static void showActivity(final Context context,
 			final TimeSliceFilterParameter filter) {
+		if (Global.isDebugEnabled()) {
+			Log.d(Global.LOG_CONTEXT,
+					context.getClass().getSimpleName()
+							+ " > TimeSheetDetailListActivity.showActivity("
+							+ TimeSheetDetailListActivity.SAVED_REPORT_RANGE_FILTER_BUNDLE_NAME
+							+ ") = '" + filter + "'");
+		}
+
 		final Intent intent = new Intent().setClass(context,
 				TimeSheetDetailListActivity.class);
 
@@ -119,36 +118,53 @@ public class TimeSheetDetailListActivity extends ListActivity implements
 				.getExtras()
 				.get(TimeSheetDetailListActivity.SAVED_REPORT_RANGE_FILTER_BUNDLE_NAME);
 		if (rangeFilter == null) {
+			if (Global.isDebugEnabled()) {
+				Log.d(Global.LOG_CONTEXT,
+						"TimeSheetDetailListActivity.onCreate: not created with parameter so restore last instance value");
+			}
+
 			// not created with parameter so restore last instance value
-			TimeSheetDetailListActivity.currentRangeFilter = ReportFramework
-					.getLastFilter(savedInstanceState,
-							this.currentBundelPersistRangeFilterName,
-							TimeSheetDetailListActivity.currentRangeFilter);
+			this.currentRangeFilter = ReportFramework.getLastFilter(this,
+					savedInstanceState,
+					this.currentBundelPersistRangeFilterName,
+					this.currentRangeFilter);
 			this.currentBundelPersistRangeFilterName = TimeSheetDetailListActivity.SAVED_REPORT_RANGE_FILTER_BUNDLE_NAME; // must
 		} else {
-			TimeSheetDetailListActivity.currentRangeFilter = rangeFilter;
+			if (Global.isDebugEnabled()) {
+				Log.d(Global.LOG_CONTEXT,
+						"TimeSheetDetailListActivity.onCreate: with parameter "
+								+ rangeFilter);
+			}
+			this.currentRangeFilter = rangeFilter;
 			this.currentBundelPersistRangeFilterName = null; // can be discarded
 		}
 
-		this.reportFramework = new ReportFramework(this,
-				TimeSheetDetailListActivity.currentRangeFilter);
+		this.setDefaultsToFilterDatesIfNeccesary(this.currentRangeFilter);
 		this.loadDataIntoReport(0);
 	}
 
 	@Override
 	protected void onSaveInstanceState(final Bundle outState) {
+		if (Global.isDebugEnabled()) {
+			Log.d(Global.LOG_CONTEXT,
+					"TimeSheetDetailListActivity.onSaveInstanceState("
+							+ this.currentBundelPersistRangeFilterName + ")");
+		}
+
 		if (this.currentBundelPersistRangeFilterName != null) {
+
 			// filter must be saved
-			ReportFramework.setLastFilter(outState,
+			this.setLastFilter(outState,
 					this.currentBundelPersistRangeFilterName,
-					TimeSheetDetailListActivity.currentRangeFilter);
+					this.currentRangeFilter);
 		} else {
 			// current filter should be discarded. Restore previous filter
-			TimeSheetDetailListActivity.currentRangeFilter = ReportFramework
+			this.currentRangeFilter = ReportFramework
 					.getLastFilter(
+							this,
 							outState,
 							TimeSheetDetailListActivity.SAVED_REPORT_RANGE_FILTER_BUNDLE_NAME,
-							TimeSheetDetailListActivity.currentRangeFilter);
+							this.currentRangeFilter);
 		}
 	}
 
@@ -206,7 +222,7 @@ public class TimeSheetDetailListActivity extends ListActivity implements
 	}
 
 	private TimeSliceFilterParameter createDrillDownFilter() {
-		final TimeSliceFilterParameter defaults = TimeSheetDetailListActivity.currentRangeFilter;
+		final TimeSliceFilterParameter defaults = this.currentRangeFilter;
 		return new TimeSliceFilterParameter().setNotes(defaults.getNotes())
 				.setNotesNotNull(defaults.isNotesNotNull())
 				.setCategoryId(defaults.getCategoryId());
@@ -223,7 +239,7 @@ public class TimeSheetDetailListActivity extends ListActivity implements
 			menu.add(0, TimeSheetDetailListActivity.SHOW_NOTES_MENU_ID, 0,
 					this.getString(R.string.menu_report_include_notes));
 		}
-		this.reportFramework.onPrepareOptionsMenu(menu);
+		super.onPrepareOptionsMenu(menu);
 	}
 
 	@Override
@@ -332,18 +348,15 @@ public class TimeSheetDetailListActivity extends ListActivity implements
 			this.loadDataIntoReport(0);
 			return true;
 		default:
-			this.reportFramework
-					.setReportType(ReportFramework.ReportTypes.TIMESHEET);
-			return this.reportFramework.onOptionsItemSelected(item);
+			return super.onOptionsItemSelected(item);
 		}
 	}
 
 	@Override
-	public void loadDataIntoReport(final int reportType) {
+	protected List<Object> loadData() {
 		long performanceMeasureStart = System.currentTimeMillis();
-		final long globalPerformanceMeasureStart = performanceMeasureStart;
 
-		final TimeSliceFilterParameter rangeFilter = TimeSheetDetailListActivity.currentRangeFilter;
+		final TimeSliceFilterParameter rangeFilter = this.currentRangeFilter;
 		final List<TimeSlice> timeSlices = this.timeSliceRepository
 				.fetchList(rangeFilter);
 		if (Global.isInfoEnabled()) {
@@ -358,11 +371,19 @@ public class TimeSheetDetailListActivity extends ListActivity implements
 			Log.i(Global.LOG_CONTEXT,
 					"Convert Data:"
 							+ (System.currentTimeMillis() - performanceMeasureStart));
-			performanceMeasureStart = System.currentTimeMillis();
 		}
+		return listItems;
+	}
+
+	@Override
+	public void loadDataIntoReport(final int reportType) {
+		final long globalPerformanceMeasureStart = System.currentTimeMillis();
+		final List<Object> listItems = this.loadData();
 
 		final int newSelection = this.convertLastSelection(this.getListView(),
 				listItems);
+
+		final long performanceMeasureStart = System.currentTimeMillis();
 
 		this.setListAdapter(new TimeSheetReportAdapter(this, listItems,
 				this.showNotes));
@@ -380,12 +401,13 @@ public class TimeSheetDetailListActivity extends ListActivity implements
 				TimeSheetDetailListActivity.this.getListView().setSelection(
 						newSelection);
 				final float loadTime = 0.0001f * (System.currentTimeMillis() - globalPerformanceMeasureStart);
-				TimeSheetDetailListActivity.this.setTitle(rangeFilter
-						.toString()
-						+ " ("
-						+ timeSlices.size()
-						+ "/"
-						+ String.format("%.1f", loadTime) + " sec)");
+				TimeSheetDetailListActivity.this
+						.setTitle(TimeSheetDetailListActivity.this.currentRangeFilter
+								.toString()
+								+ " ("
+								+ listItems.size()
+								+ "/"
+								+ String.format("%.1f", loadTime) + " sec)");
 
 			}
 		});
@@ -461,12 +483,24 @@ public class TimeSheetDetailListActivity extends ListActivity implements
 				}
 			} else if (resultCode == ReportFilterActivity.RESULT_FILTER_CHANGED) {
 				// after filter change: remeber new filter
-				TimeSheetDetailListActivity.currentRangeFilter = this.reportFramework
-						.onActivityResult(intent,
-								TimeSheetDetailListActivity.currentRangeFilter);
+				this.currentRangeFilter = super.onActivityResult(intent,
+						this.currentRangeFilter);
 			}
 
 			this.loadDataIntoReport(0);
 		}
 	}
+
+	@Override
+	protected String getDefaultReportName() {
+		return this.getString(R.string.default_export_ts_name);
+	}
+
+	@Override
+	protected String getEMailSummaryLine() {
+		final String appName = this.getString(R.string.app_name);
+		return String.format(this.getString(R.string.default_mail_ts_subject),
+				appName);
+	}
+
 }
