@@ -22,16 +22,23 @@ public class ReportFilterActivity extends FilterActivity {
 		final Intent intent = new Intent().setClass(owner,
 				ReportFilterActivity.class);
 		intent.putExtra(Global.EXTRA_FILTER, filter);
-		owner.startActivityForResult(intent, 0);
+		owner.startActivityForResult(intent,
+				ReportFilterActivity.RESULT_FILTER_CHANGED);
 	}
 
 	@Override
 	protected void onOkCLick() {
-		super.onOkCLick();
 		this.filter.setEndTime(ReportFilterActivity
 				.getFixedEndTime(this.filter));
+		super.onOkCLick();
+	}
 
-		this.finish();
+	@Override
+	protected Intent getFinishIntent() {
+		final Intent intent = super.getFinishIntent();
+
+		intent.putExtra(Global.EXTRA_FILTER, this.filter);
+		return intent;
 	}
 
 	/**

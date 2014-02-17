@@ -10,16 +10,19 @@ public class Global {
 	/**
 	 * used to return modified filter from filter editor activity back to
 	 * calling activity.<br/>
-	 * todo: hide behind public static filter activity api
 	 */
 	public static final String EXTRA_FILTER = "filter";
 
 	/**
 	 * used to return modified filter from timeslice editor activity back to
 	 * calling activity.<br/>
-	 * todo: hide behind public static filter activity api
 	 */
 	public static final String EXTRA_TIMESLICE = "time_slice";
+
+	/**
+	 * used to transfer result_id.
+	 */
+	public static final String EXTRA_RESULTID = "result_id";
 
 	private static boolean debugEnabled = false;
 	private static boolean infoEnabled = false;

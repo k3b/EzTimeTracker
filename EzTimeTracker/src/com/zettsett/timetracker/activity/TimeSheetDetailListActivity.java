@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
@@ -31,15 +32,13 @@ import de.k3b.common.ItemWithRowId;
 import de.k3b.util.DateTimeUtil;
 
 /**
- * Detail report grouped by date with optional date-filter
+ * Detail report grouped by date with optional date-category-note-filter.<br/>
+ * Called by main activity PunchInPunchOutActivity or by Drill-Down-Report from
+ * elsewhere with context daterange and/or category.
+ * 
  */
-public class TimeSheetDetailListActivity extends BaseReportListActivity implements
-		IReportInterface, ICategorySetter {
-	/**
-	 * Used to transfer optional filter between parent activity and this.
-	 */
-	private static final String SAVED_REPORT_RANGE_FILTER_BUNDLE_NAME = "DetailReportFilter";
-
+public class TimeSheetDetailListActivity extends BaseReportListActivity
+		implements IReportInterface, ICategorySetter {
 	// menu ids
 	private static final int EDIT_MENU_ID = Menu.FIRST;
 	private static final int DELETE_MENU_ID = Menu.FIRST + 1;
@@ -65,12 +64,6 @@ public class TimeSheetDetailListActivity extends BaseReportListActivity implemen
 	private boolean showNotes = true;
 
 	/**
-	 * If null do not save changed filter. Else name where current filter should
-	 * be persisted to.
-	 */
-	private String currentBundelPersistRangeFilterName;
-
-	/**
 	 * Used in options-menue for context sensitive delete
 	 */
 	private TimeSliceFilterParameter currentSelectedListItemRangeFilterUsedForMenu = null;
@@ -84,29 +77,36 @@ public class TimeSheetDetailListActivity extends BaseReportListActivity implemen
 	 *            needed to start this activity from parent activity.
 	 * @param filter
 	 *            customized filter that can be discarded after finish.
+	 * @param idOnOkResultCode
+	 * @param profileName
+	 *            where the content should be saved/restored in bundle
 	 */
 	public static void showActivity(final Context context,
-			final TimeSliceFilterParameter filter) {
+			final TimeSliceFilterParameter filter, final int idOnOkResultCode) {
 		if (Global.isDebugEnabled()) {
-			Log.d(Global.LOG_CONTEXT,
-					context.getClass().getSimpleName()
-							+ " > TimeSheetDetailListActivity.showActivity("
-							+ TimeSheetDetailListActivity.SAVED_REPORT_RANGE_FILTER_BUNDLE_NAME
-							+ ") = '" + filter + "'");
+			Log.d(Global.LOG_CONTEXT, context.getClass().getSimpleName()
+					+ " > TimeSheetDetailListActivity.showActivity("
+					+ Global.EXTRA_FILTER + ") = '" + filter + "'");
 		}
 
 		final Intent intent = new Intent().setClass(context,
 				TimeSheetDetailListActivity.class);
 
-		intent.putExtra(
-				TimeSheetDetailListActivity.SAVED_REPORT_RANGE_FILTER_BUNDLE_NAME,
-				filter);
-		context.startActivity(intent);
+		intent.putExtra(Global.EXTRA_FILTER, filter);
+		intent.putExtra(Global.EXTRA_RESULTID, idOnOkResultCode);
+
+		if (idOnOkResultCode != 0) {
+			((Activity) context).startActivityForResult(intent,
+					idOnOkResultCode);
+		} else {
+			context.startActivity(intent);
+		}
 	}
 
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		this.resultRangeFilter = null;
 		this.setContentView(R.layout.time_slice_list);
 		this.registerForContextMenu(this.getListView());
 
@@ -114,9 +114,11 @@ public class TimeSheetDetailListActivity extends BaseReportListActivity implemen
 				Settings.isPublicDatabase());
 
 		final Intent intent = this.getIntent();
+
 		final TimeSliceFilterParameter rangeFilter = (TimeSliceFilterParameter) intent
-				.getExtras()
-				.get(TimeSheetDetailListActivity.SAVED_REPORT_RANGE_FILTER_BUNDLE_NAME);
+				.getExtras().get(Global.EXTRA_FILTER);
+		this.idOnOkResultCode = intent.getExtras()
+				.getInt(Global.EXTRA_RESULTID);
 		if (rangeFilter == null) {
 			if (Global.isDebugEnabled()) {
 				Log.d(Global.LOG_CONTEXT,
@@ -124,11 +126,9 @@ public class TimeSheetDetailListActivity extends BaseReportListActivity implemen
 			}
 
 			// not created with parameter so restore last instance value
-			this.currentRangeFilter = BaseReportListActivity.getLastFilter(this,
-					savedInstanceState,
-					this.currentBundelPersistRangeFilterName,
+			this.currentRangeFilter = BaseReportListActivity.getLastFilter(
+					this, savedInstanceState, Global.EXTRA_FILTER,
 					this.currentRangeFilter);
-			this.currentBundelPersistRangeFilterName = TimeSheetDetailListActivity.SAVED_REPORT_RANGE_FILTER_BUNDLE_NAME; // must
 		} else {
 			if (Global.isDebugEnabled()) {
 				Log.d(Global.LOG_CONTEXT,
@@ -136,36 +136,10 @@ public class TimeSheetDetailListActivity extends BaseReportListActivity implemen
 								+ rangeFilter);
 			}
 			this.currentRangeFilter = rangeFilter;
-			this.currentBundelPersistRangeFilterName = null; // can be discarded
 		}
 
 		this.setDefaultsToFilterDatesIfNeccesary(this.currentRangeFilter);
 		this.loadDataIntoReport(0);
-	}
-
-	@Override
-	protected void onSaveInstanceState(final Bundle outState) {
-		if (Global.isDebugEnabled()) {
-			Log.d(Global.LOG_CONTEXT,
-					"TimeSheetDetailListActivity.onSaveInstanceState("
-							+ this.currentBundelPersistRangeFilterName + ")");
-		}
-
-		if (this.currentBundelPersistRangeFilterName != null) {
-
-			// filter must be saved
-			this.setLastFilter(outState,
-					this.currentBundelPersistRangeFilterName,
-					this.currentRangeFilter);
-		} else {
-			// current filter should be discarded. Restore previous filter
-			this.currentRangeFilter = BaseReportListActivity
-					.getLastFilter(
-							this,
-							outState,
-							TimeSheetDetailListActivity.SAVED_REPORT_RANGE_FILTER_BUNDLE_NAME,
-							this.currentRangeFilter);
-		}
 	}
 
 	@Override
@@ -293,6 +267,7 @@ public class TimeSheetDetailListActivity extends BaseReportListActivity implemen
 	}
 
 	private CategoryEditDialog edit = null;
+	private TimeSliceFilterParameter resultRangeFilter = null;
 
 	/**
 	 * Result from edit dialog
@@ -485,6 +460,12 @@ public class TimeSheetDetailListActivity extends BaseReportListActivity implemen
 				// after filter change: remeber new filter
 				this.currentRangeFilter = super.onActivityResult(intent,
 						this.currentRangeFilter);
+
+				this.resultRangeFilter = this.currentRangeFilter;
+				final Intent intent2 = new Intent();
+				intent2.putExtra(Global.EXTRA_FILTER, this.resultRangeFilter);
+				this.setResult(this.idOnOkResultCode, intent2);
+
 			}
 
 			this.loadDataIntoReport(0);
@@ -502,5 +483,4 @@ public class TimeSheetDetailListActivity extends BaseReportListActivity implemen
 		return String.format(this.getString(R.string.default_mail_ts_subject),
 				appName);
 	}
-
 }

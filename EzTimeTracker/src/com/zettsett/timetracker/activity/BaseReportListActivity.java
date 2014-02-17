@@ -1,9 +1,6 @@
 package com.zettsett.timetracker.activity;
 
 import java.io.Serializable;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 import android.app.ListActivity;
@@ -17,7 +14,6 @@ import android.view.SubMenu;
 import com.zetter.androidTime.R;
 import com.zettsett.timetracker.EmailUtilities;
 import com.zettsett.timetracker.Global;
-import com.zettsett.timetracker.model.TimeSlice;
 import com.zettsett.timetracker.report.ReportOutput;
 import com.zettsett.timetracker.report.ReprtExportEngine;
 
@@ -35,6 +31,8 @@ abstract class BaseReportListActivity extends ListActivity {
 	 */
 	protected TimeSliceFilterParameter currentRangeFilter;
 
+	protected int idOnOkResultCode = 0;
+
 	private ReportDateGrouping reportDateGrouping = ReportDateGrouping.DAILY;
 
 	/**
@@ -42,28 +40,8 @@ abstract class BaseReportListActivity extends ListActivity {
 	 */
 	protected BaseReportListActivity setDefaultsToFilterDatesIfNeccesary(
 			final TimeSliceFilterParameter filter) {
-		this.currentRangeFilter = (filter != null) ? filter
-				: new TimeSliceFilterParameter();
-
-		final Date currDate = new Date();
-
-		if (this.currentRangeFilter.getStartTime() == TimeSlice.NO_TIME_VALUE) {
-			// start = now-2months
-			final Calendar calendar = new GregorianCalendar();
-			calendar.setTime(currDate);
-			calendar.add(Calendar.MONTH, -2);
-			final long startTime = calendar.getTimeInMillis();
-			this.currentRangeFilter.setStartTime(startTime);
-		}
-
-		if (this.currentRangeFilter.getEndTime() == TimeSlice.NO_TIME_VALUE) {
-			// end = now+1week
-			final Calendar calendar = new GregorianCalendar();
-			calendar.setTime(currDate);
-			calendar.add(Calendar.WEEK_OF_YEAR, 1);
-			final long endTime = calendar.getTimeInMillis();
-			this.currentRangeFilter.setEndTime(endTime);
-		}
+		this.currentRangeFilter = TimeSliceFilterParameter
+				.filterWithDefaultsIfNeccessary(this.currentRangeFilter);
 		return this;
 	}
 

@@ -1,6 +1,9 @@
 package com.zettsett.timetracker.activity;
 
 import java.io.Serializable;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Locale;
 
 import com.zettsett.timetracker.DateTimeFormatter;
@@ -38,7 +41,8 @@ public class TimeSliceFilterParameter implements Serializable, ITimeSliceFilter 
 		return this;
 	}
 
-	public TimeSliceFilterParameter setParameter(final TimeSliceFilterParameter source) {
+	public TimeSliceFilterParameter setParameter(
+			final TimeSliceFilterParameter source) {
 		if (source != null) {
 			return this.setParameter((ITimeSliceFilter) source)
 					.setIgnoreDates(source.isIgnoreDates())
@@ -147,6 +151,36 @@ public class TimeSliceFilterParameter implements Serializable, ITimeSliceFilter 
 		}
 
 		return result.toString();
+	}
+
+	/**
+	 * creates filter if null. Fixes start/end to meaningfull defaults if empty.
+	 */
+	public static TimeSliceFilterParameter filterWithDefaultsIfNeccessary(
+			final TimeSliceFilterParameter filter) {
+		final TimeSliceFilterParameter currentRangeFilter = (filter != null) ? filter
+				: new TimeSliceFilterParameter();
+
+		final Date currDate = new Date();
+
+		if (currentRangeFilter.getStartTime() == TimeSlice.NO_TIME_VALUE) {
+			// start = now-2months
+			final Calendar calendar = new GregorianCalendar();
+			calendar.setTime(currDate);
+			calendar.add(Calendar.MONTH, -2);
+			final long startTime = calendar.getTimeInMillis();
+			currentRangeFilter.setStartTime(startTime);
+		}
+
+		if (currentRangeFilter.getEndTime() == TimeSlice.NO_TIME_VALUE) {
+			// end = now+1week
+			final Calendar calendar = new GregorianCalendar();
+			calendar.setTime(currDate);
+			calendar.add(Calendar.WEEK_OF_YEAR, 1);
+			final long endTime = calendar.getTimeInMillis();
+			currentRangeFilter.setEndTime(endTime);
+		}
+		return currentRangeFilter;
 	}
 
 }

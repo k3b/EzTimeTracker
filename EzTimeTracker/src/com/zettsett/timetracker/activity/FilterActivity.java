@@ -71,17 +71,17 @@ public abstract class FilterActivity extends Activity {
 
 	// context infos
 	private final int idOnOkResultCode;
-	private final int idCmdOk;
-	private final int idCaption;
+	private final int textIdCmdOk;
+	private final int textIdCaption;
 
 	private ArrayAdapter<TimeSliceCategory> allCategoriesAdapter;
 
 	protected TimeSliceFilterParameter filter = null;
 
-	public FilterActivity(final int idCaption, final int idCmdOk,
+	public FilterActivity(final int textIdCaption, final int textIdCmdOk,
 			final int idOnOkResultCode) {
-		this.idCaption = idCaption;
-		this.idCmdOk = idCmdOk;
+		this.textIdCaption = textIdCaption;
+		this.textIdCmdOk = textIdCmdOk;
 		this.idOnOkResultCode = idOnOkResultCode;
 	}
 
@@ -94,7 +94,7 @@ public abstract class FilterActivity extends Activity {
 		FilterActivity.DB.initialize(this, Settings.isPublicDatabase());
 
 		this.setContentView(R.layout.time_slice_filter);
-		this.setTitle(this.idCaption);
+		this.setTitle(this.textIdCaption);
 
 		this.defineButtons();
 
@@ -169,7 +169,7 @@ public abstract class FilterActivity extends Activity {
 
 	private void defineButtons() {
 		final Button okButton = (Button) this.findViewById(R.id.cmd_delete);
-		okButton.setText(this.idCmdOk);
+		okButton.setText(this.textIdCmdOk);
 		okButton.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(final View v) {
@@ -291,14 +291,18 @@ public abstract class FilterActivity extends Activity {
 
 	protected void onOkCLick() {
 		this.saveForm(this.filter);
+		final Intent intent = this.getFinishIntent();
+		this.setResult(this.idOnOkResultCode, intent);
+		this.finish();
 	}
 
-	@Override
-	public void finish() {
+	/**
+	 * @return Override with result intent with extra-paramaters for the caller
+	 */
+	protected Intent getFinishIntent() {
 		final Intent intent = new Intent();
 		intent.putExtra(Global.EXTRA_FILTER, this.filter);
-		this.setResult(this.idOnOkResultCode, intent);
-		super.finish();
+		return intent;
 	}
 
 	protected TimeSliceCategory getCurrentCategory() {

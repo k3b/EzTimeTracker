@@ -72,6 +72,14 @@ public class PunchInPunchOutActivity extends Activity implements
 	private static final int EDIT_START = 2;
 	private static final int EDIT_STOP = 3;
 	private static final int SELECT_CATAGORY_ALL = 4;
+	private static final int SELECT_DETAIL_FILTER = 5;
+
+	/**
+	 * static to survive if activity is destroeyed but not persisted to sd
+	 * because the upper filter limit must change over time
+	 */
+	private static TimeSliceFilterParameter currentRangeFilter = TimeSliceFilterParameter
+			.filterWithDefaultsIfNeccessary(null);
 
 	private TextView elapsedTimeDisplay;
 	private EditText notesEditor;
@@ -226,17 +234,56 @@ public class PunchInPunchOutActivity extends Activity implements
 	}
 
 	private boolean startActivity(final int itemId) {
-		final Class<? extends Activity> itemHandler = this
-				.getMenuIntentHandler(itemId);
-		if (itemHandler != null) {
-			final Intent intent = new Intent().setClass(this, itemHandler);
-			intent.putExtra(
-					TimeSheetSummaryListActivity.SAVED_MENU_ID_BUNDLE_NAME,
-					itemId);
-			this.startActivity(intent);
+		switch (itemId) {
+		case R.id.details:
+			TimeSheetDetailListActivity.showActivity(this,
+					PunchInPunchOutActivity.currentRangeFilter,
+					PunchInPunchOutActivity.SELECT_DETAIL_FILTER);
 			return true;
+		default:
+			final Class<? extends Activity> itemHandler = this
+					.getActivityClassForMenu(itemId);
+			if (itemHandler != null) {
+				final Intent intent = new Intent().setClass(this, itemHandler);
+				intent.putExtra(
+						TimeSheetSummaryListActivity.SAVED_MENU_ID_BUNDLE_NAME,
+						itemId);
+				this.startActivity(intent);
+				return true;
+			}
 		}
 		return false;
+	}
+
+	/**
+	 * gets class responsible for processing menue.<br/>
+	 * 
+	 * @param itemId
+	 *            menue id to be procesed
+	 * @return
+	 */
+	private Class<? extends Activity> getActivityClassForMenu(final int itemId) {
+		switch (itemId) {
+		case R.id.details:
+			return TimeSheetDetailListActivity.class;
+		case R.id.summary_day:
+		case R.id.summary_month:
+		case R.id.summary_week:
+		case R.id.category_day:
+		case R.id.category_month:
+		case R.id.category_week:
+			return TimeSheetSummaryListActivity.class;
+		case R.id.categories:
+			return CategoryListActivity.class;
+		case R.id.export:
+			return TimeSliceExportActivity.class;
+		case R.id.remove:
+			return TimeSliceRemoveActivity.class;
+		case R.id.settings:
+			return SettingsActivity.class;
+		default:
+			return null;
+		}
 	}
 
 	private Dialog getAboutDialog() {
@@ -278,30 +325,6 @@ public class PunchInPunchOutActivity extends Activity implements
 		alert.setView(wv);
 
 		return alert.create();
-	}
-
-	private Class<? extends Activity> getMenuIntentHandler(final int item) {
-		switch (item) {
-		case R.id.details:
-			return TimeSheetDetailListActivity.class;
-		case R.id.summary_day:
-		case R.id.summary_month:
-		case R.id.summary_week:
-		case R.id.category_day:
-		case R.id.category_month:
-		case R.id.category_week:
-			return TimeSheetSummaryListActivity.class;
-		case R.id.categories:
-			return CategoryListActivity.class;
-		case R.id.export:
-			return TimeSliceExportActivity.class;
-		case R.id.remove:
-			return TimeSliceRemoveActivity.class;
-		case R.id.settings:
-			return SettingsActivity.class;
-		default:
-			return null;
-		}
 	}
 
 	private void showSelectCategoryForPunchInDialog() {
@@ -456,8 +479,8 @@ public class PunchInPunchOutActivity extends Activity implements
 
 	/**
 	 * Call back from sub-activities.<br/>
-	 * Process Change StartTime (longpress start), Select StopTime befor stop
-	 * (longpress stop)
+	 * Process Change StartTime (longpress start), Select StopTime before stop
+	 * (longpress stop) or cilter change for detailReport
 	 */
 	@Override
 	protected void onActivityResult(final int requestCode,
@@ -466,34 +489,36 @@ public class PunchInPunchOutActivity extends Activity implements
 
 		final TimeSlice updatedTimeSlice = this.getTimeSlice(intent);
 		this.sessionData = this.reloadSessionData();
-		if ((this.sessionData != null) && (updatedTimeSlice != null)) { // (requestCode
-																		// ==
-																		// EDIT_START)
-																		// ||
-																		// (requestCode
-																		// ==
-																		// EDIT_STOP))
-																		// {
 
-			final boolean punchedIn = this.sessionData.isPunchedIn();
-			if ((requestCode == PunchInPunchOutActivity.EDIT_START)
-					&& !punchedIn) {
-				this.punchInClock(updatedTimeSlice.getStartTime(),
-						updatedTimeSlice.getCategory());
+		if (this.sessionData != null) {
+			if (resultCode == PunchInPunchOutActivity.SELECT_DETAIL_FILTER) {
+				PunchInPunchOutActivity.currentRangeFilter = TimeSliceFilterParameter
+						.filterWithDefaultsIfNeccessary((TimeSliceFilterParameter) intent
+								.getExtras().get(Global.EXTRA_FILTER));
+			} else if (updatedTimeSlice != null) {
 
-			} else if ((requestCode == PunchInPunchOutActivity.EDIT_START)
-					&& punchedIn) {
-				this.sessionData.setCategory(updatedTimeSlice.getCategory())
-						.setStartTime(updatedTimeSlice.getStartTime());
-				this.saveState();
-				this.reloadGui();
-			} else if ((requestCode == PunchInPunchOutActivity.EDIT_STOP)
-					&& punchedIn) {
-				this.sessionData.setCategory(updatedTimeSlice.getCategory())
-						.setStartTime(updatedTimeSlice.getStartTime());
-				this.saveState();
-				this.reloadGui();
-				this.punchOutClock(updatedTimeSlice.getEndTime());
+				final boolean punchedIn = this.sessionData.isPunchedIn();
+				if ((requestCode == PunchInPunchOutActivity.EDIT_START)
+						&& !punchedIn) {
+					this.punchInClock(updatedTimeSlice.getStartTime(),
+							updatedTimeSlice.getCategory());
+
+				} else if ((requestCode == PunchInPunchOutActivity.EDIT_START)
+						&& punchedIn) {
+					this.sessionData
+							.setCategory(updatedTimeSlice.getCategory())
+							.setStartTime(updatedTimeSlice.getStartTime());
+					this.saveState();
+					this.reloadGui();
+				} else if ((requestCode == PunchInPunchOutActivity.EDIT_STOP)
+						&& punchedIn) {
+					this.sessionData
+							.setCategory(updatedTimeSlice.getCategory())
+							.setStartTime(updatedTimeSlice.getStartTime());
+					this.saveState();
+					this.reloadGui();
+					this.punchOutClock(updatedTimeSlice.getEndTime());
+				}
 			}
 		}
 	}

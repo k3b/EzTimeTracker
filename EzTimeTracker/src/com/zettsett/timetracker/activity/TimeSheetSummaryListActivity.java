@@ -28,8 +28,8 @@ import com.zettsett.timetracker.report.IReportInterface;
 
 import de.k3b.util.DateTimeUtil;
 
-public class TimeSheetSummaryListActivity extends BaseReportListActivity implements
-		IReportInterface, ICategorySetter {
+public class TimeSheetSummaryListActivity extends BaseReportListActivity
+		implements IReportInterface, ICategorySetter {
 	/**
 	 * Used to transfer optional report-type from parent activity to this.
 	 */
@@ -53,6 +53,11 @@ public class TimeSheetSummaryListActivity extends BaseReportListActivity impleme
 	private static final int MENU_ITEM_EDIT_CATEGORY = Menu.FIRST + 6;
 
 	private static final int DELETE_MENU_ID = Menu.FIRST + 20;
+
+	/**
+	 * current range filter used to fill report.<br/>
+	 */
+	private static TimeSliceFilterParameter lastRangeFilter;
 
 	// dependent services
 	private final TimeSliceRepository timeSliceRepository = new TimeSliceRepository(
@@ -81,8 +86,8 @@ public class TimeSheetSummaryListActivity extends BaseReportListActivity impleme
 						this,
 						savedInstanceState,
 						TimeSheetSummaryListActivity.SAVED_REPORT_RANGE_FILTER_BUNDLE_NAME,
-						this.currentRangeFilter);
-
+						TimeSheetSummaryListActivity.lastRangeFilter);
+		TimeSheetSummaryListActivity.lastRangeFilter = this.currentRangeFilter;
 		this.setDefaultsToFilterDatesIfNeccesary(this.currentRangeFilter);
 
 		if (savedInstanceState != null) {
@@ -236,7 +241,7 @@ public class TimeSheetSummaryListActivity extends BaseReportListActivity impleme
 	private void showDetailReport() {
 		if (this.currentSelectedListItemRangeFilterUsedForMenu != null) {
 			TimeSheetDetailListActivity.showActivity(this,
-					this.currentSelectedListItemRangeFilterUsedForMenu);
+					this.currentSelectedListItemRangeFilterUsedForMenu, 0);
 		}
 	}
 
@@ -384,6 +389,8 @@ public class TimeSheetSummaryListActivity extends BaseReportListActivity impleme
 
 	@Override
 	protected List<Object> loadData() {
+		TimeSheetSummaryListActivity.lastRangeFilter = this.currentRangeFilter;
+
 		final long performanceMeasureStart = System.currentTimeMillis();
 
 		final TimeSliceFilterParameter rangeFilter = this.currentRangeFilter;
@@ -415,8 +422,8 @@ public class TimeSheetSummaryListActivity extends BaseReportListActivity impleme
 		final int newSelection = this.convertLastSelection(this.getListView(),
 				listItems);
 
-		this.setListAdapter(new TimeSheetReportAdapter(this, listItems,
-				this.getReportDateGrouping()));
+		this.setListAdapter(new TimeSheetReportAdapter(this, listItems, this
+				.getReportDateGrouping()));
 		if (Global.isInfoEnabled()) {
 			Log.i(Global.LOG_CONTEXT,
 					"Create adapter:"
