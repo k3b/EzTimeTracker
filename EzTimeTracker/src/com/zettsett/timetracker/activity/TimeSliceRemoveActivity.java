@@ -34,19 +34,26 @@ public class TimeSliceRemoveActivity extends FilterActivity {
 	}
 
 	private void doRemove() {
-		final int itemsDeleted = TimeSliceRepository
-				.delete(this.filter);
+		final int itemsDeleted = TimeSliceRepository.delete(this.filter);
 		final String message = this
 				.getStatusMessage(R.string.format_message_interval_deleted)
 				+ itemsDeleted;
 		Toast.makeText(this.getApplicationContext(), message, Toast.LENGTH_LONG)
 				.show();
-		this.finish();
+
+		final Intent resultIntent = new Intent();
+		resultIntent.putExtra(Global.EXTRA_FILTER,
+				TimeSliceRemoveActivity.this.filter);
+		this.setResult(Activity.RESULT_OK, resultIntent);
+		super.onOkCLick();
 	}
 
+	/**
+	 * After pessing "Ok i want to delete this item" ask "are you shure?" via
+	 * popup
+	 */
 	@Override
 	protected void onOkCLick() {
-		super.onOkCLick();
 		final int count = TimeSliceRepository.getCount(this.filter);
 
 		if (count <= 0) {
@@ -72,14 +79,6 @@ public class TimeSliceRemoveActivity extends FilterActivity {
 										final DialogInterface dialog,
 										final int id) {
 									TimeSliceRemoveActivity.this.doRemove();
-
-									final Intent resultIntent = new Intent();
-									resultIntent
-											.putExtra(
-													Global.EXTRA_FILTER,
-													TimeSliceRemoveActivity.this.filter);
-									TimeSliceRemoveActivity.this.setResult(
-											Activity.RESULT_OK, resultIntent);
 								}
 							})
 					.setNegativeButton(R.string.btn_no,
@@ -95,5 +94,6 @@ public class TimeSliceRemoveActivity extends FilterActivity {
 			final AlertDialog alert = builder.create();
 			alert.show();
 		}
+
 	}
 }

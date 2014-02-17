@@ -445,30 +445,35 @@ public class TimeSheetDetailListActivity extends BaseReportListActivity
 	protected void onActivityResult(final int requestCode,
 			final int resultCode, final Intent intent) {
 		super.onActivityResult(requestCode, resultCode, intent);
-		if (intent != null) {
-			final TimeSlice updatedTimeSlice = (TimeSlice) intent.getExtras()
-					.get(Global.EXTRA_TIMESLICE);
-
-			if (updatedTimeSlice != null) {
-				// after Edit saveNew/updateExisting Timeslice
-				if (updatedTimeSlice.getRowId() == ItemWithRowId.IS_NEW_TIMESLICE) {
-					this.timeSliceRepository.create(updatedTimeSlice);
-				} else {
-					this.timeSliceRepository.update(updatedTimeSlice);
-				}
-			} else if (resultCode == ReportFilterActivity.RESULT_FILTER_CHANGED) {
-				// after filter change: remeber new filter
-				this.currentRangeFilter = super.onActivityResult(intent,
-						this.currentRangeFilter);
-
-				this.resultRangeFilter = this.currentRangeFilter;
-				final Intent intent2 = new Intent();
-				intent2.putExtra(Global.EXTRA_FILTER, this.resultRangeFilter);
-				this.setResult(this.idOnOkResultCode, intent2);
-
-			}
-
+		if (resultCode == TimeSliceRemoveActivity.RESULT_DELETE_OK) {
 			this.loadDataIntoReport(0);
+		} else {
+			if (intent != null) {
+				final TimeSlice updatedTimeSlice = (TimeSlice) intent
+						.getExtras().get(Global.EXTRA_TIMESLICE);
+
+				if (updatedTimeSlice != null) {
+					// after Edit saveNew/updateExisting Timeslice
+					if (updatedTimeSlice.getRowId() == ItemWithRowId.IS_NEW_TIMESLICE) {
+						this.timeSliceRepository.create(updatedTimeSlice);
+					} else {
+						this.timeSliceRepository.update(updatedTimeSlice);
+					}
+				} else if (resultCode == ReportFilterActivity.RESULT_FILTER_CHANGED) {
+					// after filter change: remeber new filter
+					this.currentRangeFilter = super.onActivityResult(intent,
+							this.currentRangeFilter);
+
+					this.resultRangeFilter = this.currentRangeFilter;
+					final Intent intent2 = new Intent();
+					intent2.putExtra(Global.EXTRA_FILTER,
+							this.resultRangeFilter);
+					this.setResult(this.idOnOkResultCode, intent2);
+
+				}
+
+				this.loadDataIntoReport(0);
+			}
 		}
 	}
 
