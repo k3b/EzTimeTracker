@@ -33,18 +33,33 @@ public class ReportItemFormatter {
 	}
 
 	public String getValueGeneric(final Object obj) {
-		if (obj.getClass().isAssignableFrom(TimeSlice.class)) {
-			return this.getValue((TimeSlice) obj);
-		} else if (obj.getClass().isAssignableFrom(TimeSliceCategory.class)) {
-			return this.getValue((TimeSliceCategory) obj);
-		} else if (obj.getClass().isAssignableFrom(Long.class)) {
-			return this.getValue((Long) obj);
-		} else if (obj.getClass()
-				.isAssignableFrom(ReportItemWithDuration.class)) {
-			return this.getValue((ReportItemWithDuration) obj);
-		} else {
-			return "";
+		return this.formatValue(this.getValueGenericInternal(obj));
+	}
+
+	protected String formatValue(final String obj) {
+		return obj;
+	}
+
+	protected String getValueGenericInternal(final Object obj) {
+		if (obj != null) {
+			final Class<? extends Object> objClass = obj.getClass();
+			if (objClass.isAssignableFrom(TimeSlice.class)) {
+				return this.addField(1, this.getValue((TimeSlice) obj));
+			} else if (objClass.isAssignableFrom(TimeSliceCategory.class)) {
+				return this.addField(0, this.getValue((TimeSliceCategory) obj));
+			} else if (objClass.isAssignableFrom(Long.class)) {
+				return this.addField(0, this.getValue((Long) obj));
+			} else if (objClass.isAssignableFrom(ReportItemWithDuration.class)) {
+				return this.addField(1,
+						this.getValue((ReportItemWithDuration) obj));
+			}
 		}
+		return "";
+	}
+
+	private String addField(final int level, final String value) {
+		// TODO Auto-generated method stub
+		return value;
 	}
 
 	protected String getValue(final long obj) {

@@ -58,12 +58,6 @@ public class TimeSheetDetailListActivity extends BaseReportListActivity
 	private long lastSelectedDateUsedForAddMenu;
 
 	/**
-	 * if reportitems should be generated with timeslice-notes or not.<br>
-	 * Toggeld via option-menu
-	 */
-	private boolean showNotes = true;
-
-	/**
 	 * Used in options-menue for context sensitive delete
 	 */
 	private TimeSliceFilterParameter currentSelectedListItemRangeFilterUsedForMenu = null;

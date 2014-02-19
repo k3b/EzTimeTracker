@@ -12,8 +12,8 @@ import android.view.MenuItem;
 import android.view.SubMenu;
 
 import com.zetter.androidTime.R;
-import com.zettsett.timetracker.EmailUtilities;
 import com.zettsett.timetracker.Global;
+import com.zettsett.timetracker.SendUtilities;
 import com.zettsett.timetracker.report.ReportOutput;
 import com.zettsett.timetracker.report.ReprtExportEngine;
 
@@ -22,7 +22,7 @@ import com.zettsett.timetracker.report.ReprtExportEngine;
  */
 abstract class BaseReportListActivity extends ListActivity {
 	private static final int MENU_ITEM_EXPORT_SD = Menu.FIRST + 12;
-	private static final int MENU_ITEM_EXPORT_EMAIL = Menu.FIRST + 13;
+	private static final int MENU_ITEM_EXPORT_SEND = Menu.FIRST + 13;
 	private static final int MENU_ITEM_SET_FILTER = Menu.FIRST + 21;
 
 	// current state
@@ -34,6 +34,12 @@ abstract class BaseReportListActivity extends ListActivity {
 	protected int idOnOkResultCode = 0;
 
 	private ReportDateGrouping reportDateGrouping = ReportDateGrouping.DAILY;
+
+	/**
+	 * if reportitems should be generated with timeslice-notes or not.<br>
+	 * Toggeld via option-menu
+	 */
+	protected boolean showNotes = true;
 
 	/**
 	 * creates filter if null. Fixes start/end to meaningfull defaults if empty.
@@ -55,9 +61,8 @@ abstract class BaseReportListActivity extends ListActivity {
 				R.string.menu_export_report);
 		exportMenu.add(Menu.NONE, BaseReportListActivity.MENU_ITEM_EXPORT_SD,
 				1, R.string.menu_export_report_to_sd_card);
-		exportMenu.add(Menu.NONE,
-				BaseReportListActivity.MENU_ITEM_EXPORT_EMAIL, 2,
-				R.string.menu_email_report);
+		exportMenu.add(Menu.NONE, BaseReportListActivity.MENU_ITEM_EXPORT_SEND,
+				2, R.string.menu_send_report);
 
 		menu.add(Menu.NONE, BaseReportListActivity.MENU_ITEM_SET_FILTER, 2,
 				R.string.menu_filter);
@@ -70,29 +75,31 @@ abstract class BaseReportListActivity extends ListActivity {
 	 */
 	@Override
 	public boolean onOptionsItemSelected(final MenuItem item) {
+		ReportOutput sdFormatter = null;
 		switch (item.getItemId()) {
 		case MENU_ITEM_SET_FILTER:
 			ReportFilterActivity.showActivity(this, this.currentRangeFilter);
 			break;
 		case MENU_ITEM_EXPORT_SD:
+			sdFormatter = this.createFormatter();
 			ReprtExportEngine.exportToSD(this.getDefaultReportName(), this,
-					ReportOutput.makeFormatter(
-							this.loadData(),
-							new ReportItemFormatterEx(this, this
-									.getReportDateGrouping())));
+					sdFormatter);
 			break;
-		case MENU_ITEM_EXPORT_EMAIL:
-			final ReportOutput outPutter = ReportOutput.makeFormatter(
-					this.loadData(),
-					new ReportItemFormatterEx(this, this
-							.getReportDateGrouping()));
-			outPutter.setLineTerminator("\n");
-			EmailUtilities.send("", this.getEMailSummaryLine(), this,
-					outPutter.getOutput());
+		case MENU_ITEM_EXPORT_SEND:
+			sdFormatter = this.createFormatter();
+			sdFormatter.setLineTerminator("\n");
+			SendUtilities.send("", this.getEMailSummaryLine(), this,
+					sdFormatter.getOutput());
 			break;
 		}
 
 		return true;
+	}
+
+	private ReportOutput createFormatter() {
+		return ReportOutput.makeFormatter(this.loadData(),
+				new ReportItemFormatterEx(this, this.getReportDateGrouping(),
+						this.showNotes));
 	}
 
 	public TimeSliceFilterParameter onActivityResult(final Intent intent,

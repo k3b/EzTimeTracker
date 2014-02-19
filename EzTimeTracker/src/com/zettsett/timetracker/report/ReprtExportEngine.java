@@ -28,7 +28,7 @@ public class ReprtExportEngine {
 
 	}
 
-	private void buildSaveFileDialog() {
+	private void showSaveFileDialog() {
 		final Dialog dialog = new Dialog(this.context);
 		dialog.setContentView(R.layout.file_choose_name);
 		dialog.setTitle(R.string.choose_filename);
@@ -62,7 +62,7 @@ public class ReprtExportEngine {
 		exporter.context = context;
 		exporter.defaultName = defaultName;
 		exporter.output = output;
-		exporter.buildSaveFileDialog();
+		exporter.showSaveFileDialog();
 	}
 
 	void export(final String fileName) {

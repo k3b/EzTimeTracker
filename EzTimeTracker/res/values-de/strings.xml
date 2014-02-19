@@ -34,7 +34,7 @@
 	<string name="export_data_to_csv_file">Buchungen in CSV Datei exportieren</string>	
 	<string name="menu_export_report">Export Report</string>	
 	<string name="menu_export_report_to_sd_card">&#8230; auf Speicherkarte</string>	
-	<string name="menu_email_report">&#8230; in Email</string>	
+	<string name="menu_send_report">&#8230; senden ...</string>	
 	<string name="formatStartDate">"Start: %1$s"</string>	
 	<string name="formatEndDate">"Ende: %1$s"</string>	
 	<string name="label_report_filter">Welche Daten anzeigen?</string>	

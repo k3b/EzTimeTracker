@@ -13,13 +13,13 @@ import com.zettsett.timetracker.model.TimeSliceCategory;
 public class ReportItemFormatterEx extends ReportItemFormatter {
 
 	private static final String DETAIL_PREFIX = "\t";
-	private boolean showNotes;
+	private final boolean showNotes;
 	private String lineTerminator = "\r\n";
 
 	public ReportItemFormatterEx(final Context context,
-			final ReportDateGrouping reportDateGrouping) {
+			final ReportDateGrouping reportDateGrouping, final boolean showNotes) {
 		super(context, reportDateGrouping);
-		// TODO Auto-generated constructor stub
+		this.showNotes = showNotes;
 	}
 
 	@Override
@@ -27,8 +27,9 @@ public class ReportItemFormatterEx extends ReportItemFormatter {
 		final boolean showNotes = (this.showNotes && (obj.getNotes() != null) && (obj
 				.getNotes().length() > 0));
 
-		final String notes = (showNotes) ? (obj.getNotes()
-				+ this.lineTerminator + ReportItemFormatterEx.DETAIL_PREFIX + ReportItemFormatterEx.DETAIL_PREFIX)
+		final String notes = (showNotes) ? (this.lineTerminator
+				+ ReportItemFormatterEx.DETAIL_PREFIX + ReportItemFormatterEx.DETAIL_PREFIX)
+				+ (obj.getNotes())
 				: "";
 		return ReportItemFormatterEx.DETAIL_PREFIX + super.getValue(obj)
 				+ notes + this.lineTerminator;

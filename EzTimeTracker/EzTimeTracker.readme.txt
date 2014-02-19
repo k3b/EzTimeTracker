@@ -1,6 +1,11 @@
 
 todo
 
+	export
+		neu as csv (auch import zb git history?)
+v		as text auch mit notes
+v		sendTo anstelle von email
+
 	multi-selection display for report with actions: change category, delete, merge, sort by date/category for detailreport
 	multi-selection display for category with actions: delete,merge
 

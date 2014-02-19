@@ -34,7 +34,7 @@
 	<string name="export_data_to_csv_file">Export Data to CSV File</string>	
 	<string name="menu_export_report">Export Report</string>	
 	<string name="menu_export_report_to_sd_card">Export Report to SD Card</string>	
-	<string name="menu_email_report">Email Report</string>	
+	<string name="menu_send_report">Send Report...</string>	
 	<string name="formatStartDate">"Start: %1$s"</string>	
 	<string name="category_usage_format">"%1$d Entries %2$d Hours"</string>
 	<string name="formatEndDate">"End: %1$s"</string>	

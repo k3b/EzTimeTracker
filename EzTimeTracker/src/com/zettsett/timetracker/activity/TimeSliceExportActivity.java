@@ -21,7 +21,7 @@ import com.googlecode.android.widgets.DateSlider.DateSlider;
 import com.googlecode.android.widgets.DateSlider.DefaultDateSlider;
 import com.zetter.androidTime.R;
 import com.zettsett.timetracker.DateTimeFormatter;
-import com.zettsett.timetracker.EmailUtilities;
+import com.zettsett.timetracker.SendUtilities;
 import com.zettsett.timetracker.FileUtilities;
 import com.zettsett.timetracker.Settings;
 import com.zettsett.timetracker.database.TimeSliceRepository;
@@ -218,7 +218,7 @@ public class TimeSliceExportActivity extends Activity implements
 			final String subject = String.format(
 					this.getString(R.string.export_email_subject), appName);
 
-			EmailUtilities.send("", subject, this, output.toString());
+			SendUtilities.send("", subject, this, output.toString());
 		} else {
 			final FileUtilities fileUtil = new FileUtilities(this);
 			fileUtil.write(this.getFilenameEditText().getText().toString(),
