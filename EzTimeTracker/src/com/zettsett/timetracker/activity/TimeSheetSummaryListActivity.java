@@ -19,7 +19,7 @@ import com.zetter.androidTime.R;
 import com.zettsett.timetracker.DateTimeFormatter;
 import com.zettsett.timetracker.Global;
 import com.zettsett.timetracker.Settings;
-import com.zettsett.timetracker.activity.TimeSheetSummaryCalculator2.ReportModes;
+import com.zettsett.timetracker.activity.TimeSheetStatisticsCalculator.ReportModes;
 import com.zettsett.timetracker.database.TimeSliceCategoryRepsitory;
 import com.zettsett.timetracker.database.TimeSliceRepository;
 import com.zettsett.timetracker.model.TimeSlice;
@@ -28,13 +28,16 @@ import com.zettsett.timetracker.report.IReportInterface;
 
 import de.k3b.util.DateTimeUtil;
 
+/**
+ * List Activity with summary report items: cumulated durations by category or
+ * date.
+ */
 public class TimeSheetSummaryListActivity extends BaseReportListActivity
 		implements IReportInterface, ICategorySetter {
 	/**
 	 * Used to transfer optional report-type from parent activity to this.
 	 */
 	public static final String SAVED_MENU_ID_BUNDLE_NAME = "SAVED_MENU_ID_BUNDLE_NAME";
-
 	private static final String SAVED_REPORT_GROUPING_BUNDLE_NAME = "reportDateGrouping";
 
 	/**
@@ -45,6 +48,7 @@ public class TimeSheetSummaryListActivity extends BaseReportListActivity
 
 	/**
 	 * current range filter used to fill report.<br/>
+	 * static to remeber value from last use.
 	 */
 	private static TimeSliceFilterParameter lastRangeFilter;
 
@@ -56,7 +60,7 @@ public class TimeSheetSummaryListActivity extends BaseReportListActivity
 			this);
 
 	// current state
-	private ReportModes reportMode = ReportModes.BY_DATE;
+	private ReportModes reportMode = ReportModes.BY_DATE_AND_CATEGORY;
 
 	/**
 	 * Used in options-menue for context sensitive DrillDownMenue
@@ -133,7 +137,7 @@ public class TimeSheetSummaryListActivity extends BaseReportListActivity
 
 		menu.findItem(R.id.menu_grouping_category)
 				.setTitle(
-						(this.reportMode == ReportModes.BY_DATE) ? R.string.menu_switch_to_category_headers
+						(this.reportMode == ReportModes.BY_DATE_AND_CATEGORY) ? R.string.menu_switch_to_category_headers
 								: R.string.menu_switch_to_date_headers);
 		return result;
 	}
@@ -159,10 +163,10 @@ public class TimeSheetSummaryListActivity extends BaseReportListActivity
 			break;
 
 		case R.id.menu_grouping_category:
-			if (this.reportMode == ReportModes.BY_CATEGORY) {
-				this.reportMode = ReportModes.BY_DATE;
+			if (this.reportMode == ReportModes.BY_CATEGORY_AND_DATE) {
+				this.reportMode = ReportModes.BY_DATE_AND_CATEGORY;
 			} else {
-				this.reportMode = ReportModes.BY_CATEGORY;
+				this.reportMode = ReportModes.BY_CATEGORY_AND_DATE;
 			}
 			this.loadDataIntoReport(0);
 			break;
@@ -199,8 +203,8 @@ public class TimeSheetSummaryListActivity extends BaseReportListActivity
 
 	private Object getItemAtPosition(final int position) {
 		final Object item = this.getListView().getItemAtPosition(position);
-		if (item.getClass().isAssignableFrom(ReportItemWithDuration.class)) {
-			return ((ReportItemWithDuration) item).getSubKey();
+		if (item.getClass().isAssignableFrom(ReportItemWithStatistics.class)) {
+			return ((ReportItemWithStatistics) item).getGroupingKey();
 		}
 		return item;
 	}
@@ -275,19 +279,19 @@ public class TimeSheetSummaryListActivity extends BaseReportListActivity
 			if (category != null) {
 				filter = this.createDrillDownFilter().setCategoryId(
 						category.getRowId());
-				if (this.reportMode == ReportModes.BY_DATE) {
+				if (this.reportMode == ReportModes.BY_DATE_AND_CATEGORY) {
 					int pos = position;
 					while (--pos >= 0) {
 						final Long date = this.getLong(pos);
 						if (date != null) {
-							context = "ReportModes.BY_DATE currentSelectedCategory + super date";
+							context = "ReportModes.BY_DATE_AND_CATEGORY currentSelectedCategory + super date";
 							return this.setFilterDate(filter,
 									this.getReportDateGrouping(), date);
 						}
 					}
-					context = "ReportModes.BY_DATE currentSelectedCategory. no super date";
+					context = "ReportModes.BY_DATE_AND_CATEGORY currentSelectedCategory. no super date";
 				} else {
-					context = "ReportModes.BY_CATEGORY currentSelectedCategory";
+					context = "ReportModes.BY_CATEGORY_AND_DATE currentSelectedCategory";
 				}
 
 				return filter.setIgnoreDates(true);
@@ -296,19 +300,19 @@ public class TimeSheetSummaryListActivity extends BaseReportListActivity
 				if (date != null) {
 					filter = this.setFilterDate(this.createDrillDownFilter(),
 							this.getReportDateGrouping(), date);
-					if (this.reportMode == ReportModes.BY_CATEGORY) {
+					if (this.reportMode == ReportModes.BY_CATEGORY_AND_DATE) {
 						int pos = position;
 						while (--pos >= 0) {
 							category = this.getTimeSliceCategory(pos);
 							if (category != null) {
-								context = "ReportModes.BY_CATEGORY date + super currentSelectedCategory";
+								context = "ReportModes.BY_CATEGORY_AND_DATE date + super currentSelectedCategory";
 								return filter
 										.setCategoryId(category.getRowId());
 							}
 						}
-						context = "ReportModes.BY_CATEGORY date. no super currentSelectedCategory";
+						context = "ReportModes.BY_CATEGORY_AND_DATE date. no super currentSelectedCategory";
 					} else {
-						context = "ReportModes.BY_DATE date";
+						context = "ReportModes.BY_DATE_AND_CATEGORY date";
 					}
 					return filter;
 				}
@@ -382,9 +386,9 @@ public class TimeSheetSummaryListActivity extends BaseReportListActivity
 		final List<TimeSlice> timeSlices = this.timeSliceRepository
 				.fetchList(rangeFilter);
 
-		final List<Object> listItems = TimeSheetSummaryCalculator2.loadData(
-				this.reportMode, this.getReportDateGrouping(), timeSlices,
-				this.showNotes);
+		final List<Object> listItems = TimeSheetStatisticsCalculator
+				.createStatistics(timeSlices, this.reportMode,
+						this.getReportDateGrouping(), this.showNotes);
 
 		if (Global.isInfoEnabled()) {
 			Log.i(Global.LOG_CONTEXT,
@@ -439,27 +443,27 @@ public class TimeSheetSummaryListActivity extends BaseReportListActivity
 		switch (reportType) {
 		case R.id.summary_day:
 			this.setReportDateGrouping(ReportDateGrouping.DAILY);
-			this.reportMode = ReportModes.BY_DATE;
+			this.reportMode = ReportModes.BY_DATE_AND_CATEGORY;
 			break;
 		case R.id.summary_month:
 			this.setReportDateGrouping(ReportDateGrouping.MONTHLY);
-			this.reportMode = ReportModes.BY_DATE;
+			this.reportMode = ReportModes.BY_DATE_AND_CATEGORY;
 			break;
 		case R.id.summary_week:
 			this.setReportDateGrouping(ReportDateGrouping.WEEKLY);
-			this.reportMode = ReportModes.BY_DATE;
+			this.reportMode = ReportModes.BY_DATE_AND_CATEGORY;
 			break;
 		case R.id.category_day:
 			this.setReportDateGrouping(ReportDateGrouping.DAILY);
-			this.reportMode = ReportModes.BY_CATEGORY;
+			this.reportMode = ReportModes.BY_CATEGORY_AND_DATE;
 			break;
 		case R.id.category_month:
 			this.setReportDateGrouping(ReportDateGrouping.MONTHLY);
-			this.reportMode = ReportModes.BY_CATEGORY;
+			this.reportMode = ReportModes.BY_CATEGORY_AND_DATE;
 			break;
 		case R.id.category_week:
 			this.setReportDateGrouping(ReportDateGrouping.WEEKLY);
-			this.reportMode = ReportModes.BY_CATEGORY;
+			this.reportMode = ReportModes.BY_CATEGORY_AND_DATE;
 			break;
 		}
 	}

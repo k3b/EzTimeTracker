@@ -8,7 +8,7 @@ import com.zettsett.timetracker.model.TimeSliceCategory;
 /**
  * Formats reportItems where header item is of type Long (as date) or
  * TimeSliceCategory<br />
- * and detail item is of type TimeSlice or ReportItemWithDuration.<br/>
+ * and detail item is of type TimeSlice or ReportItemWithStatistics.<br/>
  */
 public class ReportItemFormatterEx extends ReportItemFormatter {
 
@@ -35,7 +35,7 @@ public class ReportItemFormatterEx extends ReportItemFormatter {
 	}
 
 	@Override
-	protected String getValue(final ReportItemWithDuration obj) {
+	protected String getValue(final ReportItemWithStatistics obj) {
 		return ReportItemFormatterEx.DETAIL_PREFIX + super.getValue(obj)
 				+ this.lineTerminator;
 	}

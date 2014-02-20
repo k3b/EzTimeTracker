@@ -47,6 +47,9 @@ abstract class BaseReportListActivity extends ListActivity {
 		return this;
 	}
 
+	/**
+	 * creates menuitems handled by this class, that are common to all reports
+	 */
 	@Override
 	public boolean onCreateOptionsMenu(final Menu menu) {
 		super.onCreateOptionsMenu(menu);
@@ -57,7 +60,8 @@ abstract class BaseReportListActivity extends ListActivity {
 	}
 
 	/**
-	 * called by parent Report Action to append common menuitem.
+	 * update those menuitems handled by this class, that depend on current
+	 * state
 	 */
 	@Override
 	public boolean onPrepareOptionsMenu(final Menu menu) {
@@ -70,7 +74,7 @@ abstract class BaseReportListActivity extends ListActivity {
 	}
 
 	/**
-	 * called by parent Report Action to do process common menuactions.
+	 * execute commands handled by this class, that are common to all reports
 	 */
 	@Override
 	public boolean onOptionsItemSelected(final MenuItem item) {
@@ -106,6 +110,10 @@ abstract class BaseReportListActivity extends ListActivity {
 						this.showNotes));
 	}
 
+	/**
+	 * process result of commands handled by this class, that are common to all
+	 * reports
+	 */
 	public TimeSliceFilterParameter onActivityResult(final Intent intent,
 			final TimeSliceFilterParameter previosRangeFilter) {
 		TimeSliceFilterParameter newRangeFilter = (TimeSliceFilterParameter) intent

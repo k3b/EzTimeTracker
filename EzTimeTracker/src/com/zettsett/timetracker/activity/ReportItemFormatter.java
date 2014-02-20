@@ -11,7 +11,7 @@ import com.zettsett.timetracker.model.TimeSliceCategory;
 /**
  * Formats reportItems where header item is of type Long (as date) or
  * TimeSliceCategory<br />
- * and detail item is of type TimeSlice or ReportItemWithDuration.<br/>
+ * and detail item is of type TimeSlice or ReportItemWithStatistics.<br/>
  * <br/>
  * Used by TimeSheetReportAdapter and ReportExportEngie.<br/>
  */
@@ -51,9 +51,9 @@ public class ReportItemFormatter {
 				return this.addField(0, this.getValue((Long) obj));
 			} else if (objClass.isAssignableFrom(String.class)) {
 				return this.addField(0, this.getValue((String) obj));
-			} else if (objClass.isAssignableFrom(ReportItemWithDuration.class)) {
+			} else if (objClass.isAssignableFrom(ReportItemWithStatistics.class)) {
 				return this.addField(1,
-						this.getValue((ReportItemWithDuration) obj));
+						this.getValue((ReportItemWithStatistics) obj));
 			}
 		}
 		return "";
@@ -67,16 +67,16 @@ public class ReportItemFormatter {
 	protected String getValue(final long obj) {
 		String currentStartDateText;
 		if (this.reportDateGrouping == ReportDateGrouping.DAILY) {
-			currentStartDateText = TimeSheetSummaryCalculator2.dt
+			currentStartDateText = TimeSheetStatisticsCalculator.dt
 					.getLongDateStr(obj);
 		} else if (this.reportDateGrouping == ReportDateGrouping.WEEKLY) {
-			currentStartDateText = TimeSheetSummaryCalculator2.dt
+			currentStartDateText = TimeSheetStatisticsCalculator.dt
 					.getWeekStr(obj);
 		} else if (this.reportDateGrouping == ReportDateGrouping.MONTHLY) {
-			currentStartDateText = TimeSheetSummaryCalculator2.dt
+			currentStartDateText = TimeSheetStatisticsCalculator.dt
 					.getMonthStr(obj);
 		} else if (this.reportDateGrouping == ReportDateGrouping.YEARLY) {
-			currentStartDateText = TimeSheetSummaryCalculator2.dt
+			currentStartDateText = TimeSheetStatisticsCalculator.dt
 					.getYearString(obj);
 		} else {
 			throw new IllegalArgumentException("Unknown ReportDateGrouping "
@@ -97,8 +97,8 @@ public class ReportItemFormatter {
 		return obj;
 	}
 
-	protected String getValue(final ReportItemWithDuration obj) {
-		return this.getValueGeneric(obj.getSubKey()) + ": "
+	protected String getValue(final ReportItemWithStatistics obj) {
+		return this.getValueGeneric(obj.getGroupingKey()) + ": "
 				+ this.timeInMillisToText(obj.getDuration(), false);
 	}
 

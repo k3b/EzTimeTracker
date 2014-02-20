@@ -16,7 +16,7 @@ import com.zettsett.timetracker.model.TimeSliceCategory;
 
 /**
  * Contains header items of type Long as date or TimeSliceCategory<br />
- * and detail items of type TimeSlice or ReportItemWithDuration.<br/>
+ * and detail items of type TimeSlice or ReportItemWithStatistics.<br/>
  * 
  * This class was inspired by http://stackoverflow.com/questions/3825377 .<br/>
  */
@@ -58,8 +58,8 @@ public class TimeSheetReportAdapter extends ArrayAdapter<Object> {
 					convertView, parent);
 
 			this.setItemContent(itemView, item);
-		} else if (itemClass.isAssignableFrom(ReportItemWithDuration.class)) {
-			final ReportItemWithDuration reportItem = (ReportItemWithDuration) item;
+		} else if (itemClass.isAssignableFrom(ReportItemWithStatistics.class)) {
+			final ReportItemWithStatistics reportItem = (ReportItemWithStatistics) item;
 			final boolean showNotes = (this.showNotes && reportItem.hasNotes());
 
 			if (showNotes) {
