@@ -56,13 +56,13 @@
 	<string name="hoursWordN">hours</string>	
 	<string name="minutesWord1">minute</string>	
 	<string name="minutesWordN">minutes</string>	
-	<string name="menu_select_date_grouping">Date Grouping Intervall &#8230;</string>	
+	<string name="menu_select_date_grouping">Date Intervall &#8230;</string>	
 	<string name="menu_select_date_grouping_daily">Daily</string>	
 	<string name="menu_select_date_grouping_weekly">Weekly</string>	
 	<string name="menu_select_date_grouping_monthly">Monthly</string>	
 	<string name="menu_select_date_grouping_yearly">Yearky</string>	
-	<string name="menu_switch_to_category_headers">Switch to Category Headers</string>	
-	<string name="menu_switch_to_date_headers">Switch to Date Headers</string>	
+	<string name="menu_switch_to_category_headers">Category &gt; Date</string>	
+	<string name="menu_switch_to_date_headers">Date &gt; Category</string>	
 	
 	<string name="format_category">"Category: %1$s"</string>
 	<string name="delete_from_date">"Delete From Date (including):"</string>

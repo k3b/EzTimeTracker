@@ -13,8 +13,8 @@
 	<string name="export_email_subject">%1$s Buchungsexport</string>	
 	<string name="menu_text_edit">Ansicht/Bearbeiten</string>	
 	<string name="menu_report_add_new_time_interval">Neu Buchung hinzufügen</string>	
-	<string name="menu_report_include_notes">Bemerkungen einblenden</string>	
-	<string name="menu_report_exclude_notes">Bemerkungen ausblenden</string>	
+	<string name="menu_report_include_notes">mit Bemerkungen</string>	
+	<string name="menu_report_exclude_notes">ohne Bemerkungen</string>	
 	<string name="radio_button_data_export_all">Exportiere alle Buchungen</string>	
 	<string name="radio_button_data_export_range">Exportiere Buchungen von .. bis</string>	
 	<string name="checkbox_data_export_email">Exportiere in Email</string>	
@@ -56,14 +56,14 @@
 	<string name="hoursWordN">Stunden</string>	
 	<string name="minutesWord1">Minute</string>	
 	<string name="minutesWordN">Minuten</string>	
-	<string name="menu_select_date_grouping">Gruppierung Datumsintervall &#8230;</string>	
+	<string name="menu_select_date_grouping">Datumsintervall &#8230;</string>	
 	<string name="menu_select_date_grouping_daily">&#8230; nach Tag</string>	
 	<string name="menu_select_date_grouping_weekly">&#8230; nach Woche</string>	
 	<string name="menu_select_date_grouping_monthly">&#8230; nach Monat</string>	
 	<string name="menu_select_date_grouping_yearly">&#8230; nach Jahr</string>	
 	
-	<string name="menu_switch_to_category_headers">Gruppierung nach Kategorie</string>	
-	<string name="menu_switch_to_date_headers">Gruppierung nach Datum</string>
+	<string name="menu_switch_to_category_headers">Kategorie &gt; Datum</string>	
+	<string name="menu_switch_to_date_headers">Datum &gt; Kategorie</string>
 	
 	<string name="format_category">"Kategorie: %1$s"</string>
 	<string name="delete_from_date">"Löschen von:"</string>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
-    <item android:title="@string/menu_select_date_grouping">
+    <item android:title="@string/menu_select_date_grouping" >
  		<menu>
 		    <item android:id="@+id/menu_grouping_daily"  android:title="@string/menu_select_date_grouping_daily"/>
 		    <item android:id="@+id/menu_grouping_weekly"  android:title="@string/menu_select_date_grouping_weekly"/>
@@ -9,5 +9,5 @@
  		</menu>
 	</item>
     
-    <item android:id="@+id/menu_grouping_category"  android:title="@string/menu_switch_to_category_headers"/>
+    <item android:id="@+id/menu_grouping_category"  android:title="@string/menu_switch_to_category_headers"  />
 </menu>
