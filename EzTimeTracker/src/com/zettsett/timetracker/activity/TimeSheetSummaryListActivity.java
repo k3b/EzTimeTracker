@@ -64,6 +64,10 @@ public class TimeSheetSummaryListActivity extends BaseReportListActivity
 	private TimeSliceFilterParameter currentSelectedListItemRangeFilterUsedForMenu;
 	private TimeSliceCategory currentSelectedCategory;
 
+	public TimeSheetSummaryListActivity() {
+		this.showNotes = false;
+	}
+
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -403,8 +407,8 @@ public class TimeSheetSummaryListActivity extends BaseReportListActivity
 		final int newSelection = this.convertLastSelection(this.getListView(),
 				listItems);
 
-		this.setListAdapter(new TimeSheetReportAdapter(this, listItems, this
-				.getReportDateGrouping()));
+		this.setListAdapter(new TimeSheetReportAdapter(this, listItems,
+				this.showNotes, this.getReportDateGrouping()));
 		if (Global.isInfoEnabled()) {
 			Log.i(Global.LOG_CONTEXT,
 					"Create adapter:"

@@ -31,12 +31,6 @@ public class TimeSheetReportAdapter extends ArrayAdapter<Object> {
 	}
 
 	public TimeSheetReportAdapter(final Context context,
-			final List<Object> objects,
-			final ReportDateGrouping reportDateGrouping) {
-		this(context, objects, false, reportDateGrouping);
-	}
-
-	private TimeSheetReportAdapter(final Context context,
 			final List<Object> objects, final boolean showNotes,
 			final ReportDateGrouping reportDateGrouping) {
 		super(context, 0, objects);
