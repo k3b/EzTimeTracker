@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView.AdapterContextMenuInfo;
@@ -40,13 +41,6 @@ import de.k3b.util.DateTimeUtil;
 public class TimeSheetDetailListActivity extends BaseReportListActivity
 		implements IReportInterface, ICategorySetter {
 	// menu ids
-	private static final int EDIT_MENU_ID = Menu.FIRST;
-	private static final int DELETE_MENU_ID = Menu.FIRST + 1;
-	private static final int ADD_MENU_ID = Menu.FIRST + 2;
-	private static final int SHOW_NOTES_MENU_ID = Menu.FIRST + 3;
-	private static final int ID_EDIT_TIME_SLICE = Menu.FIRST + 4;
-	private static final int ID_ADD_TIME_SLICE = Menu.FIRST + 5;
-	private static final int MENU_ITEM_EDIT_CATEGORY = Menu.FIRST + 6;
 
 	// dependent services
 	private TimeSliceRepository timeSliceRepository;
@@ -137,18 +131,27 @@ public class TimeSheetDetailListActivity extends BaseReportListActivity
 	}
 
 	@Override
-	public boolean onPrepareOptionsMenu(final Menu menu) {
-		final boolean result = super.onCreateOptionsMenu(menu);
-		menu.clear();
-		this.addMenuItems(menu);
-
-		return result;
+	public boolean onCreateOptionsMenu(final Menu menu) {
+		final MenuInflater inflater = this.getMenuInflater();
+		inflater.inflate(R.menu.detailreport, menu);
+		super.onCreateOptionsMenu(menu);
+		return true;
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(final MenuItem item) {
-		this.onMenuItemSelected(item);
-		return super.onContextItemSelected(item);
+		switch (item.getItemId()) {
+		case R.id.menue_add:
+			final Calendar c = Calendar.getInstance();
+			final long now = c.getTimeInMillis();
+			final TimeSlice newSlice = new TimeSlice().setStartTime(now)
+					.setEndTime(now);
+			TimeSliceEditActivity.showTimeSliceEditActivity(this, newSlice,
+					R.id.menue_add);
+			return true;
+		default:
+			return super.onOptionsItemSelected(item);
+		}
 	}
 
 	@Override
@@ -160,24 +163,13 @@ public class TimeSheetDetailListActivity extends BaseReportListActivity
 				((AdapterContextMenuInfo) menuInfo).position);
 
 		if (tag instanceof TimeSlice) {
-			menu.add(0, TimeSheetDetailListActivity.ADD_MENU_ID, 0,
-					this.getString(R.string.menu_report_add_new_time_interval));
-			menu.add(0, TimeSheetDetailListActivity.EDIT_MENU_ID, 0,
-					this.getString(R.string.menu_text_edit));
-			menu.add(0, TimeSheetDetailListActivity.DELETE_MENU_ID, 0,
-					this.getString(R.string.cmd_delete));
-
-			menu.add(0, TimeSheetDetailListActivity.MENU_ITEM_EDIT_CATEGORY, 0,
-					this.getString(R.string.cmd_edit_category));
+			final MenuInflater inflater = this.getMenuInflater();
+			inflater.inflate(R.menu.context_timeslice, menu);
 
 			this.currentSelectedTimeSliceUsedForMenu = (TimeSlice) tag;
 			this.lastSelectedDateUsedForAddMenu = this.currentSelectedTimeSliceUsedForMenu
 					.getEndTime();
 		} else if (tag instanceof Long) {
-			menu.add(0, TimeSheetDetailListActivity.ADD_MENU_ID, 0,
-					this.getString(R.string.menu_report_add_new_time_interval));
-			menu.add(0, TimeSheetDetailListActivity.DELETE_MENU_ID, 0,
-					this.getString(R.string.cmd_delete));
 			this.currentSelectedTimeSliceUsedForMenu = null;
 			this.lastSelectedDateUsedForAddMenu = (Long) tag;
 			this.currentSelectedListItemRangeFilterUsedForMenu = this
@@ -196,33 +188,19 @@ public class TimeSheetDetailListActivity extends BaseReportListActivity
 				.setCategoryId(defaults.getCategoryId());
 	}
 
-	private void addMenuItems(final Menu menu) {
-
-		menu.add(0, TimeSheetDetailListActivity.ADD_MENU_ID, 0,
-				this.getString(R.string.menu_report_add_new_time_interval));
-		if (this.showNotes) {
-			menu.add(0, TimeSheetDetailListActivity.SHOW_NOTES_MENU_ID, 0,
-					this.getString(R.string.menu_report_exclude_notes));
-		} else {
-			menu.add(0, TimeSheetDetailListActivity.SHOW_NOTES_MENU_ID, 0,
-					this.getString(R.string.menu_report_include_notes));
-		}
-		super.onPrepareOptionsMenu(menu);
-	}
-
 	@Override
 	public boolean onContextItemSelected(final MenuItem item) {
 		switch (item.getItemId()) {
-		case EDIT_MENU_ID:
+		case R.id.menue_edit:
 			this.onCommandEditTimeSlice();
 			return true;
-		case DELETE_MENU_ID:
+		case R.id.menue_delete:
 			this.onCommandDeleteTimeSlice();
 			return true;
-		case ADD_MENU_ID:
+		case R.id.menue_add:
 			this.onCommandAddTimeSlice();
 			return true;
-		case MENU_ITEM_EDIT_CATEGORY:
+		case R.id.menue_edit_category:
 			this.onCommandEditCategory();
 			return true;
 		default:
@@ -232,8 +210,7 @@ public class TimeSheetDetailListActivity extends BaseReportListActivity
 
 	private void onCommandEditTimeSlice() {
 		TimeSliceEditActivity.showTimeSliceEditActivity(this,
-				this.currentSelectedTimeSliceUsedForMenu,
-				TimeSheetDetailListActivity.ID_EDIT_TIME_SLICE);
+				this.currentSelectedTimeSliceUsedForMenu, R.id.menue_edit);
 	}
 
 	private void onCommandDeleteTimeSlice() {
@@ -257,7 +234,7 @@ public class TimeSheetDetailListActivity extends BaseReportListActivity
 		}
 		this.edit.setCategory(this.currentSelectedTimeSliceUsedForMenu
 				.getCategory());
-		this.showDialog(TimeSheetDetailListActivity.MENU_ITEM_EDIT_CATEGORY);
+		this.showDialog(R.id.menue_edit_category);
 	}
 
 	private CategoryEditDialog edit = null;
@@ -279,7 +256,7 @@ public class TimeSheetDetailListActivity extends BaseReportListActivity
 	@Override
 	protected Dialog onCreateDialog(final int id) {
 		switch (id) {
-		case MENU_ITEM_EDIT_CATEGORY:
+		case R.id.menue_edit_category:
 			return this.edit;
 		}
 
@@ -295,30 +272,7 @@ public class TimeSheetDetailListActivity extends BaseReportListActivity
 					.getCategory());
 		}
 		TimeSliceEditActivity.showTimeSliceEditActivity(this, newSlice,
-				TimeSheetDetailListActivity.ID_ADD_TIME_SLICE);
-	}
-
-	private boolean onMenuItemSelected(final MenuItem item) {
-		switch (item.getItemId()) {
-		case ADD_MENU_ID:
-			final Calendar c = Calendar.getInstance();
-			final long now = c.getTimeInMillis();
-			final TimeSlice newSlice = new TimeSlice().setStartTime(now)
-					.setEndTime(now);
-			TimeSliceEditActivity.showTimeSliceEditActivity(this, newSlice,
-					TimeSheetDetailListActivity.ADD_MENU_ID);
-			return true;
-		case SHOW_NOTES_MENU_ID:
-			if (this.showNotes) {
-				this.showNotes = false;
-			} else {
-				this.showNotes = true;
-			}
-			this.loadDataIntoReport(0);
-			return true;
-		default:
-			return super.onOptionsItemSelected(item);
-		}
+				R.id.menue_add);
 	}
 
 	@Override

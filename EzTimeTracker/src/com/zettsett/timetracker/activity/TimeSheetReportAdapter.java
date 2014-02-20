@@ -51,29 +51,42 @@ public class TimeSheetReportAdapter extends ArrayAdapter<Object> {
 	@Override
 	public View getView(final int position, final View convertView,
 			final ViewGroup parent) {
-		final Object obj = this.getItem(position);
+		final Object item = this.getItem(position);
 
 		View itemView = convertView;
-		if (obj.getClass().isAssignableFrom(Long.class)) {
+		final Class<? extends Object> itemClass = item.getClass();
+		if (itemClass.isAssignableFrom(Long.class)) {
 			itemView = this.createItemView(R.layout.header_list_view_row,
 					convertView, parent);
-			this.setItemContent(itemView, obj);
-		} else if (obj.getClass().isAssignableFrom(TimeSliceCategory.class)) {
+			this.setItemContent(itemView, item);
+		} else if (itemClass.isAssignableFrom(TimeSliceCategory.class)) {
 			itemView = this.createItemView(R.layout.header_list_view_row,
 					convertView, parent);
 
-			this.setItemContent(itemView, obj);
-		} else if (obj.getClass()
-				.isAssignableFrom(ReportItemWithDuration.class)) {
-			itemView = this.createItemView(R.layout.name_list_view_row,
-					convertView, parent);
+			this.setItemContent(itemView, item);
+		} else if (itemClass.isAssignableFrom(ReportItemWithDuration.class)) {
+			final ReportItemWithDuration reportItem = (ReportItemWithDuration) item;
+			final boolean showNotes = (this.showNotes && reportItem.hasNotes());
 
-			this.setItemContent(itemView, obj);
-		} else if (obj.getClass().isAssignableFrom(TimeSlice.class)) {
-			final TimeSlice aSlice = (TimeSlice) obj;
-			final boolean showNotes = (this.showNotes
-					&& (aSlice.getNotes() != null) && (aSlice.getNotes()
-					.length() > 0));
+			if (showNotes) {
+				itemView = this.createItemView(
+						R.layout.name_description_list_view_row, convertView,
+						parent);
+			} else {
+				itemView = this.createItemView(R.layout.name_list_view_row,
+						convertView, parent);
+			}
+			this.setItemContent(itemView, reportItem);
+			if (showNotes) {
+				final TextView descriptionView = (TextView) itemView
+						.findViewById(R.id.description);
+				if (descriptionView != null) {
+					descriptionView.setText(reportItem.getNotes());
+				}
+			}
+		} else if (itemClass.isAssignableFrom(TimeSlice.class)) {
+			final TimeSlice aSlice = (TimeSlice) item;
+			final boolean showNotes = (this.showNotes && aSlice.hasNotes());
 
 			if (showNotes) {
 				itemView = this.createItemView(

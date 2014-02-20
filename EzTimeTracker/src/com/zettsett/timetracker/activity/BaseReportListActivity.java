@@ -8,8 +8,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.SubMenu;
 
 import com.zetter.androidTime.R;
 import com.zettsett.timetracker.Global;
@@ -21,10 +21,6 @@ import com.zettsett.timetracker.report.ReprtExportEngine;
  * Common Handling for Report-Generation and display.
  */
 abstract class BaseReportListActivity extends ListActivity {
-	private static final int MENU_ITEM_EXPORT_SD = Menu.FIRST + 12;
-	private static final int MENU_ITEM_EXPORT_SEND = Menu.FIRST + 13;
-	private static final int MENU_ITEM_SET_FILTER = Menu.FIRST + 21;
-
 	// current state
 	/**
 	 * current range filter used to fill report.<br/>
@@ -51,22 +47,25 @@ abstract class BaseReportListActivity extends ListActivity {
 		return this;
 	}
 
+	@Override
+	public boolean onCreateOptionsMenu(final Menu menu) {
+		super.onCreateOptionsMenu(menu);
+
+		final MenuInflater inflater = this.getMenuInflater();
+		inflater.inflate(R.menu.reportbase, menu);
+		return true;
+	}
+
 	/**
 	 * called by parent Report Action to append common menuitem.
 	 */
 	@Override
 	public boolean onPrepareOptionsMenu(final Menu menu) {
-		final boolean result = true;
-		final SubMenu exportMenu = menu.addSubMenu(Menu.NONE, Menu.NONE, 2,
-				R.string.menu_export_report);
-		exportMenu.add(Menu.NONE, BaseReportListActivity.MENU_ITEM_EXPORT_SD,
-				1, R.string.menu_export_report_to_sd_card);
-		exportMenu.add(Menu.NONE, BaseReportListActivity.MENU_ITEM_EXPORT_SEND,
-				2, R.string.menu_send_report);
+		final boolean result = super.onPrepareOptionsMenu(menu);
 
-		menu.add(Menu.NONE, BaseReportListActivity.MENU_ITEM_SET_FILTER, 2,
-				R.string.menu_filter);
-
+		menu.findItem(R.id.menu_toggle_notes).setTitle(
+				(this.showNotes) ? R.string.menu_report_exclude_notes
+						: R.string.menu_report_include_notes);
 		return result;
 	}
 
@@ -77,15 +76,20 @@ abstract class BaseReportListActivity extends ListActivity {
 	public boolean onOptionsItemSelected(final MenuItem item) {
 		ReportOutput sdFormatter = null;
 		switch (item.getItemId()) {
-		case MENU_ITEM_SET_FILTER:
+		case R.id.menu_toggle_notes:
+			this.showNotes = !this.showNotes;
+			this.loadDataIntoReport(0);
+			break;
+
+		case R.id.menu_set_filter:
 			ReportFilterActivity.showActivity(this, this.currentRangeFilter);
 			break;
-		case MENU_ITEM_EXPORT_SD:
+		case R.id.menu_export_sd:
 			sdFormatter = this.createFormatter();
 			ReprtExportEngine.exportToSD(this.getDefaultReportName(), this,
 					sdFormatter);
 			break;
-		case MENU_ITEM_EXPORT_SEND:
+		case R.id.menu_export_send:
 			sdFormatter = this.createFormatter();
 			sdFormatter.setLineTerminator("\n");
 			SendUtilities.send("", this.getEMailSummaryLine(), this,
@@ -118,6 +122,8 @@ abstract class BaseReportListActivity extends ListActivity {
 	abstract protected String getDefaultReportName();
 
 	abstract protected String getEMailSummaryLine();
+
+	abstract public void loadDataIntoReport(final int reportType);
 
 	abstract protected List<Object> loadData();
 

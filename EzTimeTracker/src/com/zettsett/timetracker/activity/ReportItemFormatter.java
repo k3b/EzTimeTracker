@@ -49,6 +49,8 @@ public class ReportItemFormatter {
 				return this.addField(0, this.getValue((TimeSliceCategory) obj));
 			} else if (objClass.isAssignableFrom(Long.class)) {
 				return this.addField(0, this.getValue((Long) obj));
+			} else if (objClass.isAssignableFrom(String.class)) {
+				return this.addField(0, this.getValue((String) obj));
 			} else if (objClass.isAssignableFrom(ReportItemWithDuration.class)) {
 				return this.addField(1,
 						this.getValue((ReportItemWithDuration) obj));
@@ -91,9 +93,13 @@ public class ReportItemFormatter {
 		return obj.getTitleWithDuration();
 	}
 
+	protected String getValue(final String obj) {
+		return obj;
+	}
+
 	protected String getValue(final ReportItemWithDuration obj) {
-		return this.getValueGeneric(obj.subKey) + ": "
-				+ this.timeInMillisToText(obj.duration, false);
+		return this.getValueGeneric(obj.getSubKey()) + ": "
+				+ this.timeInMillisToText(obj.getDuration(), false);
 	}
 
 	private String timeInMillisToText(final long totalTimeInMillis,

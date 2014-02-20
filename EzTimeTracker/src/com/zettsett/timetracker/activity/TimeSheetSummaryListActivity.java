@@ -9,8 +9,8 @@ import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.SubMenu;
 import android.view.View;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListView;
@@ -41,18 +41,7 @@ public class TimeSheetSummaryListActivity extends BaseReportListActivity
 	 * Used to transfer optional filter between parent activity and this.
 	 */
 	private static final String SAVED_REPORT_RANGE_FILTER_BUNDLE_NAME = "SummaryReportFilter";
-
-	// menu ids
 	private static final String SAVED_REPORT_MODE = "reportMode";
-	private static final int MENU_ITEM_GROUP_DAILY = Menu.FIRST;
-	private static final int MENU_ITEM_GROUP_WEEKLY = Menu.FIRST + 1;
-	private static final int MENU_ITEM_GROUP_MONTHLY = Menu.FIRST + 2;
-	private static final int MENU_ITEM_GROUP_YARLY = Menu.FIRST + 3;
-	private static final int MENU_ITEM_GROUP_CATEGORY = Menu.FIRST + 4;
-	private static final int MENU_ITEM_REPORT = Menu.FIRST + 5;
-	private static final int MENU_ITEM_EDIT_CATEGORY = Menu.FIRST + 6;
-
-	private static final int DELETE_MENU_ID = Menu.FIRST + 20;
 
 	/**
 	 * current range filter used to fill report.<br/>
@@ -73,7 +62,6 @@ public class TimeSheetSummaryListActivity extends BaseReportListActivity
 	 * Used in options-menue for context sensitive DrillDownMenue
 	 */
 	private TimeSliceFilterParameter currentSelectedListItemRangeFilterUsedForMenu;
-
 	private TimeSliceCategory currentSelectedCategory;
 
 	@Override
@@ -125,55 +113,48 @@ public class TimeSheetSummaryListActivity extends BaseReportListActivity
 	}
 
 	@Override
+	public boolean onCreateOptionsMenu(final Menu menu) {
+		final MenuInflater inflater = this.getMenuInflater();
+		inflater.inflate(R.menu.summaryreport, menu);
+		super.onCreateOptionsMenu(menu);
+		return true;
+	}
+
+	/**
+	 * called by parent Report Action to append common menuitem.
+	 */
+	@Override
 	public boolean onPrepareOptionsMenu(final Menu menu) {
-		final boolean result = super.onCreateOptionsMenu(menu);
-		menu.clear();
-		final SubMenu groupDateMenu = menu.addSubMenu(0, Menu.NONE, 0,
-				R.string.menu_select_date_grouping);
-		groupDateMenu.add(0,
-				TimeSheetSummaryListActivity.MENU_ITEM_GROUP_DAILY, 0,
-				R.string.menu_select_date_grouping_daily);
-		groupDateMenu.add(0,
-				TimeSheetSummaryListActivity.MENU_ITEM_GROUP_WEEKLY, 1,
-				R.string.menu_select_date_grouping_weekly);
-		groupDateMenu.add(0,
-				TimeSheetSummaryListActivity.MENU_ITEM_GROUP_MONTHLY, 2,
-				R.string.menu_select_date_grouping_monthly);
-		groupDateMenu.add(0,
-				TimeSheetSummaryListActivity.MENU_ITEM_GROUP_YARLY, 2,
-				R.string.menu_select_date_grouping_yearly);
-		super.onPrepareOptionsMenu(menu);
-		if (this.reportMode == ReportModes.BY_DATE) {
-			menu.add(0, TimeSheetSummaryListActivity.MENU_ITEM_GROUP_CATEGORY,
-					1, R.string.menu_switch_to_category_headers);
-		} else {
-			menu.add(0, TimeSheetSummaryListActivity.MENU_ITEM_GROUP_CATEGORY,
-					1, R.string.menu_switch_to_date_headers);
-		}
+		final boolean result = super.onPrepareOptionsMenu(menu);
+
+		menu.findItem(R.id.menu_grouping_category)
+				.setTitle(
+						(this.reportMode == ReportModes.BY_DATE) ? R.string.menu_switch_to_category_headers
+								: R.string.menu_switch_to_date_headers);
 		return result;
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(final MenuItem item) {
 		switch (item.getItemId()) {
-		case MENU_ITEM_GROUP_DAILY:
+		case R.id.menu_grouping_daily:
 			this.setReportDateGrouping(ReportDateGrouping.DAILY);
 			this.loadDataIntoReport(0);
 			break;
-		case MENU_ITEM_GROUP_WEEKLY:
+		case R.id.menu_grouping_weekly:
 			this.setReportDateGrouping(ReportDateGrouping.WEEKLY);
 			this.loadDataIntoReport(0);
 			break;
-		case MENU_ITEM_GROUP_MONTHLY:
+		case R.id.menu_grouping_monthly:
 			this.setReportDateGrouping(ReportDateGrouping.MONTHLY);
 			this.loadDataIntoReport(0);
 			break;
-		case MENU_ITEM_GROUP_YARLY:
+		case R.id.menu_grouping_yearly:
 			this.setReportDateGrouping(ReportDateGrouping.YEARLY);
 			this.loadDataIntoReport(0);
 			break;
 
-		case MENU_ITEM_GROUP_CATEGORY:
+		case R.id.menu_grouping_category:
 			if (this.reportMode == ReportModes.BY_CATEGORY) {
 				this.reportMode = ReportModes.BY_DATE;
 			} else {
@@ -191,32 +172,31 @@ public class TimeSheetSummaryListActivity extends BaseReportListActivity
 	public void onCreateContextMenu(final ContextMenu menu, final View v,
 			final ContextMenuInfo menuInfo) {
 		super.onCreateContextMenu(menu, v, menuInfo);
+		final MenuInflater inflater = this.getMenuInflater();
+		inflater.inflate(R.menu.context_summary_item, menu);
+
 		final int position = ((AdapterContextMenuInfo) menuInfo).position;
 
 		final TimeSliceFilterParameter filter = this.createFilter(position);
 		if (filter != null) {
 			if (Global.isInfoEnabled()) {
-				Log.i(Global.LOG_CONTEXT, "Detailreport: " + filter);
+				Log.i(Global.LOG_CONTEXT, "filter: " + filter);
 			}
-			menu.add(0, TimeSheetSummaryListActivity.MENU_ITEM_REPORT, 0,
-					this.getString(R.string.cmd_report));
-			menu.add(0, TimeSheetSummaryListActivity.DELETE_MENU_ID, 0,
-					this.getString(R.string.cmd_delete));
-
+			menu.findItem(R.id.menue_report).setVisible(true);
+			menu.findItem(R.id.menue_delete).setVisible(true);
 		}
 		this.currentSelectedListItemRangeFilterUsedForMenu = filter;
 
 		this.currentSelectedCategory = this.getTimeSliceCategory(position);
 		if (this.currentSelectedCategory != null) {
-			menu.add(0, TimeSheetSummaryListActivity.MENU_ITEM_EDIT_CATEGORY,
-					0, this.getString(R.string.cmd_edit_category));
+			menu.findItem(R.id.menue_edit_category).setVisible(true);
 		}
 	}
 
 	private Object getItemAtPosition(final int position) {
 		final Object item = this.getListView().getItemAtPosition(position);
 		if (item.getClass().isAssignableFrom(ReportItemWithDuration.class)) {
-			return ((ReportItemWithDuration) item).subKey;
+			return ((ReportItemWithDuration) item).getSubKey();
 		}
 		return item;
 	}
@@ -224,13 +204,13 @@ public class TimeSheetSummaryListActivity extends BaseReportListActivity
 	@Override
 	public boolean onContextItemSelected(final MenuItem item) {
 		switch (item.getItemId()) {
-		case MENU_ITEM_REPORT:
+		case R.id.menue_report:
 			this.showDetailReport();
 			return true;
-		case DELETE_MENU_ID:
+		case R.id.menue_delete:
 			this.onCommandDeleteTimeSlice();
 			return true;
-		case MENU_ITEM_EDIT_CATEGORY:
+		case R.id.menue_edit_category:
 			this.onCommandEditCategory();
 			return true;
 		default:
@@ -255,7 +235,7 @@ public class TimeSheetSummaryListActivity extends BaseReportListActivity
 			this.edit = new CategoryEditDialog(this, this);
 		}
 		this.edit.setCategory(this.currentSelectedCategory);
-		this.showDialog(TimeSheetSummaryListActivity.MENU_ITEM_EDIT_CATEGORY);
+		this.showDialog(R.id.menue_edit_category);
 	}
 
 	private CategoryEditDialog edit = null;
@@ -276,7 +256,7 @@ public class TimeSheetSummaryListActivity extends BaseReportListActivity
 	@Override
 	protected Dialog onCreateDialog(final int id) {
 		switch (id) {
-		case MENU_ITEM_EDIT_CATEGORY:
+		case R.id.menue_edit_category:
 			return this.edit;
 		}
 
@@ -399,7 +379,8 @@ public class TimeSheetSummaryListActivity extends BaseReportListActivity
 				.fetchList(rangeFilter);
 
 		final List<Object> listItems = TimeSheetSummaryCalculator2.loadData(
-				this.reportMode, this.getReportDateGrouping(), timeSlices);
+				this.reportMode, this.getReportDateGrouping(), timeSlices,
+				this.showNotes);
 
 		if (Global.isInfoEnabled()) {
 			Log.i(Global.LOG_CONTEXT,

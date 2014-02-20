@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+	<item android:id="@+id/menue_report"  android:title="@string/cmd_report" android:visible="false"/>
+	<item android:id="@+id/menue_delete"  android:title="@string/cmd_delete" android:visible="false"/>
+	<item android:id="@+id/menue_edit_category"  android:title="@string/cmd_edit_category" android:visible="false"/>
+
+</menu>

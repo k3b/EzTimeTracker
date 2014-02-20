@@ -137,6 +137,10 @@ public class TimeSlice extends ItemWithRowId implements Serializable,
 		return this;
 	}
 
+	public boolean hasNotes() {
+		return (this.notes != null) && (this.notes.length() > 0);
+	}
+
 	public boolean isPunchedIn() {
 		return (this.getStartTime() != TimeSlice.NO_TIME_VALUE)
 				&& (this.getEndTime() == TimeSlice.NO_TIME_VALUE);

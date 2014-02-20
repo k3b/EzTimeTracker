@@ -24,15 +24,17 @@ public class TimeSheetSummaryCalculator2 {
 
 	final static DateTimeUtil dt = DateTimeFormatter.getInstance();
 
-	public List<Object> toList(final Map<Object, Map<Object, Long>> summary) {
+	public List<Object> toList(
+			final Map<Object, Map<Object, ReportItemWithDuration>> summary) {
 		final ArrayList<Object> result = new ArrayList<Object>();
 
 		for (final Object superKey : summary.keySet()) {
 			result.add(superKey);
-			final Map<Object, Long> subMap = summary.get(superKey);
+			final Map<Object, ReportItemWithDuration> subMap = summary
+					.get(superKey);
 			for (final Object subKey : subMap.keySet()) {
-				result.add(new ReportItemWithDuration(subKey, subMap
-						.get(subKey)));
+				final ReportItemWithDuration item = subMap.get(subKey);
+				result.add(item);
 			}
 		}
 		return result;
@@ -48,16 +50,16 @@ public class TimeSheetSummaryCalculator2 {
 	 * @param timeSlices
 	 *            where report is created from
 	 */
-	public Map<Object, Map<Object, Long>> createSummaryMap(
+	public Map<Object, Map<Object, ReportItemWithDuration>> createSummaryMap(
 			final ReportModes reportMode,
 			final ReportDateGrouping reportDateGrouping,
-			final List<TimeSlice> timeSlices) {
-		Map<Object, Map<Object, Long>> summaries;
+			final List<TimeSlice> timeSlices, final boolean showNotes) {
+		Map<Object, Map<Object, ReportItemWithDuration>> summaries;
 
 		if (reportMode == ReportModes.BY_DATE) {
-			summaries = new LinkedHashMap<Object, Map<Object, Long>>();
+			summaries = new LinkedHashMap<Object, Map<Object, ReportItemWithDuration>>();
 		} else if (reportMode == ReportModes.BY_CATEGORY) {
-			summaries = new TreeMap<Object, Map<Object, Long>>();
+			summaries = new TreeMap<Object, Map<Object, ReportItemWithDuration>>();
 		} else {
 			throw new IllegalArgumentException("Unknown ReportModes "
 					+ reportMode);
@@ -73,15 +75,16 @@ public class TimeSheetSummaryCalculator2 {
 
 			final Object currentCategoryKey = aSlice.getCategory();
 
-			final Map<Object, Long> subGroup = this.getSubMap(summaries,
-					reportMode, currentStartDateKey, currentCategoryKey);
+			final Map<Object, ReportItemWithDuration> subGroup = this
+					.getSubMap(summaries, reportMode, currentStartDateKey,
+							currentCategoryKey);
 
 			final Object subKey = this.getSubKey(reportMode,
 					currentStartDateKey, currentCategoryKey);
 
 			TimeSheetSummaryCalculator2.increment(subGroup, subKey,
-
-			aSlice.getEndTime() - rawStartTime);
+					aSlice.getEndTime() - rawStartTime,
+					(showNotes) ? aSlice.getNotes() : null);
 		} // foreach TimeSlice
 		return summaries;
 	}
@@ -119,8 +122,8 @@ public class TimeSheetSummaryCalculator2 {
 		return subKey;
 	}
 
-	private Map<Object, Long> getSubMap(
-			final Map<Object, Map<Object, Long>> summaries,
+	private Map<Object, ReportItemWithDuration> getSubMap(
+			final Map<Object, Map<Object, ReportItemWithDuration>> summaries,
 			final ReportModes reportMode, final Object currentStartDatekey,
 			final Object currentCategoryKey) {
 		Object superKey;
@@ -129,33 +132,37 @@ public class TimeSheetSummaryCalculator2 {
 		} else {
 			superKey = currentCategoryKey;
 		}
-		Map<Object, Long> group = summaries.get(superKey);
+		Map<Object, ReportItemWithDuration> group = summaries.get(superKey);
 		if (group == null) {
 			if (reportMode == ReportModes.BY_DATE) {
-				group = new TreeMap<Object, Long>();
+				group = new TreeMap<Object, ReportItemWithDuration>();
 			} else {
-				group = new LinkedHashMap<Object, Long>();
+				group = new LinkedHashMap<Object, ReportItemWithDuration>();
 			}
 			summaries.put(superKey, group);
 		}
 		return group;
 	}
 
-	private static void increment(final Map<Object, Long> map,
-			final Object key, final long diffValue) {
-		Long timeSum = map.get(key);
+	private static void increment(
+			final Map<Object, ReportItemWithDuration> map, final Object key,
+			final long diffValue, final String notes) {
+		ReportItemWithDuration timeSum = map.get(key);
 		if (timeSum == null) {
-			timeSum = Long.valueOf(0);
+			timeSum = new ReportItemWithDuration(key, 0, null);
 		}
-		map.put(key, timeSum + diffValue);
+		timeSum.incrementDuration(diffValue);
+		timeSum.appendNotes(notes);
+		map.put(key, timeSum);
 	}
 
 	public static List<Object> loadData(final ReportModes reportMode,
 			final ReportDateGrouping reportDateGrouping,
-			final List<TimeSlice> timeSlices) {
+			final List<TimeSlice> timeSlices, final boolean showNotes) {
 		final TimeSheetSummaryCalculator2 summaries = new TimeSheetSummaryCalculator2();
-		final Map<Object, Map<Object, Long>> map = summaries.createSummaryMap(
-				reportMode, reportDateGrouping, timeSlices);
+		final Map<Object, Map<Object, ReportItemWithDuration>> map = summaries
+				.createSummaryMap(reportMode, reportDateGrouping, timeSlices,
+						showNotes);
 		return summaries.toList(map);
 	}
 }

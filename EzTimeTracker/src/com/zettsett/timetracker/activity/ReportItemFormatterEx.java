@@ -24,8 +24,7 @@ public class ReportItemFormatterEx extends ReportItemFormatter {
 
 	@Override
 	protected String getValue(final TimeSlice obj) {
-		final boolean showNotes = (this.showNotes && (obj.getNotes() != null) && (obj
-				.getNotes().length() > 0));
+		final boolean showNotes = (this.showNotes && (obj.hasNotes()));
 
 		final String notes = (showNotes) ? (this.lineTerminator
 				+ ReportItemFormatterEx.DETAIL_PREFIX + ReportItemFormatterEx.DETAIL_PREFIX)

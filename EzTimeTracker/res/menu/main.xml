@@ -1,32 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
-	    <item android:title="@string/report"
-	           >
-	 		<menu>
-			    <item android:id="@+id/details"
-			          android:title="@string/report_title_details"
-			           />
-			    <item android:id="@+id/summary_day"
-			          android:title="@string/report_title_summary_day"
-			           />	 		    
-			    <item android:id="@+id/summary_week"
-			          android:title="@string/report_title_summary_week"
-			           />	 		    
-			     <item android:id="@+id/summary_month"
-			          android:title="@string/report_title_summary_month"
-			           />	 		    
-			    <item android:id="@+id/category_day"
-			          android:title="@string/report_title_category_day"
-			           />	 		    
-			    <item android:id="@+id/category_week"
-			          android:title="@string/report_title_category_week"
-			           />	 		    
-			     <item android:id="@+id/category_month"
-			          android:title="@string/report_title_category_month"
-			           />	 		    
-   	 		</menu>       
-	    </item>
+    <item android:title="@string/report"
+           >
+ 		<menu>
+		    <item android:id="@+id/details"
+		          android:title="@string/report_title_details"
+		           />
+		    <item android:id="@+id/summary_day"
+		          android:title="@string/report_title_summary_day"
+		           />	 		    
+		    <item android:id="@+id/summary_week"
+		          android:title="@string/report_title_summary_week"
+		           />	 		    
+		     <item android:id="@+id/summary_month"
+		          android:title="@string/report_title_summary_month"
+		           />	 		    
+		    <item android:id="@+id/category_day"
+		          android:title="@string/report_title_category_day"
+		           />	 		    
+		    <item android:id="@+id/category_week"
+		          android:title="@string/report_title_category_week"
+		           />	 		    
+		     <item android:id="@+id/category_month"
+		          android:title="@string/report_title_category_month"
+		           />	 		    
+  	 		</menu>       
+    </item>
     
     <item android:id="@+id/categories"
           android:title="@string/report_title_categories"
