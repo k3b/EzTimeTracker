@@ -12,7 +12,7 @@ import android.widget.*;
 
 public class BroadCastTestActivity extends Activity implements View.OnClickListener {
 	
-	private static final String ACTION_COMMAND = "com.zettsett.timetracker.action.COMMAND";
+	private static final String ACTION_COMMAND = "de.k3b.timetracker.action.COMMAND";
 	class _RemoteTimeTrackerReceiver extends BroadcastReceiver {
 		@Override
 		public void onReceive (Context context, Intent intent) {

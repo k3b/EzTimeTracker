@@ -19,7 +19,7 @@
             </intent-filter>
         </activity>
 		<receiver android:enabled="true"
-				android:name="com.zettsett.timetracker.receiver.RemoteTimeTrackerReceiver">
+				android:name="de.k3b.timetracker.receiver.RemoteTimeTrackerReceiver">
 			<intent-filter>
 				<action android:name="com.zettsett.timetracker.action.COMMAND" />
 		        <data android:scheme="cmd"/>

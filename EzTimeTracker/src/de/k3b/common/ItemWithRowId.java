@@ -15,7 +15,7 @@ public class ItemWithRowId implements IItemWithRowId, Serializable {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.zettsett.timetracker.model.IItemWithRowId#getRowId()
+	 * @see de.k3b.timetracker.model.IItemWithRowId#getRowId()
 	 */
 	@Override
 	public int getRowId() {
@@ -25,7 +25,7 @@ public class ItemWithRowId implements IItemWithRowId, Serializable {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.zettsett.timetracker.model.IItemWithRowId#setRowId(int)
+	 * @see de.k3b.timetracker.model.IItemWithRowId#setRowId(int)
 	 */
 	@Override
 	public ItemWithRowId setRowId(final int rowId) {
@@ -36,7 +36,7 @@ public class ItemWithRowId implements IItemWithRowId, Serializable {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see com.zettsett.timetracker.model.IItemWithRowId#hashCode()
+	 * @see de.k3b.timetracker.model.IItemWithRowId#hashCode()
 	 */
 	@Override
 	public int hashCode() {
@@ -47,7 +47,7 @@ public class ItemWithRowId implements IItemWithRowId, Serializable {
 	 * (non-Javadoc)
 	 * 
 	 * @see
-	 * com.zettsett.timetracker.model.IItemWithRowId#equals(java.lang.Object)
+	 * de.k3b.timetracker.model.IItemWithRowId#equals(java.lang.Object)
 	 */
 	@Override
 	public boolean equals(final Object obj) {

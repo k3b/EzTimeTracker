@@ -167,7 +167,7 @@ PunchInPunchOut Screen
 				
 "Remote controlling EZ Time Tracker"
 EZ Time Tracker registers a broadcastreceiver that enables other android-apps to do punch-in/out
-that listens to the broadcast-indent "com.zettsett.timetracker.action.COMMAND"
+that listens to the broadcast-indent "de.k3b.timetracker.action.COMMAND"
 
 The broadcast-data contains what to do:
 
@@ -181,7 +181,7 @@ The broadcast-data contains what to do:
 For example you can use Kebab-s android app "Llama" (http://kebabapps.blogspot.com/search/label/Llama)
 to create a location based events that can trigger Actions:
 - type=AndroidIntend/CustomBroadcast/
-- action="com.zettsett.timetracker.action.COMMAND"
+- action="de.k3b.timetracker.action.COMMAND"
 - data="cmd:start:AtHome"
 
 This will do a "EZ Time Tracker punch in" for category "AtHome" every time you 

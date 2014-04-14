@@ -8,8 +8,7 @@ import java.io.Serializable;
 
 import android.content.Context;
 import android.util.Log;
-
-import com.zettsett.timetracker.Global;
+import de.k3b.timetracker.Global;
 
 /**
  * Persists session state to local file

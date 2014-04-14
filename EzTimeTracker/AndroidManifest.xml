@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	package="com.zetter.androidTime" 
+	package="de.k3b.timetracker" 
     android:versionName="2.5.934 2014-0219" 
     android:versionCode="34"
 	android:installLocation="preferExternal"

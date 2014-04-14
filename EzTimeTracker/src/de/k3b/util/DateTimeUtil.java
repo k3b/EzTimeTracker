@@ -6,7 +6,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import com.zettsett.timetracker.model.TimeSlice;
+import de.k3b.timetracker.model.TimeSlice;
 
 // import android.util.Log;
 
