@@ -14,3 +14,11 @@ pkg
 /BroadCastTest/.classpath
 /EzTimeTracker/.classpath
 .classpath
+/EzTimeTracker/nbandroid/
+/google.DateTimeSlider/DateSlider/nbandroid/
+/EzTimeTracker/target
+
+gradle-app.setting
+.gradle
+settings.gradle
+build
