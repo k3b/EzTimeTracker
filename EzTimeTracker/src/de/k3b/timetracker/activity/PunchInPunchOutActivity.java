@@ -3,12 +3,14 @@ package de.k3b.timetracker.activity;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -216,6 +218,19 @@ public class PunchInPunchOutActivity extends Activity implements
 	}
 
 	@Override
+	public boolean onPrepareOptionsMenu(final Menu menu) {
+		super.onPrepareOptionsMenu(menu);
+
+		final MenuItem menuItem = menu.findItem(R.id.db);
+
+		if (menuItem != null) {
+			menuItem.setVisible(DatabaseInstance.getCurrentInstance()
+					.getDatabaseUri() != null);
+		}
+		return true;
+	}
+
+	@Override
 	public boolean onOptionsItemSelected(final MenuItem item) {
 
 		final int itemId = item.getItemId();
@@ -223,6 +238,25 @@ public class PunchInPunchOutActivity extends Activity implements
 			return true;
 		} else {
 			switch (itemId) {
+			case R.id.db:
+				final Uri uri = DatabaseInstance.getCurrentInstance()
+						.getDatabaseUri();
+				if (uri != null) {
+					try {
+						final Intent i = new Intent();
+						i.setAction(Intent.ACTION_VIEW); // "android.intent.action.VIEW");
+						i.setData(uri);
+						if (Global.isInfoEnabled()) {
+							Log.i(Global.LOG_CONTEXT, "start(startActivity='" + i
+									+ "')");
+						}
+						this.startActivity(i);
+					} catch (ActivityNotFoundException ex) {
+						Log.w(Global.LOG_CONTEXT,"Cannot start activity for " + uri, ex);
+					}
+					return true;
+				}
+				break;
 			case R.id.about:
 				this.showDialog(itemId);
 				return true;

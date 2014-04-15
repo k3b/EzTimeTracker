@@ -11,29 +11,29 @@
 	<application android:icon="@drawable/icon" android:label="@string/app_name" android:allowBackup="false">
 
 		<activity android:label="@string/app_name"
-			android:name="com.zettsett.timetracker.activity.PunchInPunchOutActivity"
+			android:name="de.k3b.timetracker.activity.PunchInPunchOutActivity"
 			android:screenOrientation="portrait">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
 		</activity>
-		<activity android:name="com.zettsett.timetracker.activity.TimeSheetDetailListActivity"/>
-		<activity android:name="com.zettsett.timetracker.activity.TimeSheetSummaryListActivity"/>
-		<activity android:name="com.zettsett.timetracker.activity.CategoryListActivity"/>
-		<activity android:name="com.zettsett.timetracker.activity.TimeSliceEditActivity"
+		<activity android:name="de.k3b.timetracker.activity.TimeSheetDetailListActivity"/>
+		<activity android:name="de.k3b.timetracker.activity.TimeSheetSummaryListActivity"/>
+		<activity android:name="de.k3b.timetracker.activity.CategoryListActivity"/>
+		<activity android:name="de.k3b.timetracker.activity.TimeSliceEditActivity"
 			android:screenOrientation="portrait"/>
-		<activity android:name="com.zettsett.timetracker.activity.TimeSliceExportActivity"
+		<activity android:name="de.k3b.timetracker.activity.TimeSliceExportActivity"
 			android:screenOrientation="portrait"/>
-		<activity android:name="com.zettsett.timetracker.activity.TimeSliceRemoveActivity"
+		<activity android:name="de.k3b.timetracker.activity.TimeSliceRemoveActivity"
 			android:screenOrientation="portrait"/>
-		<activity android:name="com.zettsett.timetracker.activity.ReportFilterActivity" />
-	    <activity android:name="com.zettsett.timetracker.activity.SettingsActivity"
+		<activity android:name="de.k3b.timetracker.activity.ReportFilterActivity" />
+	    <activity android:name="de.k3b.timetracker.activity.SettingsActivity"
 			android:screenOrientation="portrait"/>
 		<receiver android:enabled="true"
-				android:name="com.zettsett.timetracker.receiver.RemoteTimeTrackerBroadcastReceiver">
+				android:name="de.k3b.timetracker.receiver.RemoteTimeTrackerBroadcastReceiver">
 			<intent-filter>
-				<action android:name="com.zettsett.timetracker.action.COMMAND" />
+				<action android:name="de.k3b.timetracker.action.COMMAND" />
 		        <data android:scheme="cmd"/>
 		        <!-- 
 		        cmd:start:category{:notes}

@@ -1,7 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <resources>
 	<!-- these are default strings in en_US -->
-    <!-- Non localized string come from res/values/NonTranslatable.xml -->
+	<!-- Non localized string come from res/values/NonTranslatable.xml -->
+
 	<string name="category_prompt">Choose a category</string>
 	<string-array name="default_categories">
 		<item>Not Much</item>
@@ -9,61 +10,58 @@
 		<item>Working</item>
 		<item>Sleeping</item>
 	</string-array>
-	
 	<string name="default_mail_ts_subject">%1$s Time Sheet Report</string>
-	<string name="default_mail_sum_subject">%1$s Summary Report</string>	
+	<string name="default_mail_sum_subject">%1$s Summary Report</string>
 	<string name="export_email_subject">%1$s Data Export</string>
-		
-	<string name="menu_text_edit">View/Edit</string>	
-	<string name="menu_report_add_new_time_interval">Add New Time Interval</string>	
-	<string name="menu_report_include_notes">Show Notes</string>	
-	<string name="menu_report_exclude_notes">Hide Notes</string>	
-	<string name="radio_button_data_export_all">Export All Data</string>	
-	<string name="radio_button_data_export_range">Export Data for Date Range</string>	
-	<string name="checkbox_data_export_email">Export to Email</string>	
-	<string name="button_data_export">Export Data</string>	
-	<string name="cmd_update">Update</string>	
-	<string name="cmd_delete">Delete</string>	
+	<string name="menu_text_edit">View/Edit</string>
+	<string name="menu_report_add_new_time_interval">Add New Time Interval</string>
+	<string name="menu_report_include_notes">Show Notes</string>
+	<string name="menu_report_exclude_notes">Hide Notes</string>
+	<string name="radio_button_data_export_all">Export All Data</string>
+	<string name="radio_button_data_export_range">Export Data for Date Range</string>
+	<string name="export_sendto">Export send to &#8230;</string>
+	<string name="button_data_export">Export Data</string>
+	<string name="cmd_update">Update</string>
+	<string name="cmd_delete">Delete</string>
 	<string name="cmd_delete_warning">"Warning still in use : " </string>
 	<string name="cmd_delete_confirm">"Go ahead and delete it."</string>
 	<string name="cmd_delete_cancel">"Don't delete it."</string>
-	<string name="cmd_cancel"> Cancel </string>	
+	<string name="cmd_cancel"> Cancel </string>
 	<string name="cmd_report"> Details </string>
-	<string name="checkbox_filter_ignore_date">Ignore Date</string>	
-	<string name="checkbox_notes_not_null">Notes contain Data</string>	
-	<string name="export_data_to_csv_file">Export Data to CSV File</string>	
-	<string name="menu_export_report">Export Report</string>	
-	<string name="menu_export_report_to_sd_card">Export Report to SD Card</string>	
-	<string name="menu_send_report">Send Report...</string>	
-	<string name="formatStartDate">"Start: %1$s"</string>	
+	<string name="checkbox_filter_ignore_date">Ignore Date</string>
+	<string name="checkbox_notes_not_null">Notes contain Data</string>
+	<string name="export_data_to_csv_file">Export Data to CSV File</string>
+	<string name="menu_export_report">Export Report</string>
+	<string name="menu_export_report_to_sd_card">Export Report to SD Card</string>
+	<string name="menu_export_report_to_sd_card_csv">Export As CSV to SD Card</string>
+	<string name="menu_send_report">Send Report &#8230;</string>
+	<string name="menu_send_report_csv">Send as CSV &#8230;</string>
+	<string name="formatStartDate">"Start: %1$s"</string>
 	<string name="category_usage_format">"%1$d Entries %2$d Hours"</string>
-	<string name="formatEndDate">"End: %1$s"</string>	
-	<string name="label_report_filter">Which Data to show?</string>	
-	<string name="menu_filter">Filter</string>	
-	<string name="label_delete_time_interval_data">Delete Time Interval Data</string>	
-	<string name="format_message_interval_deleted">"Time intervals removed: %1$s "</string>	
-	<string name="format_question_delete_time_intervals">"Are you sure you want to permanently delete time intervals?\n
-						%1$s \n\n 						 
-	    This operation cannot be reversed.</string>
-	<string name="no_items_found">No items Found</string>	
-	<string name="filter_ignore">{all}</string>	
-	<string name="title_confirm_removal">"Confirm Removal "</string>	
-	<string name="btn_yes">Yes</string>	
-	<string name="btn_no">No</string>	
-	<string name="label_no_current_activity">No current activity</string>	
-	<string name="format_start_time_">"Start time: %1$s"</string>	
-	<string name="hoursWord1">hour</string>	
-	<string name="hoursWordN">hours</string>	
-	<string name="minutesWord1">minute</string>	
-	<string name="minutesWordN">minutes</string>	
-	<string name="menu_select_date_grouping">Date Intervall &#8230;</string>	
-	<string name="menu_select_date_grouping_daily">Daily</string>	
-	<string name="menu_select_date_grouping_weekly">Weekly</string>	
-	<string name="menu_select_date_grouping_monthly">Monthly</string>	
-	<string name="menu_select_date_grouping_yearly">Yearky</string>	
-	<string name="menu_switch_to_category_headers">Category &gt; Date</string>	
-	<string name="menu_switch_to_date_headers">Date &gt; Category</string>	
-	
+	<string name="formatEndDate">"End: %1$s"</string>
+	<string name="label_report_filter">Which Data to show?</string>
+	<string name="menu_filter">Filter</string>
+	<string name="label_delete_time_interval_data">Delete Time Interval Data</string>
+	<string name="format_message_interval_deleted">"Time intervals removed: %1$s "</string>
+	<string name="format_question_delete_time_intervals">"Are you sure you want to permanently delete time intervals?\n						%1$s \n\n 						 	    This operation cannot be reversed.</string>
+	<string name="no_items_found">No items Found</string>
+	<string name="filter_ignore">{all}</string>
+	<string name="title_confirm_removal">"Confirm Removal "</string>
+	<string name="btn_yes">Yes</string>
+	<string name="btn_no">No</string>
+	<string name="label_no_current_activity">No current activity</string>
+	<string name="format_start_time_">"Start time: %1$s"</string>
+	<string name="hoursWord1">hour</string>
+	<string name="hoursWordN">hours</string>
+	<string name="minutesWord1">minute</string>
+	<string name="minutesWordN">minutes</string>
+	<string name="menu_select_date_grouping">Date Intervall &#8230;</string>
+	<string name="menu_select_date_grouping_daily">Daily</string>
+	<string name="menu_select_date_grouping_weekly">Weekly</string>
+	<string name="menu_select_date_grouping_monthly">Monthly</string>
+	<string name="menu_select_date_grouping_yearly">Yearky</string>
+	<string name="menu_switch_to_category_headers">Category &gt; Date</string>
+	<string name="menu_switch_to_date_headers">Date &gt; Category</string>
 	<string name="format_category">"Category: %1$s"</string>
 	<string name="delete_from_date">"Delete From Date (including):"</string>
 	<string name="delete_to_date">"Delete To Date (including):"</string>
@@ -74,12 +72,11 @@
 	<string name="category_description">Description:</string>
 	<string name="cmd_save"> Save </string>
 	<string name="file_name">File Name:</string>
+	<string name="report_format">Result Format:</string>
 	<string name="cmd_save_file">Save File</string>
 	<string name="no_categories">There are no categories defined yet.</string>
-
-	<string name="cmd_edit">Edit</string>	
-	<string name="cmd_edit_category">Edit Category</string>	
-			
+	<string name="cmd_edit">Edit</string>
+	<string name="cmd_edit_category">Edit Category</string>
 	<string name="report_title_categories">Categories</string>
 	<string name="report_title_condensed_categories">Categories</string>
 	<string name="report_title_export">Export Data</string>
@@ -88,54 +85,25 @@
 	<string name="report_title_condensed_remove">Remove</string>
 	<string name="report_title_settings">Preferences and Settings</string>
 	<string name="report_title_condensed_settings">Settings</string>
-		
 	<string name="choose_filename">Enter File Name:</string>
 	<string name="format_message_successfully_saved_file">Report successfully saved to \'%1$s\'</string>
 	<string name="format_error_saved_file">Unable to export to \'%1$s\' on SD: %2$s</string>
 	<string name="format_error_create_directory">Unable to create directory \'%1$s\'. Is the SD card mounted?</string>
 	<string name="title_creating_a_new_category">Creating a New Category</string>
-	
 	<string name="format_title_edit_category">Edit %1$s %2$s</string>
-
-	
-	<string name="report">Report</string>	
+	<string name="report">Report</string>
 	<string name="report_title_details">Details Report</string>
 	<string name="report_title_summary_day">Summary by Day</string>
 	<string name="report_title_summary_week">Summary by Week</string>
 	<string name="report_title_summary_month">Summary by Month</string>
-	
 	<string name="report_title_category_day">Category by Day</string>
 	<string name="report_title_category_week">Category by Week</string>
 	<string name="report_title_category_month">Category by Month</string>
-
 	<string name="message_no_data">No items found.</string>
-
 	<string name="about_title">About EZ Time Tracker</string>
 	<string name="about_title_condensed">About</string>
-				
-	<string name="about_content_about">"<![CDATA[
-<h2>About</h2>
-<a href="https://github.com/k3b/EzTimeTracker/wiki">EZ
-Time Tracker</a>&nbsp;is an Android app to record time
-spend&nbsp;on&nbsp;user definable activities/categories. <br />
-<br />
-It records the time between "punch in" and "punch out" even if the
-app&nbsp;is not running.<br />
-<br />
-There are reports for details or totals by day, week, month, year and/or
-category that can be viewed or exported to textfile/email. You can also
-use your favorite SqLite-Databaseprogram to filter the data using the
-database-view 'time_slice_report'.<br />
-<br />
-<br />
-Raw data can be exported to csv file on sd-card. <br />
-<br />
-<a href="http://kebabapps.blogspot.com/search/label/Llama">Android
-Llama</a> + <a
- href="https://github.com/k3b/EzTimeTracker/wiki">EZ Time
-Tracker</a> =&nbsp;location based timetracking: i.e.
-aoutmatic recording when entering/leaving job/buro.<br />
-<br />
-]]>"</string>
-		
+	<string name="db_title">Databas Tool</string>
+	<string name="db_title_condensed">Sql</string>
+	<string name="about_content_about">"<![CDATA[<h2>About</h2><a href="https://github.com/k3b/EzTimeTracker/wiki">EZTime Tracker</a>&nbsp;is an Android app to record timespend&nbsp;on&nbsp;user definable activities/categories. <br /><br />It records the time between "punch in" and "punch out" even if theapp&nbsp;is not running.<br /><br />There are reports for details or totals by day, week, month, year and/orcategory that can be viewed or exported to textfile/email. You can alsouse your favorite SqLite-Databaseprogram to filter the data using thedatabase-view 'time_slice_report'.<br /><br /><br />Raw data can be exported to csv file on sd-card. <br /><br /><a href="http://kebabapps.blogspot.com/search/label/Llama">AndroidLlama</a> + <a href="https://github.com/k3b/EzTimeTracker/wiki">EZ TimeTracker</a> =&nbsp;location based timetracking: i.e.aoutmatic recording when entering/leaving job/buro.<br /><br />]]>"</string>
+	<string name="export_format">format</string>
 </resources>

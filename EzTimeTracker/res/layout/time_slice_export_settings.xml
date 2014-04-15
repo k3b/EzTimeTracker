@@ -26,7 +26,7 @@
 				android:layout_height="wrap_content"></Button>
 		</TableRow>
 	</TableLayout>
-	<CheckBox android:text="@string/checkbox_data_export_email"
+	<CheckBox android:text="@string/export_sendto"
 		android:id="@+id/checkbox_data_export_email" android:layout_width="fill_parent"
 		android:layout_height="wrap_content"></CheckBox>
 	<LinearLayout android:layout_width="fill_parent" android:id="@+id/linear_layout_data_export_filename"

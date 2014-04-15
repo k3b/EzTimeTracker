@@ -2,6 +2,7 @@ package de.k3b.timetracker.database;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.util.Log;
 import de.k3b.android.database.DatabaseContext;
 import de.k3b.timetracker.Global;
@@ -20,6 +21,7 @@ public class DatabaseInstance {
 	private Context ctx;
 	private boolean publicDir = true;
 	private String dbName = null;
+	private Uri databaseUri;
 
 	@Override
 	public String toString() {
@@ -94,11 +96,17 @@ public class DatabaseInstance {
 			if (Global.isDebugEnabled()) {
 				Log.d(Global.LOG_CONTEXT, this.toString() + ".creating helper");
 			}
-			this.mDbHelper = new DatabaseHelper(
-					(this.publicDir) ? new DatabaseContext(this.ctx) : this.ctx,
-					this.dbName);
+			final Context dbContext = (this.publicDir) ? new DatabaseContext(
+					this.ctx) : this.ctx;
+			this.databaseUri = (this.publicDir) ? Uri.fromFile(dbContext
+					.getDatabasePath(this.dbName)) : null;
+			this.mDbHelper = new DatabaseHelper(dbContext, this.dbName);
 			this.mDb = this.mDbHelper.getWritableDatabase();
 		}
 		return this.mDb;
+	}
+
+	public Uri getDatabaseUri() {
+		return (this.publicDir) ? this.databaseUri : null;
 	}
 }
