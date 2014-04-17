@@ -59,7 +59,6 @@ public class ReportItemFormatter {
 	}
 
 	private String addField(final int level, final String value) {
-		// TODO Auto-generated method stub
 		return value;
 	}
 

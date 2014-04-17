@@ -35,8 +35,23 @@ public class ReportItemFormatterEx extends ReportItemFormatter {
 
 	@Override
 	protected String getValue(final ReportItemWithStatistics obj) {
-		return ReportItemFormatterEx.DETAIL_PREFIX + super.getValue(obj)
-				+ this.lineTerminator;
+		StringBuilder result = new StringBuilder()
+			.append(ReportItemFormatterEx.DETAIL_PREFIX)
+			.append(super.getValue(obj).replace(this.lineTerminator, ""))
+			.append(this.lineTerminator);
+		boolean showNotes = this.showNotes && obj.hasNotes();
+		if (showNotes) {
+			for(String line: obj.getNotes().split("[\n\r]+")) {
+				if ((line != null) && (line.length() > 0)) {
+					result
+						.append(ReportItemFormatterEx.DETAIL_PREFIX)
+						.append(ReportItemFormatterEx.DETAIL_PREFIX)
+						.append(line.trim())
+						.append(this.lineTerminator);
+				}
+			}
+		}
+		return result.toString();
 	}
 
 	@Override
