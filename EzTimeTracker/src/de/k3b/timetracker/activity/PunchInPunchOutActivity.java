@@ -430,7 +430,7 @@ public class PunchInPunchOutActivity extends Activity implements
 	 */
 	@Override
 	public void setCategory(final TimeSliceCategory selectedCategory) {
-		if (selectedCategory == TimeSliceCategory.NO_CATEGORY) {
+		if (!TimeSliceCategory.isValid(selectedCategory)) {
 			this.showCategoryEditDialog(null);
 		} else {
 			if (selectedCategory.getRowId() == TimeSliceCategory.NOT_SAVED) {

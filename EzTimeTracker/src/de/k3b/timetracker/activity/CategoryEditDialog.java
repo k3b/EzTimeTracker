@@ -80,8 +80,7 @@ public class CategoryEditDialog extends Dialog {
 			@Override
 			public boolean onLongClick(final View v) {
 				CategoryEditDialog.this.saveChangesAndExit(owner);
-				if ((CategoryEditDialog.this.mCategory != null)
-						&& (CategoryEditDialog.this.mCategory != TimeSliceCategory.NO_CATEGORY)) {
+				if (TimeSliceCategory.isValid(CategoryEditDialog.this.mCategory)) {
 					final TimeSliceFilterParameter filter = new TimeSliceFilterParameter()
 							.setCategoryId(
 									CategoryEditDialog.this.mCategory

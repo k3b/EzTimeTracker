@@ -115,16 +115,14 @@ public class TimeSliceFilterParameter implements Serializable, ITimeSliceFilter 
 	@Override
 	public String toString() {
 		final int categoryId = this.getCategoryId();
-		final String categoryName = (categoryId != TimeSliceCategory.NO_CATEGORY
-				.getRowId()) ? String.format(Locale.US, "Category=%1$d",
+		final String categoryName = TimeSliceCategory.isValid(categoryId) ? String.format(Locale.US, "Category=%1$d",
 				categoryId) : null;
 
 		return this.toString(categoryName);
 	}
 
 	public String toString(final TimeSliceCategory selectedCategory) {
-		final String categoryName = ((selectedCategory == null) || (selectedCategory
-				.getRowId() == TimeSliceCategory.NO_CATEGORY.getRowId())) ? null
+		final String categoryName = (!TimeSliceCategory.isValid(selectedCategory)) ? null
 				: selectedCategory.getCategoryName();
 		return this.toString(categoryName);
 	}

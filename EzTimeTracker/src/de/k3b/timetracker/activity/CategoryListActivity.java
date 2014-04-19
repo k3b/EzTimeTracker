@@ -45,7 +45,7 @@ public class CategoryListActivity extends ListActivity implements
 
 	@Override
 	public void setCategory(final TimeSliceCategory category) {
-		if (category == TimeSliceCategory.NO_CATEGORY) {
+		if (!TimeSliceCategory.isValid(category)) {
 			this.showCategoryEditDialog(null);
 			return;
 		} else if (category.getRowId() == TimeSliceCategory.NOT_SAVED) {
@@ -69,8 +69,7 @@ public class CategoryListActivity extends ListActivity implements
 		}
 		menu.add(0, CategoryListActivity.EDIT_MENU_ID, 0, R.string.cmd_edit);
 		menu.add(0, CategoryListActivity.DELETE_MENU_ID, 0, R.string.cmd_delete);
-		if ((this.categoryClicked != null)
-				&& (this.categoryClicked != TimeSliceCategory.NO_CATEGORY)) {
+		if (TimeSliceCategory.isValid(this.categoryClicked)) {
 			menu.add(0, CategoryListActivity.REPORT_MENU_ID, 0,
 					R.string.cmd_report);
 		}
@@ -80,7 +79,7 @@ public class CategoryListActivity extends ListActivity implements
 	public boolean onContextItemSelected(final MenuItem item) {
 		switch (item.getItemId()) {
 		case EDIT_MENU_ID:
-			if (this.categoryClicked == TimeSliceCategory.NO_CATEGORY) {
+			if (!TimeSliceCategory.isValid(this.categoryClicked)) {
 				this.showCategoryEditDialog(null);
 			} else {
 				this.showCategoryEditDialog(this.categoryClicked);
@@ -106,8 +105,7 @@ public class CategoryListActivity extends ListActivity implements
 	}
 
 	private void showDetailReport() {
-		if ((this.categoryClicked != null)
-				&& (this.categoryClicked != TimeSliceCategory.NO_CATEGORY)) {
+		if (TimeSliceCategory.isValid(this.categoryClicked)) {
 			final TimeSliceFilterParameter filter = new TimeSliceFilterParameter()
 					.setCategoryId(this.categoryClicked.getRowId())
 					.setIgnoreDates(true);

@@ -303,7 +303,7 @@ public class TimeSliceEditActivity extends Activity implements ICategorySetter {
 
 	@Override
 	public void setCategory(final TimeSliceCategory newCategory) {
-		if (newCategory == TimeSliceCategory.NO_CATEGORY) {
+		if (!TimeSliceCategory.isValid(newCategory)) {
 			// selected item to create new category "?"
 			this.showCategoryEditDialog(null);
 		} else if (newCategory.getRowId() == TimeSliceCategory.NOT_SAVED) {

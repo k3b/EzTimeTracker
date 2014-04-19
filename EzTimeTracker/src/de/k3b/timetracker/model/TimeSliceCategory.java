@@ -162,7 +162,7 @@ public class TimeSliceCategory extends ItemWithRowId implements Serializable,
 	 */
 	public boolean isActive(final long currentDateTime) {
 		if ((currentDateTime == TimeSliceCategory.MIN_VALID_DATE)
-				|| (this == TimeSliceCategory.NO_CATEGORY)) {
+				|| !isValid(this)) {
 			return true;
 		}
 
@@ -170,4 +170,12 @@ public class TimeSliceCategory extends ItemWithRowId implements Serializable,
 				.getEndTime()));
 	}
 
+	public static boolean isValid(final TimeSliceCategory category) {
+		return (category != null) && (TimeSliceCategory.isValid(category.getRowId()));
+	}
+
+	public static boolean isValid(final int categoryId) {
+		return categoryId != TimeSliceCategory.NO_CATEGORY
+				.getRowId();
+	}
 }
