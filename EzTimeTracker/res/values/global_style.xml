@@ -3,5 +3,19 @@
     <style name="GlobalStyle" >
         <item name="android:background">#000000</item>
     </style>
-
+    <style name="GlobalStyle.TextView" >
+    </style>
+    <style name="GlobalStyle.TextView.Caption" >
+        <item name="android:textSize">20sp</item>
+    </style>    
+    
+    <style name="GlobalStyle.Line" >
+        <item name="android:background">#FFffffff</item>
+    </style>
+    
+    <style name="GlobalStyle.Line.Horizontal" >
+	    <item name="android:layout_width">fill_parent</item>
+	    <item name="android:layout_height">1dip</item>
+    </style>
+    
 </resources>

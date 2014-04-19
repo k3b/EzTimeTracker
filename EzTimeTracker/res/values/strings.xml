@@ -105,5 +105,8 @@
 	<string name="db_title">Databas Tool</string>
 	<string name="db_title_condensed">Sql</string>
 	<string name="about_content_about">"<![CDATA[<h2>About</h2><a href="https://github.com/k3b/EzTimeTracker/wiki">EZTime Tracker</a>&nbsp;is an Android app to record timespend&nbsp;on&nbsp;user definable activities/categories. <br /><br />It records the time between "punch in" and "punch out" even if theapp&nbsp;is not running.<br /><br />There are reports for details or totals by day, week, month, year and/orcategory that can be viewed or exported to textfile/email. You can alsouse your favorite SqLite-Databaseprogram to filter the data using thedatabase-view 'time_slice_report'.<br /><br /><br />Raw data can be exported to csv file on sd-card. <br /><br /><a href="http://kebabapps.blogspot.com/search/label/Llama">AndroidLlama</a> + <a href="https://github.com/k3b/EzTimeTracker/wiki">EZ TimeTracker</a> =&nbsp;location based timetracking: i.e.aoutmatic recording when entering/leaving job/buro.<br /><br />]]>"</string>
-	<string name="export_format">format</string>
+	<string name="export_format">Format</string>
+
+	<string name="export_preview">Preview</string>
+		
 </resources>
