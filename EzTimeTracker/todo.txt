@@ -1,3 +1,8 @@
+>	Neuer Export As
+	- layout
+	- filter
+	- export-plugin generates csv, html,... text
+		csv from timeslice
 options
 	chooser
 		no backup
@@ -13,9 +18,6 @@ options
 	punchInOut with button: report or list-view
 	
 v SummaryReportExport mit bemerkungen
->	Neuer Export As
-	- layout
-	- filter
 
 Filter/Gui+=Profile<-ProfilCategory->Category
 

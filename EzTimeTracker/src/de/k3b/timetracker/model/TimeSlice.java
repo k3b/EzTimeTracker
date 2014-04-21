@@ -81,6 +81,10 @@ public class TimeSlice extends ItemWithRowId implements Serializable,
 		return this.endTime - this.startTime;
 	}
 
+	public long getDurationInMinutes() {
+		return getDurationInMilliseconds() / (1000 * 60);
+	}
+
 	@Override
 	public int getCategoryId() {
 		final TimeSliceCategory category = this.getCategory();
@@ -102,7 +106,7 @@ public class TimeSlice extends ItemWithRowId implements Serializable,
 				.getCategoryName() : "???";
 	}
 
-	public Object getCategoryDescription() {
+	public String getCategoryDescription() {
 		return (this.getCategory() != null) ? this.getCategory()
 				.getDescription() : "???";
 	}

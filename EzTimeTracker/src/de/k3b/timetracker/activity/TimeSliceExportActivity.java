@@ -11,8 +11,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
-
-import de.k3b.timetracker.DateTimeFormatter;
 import de.k3b.timetracker.FileUtilities;
 import de.k3b.timetracker.Global;
 import de.k3b.timetracker.R;
@@ -22,12 +20,9 @@ import de.k3b.timetracker.database.TimeSliceCategoryRepsitory;
 import de.k3b.timetracker.database.TimeSliceRepository;
 import de.k3b.timetracker.model.TimeSlice;
 import de.k3b.timetracker.model.TimeSliceCategory;
+import de.k3b.timetracker.report.CsvDetailReportRenderer;
 
 public class TimeSliceExportActivity extends Activity {
-	private static final String CSV_LINE_SEPERATOR = "\n";
-	private static final String CSV_FIELD_SEPERATOR = ",";
-
-
 	/**
 	 * static to survive if activity is destroeyed but not persisted to sd
 	 * because the upper filter limit must change over time
@@ -141,46 +136,25 @@ public class TimeSliceExportActivity extends Activity {
 	}
 	
 	private void onExport() {
-		final StringBuilder output = createCsv(currentRangeFilter);
+		final String output = createCsv(currentRangeFilter);
 		if (this.mUseSendToInsteadOfFile) {
 			final String appName = this.getString(R.string.app_name);
 			final String subject = String.format(
 					this.getString(R.string.export_email_subject), appName);
 
-			SendUtilities.send("", subject, this, output.toString());
+			SendUtilities.send("", subject, this, output);
 		} else {
 			final FileUtilities fileUtil = new FileUtilities(this);
 			fileUtil.write(this.getFilenameEditText().getText().toString(),
-					output.toString());
+					output);
 		}
 	}
 
-	private StringBuilder createCsv(TimeSliceFilterParameter filter) {
+	private String createCsv(TimeSliceFilterParameter filter) {
 		final TimeSliceRepository mTimeSliceRepository = new TimeSliceRepository(
 				this, Settings.isPublicDatabase());
-		List<TimeSlice> timeSlices;
-
-		timeSlices = mTimeSliceRepository.fetchList(filter);
-		final StringBuilder output = new StringBuilder();
-		output.append("Start, End, Category Name, Category Description, Notes")
-				.append(TimeSliceExportActivity.CSV_LINE_SEPERATOR);
-		for (final TimeSlice aTimeSlice : timeSlices) {
-			output.append(
-					DateTimeFormatter.getInstance().getIsoDateTimeStr(
-							aTimeSlice.getStartTime())).append(
-					TimeSliceExportActivity.CSV_FIELD_SEPERATOR);
-			output.append(
-					DateTimeFormatter.getInstance().getIsoDateTimeStr(
-							aTimeSlice.getEndTime())).append(
-					TimeSliceExportActivity.CSV_FIELD_SEPERATOR);
-			output.append(aTimeSlice.getCategoryName()).append(
-					TimeSliceExportActivity.CSV_FIELD_SEPERATOR);
-			output.append(aTimeSlice.getCategoryDescription()).append(
-					TimeSliceExportActivity.CSV_FIELD_SEPERATOR);
-			output.append(aTimeSlice.getNotes().replace(
-					TimeSliceExportActivity.CSV_LINE_SEPERATOR, " "));
-			output.append(TimeSliceExportActivity.CSV_LINE_SEPERATOR);
-		}
-		return output;
+		final List<TimeSlice> timeSlices = mTimeSliceRepository.fetchList(filter);
+		return new CsvDetailReportRenderer().createReport(timeSlices);
 	}
+
 }

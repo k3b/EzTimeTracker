@@ -1,4 +1,4 @@
-package de.k3b.timetracker.activity;
+package de.k3b.timetracker.report;
 
 import java.util.Locale;
 
@@ -65,16 +65,16 @@ public class ReportItemFormatter {
 	protected String getValue(final long obj) {
 		String currentStartDateText;
 		if (this.reportDateGrouping == ReportDateGrouping.DAILY) {
-			currentStartDateText = TimeSheetStatisticsCalculator.dt
+			currentStartDateText = SummaryReportCalculator.dt
 					.getLongDateStr(obj);
 		} else if (this.reportDateGrouping == ReportDateGrouping.WEEKLY) {
-			currentStartDateText = TimeSheetStatisticsCalculator.dt
+			currentStartDateText = SummaryReportCalculator.dt
 					.getWeekStr(obj);
 		} else if (this.reportDateGrouping == ReportDateGrouping.MONTHLY) {
-			currentStartDateText = TimeSheetStatisticsCalculator.dt
+			currentStartDateText = SummaryReportCalculator.dt
 					.getMonthStr(obj);
 		} else if (this.reportDateGrouping == ReportDateGrouping.YEARLY) {
-			currentStartDateText = TimeSheetStatisticsCalculator.dt
+			currentStartDateText = SummaryReportCalculator.dt
 					.getYearString(obj);
 		} else {
 			throw new IllegalArgumentException("Unknown ReportDateGrouping "

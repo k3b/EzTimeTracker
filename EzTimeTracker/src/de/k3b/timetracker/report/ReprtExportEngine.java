@@ -20,7 +20,7 @@ public class ReprtExportEngine {
 	private Writer writer;
 	private Context context;
 	// private List<TextView> reportList;
-	ReportOutput output;
+	String output;
 	private String defaultName;
 
 	private ReprtExportEngine() {
@@ -56,7 +56,7 @@ public class ReprtExportEngine {
 	}
 
 	public static void exportToSD(final String defaultName,
-			final Context context, final ReportOutput output) {
+			final Context context, final String output) {
 		final ReprtExportEngine exporter = new ReprtExportEngine();
 		exporter.context = context;
 		exporter.defaultName = defaultName;
@@ -103,7 +103,7 @@ public class ReprtExportEngine {
 	}
 
 	private void saveData() throws IOException {
-		this.writer.write(this.output.getOutput());
+		this.writer.write(this.output);
 		this.writer.close();
 	}
 

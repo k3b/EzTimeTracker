@@ -1,4 +1,4 @@
-package de.k3b.timetracker.activity;
+package de.k3b.timetracker.report;
 
 import android.content.Context;
 import de.k3b.timetracker.model.TimeSlice;

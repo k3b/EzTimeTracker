@@ -1,4 +1,4 @@
-package de.k3b.timetracker.activity;
+package de.k3b.timetracker.report;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -16,7 +16,7 @@ import de.k3b.util.DateTimeUtil;
  * @author EVE
  * 
  */
-public class TimeSheetStatisticsCalculator {
+public class SummaryReportCalculator {
 	/** defines main and subgrouping of report */
 	public enum ReportModes {
 		/** grouped by date+category */
@@ -70,7 +70,7 @@ public class TimeSheetStatisticsCalculator {
 			final Object subKey = this.getSubKey(reportMode,
 					currentStartDateKey, currentCategoryKey);
 
-			TimeSheetStatisticsCalculator.updateItemStatistics(subGroup,
+			SummaryReportCalculator.updateItemStatistics(subGroup,
 					subKey, aSlice.getEndTime() - rawStartTime,
 					(showNotes) ? aSlice.getNotes() : null);
 		} // foreach TimeSlice
@@ -105,16 +105,16 @@ public class TimeSheetStatisticsCalculator {
 			final ReportDateGrouping reportDateGrouping) {
 		long currentStartDate;
 		if (reportDateGrouping == ReportDateGrouping.DAILY) {
-			currentStartDate = TimeSheetStatisticsCalculator.dt
+			currentStartDate = SummaryReportCalculator.dt
 					.getStartOfDay(rawDateTime);
 		} else if (reportDateGrouping == ReportDateGrouping.WEEKLY) {
-			currentStartDate = TimeSheetStatisticsCalculator.dt
+			currentStartDate = SummaryReportCalculator.dt
 					.getStartOfWeek(rawDateTime);
 		} else if (reportDateGrouping == ReportDateGrouping.MONTHLY) {
-			currentStartDate = TimeSheetStatisticsCalculator.dt
+			currentStartDate = SummaryReportCalculator.dt
 					.getStartOfMonth(rawDateTime);
 		} else if (reportDateGrouping == ReportDateGrouping.YEARLY) {
-			currentStartDate = TimeSheetStatisticsCalculator.dt
+			currentStartDate = SummaryReportCalculator.dt
 					.getStartOfYear(rawDateTime);
 		} else {
 			throw new IllegalArgumentException("Unknown ReportDateGrouping "
@@ -176,7 +176,7 @@ public class TimeSheetStatisticsCalculator {
 	public static List<Object> createStatistics(
 			final List<TimeSlice> timeSlices, final ReportModes reportMode,
 			final ReportDateGrouping reportDateGrouping, final boolean showNotes) {
-		final TimeSheetStatisticsCalculator calculator = new TimeSheetStatisticsCalculator();
+		final SummaryReportCalculator calculator = new SummaryReportCalculator();
 		final Map<Object, Map<Object, ReportItemWithStatistics>> statisticsMap = calculator
 				.createStatisticsMap(reportMode, reportDateGrouping,
 						timeSlices, showNotes);

@@ -12,8 +12,12 @@ import de.k3b.timetracker.R;
 import de.k3b.timetracker.TimeTrackerManager;
 import de.k3b.timetracker.model.TimeSlice;
 import de.k3b.timetracker.model.TimeSliceCategory;
+import de.k3b.timetracker.report.ReportDateGrouping;
+import de.k3b.timetracker.report.ReportItemFormatter;
+import de.k3b.timetracker.report.ReportItemWithStatistics;
 
 /**
+ * creates and fills item in listview.<br/>
  * Contains header items of type Long as date or TimeSliceCategory<br />
  * and detail items of type TimeSlice or ReportItemWithStatistics.<br/>
  * 

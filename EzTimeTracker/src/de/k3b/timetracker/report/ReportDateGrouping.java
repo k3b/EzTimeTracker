@@ -1,4 +1,4 @@
-package de.k3b.timetracker.activity;
+package de.k3b.timetracker.report;
 
 public enum ReportDateGrouping {
 	DAILY, WEEKLY, MONTHLY, YEARLY

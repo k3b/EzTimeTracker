@@ -13,7 +13,9 @@ import android.view.MenuItem;
 import de.k3b.timetracker.Global;
 import de.k3b.timetracker.R;
 import de.k3b.timetracker.SendUtilities;
-import de.k3b.timetracker.report.ReportOutput;
+import de.k3b.timetracker.report.ReportDateGrouping;
+import de.k3b.timetracker.report.ReportItemFormatterEx;
+import de.k3b.timetracker.report.TxtSummaryReportRenderer;
 import de.k3b.timetracker.report.ReprtExportEngine;
 
 /**
@@ -77,7 +79,6 @@ abstract class BaseReportListActivity extends ListActivity {
 	 */
 	@Override
 	public boolean onOptionsItemSelected(final MenuItem item) {
-		ReportOutput sdFormatter = null;
 		switch (item.getItemId()) {
 		case R.id.menu_toggle_notes:
 			this.showNotes = !this.showNotes;
@@ -88,25 +89,21 @@ abstract class BaseReportListActivity extends ListActivity {
 			ReportFilterActivity.showActivity(this, this.currentRangeFilter);
 			break;
 		case R.id.menu_export_sd:
-			sdFormatter = this.createFormatter();
 			ReprtExportEngine.exportToSD(this.getDefaultReportName(), this,
-					sdFormatter);
+					this.createReport());
 			break;
 		case R.id.menu_export_send:
-			sdFormatter = this.createFormatter();
-			sdFormatter.setLineTerminator("\n");
 			SendUtilities.send("", this.getEMailSummaryLine(), this,
-					sdFormatter.getOutput());
+					this.createReport());
 			break;
 		}
 
 		return true;
 	}
 
-	private ReportOutput createFormatter() {
-		return ReportOutput.makeFormatter(this.loadData(),
-				new ReportItemFormatterEx(this, this.getReportDateGrouping(),
-						this.showNotes));
+	private String createReport() {
+		return new TxtSummaryReportRenderer(new ReportItemFormatterEx(this, this.getReportDateGrouping(), this.showNotes))
+						.createReport(this.loadData());
 	}
 
 	/**

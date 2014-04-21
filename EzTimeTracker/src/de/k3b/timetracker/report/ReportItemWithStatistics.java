@@ -1,4 +1,4 @@
-package de.k3b.timetracker.activity;
+package de.k3b.timetracker.report;
 
 /**
  * Represents a report item statistics (duration, notes)

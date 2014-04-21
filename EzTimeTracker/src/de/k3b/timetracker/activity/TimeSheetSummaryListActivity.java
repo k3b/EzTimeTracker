@@ -18,12 +18,14 @@ import de.k3b.timetracker.DateTimeFormatter;
 import de.k3b.timetracker.Global;
 import de.k3b.timetracker.R;
 import de.k3b.timetracker.Settings;
-import de.k3b.timetracker.activity.TimeSheetStatisticsCalculator.ReportModes;
 import de.k3b.timetracker.database.TimeSliceCategoryRepsitory;
 import de.k3b.timetracker.database.TimeSliceRepository;
 import de.k3b.timetracker.model.TimeSlice;
 import de.k3b.timetracker.model.TimeSliceCategory;
-import de.k3b.timetracker.report.IReportInterface;
+import de.k3b.timetracker.report.ReportDateGrouping;
+import de.k3b.timetracker.report.ReportItemWithStatistics;
+import de.k3b.timetracker.report.SummaryReportCalculator;
+import de.k3b.timetracker.report.SummaryReportCalculator.ReportModes;
 import de.k3b.util.DateTimeUtil;
 
 /**
@@ -31,7 +33,7 @@ import de.k3b.util.DateTimeUtil;
  * date.
  */
 public class TimeSheetSummaryListActivity extends BaseReportListActivity
-		implements IReportInterface, ICategorySetter {
+		implements ICategorySetter {
 	/**
 	 * Used to transfer optional report-type from parent activity to this.
 	 */
@@ -384,7 +386,7 @@ public class TimeSheetSummaryListActivity extends BaseReportListActivity
 		final List<TimeSlice> timeSlices = this.timeSliceRepository
 				.fetchList(rangeFilter);
 
-		final List<Object> listItems = TimeSheetStatisticsCalculator
+		final List<Object> listItems = SummaryReportCalculator
 				.createStatistics(timeSlices, this.reportMode,
 						this.getReportDateGrouping(), this.showNotes);
 
