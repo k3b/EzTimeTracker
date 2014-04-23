@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import de.k3b.timetracker.R;
+import de.k3b.timetracker.activity.ExportSettingsDialog;
 
 public class ReprtExportEngine {
 	private Writer writer;
@@ -27,32 +28,15 @@ public class ReprtExportEngine {
 
 	}
 
+	private static ExportSettingsDto exportSettings = new ExportSettingsDto();
+	
+	private ExportSettingsDialog dlgExportSettings = null;
+	
 	private void showSaveFileDialog() {
-		final Dialog dialog = new Dialog(this.context);
-		dialog.setContentView(R.layout.file_choose_name);
-		dialog.setTitle(R.string.choose_filename);
-		final Button saveButton = (Button) dialog
-				.findViewById(R.id.choose_file_name_save_button);
-		final Button cancelButton = (Button) dialog
-				.findViewById(R.id.choose_file_name_cancel_button);
-		final EditText fileNameField = (EditText) dialog
-				.findViewById(R.id.choose_file_name_edit_field);
-		fileNameField.setText(this.defaultName);
-		saveButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(final View v) {
-				ReprtExportEngine.this.export(fileNameField.getText()
-						.toString());
-				dialog.dismiss();
-			}
-		});
-		cancelButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(final View v) {
-				dialog.cancel();
-			}
-		});
-		dialog.show();
+		if (dlgExportSettings == null) {
+			dlgExportSettings = new ExportSettingsDialog(this.context, exportSettings);
+		}
+		dlgExportSettings.show();
 	}
 
 	public static void exportToSD(final String defaultName,

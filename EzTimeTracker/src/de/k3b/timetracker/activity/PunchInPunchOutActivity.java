@@ -308,7 +308,7 @@ public class PunchInPunchOutActivity extends Activity implements
 		case R.id.categories:
 			return CategoryListActivity.class;
 		case R.id.export:
-			return TimeSliceExportActivity.class;
+			return ExportSettingsActivity.class;
 		case R.id.remove:
 			return TimeSliceRemoveActivity.class;
 		case R.id.settings:

@@ -36,8 +36,6 @@
 	    android:layout_below="@id/button_export_preview" />
 	
 	<TextView
-	    android:visibility="invisible"
-	    
 	    android:id="@+id/caption_export_format"
 	    style="@style/GlobalStyle.TextView.Caption"
 	    android:layout_width="wrap_content"
@@ -47,8 +45,6 @@
 	    android:text="@string/export_format" />
 
 	<Spinner
-	    android:visibility="invisible"
-	    
 	    android:id="@+id/spinner_export_format"
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
@@ -58,8 +54,6 @@
 	    android:prompt="@string/export_format" />
 				
 	<CheckBox 
-	    android:visibility="invisible"
-	    
 	    android:id="@+id/checkbox_data_export_email" android:text="@string/export_sendto"
 	    android:layout_alignParentLeft="true"
 		android:layout_below="@id/spinner_export_format"

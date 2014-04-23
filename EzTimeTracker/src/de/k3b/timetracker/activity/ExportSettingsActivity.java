@@ -22,7 +22,7 @@ import de.k3b.timetracker.model.TimeSlice;
 import de.k3b.timetracker.model.TimeSliceCategory;
 import de.k3b.timetracker.report.CsvDetailReportRenderer;
 
-public class TimeSliceExportActivity extends Activity {
+public class ExportSettingsActivity extends Activity {
 	/**
 	 * static to survive if activity is destroeyed but not persisted to sd
 	 * because the upper filter limit must change over time
@@ -75,8 +75,8 @@ public class TimeSliceExportActivity extends Activity {
 		sendToCheckBox.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(final View v) {
-				TimeSliceExportActivity.this.mUseSendToInsteadOfFile = sendToCheckBox.isChecked();
-				makeVisible(TimeSliceExportActivity.this.mUseSendToInsteadOfFile, R.id.caption_filename , R.id.edit_text_data_export_filename);
+				ExportSettingsActivity.this.mUseSendToInsteadOfFile = sendToCheckBox.isChecked();
+				makeVisible(ExportSettingsActivity.this.mUseSendToInsteadOfFile, R.id.caption_filename , R.id.edit_text_data_export_filename);
 			}
 		});
 		showFilter();
@@ -105,14 +105,14 @@ public class TimeSliceExportActivity extends Activity {
 		if (TimeSliceCategory.isValid(categoryId)) {
 			category = categoryRepository.fetchByRowID(categoryId);
 		}
-		TextView viewItem = (TextView) TimeSliceExportActivity.this
+		TextView viewItem = (TextView) ExportSettingsActivity.this
 				.findViewById(R.id.filter_value);
 		viewItem.setText(currentRangeFilter.toString(category));
 	}
 
 	private void makeVisible(boolean isVisible, int...viewItemIDs) {
 		for(int viewItemID : viewItemIDs) {
-			final View viewItem = TimeSliceExportActivity.this
+			final View viewItem = ExportSettingsActivity.this
 					.findViewById(viewItemID);
 			if (isVisible) {
 				viewItem.setVisibility(View.INVISIBLE);
