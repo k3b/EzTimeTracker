@@ -1,7 +1,5 @@
 package de.k3b.timetracker.report;
 
-import de.k3b.timetracker.activity.TimeSliceFilterParameter;
-
 public interface ExportSettings {
 	public abstract String getExportFormat();
 

@@ -307,8 +307,6 @@ public class PunchInPunchOutActivity extends Activity implements
 			return TimeSheetSummaryListActivity.class;
 		case R.id.categories:
 			return CategoryListActivity.class;
-		case R.id.export:
-			return ExportSettingsActivity.class;
 		case R.id.remove:
 			return TimeSliceRemoveActivity.class;
 		case R.id.settings:
@@ -512,7 +510,7 @@ public class PunchInPunchOutActivity extends Activity implements
 	/**
 	 * Call back from sub-activities.<br/>
 	 * Process Change StartTime (longpress start), Select StopTime before stop
-	 * (longpress stop) or cilter change for detailReport
+	 * (longpress stop) or filter change for detailReport
 	 */
 	@Override
 	protected void onActivityResult(final int requestCode,

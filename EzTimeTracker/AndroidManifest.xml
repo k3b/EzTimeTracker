@@ -23,8 +23,6 @@
 		<activity android:name="de.k3b.timetracker.activity.CategoryListActivity"/>
 		<activity android:name="de.k3b.timetracker.activity.TimeSliceEditActivity"
 			android:screenOrientation="portrait"/>
-		<activity android:name="de.k3b.timetracker.activity.ExportSettingsActivity"
-			android:screenOrientation="portrait"/>
 		<activity android:name="de.k3b.timetracker.activity.TimeSliceRemoveActivity"
 			android:screenOrientation="portrait"/>
 		<activity android:name="de.k3b.timetracker.activity.ReportFilterActivity" />

@@ -12,16 +12,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import de.k3b.timetracker.Global;
 import de.k3b.timetracker.R;
-import de.k3b.timetracker.SendUtilities;
 import de.k3b.timetracker.report.ReportDateGrouping;
-import de.k3b.timetracker.report.ReportItemFormatterEx;
-import de.k3b.timetracker.report.TxtSummaryReportRenderer;
-import de.k3b.timetracker.report.ReprtExportEngine;
 
 /**
  * Common Handling for Report-Generation and display.
  */
-abstract class BaseReportListActivity extends ListActivity {
+abstract class BaseReportListActivity extends ListActivity implements ExportSettingsDialog.OnExportHandler {
 	// current state
 	/**
 	 * current range filter used to fill report.<br/>
@@ -88,22 +84,9 @@ abstract class BaseReportListActivity extends ListActivity {
 		case R.id.menu_set_filter:
 			ReportFilterActivity.showActivity(this, this.currentRangeFilter);
 			break;
-		case R.id.menu_export_sd:
-			ReprtExportEngine.exportToSD(this.getDefaultReportName(), this,
-					this.createReport());
-			break;
-		case R.id.menu_export_send:
-			SendUtilities.send("", this.getEMailSummaryLine(), this,
-					this.createReport());
-			break;
 		}
 
 		return true;
-	}
-
-	private String createReport() {
-		return new TxtSummaryReportRenderer(new ReportItemFormatterEx(this, this.getReportDateGrouping(), this.showNotes))
-						.createReport(this.loadData());
 	}
 
 	/**

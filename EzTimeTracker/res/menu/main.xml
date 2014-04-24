@@ -2,7 +2,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 	<item android:title="@string/report">
 		<menu>
-			<item android:id="@+id/export" android:title="@string/report_title_export" android:titleCondensed="@string/report_title_condensed_export"/>
 			<item android:id="@+id/details" android:title="@string/report_title_details"/>
 			<item android:id="@+id/summary_day" android:title="@string/report_title_summary_day"/>
 			<item android:id="@+id/summary_week" android:title="@string/report_title_summary_week"/>

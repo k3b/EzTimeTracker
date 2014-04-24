@@ -31,10 +31,6 @@
 	<string name="checkbox_notes_not_null">Bemerkungen nicht leer</string>
 	<string name="export_data_to_csv_file">Buchungen in CSV Datei exportieren</string>
 	<string name="menu_export_report">Export Report</string>
-	<string name="menu_export_report_to_sd_card">&#8230; auf Speicherkarte</string>
-	<string name="menu_export_report_to_sd_card_csv">&#8230; als csv auf Speicherkarte</string>
-	<string name="menu_send_report">&#8230; senden &#8230;</string>
-	<string name="menu_send_report_csv">&#8230; als csv senden &#8230;</string>
 	<string name="formatStartDate">"Start: %1$s"</string>
 	<string name="formatEndDate">"Ende: %1$s"</string>
 	<string name="label_report_filter">Welche Daten anzeigen?</string>

@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
     <item android:id="@+id/menu_toggle_notes"  android:title="@string/menu_report_exclude_notes"/>
-    <item android:title="@string/menu_export_report" android:menuCategory="secondary">
- 		<menu>
-		    <item android:id="@+id/menu_export_sd"  android:title="@string/menu_export_report_to_sd_card"/>
-		    <item android:id="@+id/menu_export_send"  android:title="@string/menu_send_report"/>
- 		</menu>
-	</item>
+    <item android:id="@+id/menu_export"  android:title="@string/menu_export_report" android:menuCategory="secondary" />
     <item android:id="@+id/menu_set_filter"  android:title="@string/menu_filter"  android:menuCategory="secondary"/>
 </menu>

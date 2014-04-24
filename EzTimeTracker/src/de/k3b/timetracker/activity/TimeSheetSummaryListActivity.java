@@ -15,16 +15,23 @@ import android.view.View;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListView;
 import de.k3b.timetracker.DateTimeFormatter;
+import de.k3b.timetracker.FileUtilities;
 import de.k3b.timetracker.Global;
 import de.k3b.timetracker.R;
+import de.k3b.timetracker.SendUtilities;
 import de.k3b.timetracker.Settings;
 import de.k3b.timetracker.database.TimeSliceCategoryRepsitory;
 import de.k3b.timetracker.database.TimeSliceRepository;
 import de.k3b.timetracker.model.TimeSlice;
 import de.k3b.timetracker.model.TimeSliceCategory;
+import de.k3b.timetracker.report.CsvSummaryReportRenderer;
+import de.k3b.timetracker.report.ExportSettings;
+import de.k3b.timetracker.report.ExportSettingsDto;
 import de.k3b.timetracker.report.ReportDateGrouping;
+import de.k3b.timetracker.report.ReportItemFormatterEx;
 import de.k3b.timetracker.report.ReportItemWithStatistics;
 import de.k3b.timetracker.report.SummaryReportCalculator;
+import de.k3b.timetracker.report.TxtSummaryReportRenderer;
 import de.k3b.timetracker.report.SummaryReportCalculator.ReportModes;
 import de.k3b.util.DateTimeUtil;
 
@@ -170,6 +177,9 @@ public class TimeSheetSummaryListActivity extends BaseReportListActivity
 			}
 			this.loadDataIntoReport(0);
 			break;
+		case R.id.menu_export:
+			showExportSettingsDialog();
+			return true;
 		default:
 			super.onOptionsItemSelected(item);
 		}
@@ -522,5 +532,37 @@ public class TimeSheetSummaryListActivity extends BaseReportListActivity
 		final String appName = this.getString(R.string.app_name);
 		return String.format(this.getString(R.string.default_mail_sum_subject),
 				appName);
+	}
+
+	private static ExportSettingsDto exportSettings = new ExportSettingsDto(); 
+	private ExportSettingsDialog dlgExportSettings = null;
+	
+	private void showExportSettingsDialog() {
+		if (dlgExportSettings == null) {
+			dlgExportSettings = new ExportSettingsDialog(this, exportSettings, this);
+		}
+		dlgExportSettings.show();
+	}
+
+	private String createReport(String reportType) {
+		ReportItemFormatterEx formatter = new ReportItemFormatterEx(this, this.getReportDateGrouping(), this.showNotes);
+		List<Object> data = this.loadData();
+		if (reportType.toLowerCase().startsWith("c")) {
+			return new CsvSummaryReportRenderer(formatter, this.showNotes).createReport(data);
+		} else  {
+			return new TxtSummaryReportRenderer(formatter).createReport(data);
+		}
+	}
+	
+	@Override
+	public void onExport(ExportSettings setting) {
+		ExportSettingsDto.copy(exportSettings,setting);
+		
+		String report = createReport(exportSettings.getExportFormat());
+		if (exportSettings.isUseSendTo()) {
+			SendUtilities.send("", this.getEMailSummaryLine(), this, report);
+		} else {
+			new FileUtilities(this).write(exportSettings.getFileName(), report);
+		}
 	}
 }

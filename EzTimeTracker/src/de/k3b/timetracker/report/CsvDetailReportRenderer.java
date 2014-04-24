@@ -14,11 +14,13 @@ public class CsvDetailReportRenderer {
 
 	private static DateTimeUtil dateFormatter = DateTimeFormatter.getInstance();
 
-	public String createReport(final List<TimeSlice> timeSlices) {
+	public String createReport(final List<Object> list) {
 		final StringBuilder output = new StringBuilder();
 		addLine(output, "Start","End","DurationInMinutes","CategoryName","CategoryDescription","Notes");
-		for (final TimeSlice aTimeSlice : timeSlices) {
-			addLine(output, aTimeSlice);
+		for (final Object aTimeSlice : list) {
+			if (aTimeSlice.getClass().isAssignableFrom(TimeSlice.class)) {
+				addLine(output, (TimeSlice) aTimeSlice);
+			}
 		}
 		return output.toString();
 	}

@@ -14,15 +14,22 @@ import android.widget.*;
  */
 public class ExportSettingsDialog extends Dialog implements ExportSettings {
 
+	public interface OnExportHandler {
+		public void onExport(ExportSettings setting);
+	}
+	
 	private Spinner exportFormat;
 	private CheckBox useSendTo;
 	private View rowFileName;
 	private EditText fileName;
 	private Button cmdExport;
 	private Button cmdCancel;
+	
+	private OnExportHandler callBack;
 
-	public ExportSettingsDialog(Context context, ExportSettings source) {
+	public ExportSettingsDialog(Context context, ExportSettings source, OnExportHandler callBack) {
 		super(context);
+		this.callBack = callBack;
 		this.setContentView(R.layout.export_settings_dialog);
 		
 		this.exportFormat = (Spinner) this.findViewById(R.id.spinner_export_format);
@@ -61,7 +68,7 @@ public class ExportSettingsDialog extends Dialog implements ExportSettings {
 	}
 
 	protected void saveChangesAndExit() {
-		// todo
+		this.callBack.onExport(this);
 		this.dismiss();
 	}
 
