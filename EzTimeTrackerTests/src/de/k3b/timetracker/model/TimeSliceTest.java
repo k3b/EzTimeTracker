@@ -1,8 +1,6 @@
 package de.k3b.timetracker.model;
 
-import junit.framework.Assert;
-
-import org.junit.Test;
+import org.junit.*;
 
 import de.k3b.common.IItemWithRowId;
 import de.k3b.common.SelectedItemsWithRowId;

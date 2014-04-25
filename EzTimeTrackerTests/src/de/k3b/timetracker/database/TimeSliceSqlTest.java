@@ -1,9 +1,6 @@
 package de.k3b.timetracker.database;
 
-import junit.framework.Assert;
-
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 
 import de.k3b.android.database.SqlFilter;
 import de.k3b.timetracker.activity.TimeSliceFilterParameter;

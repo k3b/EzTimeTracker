@@ -3,9 +3,7 @@ package de.k3b.util;
 import java.util.Calendar;
 import java.util.Locale;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 
 public class DateTimeUtilTests {
 	DateTimeUtil dtu;

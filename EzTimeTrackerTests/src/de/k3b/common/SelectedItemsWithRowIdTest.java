@@ -1,8 +1,6 @@
 package de.k3b.common;
 
-import junit.framework.Assert;
-
-import org.junit.Test;
+import org.junit.*;
 
 public class SelectedItemsWithRowIdTest {
 	private final int ID = 22;
@@ -15,6 +13,7 @@ public class SelectedItemsWithRowIdTest {
 				.createTimeSliceSelectedItems().setAsSelected(
 						this.timeSliceItem, true);
 		final boolean result = sut.isSelected(this.timeSliceItem);
+		
 		Assert.assertEquals(true, result);
 	}
 
