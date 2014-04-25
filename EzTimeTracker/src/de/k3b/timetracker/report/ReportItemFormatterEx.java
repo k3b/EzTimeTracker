@@ -25,12 +25,16 @@ public class ReportItemFormatterEx extends ReportItemFormatter {
 	protected String getValue(final TimeSlice obj) {
 		final boolean showNotes = (this.showNotes && (obj.hasNotes()));
 
-		final String notes = (showNotes) ? (this.lineTerminator
-				+ ReportItemFormatterEx.DETAIL_PREFIX + ReportItemFormatterEx.DETAIL_PREFIX)
-				+ (obj.getNotes())
-				: "";
-		return ReportItemFormatterEx.DETAIL_PREFIX + super.getValue(obj)
-				+ notes + this.lineTerminator;
+		StringBuilder newNotes = new StringBuilder(ReportItemFormatterEx.DETAIL_PREFIX)
+			.append(super.getValue(obj)).append(this.lineTerminator);
+		
+			//	+ newNotes + this.lineTerminator;
+		if (showNotes) {
+			for(String note : obj.getNotes().split("[\n\r]")) {
+				newNotes.append(ReportItemFormatterEx.DETAIL_PREFIX).append(ReportItemFormatterEx.DETAIL_PREFIX).append(note).append(this.lineTerminator);
+			}
+		}
+		return newNotes.toString();
 	}
 
 	@Override

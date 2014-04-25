@@ -32,6 +32,8 @@ public class ExportSettingsDialog extends Dialog implements ExportSettings {
 		this.callBack = callBack;
 		this.setContentView(R.layout.export_settings_dialog);
 		
+		this.setTitle(R.string.menu_export_report);
+
 		this.exportFormat = (Spinner) this.findViewById(R.id.spinner_export_format);
 		this.useSendTo = (CheckBox) this.findViewById(R.id.checkbox_data_export_email);
 		this.rowFileName = this.findViewById(R.id.rowFileName);
@@ -91,7 +93,7 @@ public class ExportSettingsDialog extends Dialog implements ExportSettings {
 	 */
 	@Override
 	public String getFileName() {
-		return this.fileName.toString();
+		return this.fileName.getText().toString();
 	}
 	/* (non-Javadoc)
 	 * @see de.k3b.timetracker.report.ExportSettings#setFileName(java.lang.String)

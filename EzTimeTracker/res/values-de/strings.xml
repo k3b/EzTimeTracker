@@ -16,7 +16,6 @@
 	<string name="menu_report_include_notes">mit Bemerkungen</string>
 	<string name="menu_report_exclude_notes">ohne Bemerkungen</string>
 	<string name="export_sendto">Export versenden &#8230;</string>
-	<string name="button_data_export">Exportiere Buchungen</string>
 	<string name="cmd_update">Anwenden</string>
 	<string name="cmd_delete">Löschen</string>
 	<string name="cmd_delete_warning">"Warnung: Wird noch verwendet : " </string>
@@ -24,6 +23,7 @@
 	<string name="cmd_delete_cancel">"Nicht löschen."</string>
 	<string name="cmd_cancel"> Abbrechen </string>
 	<string name="cmd_report"> Details </string>
+	<string name="cmd_export_sendto">Export</string>
 	<string name="checkbox_filter_ignore_date">Datum egal</string>
 	<string name="checkbox_notes_not_null">Bemerkungen nicht leer</string>
 	<string name="menu_export_report">Export Report</string>

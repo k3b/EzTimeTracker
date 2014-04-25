@@ -18,4 +18,11 @@
 	    <item name="android:layout_height">1dip</item>
     </style>
     
+    <style name="DialogStyle" >
+    </style>
+    <style name="DialogStyle.TextView" >
+    </style>
+    <style name="DialogStyle.TextView.Caption" >
+        <item name="android:textSize">20sp</item>
+    </style>    
 </resources>

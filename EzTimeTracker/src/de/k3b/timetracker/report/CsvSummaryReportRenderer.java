@@ -60,6 +60,6 @@ public class CsvSummaryReportRenderer {
 		String categoryName = (category != null) ? category.getCategoryName() : null;
 		String notes = (this.showNotes) ? item.getNotes() : null;
 		
-		CsvDetailReportRenderer.addLine(output, start, duration, categoryName,notes);
+		CsvDetailReportRenderer.addLine(output, start.replace("\n", "").replace("\r", ""), duration, categoryName,notes);
 	}
 }

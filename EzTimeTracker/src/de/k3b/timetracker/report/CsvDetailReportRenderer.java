@@ -6,11 +6,15 @@ import de.k3b.timetracker.DateTimeFormatter;
 import de.k3b.timetracker.model.TimeSlice;
 import de.k3b.util.DateTimeUtil;
 
+/**
+ * Renders a detail-report as csv. Ignores all non TimeSlice items.
+ * @author k3b
+ */
 public class CsvDetailReportRenderer {
 	private static final String CSV_FIELD_DELIMITER = "\"";
 	private static final String CSV_FIELD_SEPERATOR = ";";
 	private static final String CSV_LINE_SEPERATOR = "\n";
-	private static final String CSV_FIELD_DELIMITER_REPLACEMENT = "'";
+	private static final String CSV_FIELD_DELIMITER_REPLACEMENT = "\"\"";
 
 	private static DateTimeUtil dateFormatter = DateTimeFormatter.getInstance();
 
@@ -32,7 +36,7 @@ public class CsvDetailReportRenderer {
 		String duration = "" + timeSlice.getDurationInMinutes(); 
 		String categoryName = timeSlice.getCategoryName();
 		String categoryDescription = timeSlice.getCategoryDescription();
-		String notes = timeSlice.getNotes().replace(CSV_LINE_SEPERATOR, " ");
+		String notes = timeSlice.getNotes();
 		
 		addLine(output, start, end, duration, categoryName,
 				categoryDescription, notes);

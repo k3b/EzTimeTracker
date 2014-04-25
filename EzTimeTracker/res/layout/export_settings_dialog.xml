@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-	android:layout_width="fill_parent" android:layout_height="wrap_content">
+	android:layout_width="fill_parent" android:layout_height="wrap_content" >
 	<TableLayout android:layout_width="fill_parent"
 		android:layout_height="wrap_content" android:layout_gravity="center"
 		android:stretchColumns="1">
 		<TableRow >
 			<TextView
-			    style="@style/GlobalStyle.TextView.Caption"
+			    style="@style/DialogStyle.TextView.Caption"
 			    android:layout_width="wrap_content"
 			    android:layout_height="wrap_content"
 			    android:text="@string/export_format" />
@@ -17,17 +17,15 @@
 			    android:layout_height="wrap_content"
 			    android:entries="@array/export_formats"
 			    android:prompt="@string/export_format" />
-				</TableRow>
-		<TableRow >
+		</TableRow>
 			<CheckBox 
 			    android:id="@+id/checkbox_data_export_email" android:text="@string/export_sendto"
 				android:layout_width="fill_parent" android:layout_height="wrap_content"/>
        
-		</TableRow>
 		<TableRow android:id="@+id/rowFileName">
 			<TextView
 			    android:id="@+id/caption_filename"
-			    style="@style/GlobalStyle.TextView.Caption"
+			    style="@style/DialogStyle.TextView.Caption"
 			    android:layout_width="wrap_content"
 			    android:layout_height="wrap_content"
 			    android:text="@string/file_name" />
@@ -40,7 +38,7 @@
 			    android:text="@string/default_export_data_name" />
 		</TableRow>
 		<TableRow>
-			<Button android:text="@string/button_data_export" android:layout_width="wrap_content"
+			<Button android:text="@string/cmd_export_sendto" android:layout_width="wrap_content"
 				android:layout_height="wrap_content" android:textSize="20sp"
 				android:id="@+id/execute" android:layout_gravity="right" />
 			<Button android:text="@string/cmd_cancel" android:layout_width="wrap_content"

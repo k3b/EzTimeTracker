@@ -33,7 +33,7 @@ import de.k3b.timetracker.report.CsvDetailReportRenderer;
 import de.k3b.timetracker.report.ExportSettings;
 import de.k3b.timetracker.report.ExportSettingsDto;
 import de.k3b.timetracker.report.ReportItemFormatterEx;
-import de.k3b.timetracker.report.TxtSummaryReportRenderer;
+import de.k3b.timetracker.report.TxtReportRenderer;
 import de.k3b.util.DateTimeUtil;
 
 /**
@@ -458,7 +458,7 @@ public class TimeSheetDetailListActivity extends BaseReportListActivity
 		if (reportType.toLowerCase().startsWith("c")) {
 			return new CsvDetailReportRenderer().createReport(this.loadData());
 		} else  {
-			return new TxtSummaryReportRenderer(new ReportItemFormatterEx(this, this.getReportDateGrouping(), this.showNotes))
+			return new TxtReportRenderer(new ReportItemFormatterEx(this, this.getReportDateGrouping(), this.showNotes))
 						.createReport(this.loadData());
 		}
 	}
@@ -467,11 +467,12 @@ public class TimeSheetDetailListActivity extends BaseReportListActivity
 	public void onExport(ExportSettings setting) {
 		ExportSettingsDto.copy(exportSettings,setting);
 		
-		String report = createReport(exportSettings.getExportFormat());
+		String exportFormat = exportSettings.getExportFormat();
+		String report = createReport(exportFormat);
 		if (exportSettings.isUseSendTo()) {
 			SendUtilities.send("", this.getEMailSummaryLine(), this, report);
 		} else {
-			new FileUtilities(this).write(exportSettings.getFileName(), report);
+			new FileUtilities(this).write(exportSettings.getFileName(), exportFormat, report);
 		}
 	}
 }

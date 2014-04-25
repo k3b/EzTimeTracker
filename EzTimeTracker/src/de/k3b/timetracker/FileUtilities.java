@@ -22,6 +22,13 @@ public class FileUtilities {
 		this.context = context;
 	}
 
+	public void write(String fileName, final String extension, final String data) {
+		if (!fileName.contains(".")) {
+			fileName = fileName + "." + extension;
+		}
+		write(fileName, data);
+	}
+	
 	public void write(final String fileName, final String data) {
 		final File root = Environment.getExternalStorageDirectory();
 		final File outDir = new File(root.getAbsolutePath(),

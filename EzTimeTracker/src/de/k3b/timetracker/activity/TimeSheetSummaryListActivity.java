@@ -31,7 +31,7 @@ import de.k3b.timetracker.report.ReportDateGrouping;
 import de.k3b.timetracker.report.ReportItemFormatterEx;
 import de.k3b.timetracker.report.ReportItemWithStatistics;
 import de.k3b.timetracker.report.SummaryReportCalculator;
-import de.k3b.timetracker.report.TxtSummaryReportRenderer;
+import de.k3b.timetracker.report.TxtReportRenderer;
 import de.k3b.timetracker.report.SummaryReportCalculator.ReportModes;
 import de.k3b.util.DateTimeUtil;
 
@@ -550,7 +550,7 @@ public class TimeSheetSummaryListActivity extends BaseReportListActivity
 		if (reportType.toLowerCase().startsWith("c")) {
 			return new CsvSummaryReportRenderer(formatter, this.showNotes).createReport(data);
 		} else  {
-			return new TxtSummaryReportRenderer(formatter).createReport(data);
+			return new TxtReportRenderer(formatter).createReport(data);
 		}
 	}
 	
@@ -558,11 +558,12 @@ public class TimeSheetSummaryListActivity extends BaseReportListActivity
 	public void onExport(ExportSettings setting) {
 		ExportSettingsDto.copy(exportSettings,setting);
 		
-		String report = createReport(exportSettings.getExportFormat());
+		String exportFormat = exportSettings.getExportFormat();
+		String report = createReport(exportFormat);
 		if (exportSettings.isUseSendTo()) {
 			SendUtilities.send("", this.getEMailSummaryLine(), this, report);
 		} else {
-			new FileUtilities(this).write(exportSettings.getFileName(), report);
+			new FileUtilities(this).write(exportSettings.getFileName(), exportFormat, report);
 		}
 	}
 }

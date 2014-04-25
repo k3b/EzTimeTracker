@@ -2,11 +2,11 @@ package de.k3b.timetracker.report;
 
 import java.util.List;
 
-public class TxtSummaryReportRenderer {
+public class TxtReportRenderer {
 	private ReportItemFormatter formatter;
 	
 	// ReportItemFormatterEx formatter = new ReportItemFormatterEx(context, reportDateGrouping, showNotes);
-	public TxtSummaryReportRenderer(ReportItemFormatter formatter) {
+	public TxtReportRenderer(ReportItemFormatter formatter) {
 		this.formatter = formatter;
 	}
 	

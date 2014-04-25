@@ -17,7 +17,6 @@
 	<string name="menu_report_include_notes">Show Notes</string>
 	<string name="menu_report_exclude_notes">Hide Notes</string>
 	<string name="export_sendto">Export send to &#8230;</string>
-	<string name="button_data_export">Export Data</string>
 	<string name="cmd_update">Update</string>
 	<string name="cmd_delete">Delete</string>
 	<string name="cmd_delete_warning">"Warning still in use : " </string>
@@ -25,6 +24,7 @@
 	<string name="cmd_delete_cancel">"Don't delete it."</string>
 	<string name="cmd_cancel"> Cancel </string>
 	<string name="cmd_report"> Details </string>
+	<string name="cmd_export_sendto">Export</string>
 	<string name="checkbox_filter_ignore_date">Ignore Date</string>
 	<string name="checkbox_notes_not_null">Notes contain Data</string>
 	<string name="menu_export_report">Export Report</string>
