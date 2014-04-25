@@ -40,7 +40,7 @@
 			    android:text="@string/default_export_data_name" />
 		</TableRow>
 		<TableRow>
-			<Button android:text="@string/cmd_save" android:layout_width="wrap_content"
+			<Button android:text="@string/button_data_export" android:layout_width="wrap_content"
 				android:layout_height="wrap_content" android:textSize="20sp"
 				android:id="@+id/execute" android:layout_gravity="right" />
 			<Button android:text="@string/cmd_cancel" android:layout_width="wrap_content"

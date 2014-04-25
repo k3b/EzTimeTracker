@@ -11,13 +11,10 @@
 	</string-array>
 	<string name="default_mail_ts_subject">%1$s Details</string>
 	<string name="default_mail_sum_subject">%1$s Auswertung</string>
-	<string name="export_email_subject">%1$s Buchungsexport</string>
 	<string name="menu_text_edit">Ansicht/Bearbeiten</string>
 	<string name="menu_report_add_new_time_interval">Neu Buchung hinzufügen</string>
 	<string name="menu_report_include_notes">mit Bemerkungen</string>
 	<string name="menu_report_exclude_notes">ohne Bemerkungen</string>
-	<string name="radio_button_data_export_all">Exportiere alle Buchungen</string>
-	<string name="radio_button_data_export_range">Exportiere Buchungen von .. bis</string>
 	<string name="export_sendto">Export versenden &#8230;</string>
 	<string name="button_data_export">Exportiere Buchungen</string>
 	<string name="cmd_update">Anwenden</string>
@@ -29,7 +26,6 @@
 	<string name="cmd_report"> Details </string>
 	<string name="checkbox_filter_ignore_date">Datum egal</string>
 	<string name="checkbox_notes_not_null">Bemerkungen nicht leer</string>
-	<string name="export_data_to_csv_file">Buchungen in CSV Datei exportieren</string>
 	<string name="menu_export_report">Export Report</string>
 	<string name="formatStartDate">"Start: %1$s"</string>
 	<string name="formatEndDate">"Ende: %1$s"</string>
@@ -39,7 +35,6 @@
 	<string name="format_message_interval_deleted">"Buchungen gelöscht: %1$s "</string>
 	<string name="format_question_delete_time_intervals">Wollen Sie wirklich folgende Buchungen löschen?\n						%1$s \n\n 						Das Löschen kann nicht rückgängig gemacht werden.</string>
 	<string name="no_items_found">Keine Daten gefunden</string>
-	<string name="filter_ignore">{alle}</string>
 	<string name="title_confirm_removal">"Löschen bestätigen "</string>
 	<string name="btn_yes">Ja</string>
 	<string name="btn_no">Nein</string>
@@ -58,8 +53,6 @@
 	<string name="menu_switch_to_category_headers">Kategorie &gt; Datum</string>
 	<string name="menu_switch_to_date_headers">Datum &gt; Kategorie</string>
 	<string name="format_category">"Kategorie: %1$s"</string>
-	<string name="delete_from_date">"Löschen von:"</string>
-	<string name="delete_to_date">"Löschen bis:"</string>
 	<string name="punch_in">"Start"</string>
 	<string name="punch_out">"Stop"</string>
 	<string name="notes">Bemerkungen:</string>
@@ -67,12 +60,9 @@
 	<string name="category_description">Beschreibung:</string>
 	<string name="cmd_save">Speichern</string>
 	<string name="file_name">Datei Name:</string>
-	<string name="report_format">Ausgabeformat:</string>
-	<string name="cmd_save_file">Datei speichern</string>
 	<string name="no_categories">Zur Zeit sind noch keine Kategorien definiert.</string>
 	<string name="cmd_edit">Bearbeiten</string>
 	<string name="cmd_edit_category">Kategorie bearbeiten</string>
-	<string name="choose_filename">Eingabe Dateiname:</string>
 	<string name="format_message_successfully_saved_file">Erfolgreich gespeichert unter \'%1$s\'</string>
 	<string name="format_error_saved_file">Speichern unter \'%1$s\' auf SD gescheitert: %2$s</string>
 	<string name="format_error_create_directory">Ich kann das Verzeichnis \'%1$s\' nicht erstellen. Ist die SD Speicherkarte verfügbar?</string>
@@ -81,8 +71,6 @@
 	<string name="report_title_details">Detailansicht</string>
 	<string name="report_title_categories">Kategorien</string>
 	<string name="report_title_condensed_categories">Kategorien</string>
-	<string name="report_title_export">Daten exportieren</string>
-	<string name="report_title_condensed_export">Export</string>
 	<string name="report_title_remove">Daten löschen</string>
 	<string name="report_title_condensed_remove">Löschen</string>
 	<string name="report_title_settings">Einstellungen</string>
@@ -101,7 +89,4 @@
 	<string name="db_title_condensed">Sql</string>
 	<string name="about_content_about">"<![CDATA[<h2>Info</h2><a href="https://github.com/k3b/EzTimeTracker/wiki">EZTime Tracker</a>&nbsp;ist eine Android App zur Zeiterfassung mit selbstdefinierten Aktivit&auml;ten/Kategorien. <br /><br />Es zeichnet die Zeit zwischen "Start" und "Stop" auf, auch wenn die App gerade nicht l&auml;uft.<br /><br />Die App enth&auml;lt Auswertungen/Reports zur Anzeige von Details or Summen nach Tag/Woche/Monat/Jahr und/oder Kategorien. Diese k&ouml;nnen auch als Text-Datei exportiert oder als EMail versendet werden.<br /><br />Die Zeiterfassungs-Rohdaten k&ouml;nnen als Csv-Datei auf der sd-Speicherkarte abgelegt , oder mit Hilfe eines SqLite-Datenbankprogramms &uuml;ber die Datenbank-View 'time_slice_report' weiter ausgewertet werden.<br /><br /><a href="http://kebabapps.blogspot.com/search/label/Llama">AndroidLlama</a> + <a href="https://github.com/k3b/EzTimeTracker/wiki">EZ TimeTracker</a> =&nbsp;automatisierte ortsbasierte Zeiterfassung. <br />Beispiel: Automatische Erfassung der Komme/Gehe-Zeiten am Arbeitsplatz.<br /><br />]]>"</string>
 	<string name="export_format">Format</string>
-
-	<string name="export_preview">Vorschau</string>
-
 </resources>
