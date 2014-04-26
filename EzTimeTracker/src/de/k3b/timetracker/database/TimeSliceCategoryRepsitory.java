@@ -13,7 +13,7 @@ import de.k3b.timetracker.Global;
 import de.k3b.timetracker.R;
 import de.k3b.timetracker.model.TimeSliceCategory;
 
-public class TimeSliceCategoryRepsitory {
+public class TimeSliceCategoryRepsitory implements ICategoryRepsitory {
 
 	private static final String COL_ID = "_id";
 	private static final String COL_CATEGORY_NAME = "category_name";
@@ -47,6 +47,10 @@ public class TimeSliceCategoryRepsitory {
 		return values;
 	}
 
+	/* (non-Javadoc)
+	 * @see de.k3b.timetracker.database.ICategoryRepsitory#getOrCreateTimeSlice(java.lang.String)
+	 */
+	@Override
 	public TimeSliceCategory getOrCreateTimeSlice(final String name) {
 		Cursor cur = null;
 		try {
@@ -73,8 +77,8 @@ public class TimeSliceCategoryRepsitory {
 	 */
 	public long createTimeSliceCategory(final TimeSliceCategory category) {
 
-		final long newID = TimeSliceCategoryRepsitory.DB
-				.getWritableDatabase().insert(DatabaseHelper.TIME_SLICE_CATEGORY_TABLE, null,
+		final long newID = TimeSliceCategoryRepsitory.DB.getWritableDatabase()
+				.insert(DatabaseHelper.TIME_SLICE_CATEGORY_TABLE, null,
 						this.timeSliceCategoryContentValuesList(category));
 		category.setRowId((int) newID);
 		return newID;

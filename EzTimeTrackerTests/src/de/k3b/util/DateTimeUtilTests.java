@@ -1,5 +1,6 @@
 package de.k3b.util;
 
+import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Locale;
 
@@ -96,6 +97,22 @@ public class DateTimeUtilTests {
 				this.testDateSylvester2013, 365);
 		Assert.assertEquals("Sylvester", "2014-12-31T17:45:59+0100",
 				this.dtu.getIsoDateTimeStr(resultSylvester));
+	}
+
+	@Test
+	public void ShouldAddMinutes() {
+		final long resultSylvester = this.dtu.addMinutes(
+				this.testDateSylvester2013, 10);
+		// c = this.dtu.getCalendar(2013, 1 - 1, 1, 1, 25, 57, 987);
+		Assert.assertEquals("Sylvester", "2013-12-31T17:55:59+0100",
+				this.dtu.getIsoDateTimeStr(resultSylvester));
+	}
+
+	@Test
+	public void ShouldParseIsoDate() throws ParseException {
+		final long result = this.dtu.parseIsoDate("2014-04-25T17:10:27+0200");
+		Assert.assertEquals("Date", "2014-04-25T17:10:27+0200",
+				this.dtu.getIsoDateTimeStr(result));
 	}
 
 }

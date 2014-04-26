@@ -212,6 +212,14 @@ public class DateTimeUtil {
 		return c.getTimeInMillis();
 	}
 
+	public long addMinutes(final long dateTime, final int addMinutes) {
+		final Calendar c = Calendar.getInstance();
+		c.setTimeInMillis(dateTime);
+
+		c.add(Calendar.MINUTE, addMinutes);
+		return c.getTimeInMillis();
+	}
+
 	private Calendar getStartOfDayCal(final long dateTime) {
 		final Calendar c = Calendar.getInstance();
 		c.setTimeInMillis(dateTime);
@@ -225,6 +233,12 @@ public class DateTimeUtil {
 	public long parseDate(final String mDateSelectedForAdd)
 			throws ParseException {
 		return DateTimeUtil.longDateformatter.parse(mDateSelectedForAdd)
+				.getTime();
+	}
+
+	public long parseIsoDate(final String mDateSelectedForAdd)
+			throws ParseException {
+		return DateTimeUtil.isoDateTimeformatter.parse(mDateSelectedForAdd)
 				.getTime();
 	}
 

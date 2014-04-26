@@ -2,6 +2,7 @@ package de.k3b.timetracker;
 
 import android.content.Context;
 import android.util.Log;
+import de.k3b.timetracker.database.ICategoryRepsitory;
 import de.k3b.timetracker.database.TimeSliceCategoryRepsitory;
 import de.k3b.timetracker.database.TimeSliceRepository;
 import de.k3b.timetracker.model.TimeSliceCategory;
@@ -16,7 +17,7 @@ import de.k3b.util.SessionDataPersistance;
  */
 public class TimeTrackerManager {
 	private final TimeSliceRepository timeSliceRepository;
-	private final TimeSliceCategoryRepsitory timeSliceCategoryRepository;
+	private final ICategoryRepsitory timeSliceCategoryRepository;
 
 	private final TimeTrackerSessionData sessionData;
 	private final ISessionDataPersistance<TimeTrackerSessionData> timeTrackerSessionDataPersistance;
@@ -36,7 +37,7 @@ public class TimeTrackerManager {
 	TimeTrackerManager(
 			final ISessionDataPersistance<TimeTrackerSessionData> sessionDataPersistance,
 			final TimeSliceRepository timeSliceRepository,
-			final TimeSliceCategoryRepsitory timeSliceCategoryRepsitory,
+			final ICategoryRepsitory timeSliceCategoryRepsitory,
 			final TimeTrackerSessionData sessionData) {
 		this.sessionData = sessionData;
 		this.timeTrackerSessionDataPersistance = sessionDataPersistance;
