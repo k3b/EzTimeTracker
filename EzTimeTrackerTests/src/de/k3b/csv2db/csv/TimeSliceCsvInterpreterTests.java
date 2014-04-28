@@ -5,9 +5,7 @@ import java.text.ParseException;
 import org.junit.*;
 
 import de.k3b.timetracker.DateTimeFormatter;
-import de.k3b.timetracker.database.ICategoryRepsitory;
 import de.k3b.timetracker.model.TimeSlice;
-import de.k3b.timetracker.model.TimeSliceCategory;
 
 public class TimeSliceCsvInterpreterTests {
 	@Test
@@ -49,19 +47,21 @@ public class TimeSliceCsvInterpreterTests {
 		Assert.assertEquals("hallo\nWelt" , result.getNotes());
 	}
 
-	class RepositoryMock implements ICategoryRepsitory {
-		@Override
-		public TimeSliceCategory getOrCreateTimeSlice(String name) {
-			// TODO Auto-generated method stub
-			TimeSliceCategory result = new TimeSliceCategory();
-			result.setCategoryName(name);
-			return result;
-		}		
+	@Test
+	public void shouldParseCategory() throws ParseException {
+		TimeSlice result = new TimeSliceCsvInterpreter(new CategoryRepositoryMock(), "Category").parse("hallo");
+		Assert.assertEquals("hallo" , result.getCategory().getCategoryName());
 	}
 	
 	@Test
-	public void shouldParseCategory() throws ParseException {
-		TimeSlice result = new TimeSliceCsvInterpreter(new RepositoryMock(), "Category").parse("hallo");
-		Assert.assertEquals("hallo" , result.getCategory().getCategoryName());
+	public void shouldThrowOnIllegalFormat() throws ParseException {
+		try {
+			TimeSlice result = new TimeSliceCsvInterpreter(null, "Start").parse("this is not a valid DateTime");
+			Assert.fail("missing exception");
+		} catch (CsvException e) {
+			System.out.println("got expected exception " + e.getMessage());
+		}
 	}
+
+
 }

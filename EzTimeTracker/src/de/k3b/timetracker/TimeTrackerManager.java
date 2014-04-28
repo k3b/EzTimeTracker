@@ -66,7 +66,7 @@ public class TimeTrackerManager {
 	public Boolean punchInClock(final String selectedCategoryName,
 			final long startDateTime) {
 		final TimeSliceCategory cat = this.timeSliceCategoryRepository
-				.getOrCreateTimeSlice(selectedCategoryName);
+				.getOrCreateCategory(selectedCategoryName);
 		return this.punchInClock(cat, startDateTime);
 	}
 

@@ -51,7 +51,7 @@ public class TimeSliceCategoryRepsitory implements ICategoryRepsitory {
 	 * @see de.k3b.timetracker.database.ICategoryRepsitory#getOrCreateTimeSlice(java.lang.String)
 	 */
 	@Override
-	public TimeSliceCategory getOrCreateTimeSlice(final String name) {
+	public TimeSliceCategory getOrCreateCategory(final String name) {
 		Cursor cur = null;
 		try {
 			cur = TimeSliceCategoryRepsitory.DB.getWritableDatabase().query(

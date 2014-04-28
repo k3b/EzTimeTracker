@@ -2,7 +2,6 @@ package de.k3b.csv2db.csv;
 
 import java.text.ParseException;
 
-import de.k3b.timetracker.DateTimeFormatter;
 import de.k3b.timetracker.database.ICategoryRepsitory;
 import de.k3b.timetracker.model.TimeSlice;
 import de.k3b.timetracker.model.TimeSliceCategory;
@@ -17,7 +16,8 @@ public class TimeSliceCsvInterpreter {
 	final int colCategory;
 	private ICategoryRepsitory categoryRepository;
 
-	public TimeSliceCsvInterpreter(ICategoryRepsitory categoryRepository, String... headerColumns) {
+	public TimeSliceCsvInterpreter(ICategoryRepsitory categoryRepository,
+			String... headerColumns) {
 		this.categoryRepository = categoryRepository;
 		colStart = getCol("start", headerColumns);
 		colEnd = getCol("end", headerColumns);
@@ -27,8 +27,7 @@ public class TimeSliceCsvInterpreter {
 	}
 
 	protected int getCol(String colId, String... headerColumns) {
-		for (int i=0;i < headerColumns.length; i++)
-		{
+		for (int i = 0; i < headerColumns.length; i++) {
 			if (headerColumns[i].toLowerCase().startsWith(colId)) {
 				return i;
 			}
@@ -36,30 +35,62 @@ public class TimeSliceCsvInterpreter {
 		return -1;
 	}
 
-	public TimeSlice parse(String... columns) throws ParseException {
-		TimeSlice result = new TimeSlice();
-		if ((colStart >= 0) & (colStart < columns.length)){
-			long value = dt.parseIsoDate(columns[colStart]);
-			result.setStartTime(value);
+	public TimeSlice parse(String... columns) throws CsvException {
+		if ((columns != null) && (columns.length > 0)) {
+			TimeSlice result = new TimeSlice();
+			String value;
+			
+			value = getColumnValue(columns, colStart);
+			if (value != null) {
+				try {
+					result.setStartTime(dt.parseIsoDate(columns[colStart]));
+				} catch (ParseException e) {
+					throw new CsvException("startDate",colStart,value,e);
+				}
+			}
+			
+			value = getColumnValue(columns, colEnd);
+			if (value != null) {
+				try {
+					result.setEndTime(dt.parseIsoDate(columns[colEnd]));
+				} catch (ParseException e) {
+					throw new CsvException("endDate",colEnd,value,e);
+				}
+			}
+			
+			value = getColumnValue(columns, colDuration);
+			if (value != null) {
+				 
+				try {
+					int minutes = Integer.parseInt(columns[colDuration]);
+					long value2 = dt.addMinutes(result.getStartTime(), minutes);
+					result.setEndTime(value2);
+				} catch (NumberFormatException e) {
+					throw new CsvException("duratonInMinutes",colDuration,value,e);
+				}
+			}
+			
+			value = getColumnValue(columns, colNotes);
+			if (value != null) {
+				result.setNotes(columns[colNotes]);
+			}
+
+			value = getColumnValue(columns, colCategory);
+			if (value != null) {
+				TimeSliceCategory category = this.categoryRepository
+						.getOrCreateCategory(value);
+				result.setCategory(category);
+			}
+			return result;
 		}
-		if ((colEnd >= 0) & (colEnd < columns.length)){
-			long value = dt.parseIsoDate(columns[colEnd]);
-			result.setEndTime(value);
+		return null;
+	}
+
+	private String getColumnValue(String[] columns, int index) {
+		if ((index >= 0) & (index < columns.length)) {
+			return columns[index];
 		}
-		if ((colDuration >= 0) & (colDuration < columns.length)) {
-			int minutes = Integer.parseInt(columns[colDuration]);
-			long value = dt.addMinutes(result.getStartTime(),minutes);
-			result.setEndTime(value);
-		}
-		if ((colNotes >= 0) & (colNotes < columns.length)) {
-			result.setNotes(columns[colNotes]);
-		}
-		
-		if ((colCategory >= 0) & (colCategory < columns.length)) {
-			TimeSliceCategory value = this.categoryRepository.getOrCreateTimeSlice(columns[colCategory]);
-			result.setCategory(value);
-		}
-		return result;
+		return null;
 	}
 
 }
