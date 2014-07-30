@@ -1,4 +1,4 @@
-package de.k3b.timetracker.activity;
+package de.k3b.timetracker;
 
 import java.io.Serializable;
 import java.util.Calendar;

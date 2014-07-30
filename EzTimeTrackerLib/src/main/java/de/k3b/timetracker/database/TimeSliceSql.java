@@ -1,8 +1,8 @@
 package de.k3b.timetracker.database;
 
-import de.k3b.android.database.SqlFilter;
-import de.k3b.android.database.SqlFilterBuilder;
-import de.k3b.timetracker.activity.TimeSliceFilterParameter;
+import de.k3b.timetracker.database.SqlFilter;
+import de.k3b.timetracker.database.SqlFilterBuilder;
+import de.k3b.timetracker.TimeSliceFilterParameter;
 import de.k3b.timetracker.model.ITimeSliceFilter;
 import de.k3b.timetracker.model.TimeSlice;
 import de.k3b.timetracker.model.TimeSliceCategory;

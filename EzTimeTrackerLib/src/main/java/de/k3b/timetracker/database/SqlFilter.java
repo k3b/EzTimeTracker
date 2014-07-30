@@ -1,4 +1,4 @@
-package de.k3b.android.database;
+package de.k3b.timetracker.database;
 
 /**
  * helper class because java function cannot return 2 values

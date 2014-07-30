@@ -20,6 +20,7 @@ import de.k3b.timetracker.Global;
 import de.k3b.timetracker.R;
 import de.k3b.timetracker.SendUtilities;
 import de.k3b.timetracker.Settings;
+import de.k3b.timetracker.TimeSliceFilterParameter;
 import de.k3b.timetracker.database.TimeSliceCategoryRepsitory;
 import de.k3b.timetracker.database.TimeSliceRepository;
 import de.k3b.timetracker.model.TimeSlice;

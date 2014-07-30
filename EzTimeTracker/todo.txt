@@ -1,3 +1,59 @@
+// http://stackoverflow.com/questions/4459058/alarm-manager-example
+
+	// Here's a fairly self-contained example. It turns a button red after 5sec.
+
+	public void SetAlarm()
+    {
+        final Button button = buttons[2]; // replace with a button from your own UI
+        BroadcastReceiver receiver = new BroadcastReceiver() {
+            @Override public void onReceive( Context context, Intent _ )
+            {
+                button.setBackgroundColor( Color.RED );
+                context.unregisterReceiver( this ); // this == BroadcastReceiver, not Activity
+            }
+        };
+
+        this.registerReceiver( receiver, new IntentFilter("com.blah.blah.somemessage") );
+
+        PendingIntent pintent = PendingIntent.getBroadcast( this, 0, new Intent("com.blah.blah.somemessage"), 0 );
+        AlarmManager manager = (AlarmManager)(this.getSystemService( Context.ALARM_SERVICE ));
+
+        // set alarm to fire 5 sec (1000*5) from now (SystemClock.elapsedRealtime())
+        manager.set( AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() + 1000*5, pintent );
+    }
+
+// http://stackoverflow.com/questions/22015242/unable-to-cancel-the-alarm-from-alarmmanager
+
+		// Alarm should be created and cancelled on Same Pending intent.
+		public class AlarmNotifReceiver extends BroadcastReceiver {
+
+			PendingIntent pi;
+			AlarmManager am;
+			Intent i;
+
+			@Override
+			public void onReceive(Context context, Intent intent) {
+				pi = PendingIntent.getBroadcast(context, 0, i, 0);
+				am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+				i = new Intent(context, AlarmNotifReceiver.class);
+				//things
+			}
+
+			public void SetAlarm(Context context) {
+
+				am.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), 10 * 1000, pi);
+			}
+
+			public void CancelAlarm(Context context) {
+				am.cancel(pi);
+			}
+
+
+		}
+
+
+##########################
+
 >	Neuer Export As
 	- layout
 	- filter

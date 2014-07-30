@@ -1,13 +1,13 @@
 // EzTimeTracker
 apply plugin: 'android'
 
-dependencies {
-    compile project(':google.DateTimeSlider:DateSlider')
-}
-
 android {
     compileSdkVersion 8
     buildToolsVersion "19.0.3"
+    defaultConfig {
+        minSdkVersion 8
+        targetSdkVersion 17
+    }
 
     sourceSets {
         main {
@@ -31,5 +31,18 @@ android {
         // by a similar customization.
         // debug.setRoot('build-types/debug')
         // release.setRoot('build-types/release')
+    }
+
+	// referenced by some non-android j2se unit-tests of classes that have no dependency to android
+	task jar(type: Jar) {
+		from android.sourceSets.main.java
+	}
+
+    dependencies {
+//        compile 'org.slf4j:slf4j-api:1.7.7@jar'
+//        compile 'eu.lp0.slf4j:slf4j-android:1.7.7-1'
+        compile project(':google.DateTimeSlider:DateSlider')
+        compile project(':EzTimeTrackerLib')
+
     }
 }

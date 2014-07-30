@@ -25,6 +25,7 @@ import de.k3b.timetracker.Global;
 import de.k3b.timetracker.R;
 import de.k3b.timetracker.SendUtilities;
 import de.k3b.timetracker.Settings;
+import de.k3b.timetracker.TimeSliceFilterParameter;
 import de.k3b.timetracker.database.TimeSliceCategoryRepsitory;
 import de.k3b.timetracker.database.TimeSliceRepository;
 import de.k3b.timetracker.model.TimeSlice;
@@ -70,8 +71,6 @@ public class TimeSheetDetailListActivity extends BaseReportListActivity
 	 * @param filter
 	 *            customized filter that can be discarded after finish.
 	 * @param idOnOkResultCode
-	 * @param profileName
-	 *            where the content should be saved/restored in bundle
 	 */
 	public static void showActivity(final Context context,
 			final TimeSliceFilterParameter filter, final int idOnOkResultCode) {

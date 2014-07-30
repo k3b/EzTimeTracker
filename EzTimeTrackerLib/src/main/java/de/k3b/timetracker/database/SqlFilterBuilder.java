@@ -1,4 +1,4 @@
-package de.k3b.android.database;
+package de.k3b.timetracker.database;
 
 import java.util.ArrayList;
 import java.util.List;

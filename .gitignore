@@ -21,3 +21,14 @@ gradle-app.setting
 .gradle
 settings.gradle
 build
+.idea
+.metadata
+
+*.bak
+
+gradle-app.setting
+/import-summary.txt
+/local.properties
+.classpath
+
+.project

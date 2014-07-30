@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.content.Intent;
 import de.k3b.timetracker.Global;
 import de.k3b.timetracker.R;
+import de.k3b.timetracker.TimeSliceFilterParameter;
 
 public class ReportFilterActivity extends FilterActivity {
 	public static final int RESULT_FILTER_CHANGED = 16288;

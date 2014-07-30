@@ -13,6 +13,7 @@ import com.googlecode.android.widgets.DateSlider.AlternativeDateSlider;
 import com.googlecode.android.widgets.DateSlider.DateSlider;
 
 import de.k3b.timetracker.R;
+import de.k3b.timetracker.TimeSliceFilterParameter;
 import de.k3b.timetracker.TimeTrackerManager;
 import de.k3b.timetracker.database.TimeSliceRepository;
 import de.k3b.timetracker.model.TimeSliceCategory;

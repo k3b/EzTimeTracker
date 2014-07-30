@@ -1,16 +1,13 @@
 package de.k3b.csv2db.csv;
 
-import static org.junit.Assert.*;
-
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.text.ParseException;
 
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
-
-import de.k3b.timetracker.model.TimeSlice;
 
 public class CsvTimeSliceIteratorTest {
 
@@ -40,8 +37,12 @@ public class CsvTimeSliceIteratorTest {
 	}
 
 	@Test
-	public void shouldReadDemoDataFromAssets() {
-		Reader reader = new InputStreamReader(CsvTimeSliceIterator.class.getResourceAsStream("/DemoData.csv"));
+	public void shouldReadDemoDataFromAssets() throws Exception{
+        // this does not work with android studio 0.59 when there is a file EzTimeTrackerLib/src/test/resource/DemoData.csv
+        // final InputStream resourceStream = CsvTimeSliceIterator.class.getResourceAsStream("DemoData.csv");
+        final InputStream resourceStream = new FileInputStream("D:\\prj\\eve\\android\\prj\\EzTimeTracker.wrk\\EzTimeTrackerLib\\src\\test\\resources\\DemoData.csv");
+        Assert.assertNotNull(CsvTimeSliceIterator.class.getResource(".").getPath(),resourceStream);
+        Reader reader = new InputStreamReader(resourceStream);
 		// Reader reader = new InputStreamReader(this.getClass().getResourceAsStream("/DemoData.csv"));
 		iter = new CsvTimeSliceIterator(reader, new CategoryRepositoryMock());
 		int count = 0;
@@ -49,6 +50,9 @@ public class CsvTimeSliceIteratorTest {
 			iter.next();
 			count++;
 		}
+        reader.close();
+        resourceStream.close();
+
 	}
 
 	@Test

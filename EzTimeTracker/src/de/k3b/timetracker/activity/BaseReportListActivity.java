@@ -12,6 +12,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import de.k3b.timetracker.Global;
 import de.k3b.timetracker.R;
+import de.k3b.timetracker.TimeSliceFilterParameter;
 import de.k3b.timetracker.report.ReportDateGrouping;
 
 /**

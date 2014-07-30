@@ -28,7 +28,7 @@ public class DateTimeFormatter extends DateTimeUtil {
 			return super.parseDate(mDateSelectedForAdd);
 		} catch (final ParseException e) {
 			Log.w(Global.LOG_CONTEXT, "cannot reconvert " + mDateSelectedForAdd
-					+ " to dateTime using " + DateTimeUtil.shortDateformatter,
+					+ " to dateTime using " + shortDateformatter,
 					e);
 			return TimeSlice.NO_TIME_VALUE;
 		}

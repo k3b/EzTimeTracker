@@ -30,6 +30,7 @@ import de.k3b.timetracker.DateTimeFormatter;
 import de.k3b.timetracker.Global;
 import de.k3b.timetracker.R;
 import de.k3b.timetracker.Settings;
+import de.k3b.timetracker.TimeSliceFilterParameter;
 import de.k3b.timetracker.TimeTrackerManager;
 import de.k3b.timetracker.TimeTrackerSessionData;
 import de.k3b.timetracker.database.DatabaseInstance;

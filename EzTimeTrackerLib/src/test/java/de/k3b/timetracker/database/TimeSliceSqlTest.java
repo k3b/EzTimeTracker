@@ -2,8 +2,8 @@ package de.k3b.timetracker.database;
 
 import org.junit.*;
 
-import de.k3b.android.database.SqlFilter;
-import de.k3b.timetracker.activity.TimeSliceFilterParameter;
+import de.k3b.timetracker.database.SqlFilter;
+import de.k3b.timetracker.TimeSliceFilterParameter;
 import de.k3b.timetracker.database.TimeSliceSql;
 
 public class TimeSliceSqlTest {

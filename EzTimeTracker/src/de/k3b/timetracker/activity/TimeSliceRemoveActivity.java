@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.widget.Toast;
 import de.k3b.timetracker.Global;
 import de.k3b.timetracker.R;
+import de.k3b.timetracker.TimeSliceFilterParameter;
 import de.k3b.timetracker.database.TimeSliceRepository;
 
 public class TimeSliceRemoveActivity extends FilterActivity {

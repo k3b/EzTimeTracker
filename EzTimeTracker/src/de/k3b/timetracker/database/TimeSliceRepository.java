@@ -9,10 +9,9 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
-import de.k3b.android.database.SqlFilter;
 import de.k3b.timetracker.Global;
 import de.k3b.timetracker.Settings;
-import de.k3b.timetracker.activity.TimeSliceFilterParameter;
+import de.k3b.timetracker.TimeSliceFilterParameter;
 import de.k3b.timetracker.model.ITimeSliceFilter;
 import de.k3b.timetracker.model.TimeSlice;
 import de.k3b.timetracker.model.TimeSliceCategory;
@@ -181,7 +180,7 @@ public class TimeSliceRepository {
 		final TimeSliceFilterParameter timeSliceFilter = new TimeSliceFilterParameter()
 				.setParameter(minimumEndDate, maximumEndDate,
 						category.getRowId());
-		final de.k3b.android.database.SqlFilter sqlFilter = TimeSliceRepository
+		final SqlFilter sqlFilter = TimeSliceRepository
 				.createFilter(debugMessage, timeSliceFilter);
 		final SqlFilter sqlEndFilter = new SqlFilter(sqlFilter.sql.replace(
 				TimeSliceSql.COL_START_TIME, TimeSliceSql.COL_END_TIME),
