@@ -25,6 +25,6 @@ public class Factory {
         return new TimeTrackerManager(new SessionDataPersistance<TimeTrackerSessionData>(context),
                 new TimeSliceRepository(context, publicDir),
                 new TimeSliceCategoryRepsitory(context),
-                new TimeTrackerSessionData());
+                new TimeTrackerSessionData(), SettingsImpl.getLogger(), SettingsImpl.getInstance());
     }
 }

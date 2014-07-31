@@ -1,7 +1,5 @@
 package de.k3b.timetracker.activity;
 
-import java.util.List;
-
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,12 +12,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListView;
+
+import java.util.List;
+
 import de.k3b.timetracker.DateTimeFormatter;
 import de.k3b.timetracker.FileUtilities;
 import de.k3b.timetracker.Global;
 import de.k3b.timetracker.R;
 import de.k3b.timetracker.SendUtilities;
-import de.k3b.timetracker.Settings;
+import de.k3b.timetracker.SettingsImpl;
 import de.k3b.timetracker.TimeSliceFilterParameter;
 import de.k3b.timetracker.database.TimeSliceCategoryRepsitory;
 import de.k3b.timetracker.database.TimeSliceRepository;
@@ -32,8 +33,8 @@ import de.k3b.timetracker.report.ReportDateGrouping;
 import de.k3b.timetracker.report.ReportItemFormatterEx;
 import de.k3b.timetracker.report.ReportItemWithStatistics;
 import de.k3b.timetracker.report.SummaryReportCalculator;
-import de.k3b.timetracker.report.TxtReportRenderer;
 import de.k3b.timetracker.report.SummaryReportCalculator.ReportModes;
+import de.k3b.timetracker.report.TxtReportRenderer;
 import de.k3b.util.DateTimeUtil;
 
 /**
@@ -41,530 +42,528 @@ import de.k3b.util.DateTimeUtil;
  * date.
  */
 public class TimeSheetSummaryListActivity extends BaseReportListActivity
-		implements ICategorySetter {
-	/**
-	 * Used to transfer optional report-type from parent activity to this.
-	 */
-	public static final String SAVED_MENU_ID_BUNDLE_NAME = "SAVED_MENU_ID_BUNDLE_NAME";
-	private static final String SAVED_REPORT_GROUPING_BUNDLE_NAME = "reportDateGrouping";
+        implements ICategorySetter {
+    /**
+     * Used to transfer optional report-type from parent activity to this.
+     */
+    public static final String SAVED_MENU_ID_BUNDLE_NAME = "SAVED_MENU_ID_BUNDLE_NAME";
+    private static final String SAVED_REPORT_GROUPING_BUNDLE_NAME = "reportDateGrouping";
 
-	/**
-	 * Used to transfer optional filter between parent activity and this.
-	 */
-	private static final String SAVED_REPORT_RANGE_FILTER_BUNDLE_NAME = "SummaryReportFilter";
-	private static final String SAVED_REPORT_MODE = "reportMode";
+    /**
+     * Used to transfer optional filter between parent activity and this.
+     */
+    private static final String SAVED_REPORT_RANGE_FILTER_BUNDLE_NAME = "SummaryReportFilter";
+    private static final String SAVED_REPORT_MODE = "reportMode";
 
-	/**
-	 * current range filter used to fill report.<br/>
-	 * static to remeber value from last use.
-	 */
-	private static TimeSliceFilterParameter lastRangeFilter;
+    /**
+     * current range filter used to fill report.<br/>
+     * static to remeber value from last use.
+     */
+    private static TimeSliceFilterParameter lastRangeFilter;
+    private static ExportSettingsDto exportSettings = new ExportSettingsDto();
+    // dependent services
+    private final TimeSliceRepository timeSliceRepository = new TimeSliceRepository(
+            this, SettingsImpl.isPublicDatabase());
+    private final TimeSliceCategoryRepsitory categoryRepository = new TimeSliceCategoryRepsitory(
+            this);
+    // current state
+    private ReportModes reportMode = ReportModes.BY_DATE_AND_CATEGORY;
+    /**
+     * Used in options-menue for context sensitive DrillDownMenue
+     */
+    private TimeSliceFilterParameter currentSelectedListItemRangeFilterUsedForMenu;
+    private TimeSliceCategory currentSelectedCategory;
+    private CategoryEditDialog edit = null;
+    private ExportSettingsDialog dlgExportSettings = null;
 
-	// dependent services
-	private final TimeSliceRepository timeSliceRepository = new TimeSliceRepository(
-			this, Settings.isPublicDatabase());
+    public TimeSheetSummaryListActivity() {
+        this.showNotes = false;
+    }
 
-	private final TimeSliceCategoryRepsitory categoryRepository = new TimeSliceCategoryRepsitory(
-			this);
+    @Override
+    public void onCreate(final Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        this.setContentView(R.layout.time_slice_list);
+        this.registerForContextMenu(this.getListView());
+        this.currentRangeFilter = BaseReportListActivity
+                .getLastFilter(
+                        this,
+                        savedInstanceState,
+                        TimeSheetSummaryListActivity.SAVED_REPORT_RANGE_FILTER_BUNDLE_NAME,
+                        TimeSheetSummaryListActivity.lastRangeFilter);
+        TimeSheetSummaryListActivity.lastRangeFilter = this.currentRangeFilter;
+        this.setDefaultsToFilterDatesIfNeccesary(this.currentRangeFilter);
 
-	// current state
-	private ReportModes reportMode = ReportModes.BY_DATE_AND_CATEGORY;
+        if (savedInstanceState != null) {
+            this.setReportDateGrouping((ReportDateGrouping) savedInstanceState
+                    .getSerializable(TimeSheetSummaryListActivity.SAVED_REPORT_GROUPING_BUNDLE_NAME));
+            this.reportMode = (ReportModes) savedInstanceState
+                    .getSerializable(TimeSheetSummaryListActivity.SAVED_REPORT_MODE);
+        }
+        this.loadDataIntoReport(this.getIntent().getIntExtra(
+                TimeSheetSummaryListActivity.SAVED_MENU_ID_BUNDLE_NAME, 0));
 
-	/**
-	 * Used in options-menue for context sensitive DrillDownMenue
-	 */
-	private TimeSliceFilterParameter currentSelectedListItemRangeFilterUsedForMenu;
-	private TimeSliceCategory currentSelectedCategory;
+        // scroll to end
+        this.getListView().post(new Runnable() {
+            @Override
+            public void run() {
+                // Select the last row so it will scroll into view...
+                TimeSheetSummaryListActivity.this.getListView().setSelection(
+                        TimeSheetSummaryListActivity.this.getListView()
+                                .getCount() - 1
+                );
+            }
+        });
+    }
 
-	public TimeSheetSummaryListActivity() {
-		this.showNotes = false;
-	}
+    @Override
+    protected void onSaveInstanceState(final Bundle outState) {
+        this.setLastFilter(
+                outState,
+                TimeSheetSummaryListActivity.SAVED_REPORT_RANGE_FILTER_BUNDLE_NAME,
+                this.currentRangeFilter);
+        outState.putSerializable(
+                TimeSheetSummaryListActivity.SAVED_REPORT_GROUPING_BUNDLE_NAME,
+                this.getReportDateGrouping());
+        outState.putSerializable(
+                TimeSheetSummaryListActivity.SAVED_REPORT_MODE, this.reportMode);
+    }
 
-	@Override
-	public void onCreate(final Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		this.setContentView(R.layout.time_slice_list);
-		this.registerForContextMenu(this.getListView());
-		this.currentRangeFilter = BaseReportListActivity
-				.getLastFilter(
-						this,
-						savedInstanceState,
-						TimeSheetSummaryListActivity.SAVED_REPORT_RANGE_FILTER_BUNDLE_NAME,
-						TimeSheetSummaryListActivity.lastRangeFilter);
-		TimeSheetSummaryListActivity.lastRangeFilter = this.currentRangeFilter;
-		this.setDefaultsToFilterDatesIfNeccesary(this.currentRangeFilter);
+    @Override
+    public boolean onCreateOptionsMenu(final Menu menu) {
+        final MenuInflater inflater = this.getMenuInflater();
+        inflater.inflate(R.menu.summaryreport, menu);
+        super.onCreateOptionsMenu(menu);
+        return true;
+    }
 
-		if (savedInstanceState != null) {
-			this.setReportDateGrouping((ReportDateGrouping) savedInstanceState
-					.getSerializable(TimeSheetSummaryListActivity.SAVED_REPORT_GROUPING_BUNDLE_NAME));
-			this.reportMode = (ReportModes) savedInstanceState
-					.getSerializable(TimeSheetSummaryListActivity.SAVED_REPORT_MODE);
-		}
-		this.loadDataIntoReport(this.getIntent().getIntExtra(
-				TimeSheetSummaryListActivity.SAVED_MENU_ID_BUNDLE_NAME, 0));
+    /**
+     * called by parent Report Action to append common menuitem.
+     */
+    @Override
+    public boolean onPrepareOptionsMenu(final Menu menu) {
+        final boolean result = super.onPrepareOptionsMenu(menu);
 
-		// scroll to end
-		this.getListView().post(new Runnable() {
-			@Override
-			public void run() {
-				// Select the last row so it will scroll into view...
-				TimeSheetSummaryListActivity.this.getListView().setSelection(
-						TimeSheetSummaryListActivity.this.getListView()
-								.getCount() - 1);
-			}
-		});
-	}
+        menu.findItem(R.id.menu_grouping_category)
+                .setTitle(
+                        (this.reportMode == ReportModes.BY_DATE_AND_CATEGORY) ? R.string.menu_switch_to_category_headers
+                                : R.string.menu_switch_to_date_headers
+                );
+        return result;
+    }
 
-	@Override
-	protected void onSaveInstanceState(final Bundle outState) {
-		this.setLastFilter(
-				outState,
-				TimeSheetSummaryListActivity.SAVED_REPORT_RANGE_FILTER_BUNDLE_NAME,
-				this.currentRangeFilter);
-		outState.putSerializable(
-				TimeSheetSummaryListActivity.SAVED_REPORT_GROUPING_BUNDLE_NAME,
-				this.getReportDateGrouping());
-		outState.putSerializable(
-				TimeSheetSummaryListActivity.SAVED_REPORT_MODE, this.reportMode);
-	}
+    @Override
+    public boolean onOptionsItemSelected(final MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_grouping_daily:
+                this.setReportDateGrouping(ReportDateGrouping.DAILY);
+                this.loadDataIntoReport(0);
+                break;
+            case R.id.menu_grouping_weekly:
+                this.setReportDateGrouping(ReportDateGrouping.WEEKLY);
+                this.loadDataIntoReport(0);
+                break;
+            case R.id.menu_grouping_monthly:
+                this.setReportDateGrouping(ReportDateGrouping.MONTHLY);
+                this.loadDataIntoReport(0);
+                break;
+            case R.id.menu_grouping_yearly:
+                this.setReportDateGrouping(ReportDateGrouping.YEARLY);
+                this.loadDataIntoReport(0);
+                break;
 
-	@Override
-	public boolean onCreateOptionsMenu(final Menu menu) {
-		final MenuInflater inflater = this.getMenuInflater();
-		inflater.inflate(R.menu.summaryreport, menu);
-		super.onCreateOptionsMenu(menu);
-		return true;
-	}
+            case R.id.menu_grouping_category:
+                if (this.reportMode == ReportModes.BY_CATEGORY_AND_DATE) {
+                    this.reportMode = ReportModes.BY_DATE_AND_CATEGORY;
+                } else {
+                    this.reportMode = ReportModes.BY_CATEGORY_AND_DATE;
+                }
+                this.loadDataIntoReport(0);
+                break;
+            case R.id.menu_export:
+                showExportSettingsDialog();
+                return true;
+            default:
+                super.onOptionsItemSelected(item);
+        }
+        return true;
+    }
 
-	/**
-	 * called by parent Report Action to append common menuitem.
-	 */
-	@Override
-	public boolean onPrepareOptionsMenu(final Menu menu) {
-		final boolean result = super.onPrepareOptionsMenu(menu);
+    @Override
+    public void onCreateContextMenu(final ContextMenu menu, final View v,
+                                    final ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        final MenuInflater inflater = this.getMenuInflater();
+        inflater.inflate(R.menu.context_summary_item, menu);
 
-		menu.findItem(R.id.menu_grouping_category)
-				.setTitle(
-						(this.reportMode == ReportModes.BY_DATE_AND_CATEGORY) ? R.string.menu_switch_to_category_headers
-								: R.string.menu_switch_to_date_headers);
-		return result;
-	}
+        final int position = ((AdapterContextMenuInfo) menuInfo).position;
 
-	@Override
-	public boolean onOptionsItemSelected(final MenuItem item) {
-		switch (item.getItemId()) {
-		case R.id.menu_grouping_daily:
-			this.setReportDateGrouping(ReportDateGrouping.DAILY);
-			this.loadDataIntoReport(0);
-			break;
-		case R.id.menu_grouping_weekly:
-			this.setReportDateGrouping(ReportDateGrouping.WEEKLY);
-			this.loadDataIntoReport(0);
-			break;
-		case R.id.menu_grouping_monthly:
-			this.setReportDateGrouping(ReportDateGrouping.MONTHLY);
-			this.loadDataIntoReport(0);
-			break;
-		case R.id.menu_grouping_yearly:
-			this.setReportDateGrouping(ReportDateGrouping.YEARLY);
-			this.loadDataIntoReport(0);
-			break;
+        final TimeSliceFilterParameter filter = this.createFilter(position);
+        if (filter != null) {
+            if (Global.isInfoEnabled()) {
+                Log.i(Global.LOG_CONTEXT, "filter: " + filter);
+            }
+            menu.findItem(R.id.menue_report).setVisible(true);
+            menu.findItem(R.id.menue_delete).setVisible(true);
+        }
+        this.currentSelectedListItemRangeFilterUsedForMenu = filter;
 
-		case R.id.menu_grouping_category:
-			if (this.reportMode == ReportModes.BY_CATEGORY_AND_DATE) {
-				this.reportMode = ReportModes.BY_DATE_AND_CATEGORY;
-			} else {
-				this.reportMode = ReportModes.BY_CATEGORY_AND_DATE;
-			}
-			this.loadDataIntoReport(0);
-			break;
-		case R.id.menu_export:
-			showExportSettingsDialog();
-			return true;
-		default:
-			super.onOptionsItemSelected(item);
-		}
-		return true;
-	}
+        this.currentSelectedCategory = this.getTimeSliceCategory(position);
+        if (this.currentSelectedCategory != null) {
+            menu.findItem(R.id.menue_edit_category).setVisible(true);
+        }
+    }
 
-	@Override
-	public void onCreateContextMenu(final ContextMenu menu, final View v,
-			final ContextMenuInfo menuInfo) {
-		super.onCreateContextMenu(menu, v, menuInfo);
-		final MenuInflater inflater = this.getMenuInflater();
-		inflater.inflate(R.menu.context_summary_item, menu);
+    private Object getItemAtPosition(final int position) {
+        final Object item = this.getListView().getItemAtPosition(position);
+        if (item.getClass().isAssignableFrom(ReportItemWithStatistics.class)) {
+            return ((ReportItemWithStatistics) item).getGroupingKey();
+        }
+        return item;
+    }
 
-		final int position = ((AdapterContextMenuInfo) menuInfo).position;
+    @Override
+    public boolean onContextItemSelected(final MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menue_report:
+                this.showDetailReport();
+                return true;
+            case R.id.menue_delete:
+                this.onCommandDeleteTimeSlice();
+                return true;
+            case R.id.menue_edit_category:
+                this.onCommandEditCategory();
+                return true;
+            default:
+                return super.onContextItemSelected(item);
+        }
+    }
 
-		final TimeSliceFilterParameter filter = this.createFilter(position);
-		if (filter != null) {
-			if (Global.isInfoEnabled()) {
-				Log.i(Global.LOG_CONTEXT, "filter: " + filter);
-			}
-			menu.findItem(R.id.menue_report).setVisible(true);
-			menu.findItem(R.id.menue_delete).setVisible(true);
-		}
-		this.currentSelectedListItemRangeFilterUsedForMenu = filter;
+    private void showDetailReport() {
+        if (this.currentSelectedListItemRangeFilterUsedForMenu != null) {
+            TimeSheetDetailListActivity.showActivity(this,
+                    this.currentSelectedListItemRangeFilterUsedForMenu, 0);
+        }
+    }
 
-		this.currentSelectedCategory = this.getTimeSliceCategory(position);
-		if (this.currentSelectedCategory != null) {
-			menu.findItem(R.id.menue_edit_category).setVisible(true);
-		}
-	}
+    private void onCommandDeleteTimeSlice() {
+        TimeSliceRemoveActivity.showActivity(this,
+                this.currentSelectedListItemRangeFilterUsedForMenu);
+    }
 
-	private Object getItemAtPosition(final int position) {
-		final Object item = this.getListView().getItemAtPosition(position);
-		if (item.getClass().isAssignableFrom(ReportItemWithStatistics.class)) {
-			return ((ReportItemWithStatistics) item).getGroupingKey();
-		}
-		return item;
-	}
+    private void onCommandEditCategory() {
+        if (this.edit == null) {
+            this.edit = new CategoryEditDialog(this, this);
+        }
+        this.edit.setCategory(this.currentSelectedCategory);
+        this.showDialog(R.id.menue_edit_category);
+    }
 
-	@Override
-	public boolean onContextItemSelected(final MenuItem item) {
-		switch (item.getItemId()) {
-		case R.id.menue_report:
-			this.showDetailReport();
-			return true;
-		case R.id.menue_delete:
-			this.onCommandDeleteTimeSlice();
-			return true;
-		case R.id.menue_edit_category:
-			this.onCommandEditCategory();
-			return true;
-		default:
-			return super.onContextItemSelected(item);
-		}
-	}
+    /**
+     * Result from edit dialog
+     */
+    @Override
+    public void setCategory(final TimeSliceCategory category) {
+        if (category.getRowId() == TimeSliceCategory.NOT_SAVED) {
+            this.categoryRepository.createTimeSliceCategory(category);
+        } else {
+            this.categoryRepository.update(category);
+        }
+        this.loadDataIntoReport(0);
+    }
 
-	private void showDetailReport() {
-		if (this.currentSelectedListItemRangeFilterUsedForMenu != null) {
-			TimeSheetDetailListActivity.showActivity(this,
-					this.currentSelectedListItemRangeFilterUsedForMenu, 0);
-		}
-	}
+    @Override
+    protected Dialog onCreateDialog(final int id) {
+        switch (id) {
+            case R.id.menue_edit_category:
+                return this.edit;
+        }
 
-	private void onCommandDeleteTimeSlice() {
-		TimeSliceRemoveActivity.showActivity(this,
-				this.currentSelectedListItemRangeFilterUsedForMenu);
-	}
+        return null;
+    }
 
-	private void onCommandEditCategory() {
-		if (this.edit == null) {
-			this.edit = new CategoryEditDialog(this, this);
-		}
-		this.edit.setCategory(this.currentSelectedCategory);
-		this.showDialog(R.id.menue_edit_category);
-	}
+    private TimeSliceFilterParameter createFilter(final int position) {
+        TimeSliceFilterParameter filter = null;
+        String context = "";
+        try {
+            TimeSliceCategory category = this.getTimeSliceCategory(position);
+            if (category != null) {
+                filter = this.createDrillDownFilter().setCategoryId(
+                        category.getRowId());
+                if (this.reportMode == ReportModes.BY_DATE_AND_CATEGORY) {
+                    int pos = position;
+                    while (--pos >= 0) {
+                        final Long date = this.getLong(pos);
+                        if (date != null) {
+                            context = "ReportModes.BY_DATE_AND_CATEGORY currentSelectedCategory + super date";
+                            return this.setFilterDate(filter,
+                                    this.getReportDateGrouping(), date);
+                        }
+                    }
+                    context = "ReportModes.BY_DATE_AND_CATEGORY currentSelectedCategory. no super date";
+                } else {
+                    context = "ReportModes.BY_CATEGORY_AND_DATE currentSelectedCategory";
+                }
 
-	private CategoryEditDialog edit = null;
+                return filter.setIgnoreDates(true);
+            } else {
+                final Long date = this.getLong(position);
+                if (date != null) {
+                    filter = this.setFilterDate(this.createDrillDownFilter(),
+                            this.getReportDateGrouping(), date);
+                    if (this.reportMode == ReportModes.BY_CATEGORY_AND_DATE) {
+                        int pos = position;
+                        while (--pos >= 0) {
+                            category = this.getTimeSliceCategory(pos);
+                            if (category != null) {
+                                context = "ReportModes.BY_CATEGORY_AND_DATE date + super currentSelectedCategory";
+                                return filter
+                                        .setCategoryId(category.getRowId());
+                            }
+                        }
+                        context = "ReportModes.BY_CATEGORY_AND_DATE date. no super currentSelectedCategory";
+                    } else {
+                        context = "ReportModes.BY_DATE_AND_CATEGORY date";
+                    }
+                    return filter;
+                }
+            }
+            context = "Neither currentSelectedCategory nor date selected";
+            filter = null;
+            return filter;
+        } finally {
+            if (Global.isDebugEnabled()) {
+                Log.d(Global.LOG_CONTEXT, "createFilterFromViewItemTag("
+                        + context + ") :" + filter);
+            }
+        }
+    }
 
-	/**
-	 * Result from edit dialog
-	 */
-	@Override
-	public void setCategory(final TimeSliceCategory category) {
-		if (category.getRowId() == TimeSliceCategory.NOT_SAVED) {
-			this.categoryRepository.createTimeSliceCategory(category);
-		} else {
-			this.categoryRepository.update(category);
-		}
-		this.loadDataIntoReport(0);
-	}
+    private TimeSliceFilterParameter createDrillDownFilter() {
+        final TimeSliceFilterParameter defaults = this.currentRangeFilter;
+        return new TimeSliceFilterParameter().setNotes(defaults.getNotes())
+                .setNotesNotNull(defaults.isNotesNotNull());
+    }
 
-	@Override
-	protected Dialog onCreateDialog(final int id) {
-		switch (id) {
-		case R.id.menue_edit_category:
-			return this.edit;
-		}
+    private TimeSliceCategory getTimeSliceCategory(final int position) {
+        final Object tag = this.getItemAtPosition(position);
+        if ((tag != null) && (tag instanceof TimeSliceCategory)) {
+            return (TimeSliceCategory) tag;
+        }
+        return null;
+    }
 
-		return null;
-	}
+    private Long getLong(final int position) {
+        final Object tag = this.getItemAtPosition(position);
+        if ((tag != null) && (tag instanceof Long)) {
+            return (Long) tag;
+        }
+        return null;
+    }
 
-	private TimeSliceFilterParameter createFilter(final int position) {
-		TimeSliceFilterParameter filter = null;
-		String context = "";
-		try {
-			TimeSliceCategory category = this.getTimeSliceCategory(position);
-			if (category != null) {
-				filter = this.createDrillDownFilter().setCategoryId(
-						category.getRowId());
-				if (this.reportMode == ReportModes.BY_DATE_AND_CATEGORY) {
-					int pos = position;
-					while (--pos >= 0) {
-						final Long date = this.getLong(pos);
-						if (date != null) {
-							context = "ReportModes.BY_DATE_AND_CATEGORY currentSelectedCategory + super date";
-							return this.setFilterDate(filter,
-									this.getReportDateGrouping(), date);
-						}
-					}
-					context = "ReportModes.BY_DATE_AND_CATEGORY currentSelectedCategory. no super date";
-				} else {
-					context = "ReportModes.BY_CATEGORY_AND_DATE currentSelectedCategory";
-				}
+    private TimeSliceFilterParameter setFilterDate(
+            final TimeSliceFilterParameter timeSliceFilterParameter,
+            final ReportDateGrouping mReportDateGrouping, final Long startDate) {
+        final long start = startDate.longValue();
+        final long end = this.getEndTime(mReportDateGrouping, start);
+        return timeSliceFilterParameter.setStartTime(start).setEndTime(end);
+    }
 
-				return filter.setIgnoreDates(true);
-			} else {
-				final Long date = this.getLong(position);
-				if (date != null) {
-					filter = this.setFilterDate(this.createDrillDownFilter(),
-							this.getReportDateGrouping(), date);
-					if (this.reportMode == ReportModes.BY_CATEGORY_AND_DATE) {
-						int pos = position;
-						while (--pos >= 0) {
-							category = this.getTimeSliceCategory(pos);
-							if (category != null) {
-								context = "ReportModes.BY_CATEGORY_AND_DATE date + super currentSelectedCategory";
-								return filter
-										.setCategoryId(category.getRowId());
-							}
-						}
-						context = "ReportModes.BY_CATEGORY_AND_DATE date. no super currentSelectedCategory";
-					} else {
-						context = "ReportModes.BY_DATE_AND_CATEGORY date";
-					}
-					return filter;
-				}
-			}
-			context = "Neither currentSelectedCategory nor date selected";
-			filter = null;
-			return filter;
-		} finally {
-			if (Global.isDebugEnabled()) {
-				Log.d(Global.LOG_CONTEXT, "createFilterFromViewItemTag("
-						+ context + ") :" + filter);
-			}
-		}
-	}
+    private long getEndTime(final ReportDateGrouping mReportDateGrouping,
+                            final long start) {
+        final DateTimeUtil dtu = DateTimeFormatter.getInstance();
+        if (mReportDateGrouping == ReportDateGrouping.DAILY) {
+            return dtu.addDays(start, 1);
+        } else if (mReportDateGrouping == ReportDateGrouping.WEEKLY) {
+            return dtu.addDays(start, 7);
+        } else if (mReportDateGrouping == ReportDateGrouping.MONTHLY) {
+            return dtu.getStartOfMonth(dtu.addDays(start, 31));
+        } else if (mReportDateGrouping == ReportDateGrouping.YEARLY) {
+            return dtu.getStartOfYear(dtu.addDays(start, 366));
+        }
 
-	private TimeSliceFilterParameter createDrillDownFilter() {
-		final TimeSliceFilterParameter defaults = this.currentRangeFilter;
-		return new TimeSliceFilterParameter().setNotes(defaults.getNotes())
-				.setNotesNotNull(defaults.isNotesNotNull());
-	}
+        throw new IllegalArgumentException("Unknown reportDateGrouping "
+                + mReportDateGrouping);
+    }
 
-	private TimeSliceCategory getTimeSliceCategory(final int position) {
-		final Object tag = this.getItemAtPosition(position);
-		if ((tag != null) && (tag instanceof TimeSliceCategory)) {
-			return (TimeSliceCategory) tag;
-		}
-		return null;
-	}
+    @Override
+    protected List<Object> loadData() {
+        TimeSheetSummaryListActivity.lastRangeFilter = this.currentRangeFilter;
 
-	private Long getLong(final int position) {
-		final Object tag = this.getItemAtPosition(position);
-		if ((tag != null) && (tag instanceof Long)) {
-			return (Long) tag;
-		}
-		return null;
-	}
+        final long performanceMeasureStart = System.currentTimeMillis();
 
-	private TimeSliceFilterParameter setFilterDate(
-			final TimeSliceFilterParameter timeSliceFilterParameter,
-			final ReportDateGrouping mReportDateGrouping, final Long startDate) {
-		final long start = startDate.longValue();
-		final long end = this.getEndTime(mReportDateGrouping, start);
-		return timeSliceFilterParameter.setStartTime(start).setEndTime(end);
-	}
+        final TimeSliceFilterParameter rangeFilter = this.currentRangeFilter;
 
-	private long getEndTime(final ReportDateGrouping mReportDateGrouping,
-			final long start) {
-		final DateTimeUtil dtu = DateTimeFormatter.getInstance();
-		if (mReportDateGrouping == ReportDateGrouping.DAILY) {
-			return dtu.addDays(start, 1);
-		} else if (mReportDateGrouping == ReportDateGrouping.WEEKLY) {
-			return dtu.addDays(start, 7);
-		} else if (mReportDateGrouping == ReportDateGrouping.MONTHLY) {
-			return dtu.getStartOfMonth(dtu.addDays(start, 31));
-		} else if (mReportDateGrouping == ReportDateGrouping.YEARLY) {
-			return dtu.getStartOfYear(dtu.addDays(start, 366));
-		}
+        final List<TimeSlice> timeSlices = this.timeSliceRepository
+                .fetchList(rangeFilter);
 
-		throw new IllegalArgumentException("Unknown reportDateGrouping "
-				+ mReportDateGrouping);
-	}
+        final List<Object> listItems = SummaryReportCalculator
+                .createStatistics(timeSlices, this.reportMode,
+                        this.getReportDateGrouping(), this.showNotes);
 
-	@Override
-	protected List<Object> loadData() {
-		TimeSheetSummaryListActivity.lastRangeFilter = this.currentRangeFilter;
+        if (Global.isInfoEnabled()) {
+            Log.i(Global.LOG_CONTEXT,
+                    "loadReportDataStructures:"
+                            + (System.currentTimeMillis() - performanceMeasureStart)
+            );
+        }
 
-		final long performanceMeasureStart = System.currentTimeMillis();
+        return listItems;
+    }
 
-		final TimeSliceFilterParameter rangeFilter = this.currentRangeFilter;
+    @Override
+    public void loadDataIntoReport(final int reportType) {
+        final long globalPerformanceMeasureStart = System.currentTimeMillis();
+        this.setReportType(reportType);
 
-		final List<TimeSlice> timeSlices = this.timeSliceRepository
-				.fetchList(rangeFilter);
+        final List<Object> listItems = this.loadData();
 
-		final List<Object> listItems = SummaryReportCalculator
-				.createStatistics(timeSlices, this.reportMode,
-						this.getReportDateGrouping(), this.showNotes);
+        final long performanceMeasureStart = System.currentTimeMillis();
 
-		if (Global.isInfoEnabled()) {
-			Log.i(Global.LOG_CONTEXT,
-					"loadReportDataStructures:"
-							+ (System.currentTimeMillis() - performanceMeasureStart));
-		}
+        final int newSelection = this.convertLastSelection(this.getListView(),
+                listItems);
 
-		return listItems;
-	}
+        this.setListAdapter(new TimeSheetReportAdapter(this, listItems,
+                this.showNotes, this.getReportDateGrouping()));
+        if (Global.isInfoEnabled()) {
+            Log.i(Global.LOG_CONTEXT,
+                    "Create adapter:"
+                            + (System.currentTimeMillis() - performanceMeasureStart)
+            );
+        }
 
-	@Override
-	public void loadDataIntoReport(final int reportType) {
-		final long globalPerformanceMeasureStart = System.currentTimeMillis();
-		this.setReportType(reportType);
+        // scroll to end
+        this.getListView().post(new Runnable() {
+            @Override
+            public void run() {
+                // Select the last row so it will scroll into view...
+                TimeSheetSummaryListActivity.this.getListView().setSelection(
+                        newSelection);
+                final float loadTime = 0.0001f * (System.currentTimeMillis() - globalPerformanceMeasureStart);
+                TimeSheetSummaryListActivity.this
+                        .setTitle(TimeSheetSummaryListActivity.this.currentRangeFilter
+                                .toString()
+                                + " ("
+                                + listItems.size()
+                                + "/"
+                                + String.format("%.1f", loadTime) + " sec)");
+            }
+        });
 
-		final List<Object> listItems = this.loadData();
+    }
 
-		final long performanceMeasureStart = System.currentTimeMillis();
+    private void setReportType(final int reportType) {
+        switch (reportType) {
+            case R.id.summary_day:
+                this.setReportDateGrouping(ReportDateGrouping.DAILY);
+                this.reportMode = ReportModes.BY_DATE_AND_CATEGORY;
+                break;
+            case R.id.summary_month:
+                this.setReportDateGrouping(ReportDateGrouping.MONTHLY);
+                this.reportMode = ReportModes.BY_DATE_AND_CATEGORY;
+                break;
+            case R.id.summary_week:
+                this.setReportDateGrouping(ReportDateGrouping.WEEKLY);
+                this.reportMode = ReportModes.BY_DATE_AND_CATEGORY;
+                break;
+            case R.id.category_day:
+                this.setReportDateGrouping(ReportDateGrouping.DAILY);
+                this.reportMode = ReportModes.BY_CATEGORY_AND_DATE;
+                break;
+            case R.id.category_month:
+                this.setReportDateGrouping(ReportDateGrouping.MONTHLY);
+                this.reportMode = ReportModes.BY_CATEGORY_AND_DATE;
+                break;
+            case R.id.category_week:
+                this.setReportDateGrouping(ReportDateGrouping.WEEKLY);
+                this.reportMode = ReportModes.BY_CATEGORY_AND_DATE;
+                break;
+        }
+    }
 
-		final int newSelection = this.convertLastSelection(this.getListView(),
-				listItems);
+    /**
+     * gets data from first visible item and locates it in newListItems.
+     *
+     * @return last item pos if not found
+     */
+    private int convertLastSelection(final ListView listView,
+                                     final List<Object> newListItems) {
+        // get old first visible item infos
+        final int oldItemCount = listView.getCount();
+        if (oldItemCount == 0) {
+            return newListItems.size() - 1;
+        }
+        final int lastListViewTopPos = listView.getFirstVisiblePosition();
+        final Object lastListViewTopItem = listView
+                .getItemAtPosition(lastListViewTopPos);
 
-		this.setListAdapter(new TimeSheetReportAdapter(this, listItems,
-				this.showNotes, this.getReportDateGrouping()));
-		if (Global.isInfoEnabled()) {
-			Log.i(Global.LOG_CONTEXT,
-					"Create adapter:"
-							+ (System.currentTimeMillis() - performanceMeasureStart));
-		}
+        // translate to newListItems position
+        int newSelection = (lastListViewTopItem == null) ? -1 : newListItems
+                .indexOf(lastListViewTopItem);
+        if (newSelection == -1) {
+            newSelection = lastListViewTopPos;
+        }
+        if (newSelection >= newListItems.size()) {
+            newSelection = newListItems.size() - 1;
+        }
+        return newSelection;
+    }
 
-		// scroll to end
-		this.getListView().post(new Runnable() {
-			@Override
-			public void run() {
-				// Select the last row so it will scroll into view...
-				TimeSheetSummaryListActivity.this.getListView().setSelection(
-						newSelection);
-				final float loadTime = 0.0001f * (System.currentTimeMillis() - globalPerformanceMeasureStart);
-				TimeSheetSummaryListActivity.this
-						.setTitle(TimeSheetSummaryListActivity.this.currentRangeFilter
-								.toString()
-								+ " ("
-								+ listItems.size()
-								+ "/"
-								+ String.format("%.1f", loadTime) + " sec)");
-			}
-		});
+    /**
+     * handle result from edit/changeFilter/delete
+     */
+    @Override
+    protected void onActivityResult(final int requestCode,
+                                    final int resultCode, final Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+        if (intent != null) {
+            if (resultCode == ReportFilterActivity.RESULT_FILTER_CHANGED) {
+                this.currentRangeFilter = super.onActivityResult(intent,
+                        this.currentRangeFilter);
+            }
+            this.loadDataIntoReport(0);
+        }
+    }
 
-	}
+    @Override
+    protected String getDefaultReportName() {
+        return this.getString(R.string.default_export_sum_name);
+    }
 
-	private void setReportType(final int reportType) {
-		switch (reportType) {
-		case R.id.summary_day:
-			this.setReportDateGrouping(ReportDateGrouping.DAILY);
-			this.reportMode = ReportModes.BY_DATE_AND_CATEGORY;
-			break;
-		case R.id.summary_month:
-			this.setReportDateGrouping(ReportDateGrouping.MONTHLY);
-			this.reportMode = ReportModes.BY_DATE_AND_CATEGORY;
-			break;
-		case R.id.summary_week:
-			this.setReportDateGrouping(ReportDateGrouping.WEEKLY);
-			this.reportMode = ReportModes.BY_DATE_AND_CATEGORY;
-			break;
-		case R.id.category_day:
-			this.setReportDateGrouping(ReportDateGrouping.DAILY);
-			this.reportMode = ReportModes.BY_CATEGORY_AND_DATE;
-			break;
-		case R.id.category_month:
-			this.setReportDateGrouping(ReportDateGrouping.MONTHLY);
-			this.reportMode = ReportModes.BY_CATEGORY_AND_DATE;
-			break;
-		case R.id.category_week:
-			this.setReportDateGrouping(ReportDateGrouping.WEEKLY);
-			this.reportMode = ReportModes.BY_CATEGORY_AND_DATE;
-			break;
-		}
-	}
+    @Override
+    protected String getEMailSummaryLine() {
+        final String appName = this.getString(R.string.app_name);
+        return String.format(this.getString(R.string.default_mail_sum_subject),
+                appName);
+    }
 
-	/**
-	 * gets data from first visible item and locates it in newListItems.
-	 * 
-	 * @return last item pos if not found
-	 */
-	private int convertLastSelection(final ListView listView,
-			final List<Object> newListItems) {
-		// get old first visible item infos
-		final int oldItemCount = listView.getCount();
-		if (oldItemCount == 0) {
-			return newListItems.size() - 1;
-		}
-		final int lastListViewTopPos = listView.getFirstVisiblePosition();
-		final Object lastListViewTopItem = listView
-				.getItemAtPosition(lastListViewTopPos);
+    private void showExportSettingsDialog() {
+        if (dlgExportSettings == null) {
+            dlgExportSettings = new ExportSettingsDialog(this, exportSettings, this);
+        }
+        dlgExportSettings.show();
+    }
 
-		// translate to newListItems position
-		int newSelection = (lastListViewTopItem == null) ? -1 : newListItems
-				.indexOf(lastListViewTopItem);
-		if (newSelection == -1) {
-			newSelection = lastListViewTopPos;
-		}
-		if (newSelection >= newListItems.size()) {
-			newSelection = newListItems.size() - 1;
-		}
-		return newSelection;
-	}
+    private String createReport(String reportType) {
+        ReportItemFormatterEx formatter = new ReportItemFormatterEx(this, this.getReportDateGrouping(), this.showNotes);
+        List<Object> data = this.loadData();
+        if (reportType.toLowerCase().startsWith("c")) {
+            return new CsvSummaryReportRenderer(formatter, this.showNotes).createReport(data);
+        } else {
+            return new TxtReportRenderer(formatter).createReport(data);
+        }
+    }
 
-	/**
-	 * handle result from edit/changeFilter/delete
-	 */
-	@Override
-	protected void onActivityResult(final int requestCode,
-			final int resultCode, final Intent intent) {
-		super.onActivityResult(requestCode, resultCode, intent);
-		if (intent != null) {
-			if (resultCode == ReportFilterActivity.RESULT_FILTER_CHANGED) {
-				this.currentRangeFilter = super.onActivityResult(intent,
-						this.currentRangeFilter);
-			}
-			this.loadDataIntoReport(0);
-		}
-	}
+    @Override
+    public void onExport(ExportSettings setting) {
+        ExportSettingsDto.copy(exportSettings, setting);
 
-	@Override
-	protected String getDefaultReportName() {
-		return this.getString(R.string.default_export_sum_name);
-	}
-
-	@Override
-	protected String getEMailSummaryLine() {
-		final String appName = this.getString(R.string.app_name);
-		return String.format(this.getString(R.string.default_mail_sum_subject),
-				appName);
-	}
-
-	private static ExportSettingsDto exportSettings = new ExportSettingsDto(); 
-	private ExportSettingsDialog dlgExportSettings = null;
-	
-	private void showExportSettingsDialog() {
-		if (dlgExportSettings == null) {
-			dlgExportSettings = new ExportSettingsDialog(this, exportSettings, this);
-		}
-		dlgExportSettings.show();
-	}
-
-	private String createReport(String reportType) {
-		ReportItemFormatterEx formatter = new ReportItemFormatterEx(this, this.getReportDateGrouping(), this.showNotes);
-		List<Object> data = this.loadData();
-		if (reportType.toLowerCase().startsWith("c")) {
-			return new CsvSummaryReportRenderer(formatter, this.showNotes).createReport(data);
-		} else  {
-			return new TxtReportRenderer(formatter).createReport(data);
-		}
-	}
-	
-	@Override
-	public void onExport(ExportSettings setting) {
-		ExportSettingsDto.copy(exportSettings,setting);
-		
-		String exportFormat = exportSettings.getExportFormat();
-		String report = createReport(exportFormat);
-		if (exportSettings.isUseSendTo()) {
-			SendUtilities.send("", this.getEMailSummaryLine(), this, report);
-		} else {
-			new FileUtilities(this).write(exportSettings.getFileName(), exportFormat, report);
-		}
-	}
+        String exportFormat = exportSettings.getExportFormat();
+        String report = createReport(exportFormat);
+        if (exportSettings.isUseSendTo()) {
+            SendUtilities.send("", this.getEMailSummaryLine(), this, report);
+        } else {
+            new FileUtilities(this).write(exportSettings.getFileName(), exportFormat, report);
+        }
+    }
 }

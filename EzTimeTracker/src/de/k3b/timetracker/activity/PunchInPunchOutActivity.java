@@ -31,7 +31,7 @@ import de.k3b.timetracker.DateTimeFormatter;
 import de.k3b.timetracker.Factory;
 import de.k3b.timetracker.Global;
 import de.k3b.timetracker.R;
-import de.k3b.timetracker.Settings;
+import de.k3b.timetracker.SettingsImpl;
 import de.k3b.timetracker.TimeSliceFilterParameter;
 import de.k3b.timetracker.TimeTrackerManager;
 import de.k3b.timetracker.TimeTrackerSessionData;
@@ -120,8 +120,8 @@ public class PunchInPunchOutActivity extends Activity implements
 
         this.setupButtons();
 
-        this.tracker = Factory.getInstance().createTimeTrackerManager(this, Settings.isPublicDatabase());
-        Settings.init(this.getBaseContext());
+        this.tracker = Factory.getInstance().createTimeTrackerManager(this, SettingsImpl.isPublicDatabase());
+        SettingsImpl.init(this.getBaseContext());
 
         this.reloadGui();
     }
@@ -129,11 +129,11 @@ public class PunchInPunchOutActivity extends Activity implements
     @Override
     public void onResume() {
         super.onResume();
-        Settings.init(this.getBaseContext());
+        SettingsImpl.init(this.getBaseContext());
 
         // databasetype might have changed in settings
         DatabaseInstance.getCurrentInstance().initialize(this.getBaseContext(),
-                Settings.isPublicDatabase());
+                SettingsImpl.isPublicDatabase());
 
         if (this.myReceiver == null) {
             this.myReceiver = new _RemoteTimeTrackerReceiver();
@@ -280,7 +280,6 @@ public class PunchInPunchOutActivity extends Activity implements
      * gets class responsible for processing menue.<br/>
      *
      * @param itemId menue id to be procesed
-     * @return
      */
     private Class<? extends Activity> getActivityClassForMenu(final int itemId) {
         switch (itemId) {
@@ -541,7 +540,8 @@ public class PunchInPunchOutActivity extends Activity implements
     }
 
     private TimeSlice getTimeSlice(final Intent intent) {
-        return (intent != null) ? ((TimeSlice) intent.getExtras().get(
+        final Bundle extras = (intent != null) ? intent.getExtras() : null;
+        return (extras != null) ? ((TimeSlice) extras.get(
                 Global.EXTRA_TIMESLICE)) : null;
     }
 

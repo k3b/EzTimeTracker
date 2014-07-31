@@ -1,7 +1,6 @@
 package de.k3b.timetracker;
 
-import android.util.Log;
-
+import de.k3b.common.Logger;
 import de.k3b.timetracker.database.ICategoryRepsitory;
 import de.k3b.timetracker.database.ITimeSliceRepository;
 import de.k3b.timetracker.model.TimeSliceCategory;
@@ -16,9 +15,11 @@ import de.k3b.util.ISessionDataPersistance;
 public class TimeTrackerManager {
     private final ITimeSliceRepository timeSliceRepository;
     private final ICategoryRepsitory timeSliceCategoryRepository;
+    private final Logger logger;
+    private final Settings settings;
 
-	private final TimeTrackerSessionData sessionData;
-	private final ISessionDataPersistance<TimeTrackerSessionData> timeTrackerSessionDataPersistance;
+    private final TimeTrackerSessionData sessionData;
+    private final ISessionDataPersistance<TimeTrackerSessionData> timeTrackerSessionDataPersistance;
 
     /**
      * Internal constructor used by tests to allow mocking of the child
@@ -28,14 +29,14 @@ public class TimeTrackerManager {
             final ISessionDataPersistance<TimeTrackerSessionData> sessionDataPersistance,
             final ITimeSliceRepository timeSliceRepository,
             final ICategoryRepsitory timeSliceCategoryRepsitory,
-            final TimeTrackerSessionData sessionData) {
+            final TimeTrackerSessionData sessionData, final Logger logger, final Settings settings) {
         this.sessionData = sessionData;
         this.timeTrackerSessionDataPersistance = sessionDataPersistance;
         this.timeSliceRepository = timeSliceRepository;
         this.timeSliceCategoryRepository = timeSliceCategoryRepsitory;
+        this.logger = logger;
+        this.settings = settings;
     }
-
-    ;
 
     public static long currentTimeMillis() {
         return System.currentTimeMillis(); // SystemClock.elapsedRealtime();
@@ -45,18 +46,18 @@ public class TimeTrackerManager {
 		if (Global.isDebugEnabled()) {
 			this.sessionData.updateCount++;
 
-			Log.d(Global.LOG_CONTEXT, "saveState('" + this.sessionData + "')");
-		}
-		this.timeTrackerSessionDataPersistance.save(this.sessionData);
-	}
+            logger.d("saveState('" + this.sessionData + "')");
+        }
+        this.timeTrackerSessionDataPersistance.save(this.sessionData);
+    }
 
 	public TimeTrackerSessionData reloadSessionData() {
 		this.sessionData.load(this.timeTrackerSessionDataPersistance.load());
 		if (Global.isDebugEnabled()) {
-			Log.d(Global.LOG_CONTEXT, "reloadSessionData('" + this.sessionData
-					+ "')");
-		}
-		return this.sessionData;
+            logger.d("reloadSessionData('" + this.sessionData
+                    + "')");
+        }
+        return this.sessionData;
     }
 
     public StateChangeType punchInClock(final String selectedCategoryName,
@@ -76,7 +77,7 @@ public class TimeTrackerManager {
         StateChangeType stateChangeType = StateChangeType.NONE;
 
         if (Global.isInfoEnabled() && (selectedCategory != null)) {
-            Log.i(Global.LOG_CONTEXT,
+            logger.i(
                     "punchInClock(category='"
 							+ selectedCategory.getCategoryName()
 							+ "', time='"
@@ -107,7 +108,7 @@ public class TimeTrackerManager {
 
         stateChangeType = StateChangeType.AlreadyStarted;
         if (Global.isInfoEnabled()) {
-            Log.i(Global.LOG_CONTEXT, "punchInClock(): nothing to do");
+            logger.i("punchInClock(): nothing to do");
         }
         return stateChangeType;
     }
@@ -127,11 +128,11 @@ public class TimeTrackerManager {
 		if ((this.sessionData.getCategory() != null)
 				&& (this.sessionData.isPunchedIn())) {
 			this.sessionData.setEndTime(endDateTime);
-			if (this.sessionData.getElapsedTimeInMillisecs() > Settings
-					.getMinPunchOutTreshholdInMilliSecs()) {
-				if (Global.isInfoEnabled()) {
-					Log.i(Global.LOG_CONTEXT, "punchOutClock("
-							+ this.sessionData + ") persisting ...");
+            if (this.sessionData.getElapsedTimeInMillisecs() > settings
+                    .getMinPunchOutTreshholdInMilliSecs()) {
+                if (Global.isInfoEnabled()) {
+                    logger.i("punchOutClock("
+                            + this.sessionData + ") persisting ...");
                 }
 
                 if (this.timeSliceRepository.create(this.sessionData) >= 0)
@@ -144,19 +145,18 @@ public class TimeTrackerManager {
             } else {
                 stateChangeType = StateChangeType.UndoStart;
 
-                Log.w(Global.LOG_CONTEXT,
-                        "Discarding timeslice in punchOutClock("
-                                + this.sessionData + ") : elapsed "
-								+ this.sessionData.getElapsedTimeInMillisecs()
-								+ " time smaller than trashhold "
-								+ Settings.getMinPunchOutTreshholdInMilliSecs());
-				this.saveSessionData();
-			}
+                logger.w("Discarding timeslice in punchOutClock("
+                        + this.sessionData + ") : elapsed "
+                        + this.sessionData.getElapsedTimeInMillisecs()
+                        + " time smaller than trashhold "
+                        + settings.getMinPunchOutTreshholdInMilliSecs());
+                this.saveSessionData();
+            }
         } else {
             stateChangeType = StateChangeType.NotStarted;
 
             if (Global.isInfoEnabled()) {
-                Log.i(Global.LOG_CONTEXT, "punchOutClock(" + this.sessionData
+                logger.i("punchOutClock(" + this.sessionData
                         + ") : not punched in or category not set.");
             }
         }

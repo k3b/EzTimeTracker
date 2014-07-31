@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.k3b.timetracker.Global;
-import de.k3b.timetracker.Settings;
+import de.k3b.timetracker.SettingsImpl;
 import de.k3b.timetracker.TimeSliceFilterParameter;
 import de.k3b.timetracker.model.ITimeSliceFilter;
 import de.k3b.timetracker.model.TimeSlice;
@@ -23,8 +23,8 @@ public class TimeSliceRepository implements ITimeSliceRepository {
 	private final TimeSliceCategoryRepsitory categoryRepository;
 
 	public TimeSliceRepository(final Context context, Boolean publicDir) {
-		TimeSliceRepository.DB.initialize(context, null);
-		this.categoryRepository = new TimeSliceCategoryRepsitory(context);
+        TimeSliceRepository.DB.initialize(context, publicDir);
+        this.categoryRepository = new TimeSliceCategoryRepsitory(context);
 	}
 
     public static int delete(final ITimeSliceFilter timeSliceFilter) {
@@ -44,8 +44,6 @@ public class TimeSliceRepository implements ITimeSliceRepository {
 
 	/**
      * Counts how many TimeSlice items exist that matches the timeSliceFilter
-     *
-     * @return
      */
     public static int getCount(final ITimeSliceFilter timeSliceFilter) {
         final String context = "TimeSliceRepository.getCount("
@@ -80,8 +78,6 @@ public class TimeSliceRepository implements ITimeSliceRepository {
 
     /**
      * Totals those TimeSlice-Durations that matches the timeSliceFilter
-     *
-     * @return
      */
     public static double getTotalDurationInHours(
             final ITimeSliceFilter timeSliceFilter) {
@@ -140,7 +136,6 @@ public class TimeSliceRepository implements ITimeSliceRepository {
      * if distance to last timeslice > Settings.minPunchInTrashhold.<br/>
      * Else append to previous.
      *
-     * @param timeSlice
      * @return rowid if successfull or -1 if error or negative value if timeslice was appended.
      */
     @Override
@@ -151,7 +146,7 @@ public class TimeSliceRepository implements ITimeSliceRepository {
                         "create-Find with same category to append to",
                         timeSlice.getCategory(),
                         newStartTime
-                                - Settings.getMinPunchInTreshholdInMilliSecs(),
+                                - SettingsImpl.getMinPunchInTreshholdInMilliSecs(),
                         newStartTime
                 );
 
@@ -322,7 +317,7 @@ public class TimeSliceRepository implements ITimeSliceRepository {
         columns.add(TimeSliceSql.COL_START_TIME);
         columns.add(TimeSliceSql.COL_END_TIME);
         columns.add(TimeSliceSql.COL_NOTES);
-        return columns.toArray(new String[0]);
+        return columns.toArray(new String[columns.size()]);
     }
 
     private ContentValues timeSliceContentValuesList(final TimeSlice timeSlice) {
