@@ -4,6 +4,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+
+import de.k3b.timetracker.Factory;
 import de.k3b.timetracker.Global;
 import de.k3b.timetracker.Settings;
 import de.k3b.timetracker.TimeTrackerManager;
@@ -51,7 +53,7 @@ public class RemoteTimeTrackerBroadcastReceiver extends BroadcastReceiver {
         final String category = (parts.length > 2) ? parts[2] : null;
 
         Settings.init(context); // if gui is not active
-        final TimeTrackerManager mgr = new TimeTrackerManager(context, Settings.isPublicDatabase());
+        final TimeTrackerManager mgr = Factory.getInstance().createTimeTrackerManager(context, Settings.isPublicDatabase());
         mgr.reloadSessionData();
         if (Global.CMD_START.equalsIgnoreCase(cmd) && (category != null)
                 && (category.length() > 0)) {

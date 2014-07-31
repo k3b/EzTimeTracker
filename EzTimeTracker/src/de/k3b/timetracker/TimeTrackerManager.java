@@ -1,13 +1,11 @@
 package de.k3b.timetracker;
 
-import android.content.Context;
 import android.util.Log;
+
 import de.k3b.timetracker.database.ICategoryRepsitory;
-import de.k3b.timetracker.database.TimeSliceCategoryRepsitory;
-import de.k3b.timetracker.database.TimeSliceRepository;
+import de.k3b.timetracker.database.ITimeSliceRepository;
 import de.k3b.timetracker.model.TimeSliceCategory;
 import de.k3b.util.ISessionDataPersistance;
-import de.k3b.util.SessionDataPersistance;
 
 /**
  * Gui independant api-implementation to execute timetracking.<br/>
@@ -16,34 +14,32 @@ import de.k3b.util.SessionDataPersistance;
  * 
  */
 public class TimeTrackerManager {
-	private final TimeSliceRepository timeSliceRepository;
-	private final ICategoryRepsitory timeSliceCategoryRepository;
+    private final ITimeSliceRepository timeSliceRepository;
+    private final ICategoryRepsitory timeSliceCategoryRepository;
 
 	private final TimeTrackerSessionData sessionData;
 	private final ISessionDataPersistance<TimeTrackerSessionData> timeTrackerSessionDataPersistance;
 
-	public TimeTrackerManager(final Context context, final Boolean publicDir) {
-		// poor man's dependency injection
-		this(new SessionDataPersistance<TimeTrackerSessionData>(context),
-				new TimeSliceRepository(context, publicDir),
-				new TimeSliceCategoryRepsitory(context),
-				new TimeTrackerSessionData());
-	}
+    /**
+     * Internal constructor used by tests to allow mocking of the child
+     * components.
+     */
+    TimeTrackerManager(
+            final ISessionDataPersistance<TimeTrackerSessionData> sessionDataPersistance,
+            final ITimeSliceRepository timeSliceRepository,
+            final ICategoryRepsitory timeSliceCategoryRepsitory,
+            final TimeTrackerSessionData sessionData) {
+        this.sessionData = sessionData;
+        this.timeTrackerSessionDataPersistance = sessionDataPersistance;
+        this.timeSliceRepository = timeSliceRepository;
+        this.timeSliceCategoryRepository = timeSliceCategoryRepsitory;
+    }
 
-	/**
-	 * Internal constructor used by tests to allow mocking of the child
-	 * components.
-	 */
-	TimeTrackerManager(
-			final ISessionDataPersistance<TimeTrackerSessionData> sessionDataPersistance,
-			final TimeSliceRepository timeSliceRepository,
-			final ICategoryRepsitory timeSliceCategoryRepsitory,
-			final TimeTrackerSessionData sessionData) {
-		this.sessionData = sessionData;
-		this.timeTrackerSessionDataPersistance = sessionDataPersistance;
-		this.timeSliceRepository = timeSliceRepository;
-		this.timeSliceCategoryRepository = timeSliceCategoryRepsitory;
-	}
+    ;
+
+    public static long currentTimeMillis() {
+        return System.currentTimeMillis(); // SystemClock.elapsedRealtime();
+    }
 
 	public void saveSessionData() {
 		if (Global.isDebugEnabled()) {
@@ -61,11 +57,11 @@ public class TimeTrackerManager {
 					+ "')");
 		}
 		return this.sessionData;
-	}
+    }
 
-	public Boolean punchInClock(final String selectedCategoryName,
-			final long startDateTime) {
-		final TimeSliceCategory cat = this.timeSliceCategoryRepository
+    public StateChangeType punchInClock(final String selectedCategoryName,
+                                        final long startDateTime) {
+        final TimeSliceCategory cat = this.timeSliceCategoryRepository
 				.getOrCreateCategory(selectedCategoryName);
 		return this.punchInClock(cat, startDateTime);
 	}
@@ -74,12 +70,14 @@ public class TimeTrackerManager {
 	 * Start new punchInSession.<br/>
 	 * 
 	 * @return true if success
-	 */
-	public Boolean punchInClock(final TimeSliceCategory selectedCategory,
-			final long startDateTime) {
-		if (Global.isInfoEnabled() && (selectedCategory != null)) {
-			Log.i(Global.LOG_CONTEXT,
-					"punchInClock(category='"
+     */
+    public StateChangeType punchInClock(final TimeSliceCategory selectedCategory,
+                                        final long startDateTime) {
+        StateChangeType stateChangeType = StateChangeType.NONE;
+
+        if (Global.isInfoEnabled() && (selectedCategory != null)) {
+            Log.i(Global.LOG_CONTEXT,
+                    "punchInClock(category='"
 							+ selectedCategory.getCategoryName()
 							+ "', time='"
 							+ DateTimeFormatter.getInstance().getDateTimeStr(
@@ -93,30 +91,38 @@ public class TimeTrackerManager {
 		if (!isPunchedIn || hasCategoryChanged) {
 			if (isPunchedIn && hasCategoryChanged) {
 				this.sessionData.setEndTime(startDateTime);
-				this.timeSliceRepository.create(this.sessionData);
-			}
-			this.sessionData.beginNewSlice(selectedCategory, startDateTime);
-			this.sessionData.setNotes("");
+                if (this.timeSliceRepository.create(this.sessionData) >= 0)
+                    stateChangeType = StateChangeType.Change;
+                else
+                    stateChangeType = StateChangeType.ChangeMerge;
+            } else {
+                stateChangeType = StateChangeType.Start;
+            }
+            this.sessionData.beginNewSlice(selectedCategory, startDateTime);
+            this.sessionData.setNotes("");
 			this.saveSessionData();
 
-			return true;
-		}
+            return stateChangeType;
+        }
 
-		if (Global.isInfoEnabled()) {
-			Log.i(Global.LOG_CONTEXT, "punchInClock(): nothing to do");
-		}
-		return false;
-	}
+        stateChangeType = StateChangeType.AlreadyStarted;
+        if (Global.isInfoEnabled()) {
+            Log.i(Global.LOG_CONTEXT, "punchInClock(): nothing to do");
+        }
+        return stateChangeType;
+    }
 
 	private boolean hasCategoryChanged(final TimeSliceCategory newCategory) {
 		return ((this.sessionData.getCategory() == null) || !this.sessionData
 				.getCategory().equals(newCategory));
-	}
+    }
 
-	public Boolean punchOutClock(final long endDateTime, final String notes) {
-		if ((notes != null) && (notes.length() > 0)) {
-			this.sessionData.setNotes(notes);
-		}
+    public StateChangeType punchOutClock(final long endDateTime, final String notes) {
+        StateChangeType stateChangeType = StateChangeType.NONE;
+
+        if ((notes != null) && (notes.length() > 0)) {
+            this.sessionData.setNotes(notes);
+        }
 
 		if ((this.sessionData.getCategory() != null)
 				&& (this.sessionData.isPunchedIn())) {
@@ -126,28 +132,36 @@ public class TimeTrackerManager {
 				if (Global.isInfoEnabled()) {
 					Log.i(Global.LOG_CONTEXT, "punchOutClock("
 							+ this.sessionData + ") persisting ...");
-				}
+                }
 
-				this.timeSliceRepository.create(this.sessionData);
-				this.saveSessionData();
-				return true;
-			} else {
-				Log.w(Global.LOG_CONTEXT,
-						"Discarding timeslice in punchOutClock("
-								+ this.sessionData + ") : elapsed "
+                if (this.timeSliceRepository.create(this.sessionData) >= 0)
+                    stateChangeType = StateChangeType.Stop;
+                else
+                    stateChangeType = StateChangeType.StopMerge;
+
+                this.saveSessionData();
+                return stateChangeType;
+            } else {
+                stateChangeType = StateChangeType.UndoStart;
+
+                Log.w(Global.LOG_CONTEXT,
+                        "Discarding timeslice in punchOutClock("
+                                + this.sessionData + ") : elapsed "
 								+ this.sessionData.getElapsedTimeInMillisecs()
 								+ " time smaller than trashhold "
 								+ Settings.getMinPunchOutTreshholdInMilliSecs());
 				this.saveSessionData();
 			}
-		} else {
-			if (Global.isInfoEnabled()) {
-				Log.i(Global.LOG_CONTEXT, "punchOutClock(" + this.sessionData
-						+ ") : not punched in or category not set.");
-			}
-		}
-		return false;
-	}
+        } else {
+            stateChangeType = StateChangeType.NotStarted;
+
+            if (Global.isInfoEnabled()) {
+                Log.i(Global.LOG_CONTEXT, "punchOutClock(" + this.sessionData
+                        + ") : not punched in or category not set.");
+            }
+        }
+        return stateChangeType;
+    }
 
 	public long getElapsedTimeInMillisecs() {
 		return this.sessionData.getElapsedTimeInMillisecs();
@@ -155,17 +169,49 @@ public class TimeTrackerManager {
 
 	public boolean isPunchedIn() {
 		return this.sessionData.isPunchedIn();
-	}
+    }
 
-	public static long currentTimeMillis() {
-		return System.currentTimeMillis(); // SystemClock.elapsedRealtime();
-	}
+    public void addNotes(final String note) {
+        if ((note != null) && (note.length() != 0)) {
+            this.sessionData.setNotes(this.sessionData.getNotes() + " " + note);
+        }
 
-	public void addNotes(final String note) {
-		if ((note != null) && (note.length() != 0)) {
-			this.sessionData.setNotes(this.sessionData.getNotes() + " " + note);
-		}
+    }
 
-	}
+    public enum StateChangeType {
+        NONE,
+        /**
+         * stop - start
+         */
+        Start,
+        /**
+         * start - start with category change
+         */
+        Change,
+        /**
+         * start - stop
+         */
+        Stop,
+        /**
+         * start - start no category change
+         */
+        AlreadyStarted,
+        /**
+         * start - stop change discarded because below treshold
+         */
+        UndoStart,
+        /**
+         * stop - stop
+         */
+        NotStarted,
+        /**
+         * start - start with category change the previous timeslice was merged with an existing
+         */
+        ChangeMerge,
+        /**
+         * start - stop The previous timeslice was merged with an existing
+         */
+        StopMerge,
+    }
 
 }
