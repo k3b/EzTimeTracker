@@ -2,17 +2,16 @@ package de.k3b.timetracker;
 
 import java.text.ParseException;
 
-import android.util.Log;
 import de.k3b.timetracker.model.TimeSlice;
 import de.k3b.util.DateTimeUtil;
 
 public class DateTimeFormatter extends DateTimeUtil {
 
-	public DateTimeFormatter() {
-		super(TimeSlice.NO_TIME_VALUE);
-	}
+    private static DateTimeUtil instance = null;
 
-	private static DateTimeUtil instance = null;
+    public DateTimeFormatter() {
+        super(TimeSlice.NO_TIME_VALUE);
+    }
 
 	public static DateTimeUtil getInstance() {
 		if (DateTimeFormatter.instance == null) {
@@ -27,10 +26,11 @@ public class DateTimeFormatter extends DateTimeUtil {
 		try {
 			return super.parseDate(mDateSelectedForAdd);
 		} catch (final ParseException e) {
-			Log.w(Global.LOG_CONTEXT, "cannot reconvert " + mDateSelectedForAdd
-					+ " to dateTime using " + shortDateformatter,
-					e);
-			return TimeSlice.NO_TIME_VALUE;
+            Global.getLogger().w("cannot reconvert " + mDateSelectedForAdd
+                            + " to dateTime using " + shortDateformatter,
+                    e
+            );
+            return TimeSlice.NO_TIME_VALUE;
 		}
 	}
 }

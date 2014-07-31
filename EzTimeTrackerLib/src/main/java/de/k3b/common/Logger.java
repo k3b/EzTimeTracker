@@ -11,5 +11,7 @@ public interface Logger {
 
     void w(String msg);
 
+    void w(String msg, Throwable tr);
+
     void e(String msg);
 }

@@ -38,6 +38,7 @@ public class SettingsImpl implements Settings {
                 Global.isInfoEnabled()));
         Global.setDebugEnabled(SettingsImpl.getPrefValue(prefs, "isDebugEnabled",
                 Global.isDebugEnabled()));
+        Global.setLogger(logger);
     }
 
     public static SettingsImpl getInstance() {

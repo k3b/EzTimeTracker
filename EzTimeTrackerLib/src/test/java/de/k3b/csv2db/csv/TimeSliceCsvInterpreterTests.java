@@ -1,15 +1,19 @@
 package de.k3b.csv2db.csv;
 
+import org.junit.Assert;
+import org.junit.Test;
+
 import java.text.ParseException;
 
-import org.junit.*;
-
-import de.k3b.timetracker.DateTimeFormatter;
 import de.k3b.timetracker.model.TimeSlice;
+import de.k3b.util.DateTimeUtil;
 
 public class TimeSliceCsvInterpreterTests {
-	@Test
-	public void shouldFindColum() {
+
+    private final DateTimeUtil dateTimeUtil = new DateTimeUtil(0);
+
+    @Test
+    public void shouldFindColum() {
 		TimeSliceCsvInterpreter sut = new TimeSliceCsvInterpreter(null);
 		int found = sut.getCol("not", "Start", "Duration", "notes","CategoryName");
 		Assert.assertEquals("found", 2, found);
@@ -26,20 +30,20 @@ public class TimeSliceCsvInterpreterTests {
 	@Test
 	public void shouldParseStartTime() throws ParseException {
 		TimeSlice result = new TimeSliceCsvInterpreter(null, "Start").parse("2014-04-25T17:10:27+0200");
-		Assert.assertEquals("date", "2014-04-25T17:10:27+0200" , new DateTimeFormatter().getIsoDateTimeStr(result.getStartTime()));
-	}
+        Assert.assertEquals("date", "2014-04-25T17:10:27+0200", dateTimeUtil.getIsoDateTimeStr(result.getStartTime()));
+    }
 
 	@Test
 	public void shouldParseDuration() throws ParseException {
 		TimeSlice result = new TimeSliceCsvInterpreter(null, "Start", "Duration").parse("2014-04-25T17:10:27+0200","13");
-		Assert.assertEquals("date", "2014-04-25T17:23:27+0200" , new DateTimeFormatter().getIsoDateTimeStr(result.getEndTime()));
-	}
+        Assert.assertEquals("date", "2014-04-25T17:23:27+0200", dateTimeUtil.getIsoDateTimeStr(result.getEndTime()));
+    }
 
 	@Test
 	public void shouldParseEndTime() throws ParseException {
 		TimeSlice result = new TimeSliceCsvInterpreter(null, "End").parse("2014-04-25T17:10:27+0200");
-		Assert.assertEquals("date", "2014-04-25T17:10:27+0200" , new DateTimeFormatter().getIsoDateTimeStr(result.getEndTime()));
-	}
+        Assert.assertEquals("date", "2014-04-25T17:10:27+0200", dateTimeUtil.getIsoDateTimeStr(result.getEndTime()));
+    }
 
 	@Test
 	public void shouldParseNotes() throws ParseException {

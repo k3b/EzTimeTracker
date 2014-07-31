@@ -31,6 +31,11 @@ public class LoggerImpl implements Logger {
     }
 
     @Override
+    public void w(String msg, Throwable tr) {
+        Log.w(tag, msg, tr);
+    }
+
+    @Override
     public void e(String msg) {
         Log.e(tag, msg);
     }
