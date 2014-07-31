@@ -121,9 +121,7 @@ public class TimeTrackerManager {
     public StateChangeType punchOutClock(final long endDateTime, final String notes) {
         StateChangeType stateChangeType = StateChangeType.NONE;
 
-        if ((notes != null) && (notes.length() > 0)) {
-            this.sessionData.setNotes(notes);
-        }
+        addNotes(notes);
 
         if ((this.sessionData.getCategory() != null)
                 && (this.sessionData.isPunchedIn())) {
@@ -175,7 +173,10 @@ public class TimeTrackerManager {
 
     public void addNotes(final String note) {
         if ((note != null) && (note.length() != 0)) {
-            this.sessionData.setNotes(this.sessionData.getNotes() + " " + note);
+            StringBuilder newNotes = new StringBuilder(this.sessionData.getNotes());
+            if (newNotes.length() > 0) newNotes.append(" ");
+            newNotes.append(note);
+            this.sessionData.setNotes(newNotes.toString());
         }
 
     }

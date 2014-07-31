@@ -67,6 +67,57 @@ public class TimeTrackerManagerTest {
     }
 
     @Test
+    public void testPunchInOutNotes() {
+        this.sut.punchInClock(this.testCategoryName, this.addMinutes(1));
+        this.sut.punchOutClock(this.addMinutes(10), "hello");
+        Assert.assertEquals(1,
+                timeSliceRepository.getCount());
+    }
+
+    @Test
+    public void testPunchOut() {
+        this.sut.punchOutClock(this.addMinutes(10), "");
+        Assert.assertEquals(0,
+                timeSliceRepository.getCount());
+    }
+
+    @Test
+    public void testPunchIn2Out() {
+        this.sut.punchInClock(this.testCategoryName, this.addMinutes(1));
+        this.sut.punchInClock(this.testCategoryName, this.addMinutes(1));
+        this.sut.punchOutClock(this.addMinutes(10), "");
+        Assert.assertEquals(1,
+                timeSliceRepository.getCount());
+    }
+
+    @Test
+    public void testPunchInChangeOut() {
+        this.sut.punchInClock(this.testCategoryName, this.addMinutes(1));
+        this.sut.punchInClock(this.testCategoryName + "2", this.addMinutes(1));
+        this.sut.punchOutClock(this.addMinutes(10), "");
+        Assert.assertEquals(2,
+                timeSliceRepository.getCount());
+    }
+
+    @Test
+    public void testPunchInOutInSeperateInstance() throws Exception {
+        this.sut.punchInClock(this.testCategoryName, this.addMinutes(1));
+        this.sut.saveSessionData();
+
+        this.sut = null;
+
+        // create new session
+        setUp();
+        this.sut.reloadSessionData();
+        Assert.assertEquals(true,
+                sut.isPunchedIn());
+
+        this.sut.punchOutClock(this.addMinutes(10), "");
+        Assert.assertEquals(1,
+                timeSliceRepository.getCount());
+    }
+
+    @Test
     public void testPunchInOut2() {
         this.sut.punchInClock(this.testCategoryName, this.addMinutes(1));
         this.sut.punchOutClock(this.addMinutes(10), "");
