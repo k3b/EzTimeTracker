@@ -27,6 +27,7 @@ import de.k3b.timetracker.database.TimeSliceRepository;
 import de.k3b.timetracker.model.TimeSlice;
 import de.k3b.timetracker.model.TimeSliceCategory;
 import de.k3b.timetracker.report.CsvSummaryReportRenderer;
+import de.k3b.timetracker.report.DurationFormatterAndroid;
 import de.k3b.timetracker.report.ExportSettings;
 import de.k3b.timetracker.report.ExportSettingsDto;
 import de.k3b.timetracker.report.ReportDateGrouping;
@@ -545,7 +546,7 @@ public class TimeSheetSummaryListActivity extends BaseReportListActivity
     }
 
     private String createReport(String reportType) {
-        ReportItemFormatterEx formatter = new ReportItemFormatterEx(this, this.getReportDateGrouping(), this.showNotes);
+        ReportItemFormatterEx formatter = new ReportItemFormatterEx(new DurationFormatterAndroid(this), this.getReportDateGrouping(), this.showNotes);
         List<Object> data = this.loadData();
         if (reportType.toLowerCase().startsWith("c")) {
             return new CsvSummaryReportRenderer(formatter, this.showNotes).createReport(data);

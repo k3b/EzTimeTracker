@@ -15,7 +15,6 @@ import android.view.View;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListView;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -32,11 +31,12 @@ import de.k3b.timetracker.database.TimeSliceRepository;
 import de.k3b.timetracker.model.TimeSlice;
 import de.k3b.timetracker.model.TimeSliceCategory;
 import de.k3b.timetracker.report.CsvDetailReportRenderer;
+import de.k3b.timetracker.report.DetailReportCalculator;
+import de.k3b.timetracker.report.DurationFormatterAndroid;
 import de.k3b.timetracker.report.ExportSettings;
 import de.k3b.timetracker.report.ExportSettingsDto;
 import de.k3b.timetracker.report.ReportItemFormatterEx;
 import de.k3b.timetracker.report.TxtReportRenderer;
-import de.k3b.util.DateTimeUtil;
 
 /**
  * Detail report grouped by date with optional date-category-note-filter.<br/>
@@ -375,24 +375,7 @@ public class TimeSheetDetailListActivity extends BaseReportListActivity
     }
 
     private List<Object> loadData(final List<TimeSlice> timeSlices) {
-        long lastStartDate = 0;
-
-        final DateTimeUtil formatter = DateTimeFormatter.getInstance();
-
-        final List<Object> items = new ArrayList<Object>();
-
-        for (final TimeSlice aSlice : timeSlices) {
-            final long startDate = formatter.getStartOfDay(aSlice
-                    .getStartTime());
-            if (lastStartDate != startDate) {
-                lastStartDate = startDate;
-                items.add(Long.valueOf(lastStartDate)); // , Color.GREEN);
-            }
-
-            items.add(aSlice);
-        }
-
-        return items;
+        return DetailReportCalculator.createStatistics(timeSlices);
     }
 
     /**
@@ -457,7 +440,7 @@ public class TimeSheetDetailListActivity extends BaseReportListActivity
         if (reportType.toLowerCase().startsWith("c")) {
             return new CsvDetailReportRenderer().createReport(this.loadData());
         } else {
-            return new TxtReportRenderer(new ReportItemFormatterEx(this, this.getReportDateGrouping(), this.showNotes))
+            return new TxtReportRenderer(new ReportItemFormatterEx(new DurationFormatterAndroid(this), this.getReportDateGrouping(), this.showNotes))
                     .createReport(this.loadData());
         }
     }
