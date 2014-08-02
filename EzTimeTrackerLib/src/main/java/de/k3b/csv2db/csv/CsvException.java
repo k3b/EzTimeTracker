@@ -1,18 +1,23 @@
 package de.k3b.csv2db.csv;
 
-import java.text.ParseException;
-
+/**
+ * thrown if csv parsing failed
+ */
 public class CsvException extends RuntimeException {
-	public CsvException(String columnName, int columnNumber,
-			String columnValue, Exception e) {
-		super("Error reading column " + columnName + "[#" + columnNumber + "]='"
-				+ columnValue + "' : " + e.getMessage() , e);
-	}
+    private static final long serialVersionUID = 6759186369477039441L;
 
-	public CsvException(int lineNumner, CsvException e) {
-		super("Line #" + lineNumner + ": " + e.getMessage() , e);
-	}
+    public CsvException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
-	private static final long serialVersionUID = 6759186369477039441L;
+    public CsvException(String columnName, int columnNumber,
+                        String columnValue, Exception e) {
+        super("Error reading column " + columnName + "[#" + columnNumber + "]='"
+                + columnValue + "' : " + e.getMessage(), e);
+    }
+
+    public CsvException(int lineNumner, CsvException e) {
+        super("Line #" + lineNumner + ": " + e.getMessage(), e);
+    }
 
 }

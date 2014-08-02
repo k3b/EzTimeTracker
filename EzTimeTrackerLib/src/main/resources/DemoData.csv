@@ -1,4 +1,14 @@
 Start[format=yyyy-MM-dd'T'HH:mm:ssZ];DurationInMinutes;CategoryName;Notes
+2014-08-01T16:16:22+0200;30;Demo;Made 95% of Reporting android independant. Added j2se tests
+2014-07-31T18:30:40+0200;30;Demo;TimeTrackerManager(Test) increased code coverage
+2014-07-31T17:29:23+0200;30;Demo;Ported TimeTrackerManagerTest.java from android-database-Dependent-integrationtest to j2se-integrationtest with mocked repositories
+2014-07-31T16:41:53+0200;30;Demo;made TimeTrackerManager independent from android.  Introduced Logging interface
+2014-07-31T15:08:55+0200;30;Demo;made TimeTrackerManager independent from android.  Introduced Logging interface
+2014-07-31T07:58:09+0200;30;Demo;Started making TimeTrackerManager independent from android. Introduced Factory.java as ioc-container and ITimeSliceRepository.java. New StateChangeType has infos what has has happened
+2014-07-30T21:02:20+0200;30;Demo;migrated from eclipse to androidStudio/gradle. Extracted j2se-lib with junittests
+2014-04-28T06:35:07+0200;30;Demo;created CsvTimeSliceIterator for easy import of DemoData.csv
+2014-04-26T10:21:56+0200;30;Demo;added TimeSliceCsvInterpreter.java for csv timeslice import
+2014-04-25T22:55:23+0200;30;Demo;fixed in eclipse: j2se-junit-tests
 2014-04-25T17:36:00+0200;30;Demo;V2.5.935-2014-0425
 2014-04-25T17:10:27+0200;30;Demo;"Fixed ExportSettingsDialog layout; report formatting"
 2014-04-25T14:47:50+0200;30;Demo;removed unused resources

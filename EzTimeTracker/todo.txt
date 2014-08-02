@@ -1,5 +1,9 @@
 // http://stackoverflow.com/questions/4459058/alarm-manager-example
 
+next to implement:
+    ?? j2se app for desktop
+    if punchout is removed add alarmmanager that does the punchout:
+
 	// Here's a fairly self-contained example. It turns a button red after 5sec.
 
 	public void SetAlarm()
