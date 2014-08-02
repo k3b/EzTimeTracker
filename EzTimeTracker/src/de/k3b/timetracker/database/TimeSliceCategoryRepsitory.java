@@ -8,8 +8,10 @@ import android.database.SQLException;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
+import de.k3b.android.database.AndroidDatabaseUtil;
 import de.k3b.timetracker.Global;
 import de.k3b.timetracker.R;
 import de.k3b.timetracker.model.TimeSliceCategory;
@@ -30,19 +32,7 @@ public class TimeSliceCategoryRepsitory implements ICategoryRepsitory {
 
     private ContentValues timeSliceCategoryContentValuesList(
             final TimeSliceCategory category) {
-        final ContentValues values = new ContentValues();
-        values.put(TimeSliceCategorySql.COL_CATEGORY_NAME,
-                category.getCategoryName());
-        values.put(TimeSliceCategorySql.COL_DESCRIPTION,
-                category.getDescription());
-
-        if (DatabaseHelper.DATABASE_VERSION >= DatabaseHelper.DATABASE_VERSION_4_CATEGORY_ACTIVE) {
-            values.put(TimeSliceCategorySql.COL_START_TIME,
-                    category.getStartTime());
-            values.put(TimeSliceCategorySql.COL_END_TIME,
-                    category.getEndTime());
-        }
-        return values;
+        return AndroidDatabaseUtil.toContentValues(TimeSliceCategorySql.asHashMap(category));
     }
 
     /* (non-Javadoc)
@@ -54,12 +44,12 @@ public class TimeSliceCategoryRepsitory implements ICategoryRepsitory {
         try {
             cur = TimeSliceCategoryRepsitory.DB.getWritableDatabase().query(
                     TimeSliceCategorySql.TIME_SLICE_CATEGORY_TABLE,
-                    this.columnList(), TimeSliceCategorySql.COL_CATEGORY_NAME +
+                    TimeSliceCategorySql.columnList(), TimeSliceCategorySql.COL_CATEGORY_NAME +
                             " = ?",
                     new String[]{name}, null, null, null
             );
             if (cur.moveToNext()) {
-                return this.fillTimeSliceCategoryFromCursor(cur);
+                return this.fillTimeSliceCategoryFromCursor(cur, null);
             }
         } finally {
             if (cur != null) {
@@ -91,27 +81,11 @@ public class TimeSliceCategoryRepsitory implements ICategoryRepsitory {
         return category;
     }
 
-    /**
-     * Internal helper that returns all colums supported by db-model
-     */
-    private String[] columnList() {
-        final List<String> columns = new ArrayList<String>();
-        columns.add(TimeSliceCategorySql.COL_PK);
-        columns.add(TimeSliceCategorySql.COL_CATEGORY_NAME);
-        columns.add(TimeSliceCategorySql.COL_DESCRIPTION);
-
-        if (DatabaseHelper.DATABASE_VERSION >= DatabaseHelper.DATABASE_VERSION_4_CATEGORY_ACTIVE) {
-            columns.add(TimeSliceCategorySql.COL_START_TIME);
-            columns.add(TimeSliceCategorySql.COL_END_TIME);
-        }
-        return columns.toArray(new String[columns.size()]);
-    }
-
     public List<TimeSliceCategory> fetchAllTimeSliceCategories(
             final long currentDateTime, final String debugContext) {
         List<TimeSliceCategory> result = new ArrayList<TimeSliceCategory>();
         Cursor cur = null;
-        final String filter = this.createCategoryListFilter(currentDateTime);
+        final String filter = TimeSliceCategorySql.createCategoryListFilter(currentDateTime);
         if (Global.isDebugEnabled()) {
             Log.d(Global.LOG_CONTEXT,
                     debugContext
@@ -122,7 +96,7 @@ public class TimeSliceCategoryRepsitory implements ICategoryRepsitory {
         try {
             cur = TimeSliceCategoryRepsitory.DB.getWritableDatabase().query(
                     TimeSliceCategorySql.TIME_SLICE_CATEGORY_TABLE,
-                    this.columnList(),
+                    TimeSliceCategorySql.columnList(),
                     filter,
                     null,
                     null,
@@ -130,9 +104,11 @@ public class TimeSliceCategoryRepsitory implements ICategoryRepsitory {
                     "lower(" + TimeSliceCategorySql.COL_CATEGORY_NAME
                             + ")"
             ); // order by name
+            final HashMap<String, String> values = new HashMap<String, String>();
+
             while (cur.moveToNext()) {
                 final TimeSliceCategory cat = this
-                        .fillTimeSliceCategoryFromCursor(cur);
+                        .fillTimeSliceCategoryFromCursor(cur, values);
                 result.add(cat);
             }
         } finally {
@@ -150,52 +126,15 @@ public class TimeSliceCategoryRepsitory implements ICategoryRepsitory {
         return result;
     }
 
-    private String createCategoryListFilter(final long currentDateTime) {
-        if (currentDateTime != TimeSliceCategory.MIN_VALID_DATE) {
-            return "((" + TimeSliceCategorySql.COL_START_TIME + " IS NULL) " +
-                    "OR ("
-                    + TimeSliceCategorySql.COL_START_TIME + " <= " + currentDateTime + ")) AND (("
-                    + TimeSliceCategorySql.COL_END_TIME + " IS NULL " + ") " +
-                    "OR (" + TimeSliceCategorySql.COL_END_TIME + " >= " + currentDateTime + "))";
-        }
-        return null;
-    }
-
-    private TimeSliceCategory fillTimeSliceCategoryFromCursor(final Cursor cur) {
+    private TimeSliceCategory fillTimeSliceCategoryFromCursor(final Cursor cur, HashMap<String, String> values) {
         final TimeSliceCategory cat = new TimeSliceCategory();
         if (!cur.isAfterLast()) {
-            cat.setRowId(cur.getInt(cur
-                    .getColumnIndexOrThrow(TimeSliceCategorySql.COL_PK)));
-            cat.setCategoryName(cur.getString(cur
-                    .getColumnIndex(TimeSliceCategorySql.COL_CATEGORY_NAME)));
-            cat.setDescription(cur.getString(cur
-                    .getColumnIndex(TimeSliceCategorySql.COL_DESCRIPTION)));
+            if (values == null) values = new HashMap<String, String>();
+            AndroidDatabaseUtil.cursorRowToContentValues(cur, values);
 
-            if (DatabaseHelper.DATABASE_VERSION >= DatabaseHelper.DATABASE_VERSION_4_CATEGORY_ACTIVE) {
-                cat.setStartTime(this.getLong(cur,
-                        TimeSliceCategorySql.COL_START_TIME,
-                        TimeSliceCategory.MIN_VALID_DATE));
-                cat.setEndTime(this.getLong(cur,
-                        TimeSliceCategorySql.COL_END_TIME,
-                        TimeSliceCategory.MAX_VALID_DATE));
-            }
+            TimeSliceCategorySql.fromMap(cat, values);
         }
         return cat;
-    }
-
-    /**
-     * get long value from cursor.
-     *
-     * @param nullValue returned if column is null
-     * @return nullValue if column is null
-     */
-    private long getLong(final Cursor cursor, final String columnName,
-                         final long nullValue) {
-        final int colIndex = cursor.getColumnIndexOrThrow(columnName);
-        if (!cursor.isNull(colIndex)) {
-            return cursor.getLong(colIndex);
-        }
-        return nullValue;
     }
 
     /**
@@ -206,14 +145,14 @@ public class TimeSliceCategoryRepsitory implements ICategoryRepsitory {
     public boolean delete(final long rowId) {
         return TimeSliceCategoryRepsitory.DB.getWritableDatabase().delete(
                 TimeSliceCategorySql.TIME_SLICE_CATEGORY_TABLE,
-                TimeSliceCategorySql.COL_PK + "=" + rowId, null) > 0;
+                TimeSliceCategorySql.getWhereByPK(rowId), null) > 0;
     }
 
     public long update(final TimeSliceCategory timeSliceCategory) {
         return TimeSliceCategoryRepsitory.DB.getWritableDatabase().update(
                 TimeSliceCategorySql.TIME_SLICE_CATEGORY_TABLE,
                 this.timeSliceCategoryContentValuesList(timeSliceCategory),
-                TimeSliceCategorySql.COL_PK + " = " + timeSliceCategory.getRowId(), null);
+                TimeSliceCategorySql.getWhereByPK(timeSliceCategory.getRowId()), null);
     }
 
     public TimeSliceCategory fetchByRowID(final long rowId) throws SQLException {
@@ -223,12 +162,12 @@ public class TimeSliceCategoryRepsitory implements ICategoryRepsitory {
         try {
             cur = TimeSliceCategoryRepsitory.DB.getWritableDatabase().query(
                     true, TimeSliceCategorySql.TIME_SLICE_CATEGORY_TABLE,
-                    this.columnList(),
-                    TimeSliceCategorySql.COL_PK + " = ?",
-                    new String[]{Long.toString(rowId)}, null, null, null,
+                    TimeSliceCategorySql.columnList(),
+                    TimeSliceCategorySql.getWhereByPK(rowId),
+                    null, null, null, null,
                     null);
             if ((cur != null) && (cur.moveToFirst())) {
-                return this.fillTimeSliceCategoryFromCursor(cur);
+                return this.fillTimeSliceCategoryFromCursor(cur, null);
             }
         } finally {
             if (cur != null) {
