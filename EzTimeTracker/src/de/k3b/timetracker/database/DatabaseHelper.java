@@ -53,14 +53,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private void version4Upgrade_CATEGORY_ACTIVE(final SQLiteDatabase db) {
         // added TimeSliceCategory.start/end
-        db.execSQL("ALTER TABLE " + TimeSliceCategorySql.TIME_SLICE_CATEGORY_TABLE
+        db.execSQL("ALTER TABLE " + TimeSliceCategorySql.TABLE
                 + " ADD COLUMN " + TimeSliceCategorySql.COL_START_TIME + " DATE");
-        db.execSQL("ALTER TABLE " + TimeSliceCategorySql.TIME_SLICE_CATEGORY_TABLE
+        db.execSQL("ALTER TABLE " + TimeSliceCategorySql.TABLE
                 + " ADD COLUMN " + TimeSliceCategorySql.COL_END_TIME + " DATE");
-        db.execSQL("UPDATE " + TimeSliceCategorySql.TIME_SLICE_CATEGORY_TABLE
+        db.execSQL("UPDATE " + TimeSliceCategorySql.TABLE
                 + " SET " + TimeSliceCategorySql.COL_START_TIME + " = " + TimeSliceCategory.MIN_VALID_DATE
                 + " WHERE " + TimeSliceCategorySql.COL_START_TIME + " IS NULL");
-        db.execSQL("UPDATE " + TimeSliceCategorySql.TIME_SLICE_CATEGORY_TABLE
+        db.execSQL("UPDATE " + TimeSliceCategorySql.TABLE
                 + " SET " + TimeSliceCategorySql.COL_END_TIME + " = " + TimeSliceCategory.MAX_VALID_DATE
                 + " WHERE " + TimeSliceCategorySql.COL_END_TIME + " IS NULL");
     }

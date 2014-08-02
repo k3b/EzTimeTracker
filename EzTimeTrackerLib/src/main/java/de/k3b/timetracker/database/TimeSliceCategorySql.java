@@ -14,13 +14,14 @@ import de.k3b.timetracker.model.TimeSliceCategory;
  * Scope=package to allow unittesting.<br/>
  */
 class TimeSliceCategorySql {
-    public static final String TIME_SLICE_CATEGORY_TABLE = "time_slice_category";
+    public static final String TABLE = "time_slice_category";
     static final String COL_PK = "_id";
     static final String COL_CATEGORY_NAME = "category_name";
     static final String COL_START_TIME = "start_time";
     static final String COL_END_TIME = "end_time";
     static final String COL_DESCRIPTION = "description";
-    static final String CREATE_TABLE = "CREATE TABLE " + TIME_SLICE_CATEGORY_TABLE
+
+    static final String CREATE_TABLE = "CREATE TABLE " + TABLE
             + "(" + COL_PK + " INTEGER PRIMARY KEY AUTOINCREMENT, "
             + COL_CATEGORY_NAME + " TEXT, "
             + COL_DESCRIPTION + " TEXT,"
@@ -51,21 +52,21 @@ class TimeSliceCategorySql {
         return values;
     }
 
-    static void fromMap(final TimeSliceCategory cat, final Map<String, String> values) {
-        cat.setRowId(NumberUtil.getInt(values.get(TimeSliceCategorySql.COL_PK), -1));
-        cat.setCategoryName(values.get((TimeSliceCategorySql.COL_CATEGORY_NAME)));
-        cat.setDescription(values.get((TimeSliceCategorySql.COL_DESCRIPTION)));
+    static void fromMap(final TimeSliceCategory dest, final Map<String, String> src) {
+        dest.setRowId(NumberUtil.getInt(src.get(TimeSliceCategorySql.COL_PK), -1));
+        dest.setCategoryName(src.get((TimeSliceCategorySql.COL_CATEGORY_NAME)));
+        dest.setDescription(src.get((TimeSliceCategorySql.COL_DESCRIPTION)));
 
-        cat.setStartTime(NumberUtil.getLong(values.get(TimeSliceCategorySql.COL_START_TIME),
+        dest.setStartTime(NumberUtil.getLong(src.get(TimeSliceCategorySql.COL_START_TIME),
                 TimeSliceCategory.MIN_VALID_DATE));
-        cat.setEndTime(NumberUtil.getLong(values.get(TimeSliceCategorySql.COL_END_TIME),
+        dest.setEndTime(NumberUtil.getLong(src.get(TimeSliceCategorySql.COL_END_TIME),
                 TimeSliceCategory.MAX_VALID_DATE));
     }
 
     /**
      * Internal helper that returns all colums supported by db-model
      */
-    static String[] columnList() {
+    static String[] allColumnNames() {
         final List<String> columns = new ArrayList<String>();
         columns.add(COL_PK);
         columns.add(COL_CATEGORY_NAME);
@@ -76,7 +77,7 @@ class TimeSliceCategorySql {
         return columns.toArray(new String[columns.size()]);
     }
 
-    static String createCategoryListFilter(final long currentDateTime) {
+    static String getWhereByDateTime(final long currentDateTime) {
         if (currentDateTime != TimeSliceCategory.MIN_VALID_DATE) {
             return "((" + COL_START_TIME + " IS NULL) " +
                     "OR ("

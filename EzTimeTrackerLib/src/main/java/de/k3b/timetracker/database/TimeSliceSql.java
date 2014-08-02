@@ -27,14 +27,14 @@ class TimeSliceSql {
             + "ts." + COL_PK + ", "
             + COL_CATEGORY_ID
             + " FROM " + TABLE + " AS ts "
-            + " LEFT JOIN " + TimeSliceCategorySql.TIME_SLICE_CATEGORY_TABLE + " AS ca" +
+            + " LEFT JOIN " + TimeSliceCategorySql.TABLE + " AS ca" +
             " ON ts." + COL_CATEGORY_ID + " = ca." +
             TimeSliceCategorySql.COL_PK
             + " ORDER BY ts." + COL_START_TIME + " DESC ";
 
     static final String CREATE_TABLE = "CREATE TABLE " + TABLE + "("
             + COL_PK + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-            + COL_CATEGORY_ID + " INTEGER REFERENCES " + TimeSliceCategorySql.TIME_SLICE_CATEGORY_TABLE + "(_id), "
+            + COL_CATEGORY_ID + " INTEGER REFERENCES " + TimeSliceCategorySql.TABLE + "(_id), "
             + COL_START_TIME + " DATE, " +
             COL_END_TIME + " DATE, " + // v3
             COL_NOTES + " TEXT)";

@@ -16,7 +16,7 @@ public class TimeSliceCategorySqlTests {
     @Test
     public void columnListShouldContainAllFlieds() {
         Map<String, String> values = TimeSliceCategorySql.asMap(cat);
-        Assert.assertEquals(TimeSliceCategorySql.columnList().length, values.size());
+        Assert.assertEquals(TimeSliceCategorySql.allColumnNames().length, values.size());
     }
 
     @Test

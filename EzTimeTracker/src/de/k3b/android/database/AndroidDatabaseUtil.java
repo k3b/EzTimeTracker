@@ -4,7 +4,6 @@ import android.content.ContentValues;
 import android.database.AbstractWindowedCursor;
 import android.database.Cursor;
 
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -36,7 +35,7 @@ public class AndroidDatabaseUtil {
     /**
      * converts from android independeant {@link java.util.HashMap} to android dependent {@link android.content.ContentValues}
      */
-    public static ContentValues toContentValues(HashMap<String, String> src) {
+    public static ContentValues toContentValues(Map<String, String> src) {
         ContentValues result = new ContentValues();
 
         for (String name : src.keySet()) {
