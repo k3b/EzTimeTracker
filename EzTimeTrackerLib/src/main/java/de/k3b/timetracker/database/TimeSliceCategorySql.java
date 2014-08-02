@@ -3,6 +3,7 @@ package de.k3b.timetracker.database;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.k3b.timetracker.model.TimeSliceCategory;
 
@@ -30,7 +31,7 @@ class TimeSliceCategorySql {
     /**
      * converts {@link de.k3b.timetracker.model.TimeSliceCategory}  to {@link java.util.HashMap}
      */
-    static HashMap<String, String> asHashMap(final TimeSliceCategory category) {
+    static Map<String, String> asMap(final TimeSliceCategory category) {
         final HashMap<String, String> values = new HashMap<String, String>();
         values.put(TimeSliceCategorySql.COL_CATEGORY_NAME,
                 category.getCategoryName());
@@ -41,10 +42,16 @@ class TimeSliceCategorySql {
                 Long.toString(category.getStartTime()));
         values.put(TimeSliceCategorySql.COL_END_TIME,
                 Long.toString(category.getEndTime()));
+        final int rowId = category.getRowId();
+
+        if (rowId != TimeSliceCategory.NOT_SAVED) {
+            values.put(TimeSliceCategorySql.COL_PK,
+                    Long.toString(rowId));
+        }
         return values;
     }
 
-    static void fromMap(final TimeSliceCategory cat, final HashMap<String, String> values) {
+    static void fromMap(final TimeSliceCategory cat, final Map<String, String> values) {
         cat.setRowId(NumberUtil.getInt(values.get(TimeSliceCategorySql.COL_PK), -1));
         cat.setCategoryName(values.get((TimeSliceCategorySql.COL_CATEGORY_NAME)));
         cat.setDescription(values.get((TimeSliceCategorySql.COL_DESCRIPTION)));
