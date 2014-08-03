@@ -8,8 +8,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
+import de.k3b.android.database.AndroidDatabaseUtil;
 import de.k3b.timetracker.Global;
 import de.k3b.timetracker.SettingsImpl;
 import de.k3b.timetracker.TimeSliceFilterParameter;
@@ -175,7 +177,7 @@ public class TimeSliceRepository implements ITimeSliceRepository {
             }
             return TimeSliceRepository.DB.getWritableDatabase().insert(
                     TimeSliceSql.TABLE, null,
-                    this.timeSliceContentValuesList(timeSlice));
+                    this.asContentValues(timeSlice));
         }
     }
 
@@ -187,7 +189,7 @@ public class TimeSliceRepository implements ITimeSliceRepository {
     public long update(final TimeSlice timeSlice) {
         final int result = TimeSliceRepository.DB.getWritableDatabase()
                 .update(TimeSliceSql.TABLE,
-                        this.timeSliceContentValuesList(timeSlice),
+                        this.asContentValues(timeSlice),
                         "_id = " + timeSlice.getRowId(), null);
         if (Global.isDebugEnabled()) {
             Log.d(Global.LOG_CONTEXT, "updateTimeSlice(" + timeSlice + ") "
@@ -197,15 +199,15 @@ public class TimeSliceRepository implements ITimeSliceRepository {
         return result;
     }
 
-    public TimeSlice fetchByRowID(final long rowId) throws SQLException {
+    public TimeSlice fetchByRowID(final long rowId) {
         Cursor cur = null;
         try {
             cur = TimeSliceRepository.DB.getWritableDatabase().query(true,
-                    TimeSliceSql.TABLE, this.columnList(),
+                    TimeSliceSql.TABLE, TimeSliceSql.allColumnNames(),
                     "_id=?", new String[]{Long.toString(rowId)}, null, null,
                     null, null);
             if ((cur != null) && (cur.moveToFirst())) {
-                return this.fillTimeSliceFromCursor(cur);
+                return this.fillTimeSliceFromCursor(cur, null);
             }
         } catch (final Exception ex) {
             throw new TimeTrackerDBException(
@@ -239,11 +241,12 @@ public class TimeSliceRepository implements ITimeSliceRepository {
         Cursor cur = null;
         try {
             cur = TimeSliceRepository.DB.getWritableDatabase().query(
-                    TimeSliceSql.TABLE, this.columnList(),
+                    TimeSliceSql.TABLE, TimeSliceSql.allColumnNames(),
                     sqlFilter.sql, sqlFilter.args, null, null,
                     TimeSliceSql.COL_START_TIME);
+            HashMap<String, String> values = new HashMap<String, String>();
             while (cur.moveToNext()) {
-                final TimeSlice ts = this.fillTimeSliceFromCursor(cur);
+                final TimeSlice ts = this.fillTimeSliceFromCursor(cur, values);
                 result.add(ts);
             }
             if (Global.isDebugEnabled()) {
@@ -291,44 +294,18 @@ public class TimeSliceRepository implements ITimeSliceRepository {
         return TimeSliceRepository.getCount(timeSliceFilter);
     }
 
-    private TimeSlice fillTimeSliceFromCursor(final Cursor cur) {
-        final int categoryID = cur.getInt(cur
-                .getColumnIndexOrThrow(TimeSliceSql.COL_CATEGORY_ID));
+    private TimeSlice fillTimeSliceFromCursor(final Cursor cur, HashMap<String, String> values) {
+        final TimeSlice item = new TimeSlice();
+        if (!cur.isAfterLast()) {
+            if (values == null) values = new HashMap<String, String>();
+            AndroidDatabaseUtil.cursorRowToContentValues(cur, values);
 
-        if (categoryID != TimeSliceCategory.NOT_SAVED) {
-            final TimeSlice ts = new TimeSlice();
-            ts.setRowId(cur.getInt(cur.getColumnIndexOrThrow("_id")));
-            ts.setStartTime(cur.getLong(cur
-                    .getColumnIndexOrThrow(TimeSliceSql.COL_START_TIME)));
-            ts.setEndTime(cur.getLong(cur
-                    .getColumnIndexOrThrow(TimeSliceSql.COL_END_TIME)));
-            ts.setCategory(this.categoryRepository.fetchByRowID(categoryID));
-            ts.setNotes(cur.getString(cur
-                    .getColumnIndexOrThrow(TimeSliceSql.COL_NOTES)));
-            return ts;
+            TimeSliceSql.fromMap(item, values, this.categoryRepository);
         }
-
-        Log.w(Global.LOG_CONTEXT, "Ignoring timeslice with categoryID="
-                + TimeSliceCategory.NOT_SAVED);
-        return null;
+        return item;
     }
 
-    private String[] columnList() {
-        final List<String> columns = new ArrayList<String>();
-        columns.add("_id");
-        columns.add(TimeSliceSql.COL_CATEGORY_ID);
-        columns.add(TimeSliceSql.COL_START_TIME);
-        columns.add(TimeSliceSql.COL_END_TIME);
-        columns.add(TimeSliceSql.COL_NOTES);
-        return columns.toArray(new String[columns.size()]);
-    }
-
-    private ContentValues timeSliceContentValuesList(final TimeSlice timeSlice) {
-        final ContentValues values = new ContentValues();
-        values.put(TimeSliceSql.COL_CATEGORY_ID, timeSlice.getCategoryId());
-        values.put(TimeSliceSql.COL_START_TIME, timeSlice.getStartTime());
-        values.put(TimeSliceSql.COL_END_TIME, timeSlice.getEndTime());
-        values.put(TimeSliceSql.COL_NOTES, timeSlice.getNotes());
-        return values;
+    private ContentValues asContentValues(final TimeSlice timeSlice) {
+        return AndroidDatabaseUtil.toContentValues(TimeSliceSql.asMap(timeSlice));
     }
 }

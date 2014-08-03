@@ -8,7 +8,7 @@ import java.util.Map;
 import de.k3b.timetracker.model.TimeSliceCategory;
 
 /**
- * Created by EVE on 02.08.2014.
+ * Created by k3b on 02.08.2014.
  */
 public class TimeSliceCategorySqlTests {
     private final TimeSliceCategory cat = new TimeSliceCategory(1, "name").setStartTime(100).setEndTime(200).setDescription("descripton");
@@ -30,4 +30,11 @@ public class TimeSliceCategorySqlTests {
         Assert.assertEquals("getEndTime", cat.getEndTime(), result.getEndTime());
         Assert.assertEquals("getDescription", cat.getDescription(), result.getDescription());
     }
+
+    @Test
+    public void showSql() {
+        System.out.println(TimeSliceCategorySql.getWhereByDateTime(500));
+        System.out.println(TimeSliceCategorySql.getWhereByPK(1));
+    }
+
 }

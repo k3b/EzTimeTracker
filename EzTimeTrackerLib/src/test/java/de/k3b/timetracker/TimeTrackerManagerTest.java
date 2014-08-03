@@ -36,6 +36,7 @@ public class TimeTrackerManagerTest {
             return 120000;
         }
     };
+    private TimeTrackerSessionData sessionData;
     private TimeTrackerManager sut;
     private Calendar cal;
     private TimeSliceRepositoryMock timeSliceRepository;
@@ -52,10 +53,11 @@ public class TimeTrackerManagerTest {
         this.cal = dtu.getCalendar(2013, 1 - 1, 1, 17, 45, 59, 123);
 
         timeSliceRepository = new TimeSliceRepositoryMock();
+        sessionData = new TimeTrackerSessionData();
         this.sut = new TimeTrackerManager(this.sessionDataPersistance,
                 timeSliceRepository,
                 new TimeSliceCategoryRepsitoryMock(),
-                new TimeTrackerSessionData(), null, settings);
+                sessionData, null, settings);
     }
 
     @Test
@@ -102,7 +104,6 @@ public class TimeTrackerManagerTest {
     @Test
     public void testPunchInOutInSeperateInstance() throws Exception {
         this.sut.punchInClock(this.testCategoryName, this.addMinutes(1));
-        this.sut.saveSessionData();
 
         this.sut = null;
 
@@ -113,8 +114,9 @@ public class TimeTrackerManagerTest {
                 sut.isPunchedIn());
 
         this.sut.punchOutClock(this.addMinutes(10), "");
-        Assert.assertEquals(1,
+        Assert.assertEquals("timeSliceRepository.getCount()", 1,
                 timeSliceRepository.getCount());
+        System.out.println("session: " + this.sessionData.toString());
     }
 
     @Test

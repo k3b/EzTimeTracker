@@ -5,6 +5,7 @@ import org.junit.Test;
 
 import java.text.ParseException;
 
+import de.k3b.timetracker.database.TimeSliceCategoryRepsitoryMock;
 import de.k3b.timetracker.model.TimeSlice;
 import de.k3b.util.DateTimeUtil;
 
@@ -18,7 +19,7 @@ public class TimeSliceCsvInterpreterTests {
         TimeSliceCsvInterpreter sut = new TimeSliceCsvInterpreter(null);
         int found = sut.getColumnIndexFromName("not", "Start", "Duration", "notes", "CategoryName");
         Assert.assertEquals("found", 2, found);
-	}
+    }
 
     @Test
     public void shouldFindColumnIndexFromNameEx() {
@@ -40,15 +41,15 @@ public class TimeSliceCsvInterpreterTests {
         Assert.assertEquals(null, result);
     }
 
-	@Test
-	public void shouldParseStartTime() throws ParseException {
-		TimeSlice result = new TimeSliceCsvInterpreter(null, "Start").parse("2014-04-25T17:10:27+0200");
+    @Test
+    public void shouldParseStartTime() throws ParseException {
+        TimeSlice result = new TimeSliceCsvInterpreter(null, "Start").parse("2014-04-25T17:10:27+0200");
         Assert.assertEquals("date", "2014-04-25T17:10:27+0200", dateTimeUtil.getIsoDateTimeStr(result.getStartTime()));
     }
 
-	@Test
-	public void shouldParseDuration() throws ParseException {
-		TimeSlice result = new TimeSliceCsvInterpreter(null, "Start", "Duration").parse("2014-04-25T17:10:27+0200","13");
+    @Test
+    public void shouldParseDuration() throws ParseException {
+        TimeSlice result = new TimeSliceCsvInterpreter(null, "Start", "Duration").parse("2014-04-25T17:10:27+0200", "13");
         Assert.assertEquals("date", "2014-04-25T17:23:27+0200", dateTimeUtil.getIsoDateTimeStr(result.getEndTime()));
     }
 
@@ -78,27 +79,27 @@ public class TimeSliceCsvInterpreterTests {
         Assert.assertEquals("date", "2014-04-25T17:10:27+0200", dateTimeUtil.getIsoDateTimeStr(result.getEndTime()));
     }
 
-	@Test
-	public void shouldParseNotes() throws ParseException {
-		TimeSlice result = new TimeSliceCsvInterpreter(null, "Notes").parse("hallo\nWelt");
-		Assert.assertEquals("hallo\nWelt" , result.getNotes());
-	}
+    @Test
+    public void shouldParseNotes() throws ParseException {
+        TimeSlice result = new TimeSliceCsvInterpreter(null, "Notes").parse("hallo\nWelt");
+        Assert.assertEquals("hallo\nWelt", result.getNotes());
+    }
 
-	@Test
-	public void shouldParseCategory() throws ParseException {
-		TimeSlice result = new TimeSliceCsvInterpreter(new CategoryRepositoryMock(), "Category").parse("hallo");
-		Assert.assertEquals("hallo" , result.getCategory().getCategoryName());
-	}
-	
-	@Test
-	public void shouldThrowOnIllegalFormat() throws ParseException {
-		try {
+    @Test
+    public void shouldParseCategory() throws ParseException {
+        TimeSlice result = new TimeSliceCsvInterpreter(new TimeSliceCategoryRepsitoryMock(), "Category").parse("hallo");
+        Assert.assertEquals("hallo", result.getCategory().getCategoryName());
+    }
+
+    @Test
+    public void shouldThrowOnIllegalFormat() throws ParseException {
+        try {
             new TimeSliceCsvInterpreter(null, "Start").parse("this is not a valid DateTime");
             Assert.fail("missing exception");
         } catch (CsvException e) {
-			System.out.println("got expected exception " + e.getMessage());
-		}
-	}
+            System.out.println("got expected exception " + e.getMessage());
+        }
+    }
 
 
 }

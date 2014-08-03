@@ -4,6 +4,9 @@ import de.k3b.timetracker.model.TimeSliceCategory;
 
 public interface ICategoryRepsitory {
 
-	public abstract TimeSliceCategory getOrCreateCategory(String name);
+    TimeSliceCategory getOrCreateCategory(String name);
 
+    long createTimeSliceCategory(TimeSliceCategory category);
+
+    TimeSliceCategory fetchByRowID(long rowId);
 }

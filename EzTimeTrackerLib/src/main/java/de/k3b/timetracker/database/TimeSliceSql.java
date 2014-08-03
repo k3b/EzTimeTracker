@@ -1,5 +1,10 @@
 package de.k3b.timetracker.database;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import de.k3b.timetracker.TimeSliceFilterParameter;
 import de.k3b.timetracker.model.ITimeSliceFilter;
 import de.k3b.timetracker.model.TimeSlice;
@@ -38,6 +43,9 @@ class TimeSliceSql {
             + COL_START_TIME + " DATE, " +
             COL_END_TIME + " DATE, " + // v3
             COL_NOTES + " TEXT)";
+
+    private TimeSliceSql() {
+    }
 
     /**
      * generates sql-where from genericTimeSliceFilter
@@ -85,6 +93,46 @@ class TimeSliceSql {
                     "" + TimeSlice.NO_TIME_VALUE);
             builder.add(TimeSliceSql.COL_START_TIME + "<= ?", "" + endDate, ""
                     + TimeSlice.NO_TIME_VALUE);
+        }
+    }
+
+    static String[] allColumnNames() {
+        final List<String> columns = new ArrayList<String>();
+        columns.add("_id");
+        columns.add(COL_CATEGORY_ID);
+        columns.add(COL_START_TIME);
+        columns.add(COL_END_TIME);
+        columns.add(COL_NOTES);
+        return columns.toArray(new String[columns.size()]);
+    }
+
+    public static Map<String, String> asMap(final TimeSlice timeSlice) {
+
+        final Map<String, String> values = new HashMap<String, String>();
+        values.put(TimeSliceSql.COL_CATEGORY_ID, Integer.toString(timeSlice.getCategoryId()));
+        values.put(TimeSliceSql.COL_START_TIME, Long.toString(timeSlice.getStartTime()));
+        values.put(TimeSliceSql.COL_END_TIME, Long.toString(timeSlice.getEndTime()));
+        values.put(TimeSliceSql.COL_NOTES, timeSlice.getNotes());
+        final int rowId = timeSlice.getRowId();
+
+        if (rowId != TimeSlice.IS_NEW_TIMESLICE) {
+            values.put(TimeSliceSql.COL_PK,
+                    Long.toString(rowId));
+        }
+        return values;
+
+    }
+
+    public static void fromMap(final TimeSlice dest, final Map<String, String> src, ICategoryRepsitory categoryRepository) {
+        dest.setRowId(NumberUtil.getInt(src.get(TimeSliceSql.COL_PK), TimeSlice.IS_NEW_TIMESLICE));
+        dest.setStartTime(NumberUtil.getLong(src.get(TimeSliceSql.COL_START_TIME), TimeSliceCategory.MIN_VALID_DATE));
+        dest.setEndTime(NumberUtil.getLong(src.get(TimeSliceSql.COL_END_TIME), TimeSliceCategory.MAX_VALID_DATE));
+        dest.setNotes(src.get(TimeSliceSql.COL_NOTES));
+
+        if (categoryRepository != null) {
+            final int rowID = NumberUtil.getInt(src.get(TimeSliceSql.COL_CATEGORY_ID), TimeSliceCategory.IS_NEW_TIMESLICE);
+
+            dest.setCategory(categoryRepository.fetchByRowID(rowID));
         }
     }
 }

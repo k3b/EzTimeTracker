@@ -9,6 +9,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 
+import de.k3b.timetracker.database.TimeSliceCategoryRepsitoryMock;
+
 public class CsvTimeSliceIteratorTest {
 
     private CsvTimeSliceIterator iter = null;
@@ -49,7 +51,7 @@ public class CsvTimeSliceIteratorTest {
 
         Reader reader = new InputStreamReader(resourceStream);
         // Reader reader = new InputStreamReader(this.getClass().getResourceAsStream("/DemoData.csv"));
-        iter = new CsvTimeSliceIterator(reader, new CategoryRepositoryMock());
+        iter = new CsvTimeSliceIterator(reader, new TimeSliceCategoryRepsitoryMock());
         int count = 0;
         while (iter.hasNext()) {
             iter.next();

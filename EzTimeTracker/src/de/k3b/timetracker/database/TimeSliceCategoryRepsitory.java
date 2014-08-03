@@ -4,7 +4,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.res.Resources;
 import android.database.Cursor;
-import android.database.SQLException;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -30,7 +29,7 @@ public class TimeSliceCategoryRepsitory implements ICategoryRepsitory {
         this.context = context;
     }
 
-    private ContentValues timeSliceCategoryContentValuesList(
+    private ContentValues asContentValues(
             final TimeSliceCategory category) {
         return AndroidDatabaseUtil.toContentValues(TimeSliceCategorySql.asMap(category));
     }
@@ -65,11 +64,12 @@ public class TimeSliceCategoryRepsitory implements ICategoryRepsitory {
      *
      * @return newID generated for dbItem.
      */
+    @Override
     public long createTimeSliceCategory(final TimeSliceCategory category) {
 
         final long newID = TimeSliceCategoryRepsitory.DB.getWritableDatabase()
                 .insert(TimeSliceCategorySql.TABLE, null,
-                        this.timeSliceCategoryContentValuesList(category));
+                        asContentValues(category));
         category.setRowId((int) newID);
         return newID;
     }
@@ -151,11 +151,12 @@ public class TimeSliceCategoryRepsitory implements ICategoryRepsitory {
     public long update(final TimeSliceCategory timeSliceCategory) {
         return TimeSliceCategoryRepsitory.DB.getWritableDatabase().update(
                 TimeSliceCategorySql.TABLE,
-                this.timeSliceCategoryContentValuesList(timeSliceCategory),
+                asContentValues(timeSliceCategory),
                 TimeSliceCategorySql.getWhereByPK(timeSliceCategory.getRowId()), null);
     }
 
-    public TimeSliceCategory fetchByRowID(final long rowId) throws SQLException {
+    @Override
+    public TimeSliceCategory fetchByRowID(final long rowId) {
 
         Cursor cur = null;
 
@@ -169,6 +170,10 @@ public class TimeSliceCategoryRepsitory implements ICategoryRepsitory {
             if ((cur != null) && (cur.moveToFirst())) {
                 return this.fillTimeSliceCategoryFromCursor(cur, null);
             }
+        } catch (final Exception ex) {
+            throw new TimeTrackerDBException(
+                    "TimeSliceRepository.fetchByRowID(rowId = " + rowId + ")",
+                    null, ex);
         } finally {
             if (cur != null) {
                 cur.close();
