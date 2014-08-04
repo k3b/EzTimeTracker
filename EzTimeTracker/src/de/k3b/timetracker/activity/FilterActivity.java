@@ -20,10 +20,8 @@ import java.util.Calendar;
 import de.k3b.timetracker.DateTimeFormatter;
 import de.k3b.timetracker.Global;
 import de.k3b.timetracker.R;
-import de.k3b.timetracker.SettingsImpl;
 import de.k3b.timetracker.TimeSliceFilterParameter;
 import de.k3b.timetracker.TimeTrackerManager;
-import de.k3b.timetracker.database.DatabaseInstance;
 import de.k3b.timetracker.model.TimeSlice;
 import de.k3b.timetracker.model.TimeSliceCategory;
 
@@ -35,8 +33,6 @@ public abstract class FilterActivity extends Activity {
     private static final int GET_END_DATETIME_NOW = 2;
     private static final int GET_START_DATETIME_NOW = 3;
 
-    private static final DatabaseInstance DB = DatabaseInstance
-            .getCurrentInstance();
     // context infos
     private final int idOnOkResultCode;
     private final int textIdCmdOk;
@@ -95,8 +91,6 @@ public abstract class FilterActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         this.filter = FilterActivity.getFilterParameter(this);
-
-        FilterActivity.DB.initialize(this, SettingsImpl.isPublicDatabase());
 
         this.setContentView(R.layout.time_slice_filter);
         this.setTitle(this.textIdCaption);

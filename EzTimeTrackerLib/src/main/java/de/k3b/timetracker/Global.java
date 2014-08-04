@@ -26,8 +26,8 @@ public class Global {
 	 */
 	public static final String EXTRA_RESULTID = "result_id";
 
-	private static boolean debugEnabled = false;
-	private static boolean infoEnabled = false;
+    private static boolean debugEnabled = true;
+    private static boolean infoEnabled = true;
     private static Logger logger = null;
 
     public static boolean isDebugEnabled() {

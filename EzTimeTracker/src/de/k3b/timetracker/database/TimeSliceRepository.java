@@ -29,24 +29,37 @@ import de.k3b.timetracker.model.TimeSliceCategory;
  * handles android specific database persistance for {@link de.k3b.timetracker.model.TimeSlice}.
  */
 public class TimeSliceRepository implements ITimeSliceRepository {
-    private static final DatabaseInstance DB = DatabaseInstance
-            .getCurrentInstance();
+    private final SQLiteDatabase db;
     private final TimeSliceCategoryRepsitory categoryRepository;
 
-    public TimeSliceRepository(final Context context, Boolean publicDir, final TimeSliceCategoryRepsitory categoryRepository) {
-        TimeSliceRepository.DB.initialize(context, publicDir);
+    public TimeSliceRepository(final Context context, SQLiteDatabase db, final TimeSliceCategoryRepsitory categoryRepository) {
+        this.db = db;
         this.categoryRepository = categoryRepository;
     }
 
-    public static int delete(final ITimeSliceFilter timeSliceFilter) {
+    private static SqlFilter createFilter(final String debugContext,
+                                          final ITimeSliceFilter timeSliceFilter) {
+        final String context = "TimeSliceRepository.createFilter("
+                + debugContext + "," + timeSliceFilter + ")";
+        final SqlFilter sqlFilter = TimeSliceSql.createFilter(timeSliceFilter);
+
+        if (Global.isDebugEnabled()) {
+            Log.d(Global.LOG_CONTEXT,
+                    (sqlFilter != null) ? sqlFilter.getDebugMessage(context)
+                            : context
+            );
+        }
+        return sqlFilter;
+    }
+
+    public int delete(final ITimeSliceFilter timeSliceFilter) {
         final String context = "TimeSliceCategoryRepsitory.delete(" + timeSliceFilter + ")";
 
         final SqlFilter sqlFilter = TimeSliceRepository.createFilter(context,
                 timeSliceFilter);
 
-        final int result = TimeSliceRepository.DB.getWritableDatabase()
-                .delete(TimeSliceSql.TABLE, sqlFilter.sql,
-                        sqlFilter.args);
+        final int result = db.delete(TimeSliceSql.TABLE, sqlFilter.sql,
+                sqlFilter.args);
         if (Global.isDebugEnabled()) {
             Log.d(Global.LOG_CONTEXT, context + " via '" + sqlFilter + "':" + result + " rows affected");
         }
@@ -56,7 +69,7 @@ public class TimeSliceRepository implements ITimeSliceRepository {
     /**
      * Counts how many TimeSlice items exist that matches the timeSliceFilter
      */
-    public static int getCount(final ITimeSliceFilter timeSliceFilter) {
+    public int getCount(final ITimeSliceFilter timeSliceFilter) {
         final String context = "TimeSliceRepository.getCount("
                 + timeSliceFilter + ")";
 
@@ -65,8 +78,6 @@ public class TimeSliceRepository implements ITimeSliceRepository {
         Cursor cur = null;
         int result = -1;
         try {
-            final SQLiteDatabase db = TimeSliceRepository.DB
-                    .getWritableDatabase();
             cur = db.query(TimeSliceSql.TABLE,
                     new String[]{"COUNT(*)"}, sqlFilter.sql, sqlFilter.args,
                     null, null, null);
@@ -90,7 +101,7 @@ public class TimeSliceRepository implements ITimeSliceRepository {
     /**
      * Totals those TimeSlice-Durations that matches the timeSliceFilter
      */
-    public static double getTotalDurationInHours(
+    public double getTotalDurationInHours(
             final ITimeSliceFilter timeSliceFilter) {
         final String context = "TimeSliceRepository.getTotalDurationInHours("
                 + timeSliceFilter + ")";
@@ -100,7 +111,7 @@ public class TimeSliceRepository implements ITimeSliceRepository {
         Cursor cur = null;
         double result = -1.0;
         try {
-            cur = TimeSliceRepository.DB.getWritableDatabase().query(
+            cur = db.query(
                     TimeSliceSql.TABLE,
                     new String[]{"SUM(" + TimeSliceSql.COL_END_TIME + "-"
                             + TimeSliceSql.COL_START_TIME + ")"},
@@ -125,21 +136,6 @@ public class TimeSliceRepository implements ITimeSliceRepository {
         }
         return result;
 
-    }
-
-    private static SqlFilter createFilter(final String debugContext,
-                                          final ITimeSliceFilter timeSliceFilter) {
-        final String context = "TimeSliceRepository.createFilter("
-                + debugContext + "," + timeSliceFilter + ")";
-        final SqlFilter sqlFilter = TimeSliceSql.createFilter(timeSliceFilter);
-
-        if (Global.isDebugEnabled()) {
-            Log.d(Global.LOG_CONTEXT,
-                    (sqlFilter != null) ? sqlFilter.getDebugMessage(context)
-                            : context
-            );
-        }
-        return sqlFilter;
     }
 
     /**
@@ -181,7 +177,7 @@ public class TimeSliceRepository implements ITimeSliceRepository {
                                 + "'."
                 );
             }
-            return TimeSliceRepository.DB.getWritableDatabase().insert(
+            return db.insert(
                     TimeSliceSql.TABLE, null,
                     this.asContentValues(timeSlice));
         }
@@ -193,7 +189,7 @@ public class TimeSliceRepository implements ITimeSliceRepository {
      * @return number of affected rows.
      */
     public long update(final TimeSlice timeSlice) {
-        final int result = TimeSliceRepository.DB.getWritableDatabase()
+        final int result = db
                 .update(TimeSliceSql.TABLE,
                         this.asContentValues(timeSlice),
                         "_id = " + timeSlice.getRowId(), null);
@@ -208,7 +204,7 @@ public class TimeSliceRepository implements ITimeSliceRepository {
     public TimeSlice fetchByRowID(final long rowId) {
         Cursor cur = null;
         try {
-            cur = TimeSliceRepository.DB.getWritableDatabase().query(true,
+            cur = db.query(true,
                     TimeSliceSql.TABLE, TimeSliceSql.allColumnNames(),
                     "_id=?", new String[]{Long.toString(rowId)}, null, null,
                     null, null);
@@ -246,7 +242,7 @@ public class TimeSliceRepository implements ITimeSliceRepository {
         final List<TimeSlice> result = new ArrayList<TimeSlice>();
         Cursor cur = null;
         try {
-            cur = TimeSliceRepository.DB.getWritableDatabase().query(
+            cur = db.query(
                     TimeSliceSql.TABLE, TimeSliceSql.allColumnNames(),
                     sqlFilter.sql, sqlFilter.args, null, null,
                     TimeSliceSql.COL_START_TIME);
@@ -299,7 +295,7 @@ public class TimeSliceRepository implements ITimeSliceRepository {
         if (category != null) {
             timeSliceFilter.setCategoryId(category.getRowId());
         }
-        return TimeSliceRepository.getCount(timeSliceFilter);
+        return getCount(timeSliceFilter);
     }
 
     private TimeSlice fillTimeSliceFromCursor(final Cursor cur, HashMap<String, String> values) {

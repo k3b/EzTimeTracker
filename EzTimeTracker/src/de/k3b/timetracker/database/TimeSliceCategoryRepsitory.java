@@ -21,27 +21,24 @@ import de.k3b.timetracker.model.TimeSliceCategory;
  */
 public class TimeSliceCategoryRepsitory implements ICategoryRepsitory {
 
-    private static final DatabaseInstance DB = DatabaseInstance
-            .getCurrentInstance();
+    private final SQLiteDatabase db;
     private final Context context;
 
-    public TimeSliceCategoryRepsitory(final Context context, Boolean publicDir) {
+    public TimeSliceCategoryRepsitory(final Context context, SQLiteDatabase db) {
         super();
-        TimeSliceCategoryRepsitory.DB.initialize(context, publicDir);
+        this.db = db;
         this.context = context;
     }
 
     /**
      * Counts how many items exist.
      */
-    public static int getCount() {
+    public int getCount() {
         final String context = "TimeSliceCategoryRepository.getCount()";
 
         Cursor cur = null;
         int result = -1;
         try {
-            final SQLiteDatabase db = DB
-                    .getWritableDatabase();
             cur = db.query(TimeSliceCategorySql.TABLE,
                     new String[]{"COUNT(*)"}, null, null,
                     null, null, null);
@@ -73,7 +70,7 @@ public class TimeSliceCategoryRepsitory implements ICategoryRepsitory {
     public TimeSliceCategory getOrCreateCategory(final String name) {
         Cursor cur = null;
         try {
-            cur = TimeSliceCategoryRepsitory.DB.getWritableDatabase().query(
+            cur = db.query(
                     TimeSliceCategorySql.TABLE,
                     TimeSliceCategorySql.allColumnNames(), TimeSliceCategorySql.COL_CATEGORY_NAME +
                             " = ?",
@@ -99,9 +96,8 @@ public class TimeSliceCategoryRepsitory implements ICategoryRepsitory {
     @Override
     public long createTimeSliceCategory(final TimeSliceCategory category) {
 
-        final long newID = TimeSliceCategoryRepsitory.DB.getWritableDatabase()
-                .insert(TimeSliceCategorySql.TABLE, null,
-                        asContentValues(category));
+        final long newID = db.insert(TimeSliceCategorySql.TABLE, null,
+                asContentValues(category));
         category.setRowId((int) newID);
         return newID;
     }
@@ -119,7 +115,7 @@ public class TimeSliceCategoryRepsitory implements ICategoryRepsitory {
         Cursor cur = null;
         final String filter = TimeSliceCategorySql.getWhereByDateTime(currentDateTime);
         try {
-            cur = TimeSliceCategoryRepsitory.DB.getWritableDatabase().query(
+            cur = db.query(
                     TimeSliceCategorySql.TABLE,
                     TimeSliceCategorySql.allColumnNames(),
                     filter,
@@ -172,13 +168,13 @@ public class TimeSliceCategoryRepsitory implements ICategoryRepsitory {
         if (Global.isDebugEnabled()) {
             Log.d(Global.LOG_CONTEXT, "Deleting category #" + rowId);
         }
-        return TimeSliceCategoryRepsitory.DB.getWritableDatabase().delete(
+        return db.delete(
                 TimeSliceCategorySql.TABLE,
                 TimeSliceCategorySql.getWhereByPK(rowId), null) > 0;
     }
 
     public long update(final TimeSliceCategory timeSliceCategory) {
-        return TimeSliceCategoryRepsitory.DB.getWritableDatabase().update(
+        return db.update(
                 TimeSliceCategorySql.TABLE,
                 asContentValues(timeSliceCategory),
                 TimeSliceCategorySql.getWhereByPK(timeSliceCategory.getRowId()), null);
@@ -190,7 +186,7 @@ public class TimeSliceCategoryRepsitory implements ICategoryRepsitory {
         Cursor cur = null;
 
         try {
-            cur = TimeSliceCategoryRepsitory.DB.getWritableDatabase().query(
+            cur = db.query(
                     true, TimeSliceCategorySql.TABLE,
                     TimeSliceCategorySql.allColumnNames(),
                     TimeSliceCategorySql.getWhereByPK(rowId),

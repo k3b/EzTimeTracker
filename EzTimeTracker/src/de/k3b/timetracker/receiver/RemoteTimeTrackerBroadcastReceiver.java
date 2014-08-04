@@ -52,7 +52,7 @@ public class RemoteTimeTrackerBroadcastReceiver extends BroadcastReceiver {
         final String category = (parts.length > 2) ? parts[2] : null;
 
         SettingsImpl.init(context); // if gui is not active
-        final TimeTrackerManager mgr = Factory.getInstance().createTimeTrackerManager(context, null, null);
+        final TimeTrackerManager mgr = Factory.getInstance().createTimeTrackerManager(context);
         mgr.reloadSessionData();
         if (Global.CMD_START.equalsIgnoreCase(cmd) && (category != null)
                 && (category.length() > 0)) {

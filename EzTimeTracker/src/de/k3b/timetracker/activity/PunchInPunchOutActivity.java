@@ -35,8 +35,6 @@ import de.k3b.timetracker.SettingsImpl;
 import de.k3b.timetracker.TimeSliceFilterParameter;
 import de.k3b.timetracker.TimeTrackerManager;
 import de.k3b.timetracker.TimeTrackerSessionData;
-import de.k3b.timetracker.database.DatabaseHelper;
-import de.k3b.timetracker.database.DatabaseInstance;
 import de.k3b.timetracker.database.TimeSliceCategoryRepsitory;
 import de.k3b.timetracker.model.TimeSlice;
 import de.k3b.timetracker.model.TimeSliceCategory;
@@ -100,11 +98,13 @@ public class PunchInPunchOutActivity extends Activity implements
         }
 
         super.onCreate(savedInstanceState);
+        SettingsImpl.init(this.getBaseContext());
         // DateTimeFormatter.getInstance().SetFormat(DateFormat.get
         // DateInstance(DateFormat.S));
         this.setContentView(R.layout.time_slice_main);
 
-        categoryRepository = Factory.getInstance().createTimeSliceCategoryRepsitory(this);
+        final Factory factory = Factory.getInstance();
+        categoryRepository = factory.createTimeSliceCategoryRepsitory(this);
 
         this.elapsedTimeDisplay = (TextView) this
                 .findViewById(R.id.mainViewChronOutput);
@@ -123,8 +123,7 @@ public class PunchInPunchOutActivity extends Activity implements
 
         this.setupButtons();
 
-        this.tracker = Factory.getInstance().createTimeTrackerManager(this, categoryRepository, null);
-        SettingsImpl.init(this.getBaseContext());
+        this.tracker = factory.createTimeTrackerManager(this);
 
         this.reloadGui();
     }
@@ -133,10 +132,6 @@ public class PunchInPunchOutActivity extends Activity implements
     public void onResume() {
         super.onResume();
         SettingsImpl.init(this.getBaseContext());
-
-        // databasetype might have changed in settings
-        DatabaseInstance.getCurrentInstance().initialize(this.getBaseContext(),
-                SettingsImpl.isPublicDatabase());
 
         if (this.myReceiver == null) {
             this.myReceiver = new _RemoteTimeTrackerReceiver();
@@ -216,8 +211,7 @@ public class PunchInPunchOutActivity extends Activity implements
         final MenuItem menuItem = menu.findItem(R.id.db);
 
         if (menuItem != null) {
-            menuItem.setVisible(DatabaseInstance.getCurrentInstance()
-                    .getDatabaseUri() != null);
+            menuItem.setVisible(Factory.getInstance().getDatabaseUri() != null);
         }
         return true;
     }
@@ -231,12 +225,11 @@ public class PunchInPunchOutActivity extends Activity implements
         } else {
             switch (itemId) {
                 case R.id.db_create_demo:
-                    DatabaseHelper.loadDemoData(this);
+                    Factory.getInstance().loadDemoDataIfNew(this);
                     break;
 
                 case R.id.db:
-                    final Uri uri = DatabaseInstance.getCurrentInstance()
-                            .getDatabaseUri();
+                    final Uri uri = Factory.getInstance().getDatabaseUri();
                     if (uri != null) {
                         try {
                             final Intent i = new Intent();

@@ -91,7 +91,7 @@ public class CategoryListActivity extends ListActivity implements
                 return true;
             case DELETE_MENU_ID:
                 final TimeSliceRepository timeSliceRepository = Factory.getInstance().createTimeSliceRepository(
-                        this, this.categoryRepository);
+                        this);
 
                 final int count = timeSliceRepository.getCount(this.categoryClicked);
                 if (count > 0) {

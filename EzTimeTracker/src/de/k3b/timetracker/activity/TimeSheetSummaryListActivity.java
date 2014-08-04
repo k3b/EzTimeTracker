@@ -85,7 +85,7 @@ public class TimeSheetSummaryListActivity extends BaseReportListActivity
         this.setContentView(R.layout.time_slice_list);
         categoryRepository = Factory.getInstance().createTimeSliceCategoryRepsitory(
                 this);
-        timeSliceRepository = Factory.getInstance().createTimeSliceRepository(this, categoryRepository);
+        timeSliceRepository = Factory.getInstance().createTimeSliceRepository(this);
 
         this.registerForContextMenu(this.getListView());
         this.currentRangeFilter = BaseReportListActivity

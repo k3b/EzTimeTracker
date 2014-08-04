@@ -18,9 +18,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final int DATABASE_VERSION_5_REPORT_VIEW = 5;
 
     public static final int DATABASE_VERSION = DatabaseHelper.DATABASE_VERSION_5_REPORT_VIEW;
+    public static boolean mustCreateDemoData = false;
     private final Context createContext;
 
-    DatabaseHelper(final Context context, final String databaseName) {
+    public DatabaseHelper(final Context context, final String databaseName) {
         super(context, databaseName, null, DatabaseHelper.DATABASE_VERSION);
         this.createContext = context;
     }
@@ -28,9 +29,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     /**
      * make shure that initial database contains data
      */
-    public static void loadDemoData(Context createContext) {
-        TimeSliceCategoryRepsitory categoryRepsitory = Factory.getInstance().createTimeSliceCategoryRepsitory(createContext);
-        TimeSliceRepository timeSliceRepository = Factory.getInstance().createTimeSliceRepository(createContext, categoryRepsitory);
+    public static void loadDemoData(TimeSliceCategoryRepsitory categoryRepsitory, TimeSliceRepository timeSliceRepository) {
+        mustCreateDemoData = false;
+        final Factory factory = Factory.getInstance();
 
         if (Global.isDebugEnabled()) {
             Global.getLogger().d("Before loading demo data into database:" +
@@ -58,7 +59,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         this.version5Upgrade_REPORT_VIEW(db);
 
-        loadDemoData(this.createContext);
+        mustCreateDemoData = true;
     }
 
     @Override
