@@ -3,7 +3,9 @@ package de.k3b.timetracker;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
 
 import de.k3b.android.database.DatabaseContext;
 import de.k3b.timetracker.database.DatabaseHelper;
@@ -120,10 +122,31 @@ public class Factory {
 
     public void loadDemoDataIfNew(Context context) {
         if (DatabaseHelper.mustCreateDemoData) {
-            DatabaseHelper.loadDemoData(createTimeSliceCategoryRepsitory(context), createTimeSliceRepository(context));
+            loadDemoData(context);
         }
     }
 
+    public void loadDemoData(final Context context) {
+        Toast.makeText(context, R.string.db_createDemo,
+                Toast.LENGTH_SHORT).show();
+
+        new AsyncTask<Void, Integer, String>() {
+            @Override
+            protected String doInBackground(final Void... voids) {
+                DatabaseHelper.loadDemoData(
+                        createTimeSliceCategoryRepsitory(context), createTimeSliceRepository
+                                (context)
+                );
+                return null;
+            }
+
+            protected void onPostExecute(String result) {
+                Toast.makeText(context, R.string.db_createdDemo,
+                        Toast.LENGTH_SHORT).
+                        show();
+            }
+        }.execute();
+    }
 
     public TimeTrackerManager createTimeTrackerManager(final Context context) {
         if (timeTrackerManager == null) {

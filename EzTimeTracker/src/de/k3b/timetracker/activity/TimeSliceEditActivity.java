@@ -285,7 +285,7 @@ public class TimeSliceEditActivity extends Activity implements ICategorySetter {
         if ((endTime != TimeSliceEditActivity.HIDDEN)
                 && (endTime < this.timeSlice.getStartTime())) {
             Toast.makeText(this.getApplicationContext(),
-                    "Invalid input: end time must be after start time.",
+                    getString(R.string.error_end_less_start),
                     Toast.LENGTH_SHORT).show();
             return false;
         }

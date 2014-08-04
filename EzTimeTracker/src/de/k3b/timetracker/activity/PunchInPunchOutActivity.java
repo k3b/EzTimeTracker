@@ -208,12 +208,17 @@ public class PunchInPunchOutActivity extends Activity implements
     public boolean onPrepareOptionsMenu(final Menu menu) {
         super.onPrepareOptionsMenu(menu);
 
-        final MenuItem menuItem = menu.findItem(R.id.db);
+        enableMenue(menu, R.id.db, Factory.getInstance().getDatabaseUri() != null);
+        enableMenue(menu, R.id.db_create_demo, Global.isDebugEnabled());
 
-        if (menuItem != null) {
-            menuItem.setVisible(Factory.getInstance().getDatabaseUri() != null);
-        }
         return true;
+    }
+
+    private void enableMenue(final Menu menu, final int id, final boolean hasPublicDB) {
+        final MenuItem menuItem = menu.findItem(id);
+        if (menuItem != null) {
+            menuItem.setVisible(hasPublicDB);
+        }
     }
 
     @Override
@@ -225,7 +230,7 @@ public class PunchInPunchOutActivity extends Activity implements
         } else {
             switch (itemId) {
                 case R.id.db_create_demo:
-                    Factory.getInstance().loadDemoDataIfNew(this);
+                    Factory.getInstance().loadDemoData(this);
                     break;
 
                 case R.id.db:

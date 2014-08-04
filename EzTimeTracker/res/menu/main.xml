@@ -50,5 +50,5 @@
         android:id="@+id/db_create_demo"
         android:title="@string/db_createDemo"
         android:titleCondensed="@string/db_createDemo_condensed"
-        android:visible="true"/>
+        android:visible="false"/>
 </menu>
