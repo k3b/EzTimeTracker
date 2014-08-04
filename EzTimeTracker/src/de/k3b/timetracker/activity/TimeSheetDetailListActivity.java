@@ -49,8 +49,8 @@ public class TimeSheetDetailListActivity extends BaseReportListActivity
 
     private static ExportSettingsDto exportSettings = new ExportSettingsDto();
     // dependent services
-    private final TimeSliceCategoryRepsitory categoryRepository = Factory.getInstance().createTimeSliceCategoryRepsitory(this);
-    private final TimeSliceRepository timeSliceRepository = Factory.getInstance().createTimeSliceRepository(this, categoryRepository);
+    private TimeSliceCategoryRepsitory categoryRepository = null;
+    private TimeSliceRepository timeSliceRepository = null;
     // current state
     private TimeSlice currentSelectedTimeSliceUsedForMenu;
     private long lastSelectedDateUsedForAddMenu;
@@ -98,6 +98,9 @@ public class TimeSheetDetailListActivity extends BaseReportListActivity
         super.onCreate(savedInstanceState);
         this.resultRangeFilter = null;
         this.setContentView(R.layout.time_slice_list);
+        categoryRepository = Factory.getInstance().createTimeSliceCategoryRepsitory(this);
+        timeSliceRepository = Factory.getInstance().createTimeSliceRepository(this, categoryRepository);
+
         this.registerForContextMenu(this.getListView());
 
 
@@ -330,13 +333,17 @@ public class TimeSheetDetailListActivity extends BaseReportListActivity
                 TimeSheetDetailListActivity.this.getListView().setSelection(
                         newSelection);
                 final float loadTime = 0.0001f * (System.currentTimeMillis() - globalPerformanceMeasureStart);
+                final String title = TimeSheetDetailListActivity.this.currentRangeFilter
+                        .toString()
+                        + " ("
+                        + listItems.size()
+                        + "/"
+                        + String.format("%.1f", loadTime) + " sec)";
                 TimeSheetDetailListActivity.this
-                        .setTitle(TimeSheetDetailListActivity.this.currentRangeFilter
-                                .toString()
-                                + " ("
-                                + listItems.size()
-                                + "/"
-                                + String.format("%.1f", loadTime) + " sec)");
+                        .setTitle(title);
+                if (Global.isInfoEnabled()) {
+                    Log.i(Global.LOG_CONTEXT, "TimeSheetDetailListActivity: " + title);
+                }
 
             }
         });

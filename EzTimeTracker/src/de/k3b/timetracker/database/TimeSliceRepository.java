@@ -39,7 +39,7 @@ public class TimeSliceRepository implements ITimeSliceRepository {
     }
 
     public static int delete(final ITimeSliceFilter timeSliceFilter) {
-        final String context = "deleteForDateRange(" + timeSliceFilter + ") ";
+        final String context = "TimeSliceCategoryRepsitory.delete(" + timeSliceFilter + ")";
 
         final SqlFilter sqlFilter = TimeSliceRepository.createFilter(context,
                 timeSliceFilter);
@@ -48,7 +48,7 @@ public class TimeSliceRepository implements ITimeSliceRepository {
                 .delete(TimeSliceSql.TABLE, sqlFilter.sql,
                         sqlFilter.args);
         if (Global.isDebugEnabled()) {
-            Log.d(Global.LOG_CONTEXT, context + result + " rows affected");
+            Log.d(Global.LOG_CONTEXT, context + " via '" + sqlFilter + "':" + result + " rows affected");
         }
         return result;
     }
@@ -129,10 +129,10 @@ public class TimeSliceRepository implements ITimeSliceRepository {
 
     private static SqlFilter createFilter(final String debugContext,
                                           final ITimeSliceFilter timeSliceFilter) {
-        final SqlFilter sqlFilter = TimeSliceSql.createFilter(timeSliceFilter);
-
         final String context = "TimeSliceRepository.createFilter("
                 + debugContext + "," + timeSliceFilter + ")";
+        final SqlFilter sqlFilter = TimeSliceSql.createFilter(timeSliceFilter);
+
         if (Global.isDebugEnabled()) {
             Log.d(Global.LOG_CONTEXT,
                     (sqlFilter != null) ? sqlFilter.getDebugMessage(context)
@@ -232,7 +232,7 @@ public class TimeSliceRepository implements ITimeSliceRepository {
     }
 
     public List<TimeSlice> fetchList(final ITimeSliceFilter timeSliceFilter) {
-        final String debugMessage = "TimeSliceRepository.fetchTimeSlices("
+        final String debugMessage = "TimeSliceRepository.fetchList("
                 + timeSliceFilter + ")";
         final SqlFilter sqlFilter = TimeSliceRepository.createFilter(
                 debugMessage, timeSliceFilter);
@@ -295,8 +295,10 @@ public class TimeSliceRepository implements ITimeSliceRepository {
     }
 
     public int getCount(final TimeSliceCategory category) throws SQLException {
-        final ITimeSliceFilter timeSliceFilter = new TimeSliceFilterParameter()
-                .setCategoryId(category.getRowId());
+        final TimeSliceFilterParameter timeSliceFilter = new TimeSliceFilterParameter();
+        if (category != null) {
+            timeSliceFilter.setCategoryId(category.getRowId());
+        }
         return TimeSliceRepository.getCount(timeSliceFilter);
     }
 
@@ -326,7 +328,7 @@ public class TimeSliceRepository implements ITimeSliceRepository {
             try {
                 iter = new CsvTimeSliceIterator(reader, this.categoryRepository);
                 while (iter.hasNext()) {
-                    this.update(iter.next());
+                    this.create(iter.next());
                 }
             } finally {
                 if (reader != null) reader.close();

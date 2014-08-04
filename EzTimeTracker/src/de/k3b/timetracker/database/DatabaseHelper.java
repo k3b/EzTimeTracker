@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import de.k3b.timetracker.Factory;
+import de.k3b.timetracker.Global;
 import de.k3b.timetracker.model.TimeSliceCategory;
 
 /**
@@ -30,9 +31,21 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static void loadDemoData(Context createContext) {
         TimeSliceCategoryRepsitory categoryRepsitory = Factory.getInstance().createTimeSliceCategoryRepsitory(createContext);
         TimeSliceRepository timeSliceRepository = Factory.getInstance().createTimeSliceRepository(createContext, categoryRepsitory);
+
+        if (Global.isDebugEnabled()) {
+            Global.getLogger().d("Before loading demo data into database:" +
+                    " #categories:" + categoryRepsitory.getCount() + ", #timeslices: " + +timeSliceRepository.getCount((TimeSliceCategory) null));
+
+        }
+
         categoryRepsitory.createInitialDemoDataFromResources();
 
         timeSliceRepository.createInitialDemoDataFromResources();
+
+        if (Global.isDebugEnabled()) {
+            Global.getLogger().d("After loading demo data into database*" +
+                    " #categories:" + categoryRepsitory.getCount() + ", #timeslices: " + +timeSliceRepository.getCount((TimeSliceCategory) null));
+        }
     }
 
     /**

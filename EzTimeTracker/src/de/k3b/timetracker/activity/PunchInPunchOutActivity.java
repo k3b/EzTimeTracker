@@ -35,6 +35,7 @@ import de.k3b.timetracker.SettingsImpl;
 import de.k3b.timetracker.TimeSliceFilterParameter;
 import de.k3b.timetracker.TimeTrackerManager;
 import de.k3b.timetracker.TimeTrackerSessionData;
+import de.k3b.timetracker.database.DatabaseHelper;
 import de.k3b.timetracker.database.DatabaseInstance;
 import de.k3b.timetracker.database.TimeSliceCategoryRepsitory;
 import de.k3b.timetracker.model.TimeSlice;
@@ -83,8 +84,7 @@ public class PunchInPunchOutActivity extends Activity implements
      */
     private static TimeSliceFilterParameter currentRangeFilter = TimeSliceFilterParameter
             .filterWithDefaultsIfNeccessary(null);
-    private final TimeSliceCategoryRepsitory categoryRepository = Factory.getInstance().createTimeSliceCategoryRepsitory(
-            this);
+    private TimeSliceCategoryRepsitory categoryRepository = null;
     private TextView elapsedTimeDisplay;
     private EditText notesEditor;
     private TimeTrackerSessionData sessionData = new TimeTrackerSessionData();
@@ -103,6 +103,9 @@ public class PunchInPunchOutActivity extends Activity implements
         // DateTimeFormatter.getInstance().SetFormat(DateFormat.get
         // DateInstance(DateFormat.S));
         this.setContentView(R.layout.time_slice_main);
+
+        categoryRepository = Factory.getInstance().createTimeSliceCategoryRepsitory(this);
+
         this.elapsedTimeDisplay = (TextView) this
                 .findViewById(R.id.mainViewChronOutput);
         this.elapsedTimeDisplay
@@ -227,6 +230,10 @@ public class PunchInPunchOutActivity extends Activity implements
             return true;
         } else {
             switch (itemId) {
+                case R.id.db_create_demo:
+                    DatabaseHelper.loadDemoData(this);
+                    break;
+
                 case R.id.db:
                     final Uri uri = DatabaseInstance.getCurrentInstance()
                             .getDatabaseUri();

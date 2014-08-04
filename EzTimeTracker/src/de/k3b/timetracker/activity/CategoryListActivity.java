@@ -25,8 +25,7 @@ public class CategoryListActivity extends ListActivity implements
     private static final int EDIT_MENU_ID = Menu.FIRST + 1;
     private static final int DELETE_MENU_ID = Menu.FIRST + 2;
     private static final int REPORT_MENU_ID = Menu.FIRST + 3;
-    private final TimeSliceCategoryRepsitory categoryRepository = Factory.getInstance().createTimeSliceCategoryRepsitory(
-            this);
+    private TimeSliceCategoryRepsitory categoryRepository = null;
     private TimeSliceCategory categoryClicked;
     private CategoryEditDialog edit = null;
 
@@ -34,6 +33,8 @@ public class CategoryListActivity extends ListActivity implements
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.category_list);
+        categoryRepository = Factory.getInstance().createTimeSliceCategoryRepsitory(
+                this);
         this.registerForContextMenu(this.getListView());
         this.refreshCategoryList();
     }
@@ -91,7 +92,9 @@ public class CategoryListActivity extends ListActivity implements
             case DELETE_MENU_ID:
                 final TimeSliceRepository timeSliceRepository = Factory.getInstance().createTimeSliceRepository(
                         this, this.categoryRepository);
-                if (timeSliceRepository.getCount(this.categoryClicked) > 0) {
+
+                final int count = timeSliceRepository.getCount(this.categoryClicked);
+                if (count > 0) {
                     this.showDialog(CategoryListActivity.DELETE_MENU_ID);
                 } else {
                     this.categoryRepository.delete(this.categoryClicked.getRowId());

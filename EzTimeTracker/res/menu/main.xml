@@ -1,19 +1,54 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-	<item android:title="@string/report">
-		<menu>
-			<item android:id="@+id/details" android:title="@string/report_title_details"/>
-			<item android:id="@+id/summary_day" android:title="@string/report_title_summary_day"/>
-			<item android:id="@+id/summary_week" android:title="@string/report_title_summary_week"/>
-			<item android:id="@+id/summary_month" android:title="@string/report_title_summary_month"/>
-			<item android:id="@+id/category_day" android:title="@string/report_title_category_day"/>
-			<item android:id="@+id/category_week" android:title="@string/report_title_category_week"/>
-			<item android:id="@+id/category_month" android:title="@string/report_title_category_month"/>
-		</menu>
-	</item>
-	<item android:id="@+id/categories" android:title="@string/report_title_categories" android:titleCondensed="@string/report_title_condensed_categories"/>
-	<item android:id="@+id/remove" android:title="@string/report_title_remove" android:titleCondensed="@string/report_title_condensed_remove"/>
-	<item android:id="@+id/settings" android:title="@string/report_title_settings" android:titleCondensed="@string/report_title_condensed_settings"/>
-	<item android:id="@+id/db" android:visible="false" android:title="@string/db_title" android:titleCondensed="@string/db_title_condensed"/>
-	<item android:id="@+id/about" android:title="@string/about_title" android:titleCondensed="@string/about_title_condensed"/>
+    <item android:title="@string/report">
+        <menu>
+            <item
+                android:id="@+id/details"
+                android:title="@string/report_title_details"/>
+            <item
+                android:id="@+id/summary_day"
+                android:title="@string/report_title_summary_day"/>
+            <item
+                android:id="@+id/summary_week"
+                android:title="@string/report_title_summary_week"/>
+            <item
+                android:id="@+id/summary_month"
+                android:title="@string/report_title_summary_month"/>
+            <item
+                android:id="@+id/category_day"
+                android:title="@string/report_title_category_day"/>
+            <item
+                android:id="@+id/category_week"
+                android:title="@string/report_title_category_week"/>
+            <item
+                android:id="@+id/category_month"
+                android:title="@string/report_title_category_month"/>
+        </menu>
+    </item>
+    <item
+        android:id="@+id/categories"
+        android:title="@string/report_title_categories"
+        android:titleCondensed="@string/report_title_condensed_categories"/>
+    <item
+        android:id="@+id/remove"
+        android:title="@string/report_title_remove"
+        android:titleCondensed="@string/report_title_condensed_remove"/>
+    <item
+        android:id="@+id/settings"
+        android:title="@string/report_title_settings"
+        android:titleCondensed="@string/report_title_condensed_settings"/>
+    <item
+        android:id="@+id/about"
+        android:title="@string/about_title"
+        android:titleCondensed="@string/about_title_condensed"/>
+    <item
+        android:id="@+id/db"
+        android:title="@string/db_title"
+        android:titleCondensed="@string/db_title_condensed"
+        android:visible="false"/>
+    <item
+        android:id="@+id/db_create_demo"
+        android:title="@string/db_createDemo"
+        android:titleCondensed="@string/db_createDemo_condensed"
+        android:visible="true"/>
 </menu>

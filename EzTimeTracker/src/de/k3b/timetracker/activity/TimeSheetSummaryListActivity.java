@@ -63,9 +63,8 @@ public class TimeSheetSummaryListActivity extends BaseReportListActivity
     private static TimeSliceFilterParameter lastRangeFilter;
     private static ExportSettingsDto exportSettings = new ExportSettingsDto();
     // dependent services
-    private final TimeSliceCategoryRepsitory categoryRepository = Factory.getInstance().createTimeSliceCategoryRepsitory(
-            this);
-    private final TimeSliceRepository timeSliceRepository = Factory.getInstance().createTimeSliceRepository(this, categoryRepository);
+    private TimeSliceCategoryRepsitory categoryRepository = null;
+    private TimeSliceRepository timeSliceRepository = null;
     // current state
     private ReportModes reportMode = ReportModes.BY_DATE_AND_CATEGORY;
     /**
@@ -84,6 +83,10 @@ public class TimeSheetSummaryListActivity extends BaseReportListActivity
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.time_slice_list);
+        categoryRepository = Factory.getInstance().createTimeSliceCategoryRepsitory(
+                this);
+        timeSliceRepository = Factory.getInstance().createTimeSliceRepository(this, categoryRepository);
+
         this.registerForContextMenu(this.getListView());
         this.currentRangeFilter = BaseReportListActivity
                 .getLastFilter(
@@ -440,13 +443,17 @@ public class TimeSheetSummaryListActivity extends BaseReportListActivity
                 TimeSheetSummaryListActivity.this.getListView().setSelection(
                         newSelection);
                 final float loadTime = 0.0001f * (System.currentTimeMillis() - globalPerformanceMeasureStart);
+                final String title = TimeSheetSummaryListActivity.this.currentRangeFilter
+                        .toString()
+                        + " ("
+                        + listItems.size()
+                        + "/"
+                        + String.format("%.1f", loadTime) + " sec)";
                 TimeSheetSummaryListActivity.this
-                        .setTitle(TimeSheetSummaryListActivity.this.currentRangeFilter
-                                .toString()
-                                + " ("
-                                + listItems.size()
-                                + "/"
-                                + String.format("%.1f", loadTime) + " sec)");
+                        .setTitle(title);
+                if (Global.isInfoEnabled()) {
+                    Log.i(Global.LOG_CONTEXT, "TimeSheetSummaryListActivity: " + title);
+                }
             }
         });
 
