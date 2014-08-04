@@ -12,8 +12,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 
+import de.k3b.timetracker.Factory;
 import de.k3b.timetracker.R;
-import de.k3b.timetracker.SettingsImpl;
 import de.k3b.timetracker.TimeSliceFilterParameter;
 import de.k3b.timetracker.database.TimeSliceCategoryRepsitory;
 import de.k3b.timetracker.database.TimeSliceRepository;
@@ -25,7 +25,7 @@ public class CategoryListActivity extends ListActivity implements
     private static final int EDIT_MENU_ID = Menu.FIRST + 1;
     private static final int DELETE_MENU_ID = Menu.FIRST + 2;
     private static final int REPORT_MENU_ID = Menu.FIRST + 3;
-    private final TimeSliceCategoryRepsitory categoryRepository = new TimeSliceCategoryRepsitory(
+    private final TimeSliceCategoryRepsitory categoryRepository = Factory.getInstance().createTimeSliceCategoryRepsitory(
             this);
     private TimeSliceCategory categoryClicked;
     private CategoryEditDialog edit = null;
@@ -89,8 +89,8 @@ public class CategoryListActivity extends ListActivity implements
                 }
                 return true;
             case DELETE_MENU_ID:
-                final TimeSliceRepository timeSliceRepository = new TimeSliceRepository(
-                        this, SettingsImpl.isPublicDatabase());
+                final TimeSliceRepository timeSliceRepository = Factory.getInstance().createTimeSliceRepository(
+                        this, this.categoryRepository);
                 if (timeSliceRepository.getCount(this.categoryClicked) > 0) {
                     this.showDialog(CategoryListActivity.DELETE_MENU_ID);
                 } else {

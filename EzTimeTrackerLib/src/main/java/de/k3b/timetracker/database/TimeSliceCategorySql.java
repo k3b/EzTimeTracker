@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import de.k3b.common.database.NumberUtil;
 import de.k3b.timetracker.model.TimeSliceCategory;
 
 /**
@@ -53,13 +54,13 @@ class TimeSliceCategorySql {
     }
 
     static void fromMap(final TimeSliceCategory dest, final Map<String, String> src) {
-        dest.setRowId(NumberUtil.getInt(src.get(TimeSliceCategorySql.COL_PK), -1));
+        dest.setRowId(NumberUtil.getInt(TABLE, src, COL_PK, TimeSliceCategory.IS_NEW_TIMESLICE));
         dest.setCategoryName(src.get((TimeSliceCategorySql.COL_CATEGORY_NAME)));
         dest.setDescription(src.get((TimeSliceCategorySql.COL_DESCRIPTION)));
 
-        dest.setStartTime(NumberUtil.getLong(src.get(TimeSliceCategorySql.COL_START_TIME),
+        dest.setStartTime(NumberUtil.getLong(TABLE, src, TimeSliceCategorySql.COL_START_TIME,
                 TimeSliceCategory.MIN_VALID_DATE));
-        dest.setEndTime(NumberUtil.getLong(src.get(TimeSliceCategorySql.COL_END_TIME),
+        dest.setEndTime(NumberUtil.getLong(TABLE, src, TimeSliceCategorySql.COL_END_TIME,
                 TimeSliceCategory.MAX_VALID_DATE));
     }
 

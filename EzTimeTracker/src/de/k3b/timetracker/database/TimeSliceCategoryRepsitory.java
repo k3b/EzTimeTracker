@@ -24,8 +24,9 @@ public class TimeSliceCategoryRepsitory implements ICategoryRepsitory {
             .getCurrentInstance();
     private final Context context;
 
-    public TimeSliceCategoryRepsitory(final Context context) {
+    public TimeSliceCategoryRepsitory(final Context context, Boolean publicDir) {
         super();
+        TimeSliceCategoryRepsitory.DB.initialize(context, publicDir);
         this.context = context;
     }
 
@@ -117,12 +118,6 @@ public class TimeSliceCategoryRepsitory implements ICategoryRepsitory {
             }
         }
 
-        // Database does not contain categories yet, create them
-        if (result.size() == 0) {
-            this.createInitialDemoCategoriesFromResources();
-            result = this.fetchAllTimeSliceCategories(currentDateTime,
-                    debugContext); // reload the demo items
-        }
         return result;
     }
 
@@ -186,12 +181,12 @@ public class TimeSliceCategoryRepsitory implements ICategoryRepsitory {
         return null;
     }
 
-    private void createInitialDemoCategoriesFromResources() {
+    void createInitialDemoDataFromResources() {
         final Resources res = this.context.getResources();
         final String[] catNames = res
                 .getStringArray(R.array.default_categories);
         for (final String catName : catNames) {
-            this.createTimeSliceCategoryFromName(catName);
+            this.getOrCreateCategory(catName); // create only if not exist
         }
     }
 

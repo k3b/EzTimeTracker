@@ -20,11 +20,27 @@ public class Factory {
         return ourInstance;
     }
 
-    public TimeTrackerManager createTimeTrackerManager(final Context context, final Boolean publicDir) {
+    public TimeSliceCategoryRepsitory createTimeSliceCategoryRepsitory(final Context context) {
+        final Boolean publicDir = SettingsImpl.isPublicDatabase();
+        return new TimeSliceCategoryRepsitory(context, publicDir);
+    }
+
+    public TimeSliceRepository createTimeSliceRepository(final Context context, TimeSliceCategoryRepsitory timeSliceCategoryRepsitory) {
+        if (timeSliceCategoryRepsitory == null)
+            timeSliceCategoryRepsitory = createTimeSliceCategoryRepsitory(context);
+        final Boolean publicDir = SettingsImpl.isPublicDatabase();
+        return new TimeSliceRepository(context, publicDir, timeSliceCategoryRepsitory);
+    }
+
+    public TimeTrackerManager createTimeTrackerManager(final Context context, TimeSliceCategoryRepsitory timeSliceCategoryRepsitory, TimeSliceRepository timeSliceRepsitory) {
         // poor man's dependency injection
+        if (timeSliceCategoryRepsitory == null)
+            timeSliceCategoryRepsitory = createTimeSliceCategoryRepsitory(context);
+        if (timeSliceRepsitory == null)
+            timeSliceRepsitory = createTimeSliceRepository(context, timeSliceCategoryRepsitory);
         return new TimeTrackerManager(new SessionDataPersistance<TimeTrackerSessionData>(context),
-                new TimeSliceRepository(context, publicDir),
-                new TimeSliceCategoryRepsitory(context),
+                timeSliceRepsitory,
+                timeSliceCategoryRepsitory,
                 new TimeTrackerSessionData(), SettingsImpl.getLogger(), SettingsImpl.getInstance());
     }
 }

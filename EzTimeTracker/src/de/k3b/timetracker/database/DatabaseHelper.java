@@ -5,6 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import de.k3b.timetracker.Factory;
 import de.k3b.timetracker.model.TimeSliceCategory;
 
 /**
@@ -16,17 +17,35 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final int DATABASE_VERSION_5_REPORT_VIEW = 5;
 
     public static final int DATABASE_VERSION = DatabaseHelper.DATABASE_VERSION_5_REPORT_VIEW;
+    private final Context createContext;
 
     DatabaseHelper(final Context context, final String databaseName) {
         super(context, databaseName, null, DatabaseHelper.DATABASE_VERSION);
+        this.createContext = context;
     }
 
+    /**
+     * make shure that initial database contains data
+     */
+    public static void loadDemoData(Context createContext) {
+        TimeSliceCategoryRepsitory categoryRepsitory = Factory.getInstance().createTimeSliceCategoryRepsitory(createContext);
+        TimeSliceRepository timeSliceRepository = Factory.getInstance().createTimeSliceRepository(createContext, categoryRepsitory);
+        categoryRepsitory.createInitialDemoDataFromResources();
+
+        timeSliceRepository.createInitialDemoDataFromResources();
+    }
+
+    /**
+     * called if database doesn-t exist yet
+     */
     @Override
     public void onCreate(final SQLiteDatabase db) {
         db.execSQL(TimeSliceCategorySql.CREATE_TABLE);
         db.execSQL(TimeSliceSql.CREATE_TABLE);
 
         this.version5Upgrade_REPORT_VIEW(db);
+
+        loadDemoData(this.createContext);
     }
 
     @Override

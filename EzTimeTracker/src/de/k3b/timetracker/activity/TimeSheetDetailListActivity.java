@@ -20,11 +20,11 @@ import java.util.List;
 
 import de.k3b.common.ItemWithRowId;
 import de.k3b.timetracker.DateTimeFormatter;
+import de.k3b.timetracker.Factory;
 import de.k3b.timetracker.FileUtilities;
 import de.k3b.timetracker.Global;
 import de.k3b.timetracker.R;
 import de.k3b.timetracker.SendUtilities;
-import de.k3b.timetracker.SettingsImpl;
 import de.k3b.timetracker.TimeSliceFilterParameter;
 import de.k3b.timetracker.database.TimeSliceCategoryRepsitory;
 import de.k3b.timetracker.database.TimeSliceRepository;
@@ -48,10 +48,9 @@ public class TimeSheetDetailListActivity extends BaseReportListActivity
     // menu ids
 
     private static ExportSettingsDto exportSettings = new ExportSettingsDto();
-    private final TimeSliceCategoryRepsitory categoryRepository = new TimeSliceCategoryRepsitory(
-            this);
     // dependent services
-    private TimeSliceRepository timeSliceRepository;
+    private final TimeSliceCategoryRepsitory categoryRepository = Factory.getInstance().createTimeSliceCategoryRepsitory(this);
+    private final TimeSliceRepository timeSliceRepository = Factory.getInstance().createTimeSliceRepository(this, categoryRepository);
     // current state
     private TimeSlice currentSelectedTimeSliceUsedForMenu;
     private long lastSelectedDateUsedForAddMenu;
@@ -101,8 +100,6 @@ public class TimeSheetDetailListActivity extends BaseReportListActivity
         this.setContentView(R.layout.time_slice_list);
         this.registerForContextMenu(this.getListView());
 
-        this.timeSliceRepository = new TimeSliceRepository(this,
-                SettingsImpl.isPublicDatabase());
 
         final Intent intent = this.getIntent();
 

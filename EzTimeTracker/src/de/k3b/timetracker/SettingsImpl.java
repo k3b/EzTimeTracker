@@ -11,18 +11,21 @@ import de.k3b.common.Logger;
 public class SettingsImpl implements Settings {
     private static final Logger logger = new LoggerImpl(Global.LOG_CONTEXT);
 
+    /**
+     * data of the one and only SettingsImpl instance.
+     */
     private static SettingsImpl ourInstance = new SettingsImpl();
     private static boolean publicDatabase = false;
     private static boolean hideInactiveCategories = false;
-	private static int minPunchOutTreshholdInSecs = 1;
-	private static int minPunchInTreshholdInSecs = 1;
+    private static int minPunchOutTreshholdInSecs = 1;
+    private static int minPunchInTreshholdInSecs = 1;
 
     private SettingsImpl() {
     }
 
-	public static void init(final Context context) {
-		final SharedPreferences prefs = PreferenceManager
-				.getDefaultSharedPreferences(context);
+    public static void init(final Context context) {
+        final SharedPreferences prefs = PreferenceManager
+                .getDefaultSharedPreferences(context);
         SettingsImpl.minPunchInTreshholdInSecs = SettingsImpl
                 .getPrefValue(prefs, "minPunchInTreshholdInSecs",
                         SettingsImpl.minPunchInTreshholdInSecs);
@@ -48,12 +51,12 @@ public class SettingsImpl implements Settings {
     /**
      * New Punchin within same Category if longer away than this (in seconds).<br/>
      * Else append to previous.
-	 */
-	public static long getMinPunchInTreshholdInMilliSecs() {
+     */
+    public static long getMinPunchInTreshholdInMilliSecs() {
         return 1000l * SettingsImpl.minPunchInTreshholdInSecs;
     }
 
-	public static void setMinPunchInTreshholdInMilliSecs(final long value) {
+    public static void setMinPunchInTreshholdInMilliSecs(final long value) {
         SettingsImpl.minPunchInTreshholdInSecs = (int) (value / 1000l);
     }
 

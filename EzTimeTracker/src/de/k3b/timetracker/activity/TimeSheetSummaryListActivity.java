@@ -16,11 +16,11 @@ import android.widget.ListView;
 import java.util.List;
 
 import de.k3b.timetracker.DateTimeFormatter;
+import de.k3b.timetracker.Factory;
 import de.k3b.timetracker.FileUtilities;
 import de.k3b.timetracker.Global;
 import de.k3b.timetracker.R;
 import de.k3b.timetracker.SendUtilities;
-import de.k3b.timetracker.SettingsImpl;
 import de.k3b.timetracker.TimeSliceFilterParameter;
 import de.k3b.timetracker.database.TimeSliceCategoryRepsitory;
 import de.k3b.timetracker.database.TimeSliceRepository;
@@ -63,10 +63,9 @@ public class TimeSheetSummaryListActivity extends BaseReportListActivity
     private static TimeSliceFilterParameter lastRangeFilter;
     private static ExportSettingsDto exportSettings = new ExportSettingsDto();
     // dependent services
-    private final TimeSliceRepository timeSliceRepository = new TimeSliceRepository(
-            this, SettingsImpl.isPublicDatabase());
-    private final TimeSliceCategoryRepsitory categoryRepository = new TimeSliceCategoryRepsitory(
+    private final TimeSliceCategoryRepsitory categoryRepository = Factory.getInstance().createTimeSliceCategoryRepsitory(
             this);
+    private final TimeSliceRepository timeSliceRepository = Factory.getInstance().createTimeSliceRepository(this, categoryRepository);
     // current state
     private ReportModes reportMode = ReportModes.BY_DATE_AND_CATEGORY;
     /**

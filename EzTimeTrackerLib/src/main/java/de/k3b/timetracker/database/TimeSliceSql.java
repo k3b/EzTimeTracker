@@ -5,6 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import de.k3b.common.database.NumberUtil;
+import de.k3b.common.database.SqlFilter;
+import de.k3b.common.database.SqlFilterBuilder;
 import de.k3b.timetracker.TimeSliceFilterParameter;
 import de.k3b.timetracker.model.ITimeSliceFilter;
 import de.k3b.timetracker.model.TimeSlice;
@@ -124,14 +127,13 @@ class TimeSliceSql {
     }
 
     public static void fromMap(final TimeSlice dest, final Map<String, String> src, ICategoryRepsitory categoryRepository) {
-        dest.setRowId(NumberUtil.getInt(src.get(TimeSliceSql.COL_PK), TimeSlice.IS_NEW_TIMESLICE));
-        dest.setStartTime(NumberUtil.getLong(src.get(TimeSliceSql.COL_START_TIME), TimeSliceCategory.MIN_VALID_DATE));
-        dest.setEndTime(NumberUtil.getLong(src.get(TimeSliceSql.COL_END_TIME), TimeSliceCategory.MAX_VALID_DATE));
+        dest.setRowId(NumberUtil.getInt(TABLE, src, COL_PK, TimeSlice.IS_NEW_TIMESLICE));
+        dest.setStartTime(NumberUtil.getLong(TABLE, src, TimeSliceSql.COL_START_TIME, TimeSliceCategory.MIN_VALID_DATE));
+        dest.setEndTime(NumberUtil.getLong(TABLE, src, TimeSliceSql.COL_END_TIME, TimeSliceCategory.MAX_VALID_DATE));
         dest.setNotes(src.get(TimeSliceSql.COL_NOTES));
 
         if (categoryRepository != null) {
-            final int rowID = NumberUtil.getInt(src.get(TimeSliceSql.COL_CATEGORY_ID), TimeSliceCategory.IS_NEW_TIMESLICE);
-
+            final int rowID = NumberUtil.getInt(TABLE, src, COL_CATEGORY_ID, TimeSliceCategory.IS_NEW_TIMESLICE);
             dest.setCategory(categoryRepository.fetchByRowID(rowID));
         }
     }

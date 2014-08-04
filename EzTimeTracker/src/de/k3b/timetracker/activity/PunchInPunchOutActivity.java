@@ -83,7 +83,7 @@ public class PunchInPunchOutActivity extends Activity implements
      */
     private static TimeSliceFilterParameter currentRangeFilter = TimeSliceFilterParameter
             .filterWithDefaultsIfNeccessary(null);
-    private final TimeSliceCategoryRepsitory timeSliceRepository = new TimeSliceCategoryRepsitory(
+    private final TimeSliceCategoryRepsitory categoryRepository = Factory.getInstance().createTimeSliceCategoryRepsitory(
             this);
     private TextView elapsedTimeDisplay;
     private EditText notesEditor;
@@ -120,7 +120,7 @@ public class PunchInPunchOutActivity extends Activity implements
 
         this.setupButtons();
 
-        this.tracker = Factory.getInstance().createTimeTrackerManager(this, SettingsImpl.isPublicDatabase());
+        this.tracker = Factory.getInstance().createTimeTrackerManager(this, categoryRepository, null);
         SettingsImpl.init(this.getBaseContext());
 
         this.reloadGui();
@@ -418,7 +418,7 @@ public class PunchInPunchOutActivity extends Activity implements
             this.showCategoryEditDialog(null);
         } else {
             if (selectedCategory.getRowId() == TimeSliceCategory.NOT_SAVED) {
-                this.timeSliceRepository
+                this.categoryRepository
                         .createTimeSliceCategory(selectedCategory);
             }
             final long elapsedRealtime = TimeTrackerManager.currentTimeMillis();

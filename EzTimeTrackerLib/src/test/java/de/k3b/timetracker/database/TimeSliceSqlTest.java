@@ -6,6 +6,7 @@ import org.junit.Test;
 
 import java.util.Map;
 
+import de.k3b.common.database.SqlFilter;
 import de.k3b.timetracker.TimeSliceFilterParameter;
 import de.k3b.timetracker.model.TimeSlice;
 import de.k3b.timetracker.model.TimeSliceCategory;
@@ -21,7 +22,7 @@ public class TimeSliceSqlTest {
         this.timeSliceFilter = new TimeSliceFilterParameter();
     }
 
-	@Test
+    @Test
     public void ShouldFormatEmpty() {
         final SqlFilter sqlFilter = this.createFilter();
 
@@ -30,13 +31,13 @@ public class TimeSliceSqlTest {
         Assert.assertNull("sqlFilter.sql", sqlFilter.sql);
     }
 
-	@Test
+    @Test
     public void ShouldFormatCategory() {
 
         this.timeSliceFilter.setCategoryId(22);
         final SqlFilter sqlFilter = this.createFilter();
 
-		Assert.assertEquals(sqlFilter.getDebugMessage("sql"),
+        Assert.assertEquals(sqlFilter.getDebugMessage("sql"),
                 "category_id = ?", sqlFilter.sql);
         Assert.assertEquals(sqlFilter.getDebugMessage("args.length"), 1,
                 sqlFilter.args.length);
@@ -44,7 +45,7 @@ public class TimeSliceSqlTest {
                 sqlFilter.args[0]);
     }
 
-	@Test
+    @Test
     public void ShouldFormatIgnoreDate() {
         this.timeSliceFilter.setStartTime(20010101).setEndTime(20011231)
                 .setIgnoreDates(true);
@@ -55,7 +56,7 @@ public class TimeSliceSqlTest {
         Assert.assertNull("sqlFilter.sql", sqlFilter.sql);
     }
 
-	@Test
+    @Test
     public void ShouldFormatDateFromTo() {
         this.timeSliceFilter.setStartTime(20010101).setEndTime(20011231);
         final SqlFilter sqlFilter = this.createFilter();
@@ -129,5 +130,5 @@ public class TimeSliceSqlTest {
 
     private SqlFilter createFilter() {
         return TimeSliceSql.createFilter(this.timeSliceFilter);
-	}
+    }
 }

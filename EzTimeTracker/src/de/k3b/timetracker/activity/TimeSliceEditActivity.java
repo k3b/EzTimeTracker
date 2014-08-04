@@ -19,6 +19,7 @@ import com.googlecode.android.widgets.DateSlider.DateTimeMinuteSlider;
 import java.util.Calendar;
 
 import de.k3b.timetracker.DateTimeFormatter;
+import de.k3b.timetracker.Factory;
 import de.k3b.timetracker.Global;
 import de.k3b.timetracker.R;
 import de.k3b.timetracker.SettingsImpl;
@@ -117,7 +118,7 @@ public class TimeSliceEditActivity extends Activity implements ICategorySetter {
         this.catSpinner = (Spinner) this
                 .findViewById(R.id.spinnerEditTimeSliceCategory);
         if (this.timeSlice.getCategoryId() != TimeSliceEditActivity.HIDDEN) {
-            this.catSpinner.setAdapter(this.createCategoryAdapter(this));
+            this.catSpinner.setAdapter(this.createCategoryAdapter());
 
             TimeSliceCategory currentCategory = this.timeSlice.getCategory();
 
@@ -221,8 +222,7 @@ public class TimeSliceEditActivity extends Activity implements ICategorySetter {
         this.setTimeTexts();
     }
 
-    private ArrayAdapter<TimeSliceCategory> createCategoryAdapter(
-            final TimeSliceEditActivity timeSliceEditActivity) {
+    private ArrayAdapter<TimeSliceCategory> createCategoryAdapter() {
         long loadReferenceDate = (SettingsImpl.getHideInactiveCategories()) ? TimeTrackerManager
                 .currentTimeMillis() : TimeSliceCategory.MIN_VALID_DATE;
 
@@ -232,10 +232,6 @@ public class TimeSliceEditActivity extends Activity implements ICategorySetter {
             loadReferenceDate = TimeSliceCategory.MIN_VALID_DATE;
         }
 
-        // return CategoryListAdapterDetailed.createAdapter(this,
-        // R.layout.category_list_view_row, false,
-        // TimeSliceCategory.NO_CATEGORY,
-        // loadReferenceDate, "TimeSliceEditActivity");
         return CategoryListAdapterSimple.createAdapter(this,
                 TimeSliceCategory.NO_CATEGORY, loadReferenceDate,
                 "TimeSliceEditActivity");
@@ -323,11 +319,11 @@ public class TimeSliceEditActivity extends Activity implements ICategorySetter {
         } else if (newCategory.getRowId() == TimeSliceCategory.NOT_SAVED) {
             // result of create new category
 
-            final TimeSliceCategoryRepsitory categoryRepository = new TimeSliceCategoryRepsitory(
+            final TimeSliceCategoryRepsitory categoryRepository = Factory.getInstance().createTimeSliceCategoryRepsitory(
                     this);
             categoryRepository.createTimeSliceCategory(newCategory);
             final ArrayAdapter<TimeSliceCategory> categoryAdapter = this
-                    .createCategoryAdapter(this);
+                    .createCategoryAdapter();
             this.catSpinner.setAdapter(categoryAdapter);
             final int newPosition = categoryAdapter.getPosition(newCategory);
             this.catSpinner.setSelection(newPosition);

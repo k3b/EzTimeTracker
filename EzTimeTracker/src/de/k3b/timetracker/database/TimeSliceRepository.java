@@ -7,11 +7,17 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import de.k3b.android.database.AndroidDatabaseUtil;
+import de.k3b.common.database.SqlFilter;
+import de.k3b.csv2db.csv.CsvTimeSliceIterator;
 import de.k3b.timetracker.Global;
 import de.k3b.timetracker.SettingsImpl;
 import de.k3b.timetracker.TimeSliceFilterParameter;
@@ -27,9 +33,9 @@ public class TimeSliceRepository implements ITimeSliceRepository {
             .getCurrentInstance();
     private final TimeSliceCategoryRepsitory categoryRepository;
 
-    public TimeSliceRepository(final Context context, Boolean publicDir) {
+    public TimeSliceRepository(final Context context, Boolean publicDir, final TimeSliceCategoryRepsitory categoryRepository) {
         TimeSliceRepository.DB.initialize(context, publicDir);
-        this.categoryRepository = new TimeSliceCategoryRepsitory(context);
+        this.categoryRepository = categoryRepository;
     }
 
     public static int delete(final ITimeSliceFilter timeSliceFilter) {
@@ -307,5 +313,28 @@ public class TimeSliceRepository implements ITimeSliceRepository {
 
     private ContentValues asContentValues(final TimeSlice timeSlice) {
         return AndroidDatabaseUtil.toContentValues(TimeSliceSql.asMap(timeSlice));
+    }
+
+    void createInitialDemoDataFromResources() {
+        InputStream resourceStream = null;
+        Reader reader = null;
+        CsvTimeSliceIterator iter = null;
+
+        try {
+            resourceStream = CsvTimeSliceIterator.class.getResourceAsStream("/DemoData.csv");
+            reader = new InputStreamReader(resourceStream);
+            try {
+                iter = new CsvTimeSliceIterator(reader, this.categoryRepository);
+                while (iter.hasNext()) {
+                    this.update(iter.next());
+                }
+            } finally {
+                if (reader != null) reader.close();
+                if (resourceStream != null) resourceStream.close();
+                if (iter != null) iter.close();
+            }
+        } catch (IOException ignore) {
+            Log.e(Global.LOG_CONTEXT, "error createInitialDemoDataFromResources(). '/' = " + CsvTimeSliceIterator.class.getResource("/").getPath(), ignore);
+        }
     }
 }

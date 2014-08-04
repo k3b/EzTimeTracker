@@ -2,7 +2,7 @@
 todo
 
 	export
-		new as csv 
+-		new as csv
 			import csv (from zb git history?)
 v		as text auch mit notes
 v		sendTo anstelle von email
@@ -41,7 +41,7 @@ v	after report update scroll to last know pos
 
 	merge short timeslices 
 
-	gui: menü mit images
+	gui: menï¿½ mit images
 
 	Propertie-dialog with value preview
 
