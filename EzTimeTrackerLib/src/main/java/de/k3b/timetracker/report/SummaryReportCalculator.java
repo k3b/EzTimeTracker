@@ -12,12 +12,11 @@ import de.k3b.util.DateTimeUtil;
 
 /**
  * Calculator to create summary from raw data.
- * 
+ *
  * @author EVE
- * 
  */
 public class SummaryReportCalculator {
-	final static DateTimeUtil dt = DateTimeFormatter.getInstance();
+    final static DateTimeUtil dt = DateTimeFormatter.getInstance();
 
     /**
      * update statistics for one item
@@ -27,14 +26,16 @@ public class SummaryReportCalculator {
             final Object key, final long diffTimeValue, final String notes) {
         ReportItemWithStatistics timeSum = supMap.get(key);
         if (timeSum == null) {
-            timeSum = new ReportItemWithStatistics(key, 0, null);
+            timeSum = new ReportItemWithStatistics(key, 0, 0, null);
         }
         timeSum.incrementDuration(diffTimeValue);
         timeSum.appendNotes(notes);
         supMap.put(key, timeSum);
     }
 
-	/** create a statistics in a guiAdapter friendly format */
+    /**
+     * create a statistics in a guiAdapter friendly format
+     */
     public static List<Object> createStatistics(
             final List<TimeSlice> timeSlices, final ReportModes reportMode,
             final ReportDateGrouping reportDateGrouping, final boolean showNotes) {
@@ -65,7 +66,7 @@ public class SummaryReportCalculator {
         } else {
             throw new IllegalArgumentException("Unknown ReportModes "
                     + reportMode);
-		}
+        }
 
         for (final TimeSlice aSlice : timeSlices) {
             final long rawStartTime = aSlice.getStartTime();
@@ -91,7 +92,7 @@ public class SummaryReportCalculator {
         return statisticsMap;
     }
 
-	/**
+    /**
      * converst a statisticsMap to a list that can be displayed via a guiadapter
      */
     private List<Object> toList(
@@ -110,7 +111,7 @@ public class SummaryReportCalculator {
         return result;
     }
 
-	/**
+    /**
      * rounds rawDateTime to previous start of reportDateGrouping.<br/>
      * Example: roundDateByReportDateGroup("2014-12-24",
      * ReportDateGrouping.YEARLY) becomes "2014-01-01"
@@ -137,7 +138,7 @@ public class SummaryReportCalculator {
         return currentStartDate;
     }
 
-	/**
+    /**
      * returns the subKey depending on reportmode
      */
     private Object getSubKey(final ReportModes reportMode,
@@ -177,10 +178,14 @@ public class SummaryReportCalculator {
      * defines main and subgrouping of report
      */
     public enum ReportModes {
-        /** grouped by date+category */
+        /**
+         * grouped by date+category
+         */
         BY_DATE_AND_CATEGORY,
 
-        /** grouped by category+date */
+        /**
+         * grouped by category+date
+         */
         BY_CATEGORY_AND_DATE
     }
 }

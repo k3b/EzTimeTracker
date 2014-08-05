@@ -89,7 +89,8 @@ public class ReportItemFormatter implements IReportItemFormatter {
     }
 
     protected String getValue(final ReportItemWithStatistics obj) {
-        return this.getValueGeneric(obj.getGroupingKey()) + ": "
+        return this.getValueGeneric(obj.getGroupingKey()) + "("
+                + obj.getItemCount() + "): "
                 + this.durationFormatter.timeInMillisToText(obj.getDuration(), false);
     }
 

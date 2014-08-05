@@ -31,7 +31,7 @@ public class CsvSummaryReportRenderer {
      */
     public String createReport(final List<Object> items) {
         output.setLength(0);
-        CsvDetailReportRenderer.addLine(output, "Start", "DurationInMinutes", "CategoryName", "Notes");
+        CsvDetailReportRenderer.addLine(output, "Start", "DurationInMinutes", "items", "CategoryName", "Notes");
 
         for (final Object reportItem : items) {
             addLine(reportItem);
@@ -58,9 +58,10 @@ public class CsvSummaryReportRenderer {
         TimeSliceCategory category = (this.byCategory) ? this.category : (TimeSliceCategory) item.getGroupingKey();
         String start = (!this.byCategory) ? this.date : this.itemFormatter.getValueGeneric(item.getGroupingKey());
         String duration = "" + (item.getDuration() / (1000 * 60));
+        String elementCount = "" + item.getItemCount();
         String categoryName = (category != null) ? category.getCategoryName() : null;
         String notes = (this.showNotes) ? item.getNotes() : null;
 
-        CsvDetailReportRenderer.addLine(output, start.replace("\n", "").replace("\r", ""), duration, categoryName, notes);
+        CsvDetailReportRenderer.addLine(output, start.replace("\n", "").replace("\r", ""), duration, elementCount, categoryName, notes);
     }
 }

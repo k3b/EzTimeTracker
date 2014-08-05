@@ -11,18 +11,31 @@ public class ReportItemWithStatistics {
 
     private final Object groupingKey;
     private long duration;
+    private int itemCount;
     private String notes;
 
     /**
      * @param groupingKey where items are grouped by (Long=Date, Category, ...)
      * @param duration    sum within grouping
+     * @param itemCount how many items were involved in sum
      * @param notes       sum of notes
      */
     public ReportItemWithStatistics(final Object groupingKey,
-                                    final long duration, final String notes) {
+                                    final long duration,
+                                    final int itemCount,
+                                    final String notes) {
         this.groupingKey = groupingKey;
         this.setDuration(duration);
+        this.setItemCount(itemCount);
         this.setNotes(notes);
+    }
+
+    public long getItemCount() {
+        return this.itemCount;
+    }
+
+    public void setItemCount(final int itemCount) {
+        this.itemCount = itemCount;
     }
 
     public long getDuration() {
@@ -37,6 +50,7 @@ public class ReportItemWithStatistics {
         if (diffTimeValue > 0) {
             this.duration += diffTimeValue;
         }
+        this.itemCount++;
     }
 
     public String getNotes() {
