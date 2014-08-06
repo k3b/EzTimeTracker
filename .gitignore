@@ -32,3 +32,5 @@ gradle-app.setting
 .classpath
 
 .project
+nbproject/private/
+dist/
