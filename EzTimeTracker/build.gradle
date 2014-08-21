@@ -3,7 +3,7 @@ apply plugin: 'android'
 
 android {
     compileSdkVersion 8
-    buildToolsVersion "19.0.3"
+    buildToolsVersion "19.1"
     defaultConfig {
         minSdkVersion 8
         targetSdkVersion 17
@@ -33,10 +33,10 @@ android {
         // release.setRoot('build-types/release')
     }
 
-	// referenced by some non-android j2se unit-tests of classes that have no dependency to android
-	task jar(type: Jar) {
-		from android.sourceSets.main.java
-	}
+    // referenced by some non-android j2se unit-tests of classes that have no dependency to android
+    task jar(type: Jar) {
+        from android.sourceSets.main.java
+    }
 
     dependencies {
 //        compile 'org.slf4j:slf4j-api:1.7.7@jar'
