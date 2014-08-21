@@ -58,12 +58,17 @@ public class TimeSliceRepository implements ITimeSliceRepository {
         final SqlFilter sqlFilter = TimeSliceRepository.createFilter(context,
                 timeSliceFilter);
 
-        final int result = db.delete(TimeSliceSql.TABLE, sqlFilter.sql,
-                sqlFilter.args);
-        if (Global.isDebugEnabled()) {
-            Log.d(Global.LOG_CONTEXT, context + " via '" + sqlFilter + "':" + result + " rows affected");
+        try {
+            final int result = db.delete(TimeSliceSql.TABLE, sqlFilter.sql,
+                    sqlFilter.args);
+            if (Global.isDebugEnabled()) {
+                Log.d(Global.LOG_CONTEXT, context + " via '" + sqlFilter + "':" + result + " rows affected");
+            }
+            return result;
+        } catch (final Exception ex) {
+            throw new TimeTrackerDBException(context, sqlFilter, ex);
         }
-        return result;
+
     }
 
     /**
@@ -177,9 +182,17 @@ public class TimeSliceRepository implements ITimeSliceRepository {
                                 + "'."
                 );
             }
-            return db.insert(
-                    TimeSliceSql.TABLE, null,
-                    this.asContentValues(timeSlice));
+
+            ContentValues values = this.asContentValues(timeSlice, false);
+
+            try {
+                return db.insert(
+                        TimeSliceSql.TABLE, null,
+                        values);
+            } catch (final Exception ex) {
+                throw new TimeTrackerDBException("create(): db-inserting new timeslice '" + timeSlice
+                        + "'.", new SqlFilter(TimeSliceSql.TABLE, TimeSliceSql.asMap(timeSlice, false)), ex);
+            }
         }
     }
 
@@ -189,16 +202,24 @@ public class TimeSliceRepository implements ITimeSliceRepository {
      * @return number of affected rows.
      */
     public long update(final TimeSlice timeSlice) {
-        final int result = db
-                .update(TimeSliceSql.TABLE,
-                        this.asContentValues(timeSlice),
-                        "_id = " + timeSlice.getRowId(), null);
-        if (Global.isDebugEnabled()) {
-            Log.d(Global.LOG_CONTEXT, "updateTimeSlice(" + timeSlice + ") "
-                    + result + " rows affected");
+        try {
+            final int result = db
+                    .update(TimeSliceSql.TABLE,
+                            this.asContentValues(timeSlice, true),
+                            "_id = " + timeSlice.getRowId(), null);
+            if (Global.isDebugEnabled()) {
+                Log.d(Global.LOG_CONTEXT, "updateTimeSlice(" + timeSlice + ") "
+                        + result + " rows affected");
+            }
+
+            return result;
+        } catch (final Exception ex) {
+            throw new TimeTrackerDBException(
+                    "updateTimeSlice(" + timeSlice + ") ",
+                    new SqlFilter(TimeSliceSql.TABLE + " _id = " + timeSlice.getRowId(),
+                            TimeSliceSql.asMap(timeSlice, true)), ex);
         }
 
-        return result;
     }
 
     public TimeSlice fetchByRowID(final long rowId) {
@@ -309,8 +330,8 @@ public class TimeSliceRepository implements ITimeSliceRepository {
         return item;
     }
 
-    private ContentValues asContentValues(final TimeSlice timeSlice) {
-        return AndroidDatabaseUtil.toContentValues(TimeSliceSql.asMap(timeSlice));
+    private ContentValues asContentValues(final TimeSlice timeSlice, boolean includePK) {
+        return AndroidDatabaseUtil.toContentValues(TimeSliceSql.asMap(timeSlice, includePK));
     }
 
     void createInitialDemoDataFromResources() {

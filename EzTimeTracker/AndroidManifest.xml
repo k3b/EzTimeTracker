@@ -1,17 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	package="de.k3b.timetracker" 
-    android:versionName="V2.5.935-2014-0425" 
-    android:versionCode="35"
-	android:installLocation="preferExternal"
+	package="de.k3b.timetracker"
+    android:installLocation="preferExternal"
+    android:versionCode="36"
+    android:versionName="V2.5.936-2014-0821"
 	>
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission>
 	<uses-sdk android:minSdkVersion="6" android:targetSdkVersion="6" />
-		    
-	<application android:icon="@drawable/icon" android:label="@string/app_name" android:allowBackup="false">
 
-		<activity android:label="@string/app_name"
-			android:name="de.k3b.timetracker.activity.PunchInPunchOutActivity"
+    <application
+        android:allowBackup="false"
+        android:icon="@drawable/icon"
+        android:label="@string/app_name">
+
+        <activity
+            android:name="de.k3b.timetracker.activity.PunchInPunchOutActivity"
+            android:label="@string/app_name"
 			android:screenOrientation="portrait">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
@@ -28,9 +32,11 @@
 		<activity android:name="de.k3b.timetracker.activity.ReportFilterActivity" />
 	    <activity android:name="de.k3b.timetracker.activity.SettingsActivity"
 			android:screenOrientation="portrait"/>
-		<receiver android:enabled="true"
-				android:name="de.k3b.timetracker.receiver.RemoteTimeTrackerBroadcastReceiver">
-			<intent-filter>
+
+        <receiver
+            android:name="de.k3b.timetracker.receiver.RemoteTimeTrackerBroadcastReceiver"
+            android:enabled="true">
+        <intent-filter>
 				<action android:name="de.k3b.timetracker.action.COMMAND" />
 		        <data android:scheme="cmd"/>
 		        <!-- 

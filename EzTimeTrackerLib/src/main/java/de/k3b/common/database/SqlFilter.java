@@ -1,5 +1,7 @@
 package de.k3b.common.database;
 
+import java.util.Map;
+
 /**
  * helper class because java function cannot return 2 values
  */
@@ -16,6 +18,16 @@ public class SqlFilter {
     public SqlFilter(final String sql, final String... args) {
         this.sql = sql;
         this.args = args;
+    }
+
+    public SqlFilter(String sql, Map<String, String> args) {
+        this.sql = sql;
+        this.args = new String[args.size()];
+        int i = 0;
+        for (String key : args.keySet()) {
+            this.args[i] = key + "='" + args.get(key) + "'";
+            i++;
+        }
     }
 
     /**

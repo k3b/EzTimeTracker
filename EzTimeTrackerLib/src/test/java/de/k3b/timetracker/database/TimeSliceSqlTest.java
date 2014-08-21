@@ -112,13 +112,13 @@ public class TimeSliceSqlTest {
 
     @Test
     public void columnListShouldContainAllFlieds() {
-        Map<String, String> values = TimeSliceSql.asMap(ts);
+        Map<String, String> values = TimeSliceSql.asMap(ts, true);
         Assert.assertEquals(TimeSliceSql.allColumnNames().length, values.size());
     }
 
     @Test
     public void shouldTransferAllFlieds() {
-        Map<String, String> values = TimeSliceSql.asMap(ts);
+        Map<String, String> values = TimeSliceSql.asMap(ts, true);
         TimeSlice result = new TimeSlice();
         TimeSliceSql.fromMap(result, values, tsRepository);
         Assert.assertEquals("getRowId", ts.getRowId(), result.getRowId());

@@ -1,3 +1,4 @@
+V2.5.936-2014-0821
 v2.5.930 2013-11-04
 v2.5.929 2013-10-30
 * fixed crash detailreport by Category

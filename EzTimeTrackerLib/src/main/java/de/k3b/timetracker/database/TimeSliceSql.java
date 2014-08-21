@@ -109,7 +109,7 @@ class TimeSliceSql {
         return columns.toArray(new String[columns.size()]);
     }
 
-    public static Map<String, String> asMap(final TimeSlice timeSlice) {
+    public static Map<String, String> asMap(final TimeSlice timeSlice, boolean includePK) {
 
         final Map<String, String> values = new HashMap<String, String>();
         values.put(TimeSliceSql.COL_CATEGORY_ID, Integer.toString(timeSlice.getCategoryId()));
@@ -118,7 +118,7 @@ class TimeSliceSql {
         values.put(TimeSliceSql.COL_NOTES, timeSlice.getNotes());
         final int rowId = timeSlice.getRowId();
 
-        if (rowId != TimeSlice.IS_NEW_TIMESLICE) {
+        if (includePK) {
             values.put(TimeSliceSql.COL_PK,
                     Long.toString(rowId));
         }
