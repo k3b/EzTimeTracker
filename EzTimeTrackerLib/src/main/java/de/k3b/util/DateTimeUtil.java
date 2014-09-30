@@ -266,4 +266,9 @@ public class DateTimeUtil {
 		// Calendar.HOUR_OF_DAY
 
 	}
+
+    public static long currentTimeMillis() {
+        return System.currentTimeMillis(); // SystemClock.elapsedRealtime();
+    }
+
 }

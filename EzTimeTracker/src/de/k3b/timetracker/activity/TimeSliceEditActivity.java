@@ -263,7 +263,7 @@ public class TimeSliceEditActivity extends Activity implements ICategorySetter {
                 return new DateTimeMinuteSlider(this,
                         this.mDateTimeSetListenerStart, c);
             case GET_START_DATETIME_NOW:
-                c.setTimeInMillis(TimeTrackerManager.currentTimeMillis());
+                c.setTimeInMillis(TimeTrackerManager.currentTimeMillis() + SettingsImpl.getInstance().getPunchInTimeOffsetInSecs());
                 return new DateTimeMinuteSlider(this,
                         this.mDateTimeSetListenerStart, c);
             case GET_END_DATETIME:
@@ -271,7 +271,7 @@ public class TimeSliceEditActivity extends Activity implements ICategorySetter {
                 return new DateTimeMinuteSlider(this, this.mDateTimeSetListenerEnd,
                         c);
             case GET_END_DATETIME_NOW:
-                c.setTimeInMillis(TimeTrackerManager.currentTimeMillis());
+                c.setTimeInMillis(TimeTrackerManager.currentTimeMillis() + SettingsImpl.getInstance().getPunchOutTimeOffsetInSecs());
                 return new DateTimeMinuteSlider(this, this.mDateTimeSetListenerEnd,
                         c);
             case EDIT_CATEGORY_ID:

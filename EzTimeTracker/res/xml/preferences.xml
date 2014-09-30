@@ -4,8 +4,21 @@
 	<PreferenceCategory 
 		android:title="Settings"
 		android:key="first_category">
-		
-		<EditTextPreference
+
+        <EditTextPreference
+            android:key="punchInTimeOffsetInSecs"
+            android:summary="Add Seconds to punchInTime."
+            android:title="PunchIn Fix"
+            android:defaultValue="0"
+            />
+        <EditTextPreference
+            android:key="punchOutTimeOffsetInSecs"
+            android:summary="Add Seconds to punchOutTime."
+            android:title="PunchOut fix"
+            android:defaultValue="0"
+            />
+
+        <EditTextPreference
 			android:key="minPunchInTreshholdInSecs"
 			android:summary="New Punchin within same Category if longer away than this (in seconds). Else append to previous."
 			android:title="Min New Treshhold" 

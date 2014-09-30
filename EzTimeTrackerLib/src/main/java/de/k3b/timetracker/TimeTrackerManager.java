@@ -4,6 +4,7 @@ import de.k3b.common.Logger;
 import de.k3b.timetracker.database.ICategoryRepsitory;
 import de.k3b.timetracker.database.ITimeSliceRepository;
 import de.k3b.timetracker.model.TimeSliceCategory;
+import de.k3b.util.DateTimeUtil;
 import de.k3b.util.ISessionDataPersistance;
 
 /**
@@ -38,7 +39,7 @@ public class TimeTrackerManager {
     }
 
     public static long currentTimeMillis() {
-        return System.currentTimeMillis(); // SystemClock.elapsedRealtime();
+        return DateTimeUtil.currentTimeMillis(); // SystemClock.elapsedRealtime();
     }
 
     public void saveSessionData() {

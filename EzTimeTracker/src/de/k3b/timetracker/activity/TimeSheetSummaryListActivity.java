@@ -393,7 +393,7 @@ public class TimeSheetSummaryListActivity extends BaseReportListActivity
     protected List<Object> loadData() {
         TimeSheetSummaryListActivity.lastRangeFilter = this.currentRangeFilter;
 
-        final long performanceMeasureStart = System.currentTimeMillis();
+        final long performanceMeasureStart = DateTimeUtil.currentTimeMillis();
 
         final TimeSliceFilterParameter rangeFilter = this.currentRangeFilter;
 
@@ -407,7 +407,7 @@ public class TimeSheetSummaryListActivity extends BaseReportListActivity
         if (Global.isInfoEnabled()) {
             Log.i(Global.LOG_CONTEXT,
                     "loadReportDataStructures:"
-                            + (System.currentTimeMillis() - performanceMeasureStart)
+                            + (DateTimeUtil.currentTimeMillis() - performanceMeasureStart)
             );
         }
 
@@ -416,12 +416,12 @@ public class TimeSheetSummaryListActivity extends BaseReportListActivity
 
     @Override
     public void loadDataIntoReport(final int reportType) {
-        final long globalPerformanceMeasureStart = System.currentTimeMillis();
+        final long globalPerformanceMeasureStart = DateTimeUtil.currentTimeMillis();
         this.setReportType(reportType);
 
         final List<Object> listItems = this.loadData();
 
-        final long performanceMeasureStart = System.currentTimeMillis();
+        final long performanceMeasureStart = DateTimeUtil.currentTimeMillis();
 
         final int newSelection = this.convertLastSelection(this.getListView(),
                 listItems);
@@ -431,7 +431,7 @@ public class TimeSheetSummaryListActivity extends BaseReportListActivity
         if (Global.isInfoEnabled()) {
             Log.i(Global.LOG_CONTEXT,
                     "Create adapter:"
-                            + (System.currentTimeMillis() - performanceMeasureStart)
+                            + (DateTimeUtil.currentTimeMillis() - performanceMeasureStart)
             );
         }
 
@@ -442,7 +442,7 @@ public class TimeSheetSummaryListActivity extends BaseReportListActivity
                 // Select the last row so it will scroll into view...
                 TimeSheetSummaryListActivity.this.getListView().setSelection(
                         newSelection);
-                final float loadTime = 0.0001f * (System.currentTimeMillis() - globalPerformanceMeasureStart);
+                final float loadTime = 0.0001f * (DateTimeUtil.currentTimeMillis() - globalPerformanceMeasureStart);
                 final String title = TimeSheetSummaryListActivity.this.currentRangeFilter
                         .toString()
                         + " ("

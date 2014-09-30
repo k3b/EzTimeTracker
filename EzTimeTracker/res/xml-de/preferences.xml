@@ -4,8 +4,21 @@
 	<PreferenceCategory 
 		android:title="Einstellungen"
 		android:key="first_category">
-		
-		<EditTextPreference
+
+        <EditTextPreference
+            android:key="punchInTimeOffsetInSecs"
+            android:summary="So viele Sekunden an jede Startzeit anhängen."
+            android:title="Startzeit Korrektur"
+            android:defaultValue="0"
+            />
+        <EditTextPreference
+            android:key="punchOutTimeOffsetInSecs"
+            android:summary="So viele Sekunden an jede Endzeit anhängen."
+            android:title="Endzeit Korrektur"
+            android:defaultValue="0"
+            />
+
+        <EditTextPreference
 			android:key="minPunchInTreshholdInSecs"
 			android:summary="Erneute Zeitmessung bei gleicher Category frühstens nach x Sekunden. Sonst an vorhergehende anhängen."
 			android:title="Min neue Buchung" 

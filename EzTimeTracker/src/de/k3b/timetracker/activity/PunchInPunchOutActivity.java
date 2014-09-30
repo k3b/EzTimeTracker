@@ -401,8 +401,7 @@ public class PunchInPunchOutActivity extends Activity implements
         punchOutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
-                PunchInPunchOutActivity.this.punchOutClock(TimeTrackerManager
-                        .currentTimeMillis());
+                PunchInPunchOutActivity.this.punchOutClock(currentTimeMillis(false));
             }
         });
         punchOutButton.setOnLongClickListener(new View.OnLongClickListener() {
@@ -426,7 +425,7 @@ public class PunchInPunchOutActivity extends Activity implements
                 this.categoryRepository
                         .createTimeSliceCategory(selectedCategory);
             }
-            final long elapsedRealtime = TimeTrackerManager.currentTimeMillis();
+            final long elapsedRealtime = currentTimeMillis(true);
             this.punchInClock(elapsedRealtime, selectedCategory);
         }
     }
@@ -476,7 +475,7 @@ public class PunchInPunchOutActivity extends Activity implements
             if (this.sessionData.isPunchedIn()) {
                 editItem.setStartTime(this.sessionData.getStartTime());
             } else {
-                editItem.setStartTime(TimeTrackerManager.currentTimeMillis());
+                editItem.setStartTime(currentTimeMillis(false));
             }
             TimeSliceEditActivity.showTimeSliceEditActivity(this, editItem,
                     PunchInPunchOutActivity.EDIT_START);
@@ -490,12 +489,16 @@ public class PunchInPunchOutActivity extends Activity implements
             final TimeSlice editItem = new TimeSlice(32531)
                     .setCategory(this.sessionData.getCategory())
                     .setStartTime(this.sessionData.getStartTime())
-                    .setEndTime(TimeTrackerManager.currentTimeMillis())
+                    .setEndTime(currentTimeMillis(false))
                     .setNotes(TimeSliceEditActivity.HIDDEN_NOTES);
             TimeSliceEditActivity.showTimeSliceEditActivity(this, editItem,
                     PunchInPunchOutActivity.EDIT_STOP);
         }
         return true; // consumed
+    }
+
+    private long currentTimeMillis(boolean forPunchIn) {
+        return TimeTrackerManager.currentTimeMillis() + (1000l * ((forPunchIn) ? SettingsImpl.getInstance().getPunchInTimeOffsetInSecs() : SettingsImpl.getInstance().getPunchOutTimeOffsetInSecs()));
     }
 
     /**
@@ -564,8 +567,7 @@ public class PunchInPunchOutActivity extends Activity implements
 
     private void updateChronOutputTextView() {
         final long elapsed = (!this.tracker.isPunchedIn()) ? this.tracker
-                .getElapsedTimeInMillisecs() : (TimeTrackerManager
-                .currentTimeMillis() - this.sessionData.getStartTime());
+                .getElapsedTimeInMillisecs() : (currentTimeMillis(false) - this.sessionData.getStartTime());
         this.updateElapsedTimeLabel(elapsed);
     }
 

@@ -20,6 +20,9 @@ public class SettingsImpl implements Settings {
     private static int minPunchOutTreshholdInSecs = 1;
     private static int minPunchInTreshholdInSecs = 1;
 
+    private static int punchInTimeOffsetInSecs = 0;
+    private static int punchOutTimeOffsetInSecs = 0;
+
     private SettingsImpl() {
     }
 
@@ -32,6 +35,15 @@ public class SettingsImpl implements Settings {
         SettingsImpl.minPunchOutTreshholdInSecs = SettingsImpl.getPrefValue(prefs,
                 "minPunchOutTreshholdInSecs",
                 SettingsImpl.minPunchOutTreshholdInSecs);
+
+        SettingsImpl.punchOutTimeOffsetInSecs = SettingsImpl
+                .getPrefValue(prefs, "punchOutTimeOffsetInSecs",
+                        SettingsImpl.punchOutTimeOffsetInSecs);
+        SettingsImpl.punchInTimeOffsetInSecs = SettingsImpl.getPrefValue(prefs,
+                "punchInTimeOffsetInSecs",
+                SettingsImpl.punchInTimeOffsetInSecs);
+
+
         SettingsImpl.publicDatabase = SettingsImpl.getPrefValue(prefs,
                 "publicDatabase", SettingsImpl.publicDatabase);
         SettingsImpl.hideInactiveCategories = SettingsImpl.getPrefValue(prefs,
@@ -110,4 +122,27 @@ public class SettingsImpl implements Settings {
     public static void setMinPunchOutTreshholdInMilliSecs(final long value) {
         SettingsImpl.minPunchOutTreshholdInSecs = (int) (value / 1000l);
     }
+    /**
+     * Add Seconds to punchOutTime.
+     */
+    @Override
+    public long getPunchOutTimeOffsetInSecs() {
+        return SettingsImpl.punchOutTimeOffsetInSecs;
+    }
+
+    public void setPunchOutTimeOffsetInSecs(final long value) {
+        SettingsImpl.punchOutTimeOffsetInSecs = (int) (value);
+    }
+    /**
+     * Add Seconds to punchInTime.
+     */
+    @Override
+    public long getPunchInTimeOffsetInSecs() {
+        return SettingsImpl.punchInTimeOffsetInSecs;
+    }
+
+    public void setPunchInTimeOffsetInSecs(final long value) {
+        SettingsImpl.punchInTimeOffsetInSecs = (int) (value);
+    }
+
 }

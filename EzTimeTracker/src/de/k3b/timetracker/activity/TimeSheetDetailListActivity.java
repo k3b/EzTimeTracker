@@ -37,6 +37,7 @@ import de.k3b.timetracker.report.ExportSettings;
 import de.k3b.timetracker.report.ExportSettingsDto;
 import de.k3b.timetracker.report.ReportItemFormatterEx;
 import de.k3b.timetracker.report.TxtReportRenderer;
+import de.k3b.util.DateTimeUtil;
 
 /**
  * Detail report grouped by date with optional date-category-note-filter.<br/>
@@ -283,7 +284,7 @@ public class TimeSheetDetailListActivity extends BaseReportListActivity
 
     @Override
     protected List<Object> loadData() {
-        long performanceMeasureStart = System.currentTimeMillis();
+        long performanceMeasureStart = DateTimeUtil.currentTimeMillis();
 
         final TimeSliceFilterParameter rangeFilter = this.currentRangeFilter;
         final List<TimeSlice> timeSlices = this.timeSliceRepository
@@ -291,16 +292,16 @@ public class TimeSheetDetailListActivity extends BaseReportListActivity
         if (Global.isInfoEnabled()) {
             Log.i(Global.LOG_CONTEXT,
                     "fetchTimeSlicesByDateRange:"
-                            + (System.currentTimeMillis() - performanceMeasureStart)
+                            + (DateTimeUtil.currentTimeMillis() - performanceMeasureStart)
             );
-            performanceMeasureStart = System.currentTimeMillis();
+            performanceMeasureStart = DateTimeUtil.currentTimeMillis();
         }
 
         final List<Object> listItems = this.loadData(timeSlices);
         if (Global.isInfoEnabled()) {
             Log.i(Global.LOG_CONTEXT,
                     "Convert Data:"
-                            + (System.currentTimeMillis() - performanceMeasureStart)
+                            + (DateTimeUtil.currentTimeMillis() - performanceMeasureStart)
             );
         }
         return listItems;
@@ -308,20 +309,20 @@ public class TimeSheetDetailListActivity extends BaseReportListActivity
 
     @Override
     public void loadDataIntoReport(final int reportType) {
-        final long globalPerformanceMeasureStart = System.currentTimeMillis();
+        final long globalPerformanceMeasureStart = DateTimeUtil.currentTimeMillis();
         final List<Object> listItems = this.loadData();
 
         final int newSelection = this.convertLastSelection(this.getListView(),
                 listItems);
 
-        final long performanceMeasureStart = System.currentTimeMillis();
+        final long performanceMeasureStart = DateTimeUtil.currentTimeMillis();
 
         this.setListAdapter(new TimeSheetReportAdapter(this, listItems,
                 this.showNotes));
         if (Global.isInfoEnabled()) {
             Log.i(Global.LOG_CONTEXT,
                     "Create adapter:"
-                            + (System.currentTimeMillis() - performanceMeasureStart)
+                            + (DateTimeUtil.currentTimeMillis() - performanceMeasureStart)
             );
         }
 
@@ -332,7 +333,7 @@ public class TimeSheetDetailListActivity extends BaseReportListActivity
                 // Select the last row so it will scroll into view...
                 TimeSheetDetailListActivity.this.getListView().setSelection(
                         newSelection);
-                final float loadTime = 0.0001f * (System.currentTimeMillis() - globalPerformanceMeasureStart);
+                final float loadTime = 0.0001f * (DateTimeUtil.currentTimeMillis() - globalPerformanceMeasureStart);
                 final String title = TimeSheetDetailListActivity.this.currentRangeFilter
                         .toString()
                         + " ("

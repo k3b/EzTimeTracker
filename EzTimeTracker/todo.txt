@@ -1,6 +1,8 @@
 // http://stackoverflow.com/questions/4459058/alarm-manager-example
 
 next to implement:
+    - PunchIn/OutTimeOffset
+
 	v summary: count+total
     ?? j2se app for desktop
     if punchout is removed add alarmmanager that does the punchout:

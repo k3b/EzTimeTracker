@@ -20,10 +20,12 @@ import java.util.Calendar;
 import de.k3b.timetracker.DateTimeFormatter;
 import de.k3b.timetracker.Global;
 import de.k3b.timetracker.R;
+import de.k3b.timetracker.SettingsImpl;
 import de.k3b.timetracker.TimeSliceFilterParameter;
 import de.k3b.timetracker.TimeTrackerManager;
 import de.k3b.timetracker.model.TimeSlice;
 import de.k3b.timetracker.model.TimeSliceCategory;
+import de.k3b.util.DateTimeUtil;
 
 public abstract class FilterActivity extends Activity {
 
@@ -44,7 +46,7 @@ public abstract class FilterActivity extends Activity {
         public void onDateSet(final DateSlider view, final Calendar selectedDate) {
             FilterActivity.this.saveForm(FilterActivity.this.filter);
             FilterActivity.this.filter.setStartTime(FilterActivity.this
-                    .fixTime(selectedDate.getTimeInMillis()));
+                    .fixTime(selectedDate.getTimeInMillis(), SettingsImpl.getInstance().getPunchInTimeOffsetInSecs()));
             FilterActivity.this.loadForm(FilterActivity.this.filter);
         }
     };
@@ -54,7 +56,7 @@ public abstract class FilterActivity extends Activity {
         public void onDateSet(final DateSlider view, final Calendar selectedDate) {
             FilterActivity.this.saveForm(FilterActivity.this.filter);
             FilterActivity.this.filter.setEndTime(FilterActivity.this
-                    .fixTime(selectedDate.getTimeInMillis()));
+                    .fixTime(selectedDate.getTimeInMillis(), SettingsImpl.getInstance().getPunchInTimeOffsetInSecs()));
             FilterActivity.this.loadForm(FilterActivity.this.filter);
         }
     };
@@ -231,8 +233,8 @@ public abstract class FilterActivity extends Activity {
         FilterActivity.this.loadForm(FilterActivity.this.filter);
     }
 
-    private long fixTime(final long time) {
-        return (time == TimeSlice.NO_TIME_VALUE) ? System.currentTimeMillis()
+    private long fixTime(final long time, long nowOffsetInSecs) {
+        return (time == TimeSlice.NO_TIME_VALUE) ? DateTimeUtil.currentTimeMillis() + 1000l * nowOffsetInSecs
                 : time;
     }
 
