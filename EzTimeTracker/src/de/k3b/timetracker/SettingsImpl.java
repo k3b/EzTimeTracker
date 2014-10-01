@@ -112,6 +112,28 @@ public class SettingsImpl implements Settings {
     }
 
     /**
+     * Add Seconds to punchOutTime.
+     */
+    public static long getPunchOutTimeOffsetInSecs() {
+        return SettingsImpl.punchOutTimeOffsetInSecs;
+    }
+
+    public static void setPunchOutTimeOffsetInSecs(final long value) {
+        SettingsImpl.punchOutTimeOffsetInSecs = (int) (value);
+    }
+
+    /**
+     * Add Seconds to punchInTime.
+     */
+    public static long getPunchInTimeOffsetInSecs() {
+        return SettingsImpl.punchInTimeOffsetInSecs;
+    }
+
+    public static void setPunchInTimeOffsetInSecs(final long value) {
+        SettingsImpl.punchInTimeOffsetInSecs = (int) (value);
+    }
+
+    /**
      * Punchout only if longer than this (in seconds). Else discard.
      */
     @Override
@@ -121,28 +143,6 @@ public class SettingsImpl implements Settings {
 
     public static void setMinPunchOutTreshholdInMilliSecs(final long value) {
         SettingsImpl.minPunchOutTreshholdInSecs = (int) (value / 1000l);
-    }
-    /**
-     * Add Seconds to punchOutTime.
-     */
-    @Override
-    public long getPunchOutTimeOffsetInSecs() {
-        return SettingsImpl.punchOutTimeOffsetInSecs;
-    }
-
-    public void setPunchOutTimeOffsetInSecs(final long value) {
-        SettingsImpl.punchOutTimeOffsetInSecs = (int) (value);
-    }
-    /**
-     * Add Seconds to punchInTime.
-     */
-    @Override
-    public long getPunchInTimeOffsetInSecs() {
-        return SettingsImpl.punchInTimeOffsetInSecs;
-    }
-
-    public void setPunchInTimeOffsetInSecs(final long value) {
-        SettingsImpl.punchInTimeOffsetInSecs = (int) (value);
     }
 
 }

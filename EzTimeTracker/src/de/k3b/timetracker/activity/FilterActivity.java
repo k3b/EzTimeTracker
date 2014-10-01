@@ -46,7 +46,7 @@ public abstract class FilterActivity extends Activity {
         public void onDateSet(final DateSlider view, final Calendar selectedDate) {
             FilterActivity.this.saveForm(FilterActivity.this.filter);
             FilterActivity.this.filter.setStartTime(FilterActivity.this
-                    .fixTime(selectedDate.getTimeInMillis(), SettingsImpl.getInstance().getPunchInTimeOffsetInSecs()));
+                    .fixTime(selectedDate.getTimeInMillis(), SettingsImpl.getPunchInTimeOffsetInSecs()));
             FilterActivity.this.loadForm(FilterActivity.this.filter);
         }
     };
@@ -56,7 +56,7 @@ public abstract class FilterActivity extends Activity {
         public void onDateSet(final DateSlider view, final Calendar selectedDate) {
             FilterActivity.this.saveForm(FilterActivity.this.filter);
             FilterActivity.this.filter.setEndTime(FilterActivity.this
-                    .fixTime(selectedDate.getTimeInMillis(), SettingsImpl.getInstance().getPunchInTimeOffsetInSecs()));
+                    .fixTime(selectedDate.getTimeInMillis(), SettingsImpl.getPunchInTimeOffsetInSecs()));
             FilterActivity.this.loadForm(FilterActivity.this.filter);
         }
     };

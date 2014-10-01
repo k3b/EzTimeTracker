@@ -498,7 +498,7 @@ public class PunchInPunchOutActivity extends Activity implements
     }
 
     private long currentTimeMillis(boolean forPunchIn) {
-        return TimeTrackerManager.currentTimeMillis() + (1000l * ((forPunchIn) ? SettingsImpl.getInstance().getPunchInTimeOffsetInSecs() : SettingsImpl.getInstance().getPunchOutTimeOffsetInSecs()));
+        return TimeTrackerManager.currentTimeMillis() + (1000l * ((forPunchIn) ? SettingsImpl.getPunchInTimeOffsetInSecs() : SettingsImpl.getPunchOutTimeOffsetInSecs()));
     }
 
     /**

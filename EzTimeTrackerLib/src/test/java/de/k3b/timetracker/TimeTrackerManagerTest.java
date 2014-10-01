@@ -35,17 +35,8 @@ public class TimeTrackerManagerTest {
         public long getMinPunchOutTreshholdInMilliSecs() {
             return 120000;
         }
-
-        @Override
-        public long getPunchOutTimeOffsetInSecs() {
-            return 0;
-        }
-
-        @Override
-        public long getPunchInTimeOffsetInSecs() {
-            return 0;
-        }
     };
+
     private TimeTrackerSessionData sessionData;
     private TimeTrackerManager sut;
     private Calendar cal;
