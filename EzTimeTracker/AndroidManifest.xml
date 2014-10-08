@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	package="de.k3b.timetracker"
     android:installLocation="preferExternal"
-    android:versionCode="36"
-    android:versionName="V2.5.936-2014-0821"
+    android:versionCode="37"
+    android:versionName="V2.5.937-2014-1008"
 	>
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission>
 	<uses-sdk android:minSdkVersion="6" android:targetSdkVersion="6" />

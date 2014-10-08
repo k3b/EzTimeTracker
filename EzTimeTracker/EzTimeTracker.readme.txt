@@ -1,19 +1,5 @@
-
-todo
-
-	export
--		new as csv
-			import csv (from zb git history?)
-v		as text auch mit notes
-v		sendTo anstelle von email
->		summary report cumulate notes
-			? summaryReport-Filter geht nicht mehr
-		
-	
-	multi-selection display for report with actions: change category, delete, merge, sort by date/category for detailreport
-	multi-selection display for category with actions: delete,merge
-
-2.5.931 2013-11-05
+V2.5.937-2014-1008
+V2.5.931 2013-11-05
 v	Category edit umstellung auf relativ layout so das von/bis und speichern/abbrechen untereinander sind
 
 v	Summary Report: statt x stunden y minuten kompakteres x Stunden y wobei y 2 stellig ist

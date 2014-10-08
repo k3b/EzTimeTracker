@@ -15,7 +15,7 @@ import de.k3b.timetracker.TimeTrackerManager;
 import de.k3b.timetracker.database.TimeSliceCategoryRepsitory;
 import de.k3b.timetracker.model.TimeSliceCategory;
 
-public class CategoryListAdapterDetailed extends
+class CategoryListAdapterDetailed extends
         ArrayAdapter<TimeSliceCategory> {
 
     /**

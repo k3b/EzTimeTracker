@@ -23,6 +23,7 @@
     <string name="cmd_delete_confirm">"Go ahead and delete it."</string>
     <string name="cmd_delete_cancel">"Don't delete it."</string>
     <string name="cmd_cancel"> Cancel </string>
+    <string name="cmd_append"><![CDATA[>+<]]></string>
     <string name="cmd_report"> Details </string>
     <string name="cmd_export_sendto">Export</string>
     <string name="checkbox_filter_ignore_date">Ignore Date</string>

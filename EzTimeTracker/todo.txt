@@ -1,5 +1,28 @@
 // http://stackoverflow.com/questions/4459058/alarm-manager-example
 
+bug dateTimePicker.longpress-now noch ohne offset
+
+bug
+    di 7.10.14  Conrad 07:59-18:09
+    di 7.10.14  Conrad 18:00-19:08
+    ==> kein append
+
+
+todo
+    PunchInPunchOutActivity longpress start: append to previous
+	export
+-		new as csv
+			import csv (from zb git history?)
+v		as text auch mit notes
+v		sendTo anstelle von email
+>		summary report cumulate notes
+			? summaryReport-Filter geht nicht mehr
+		
+	
+	multi-selection display for report with actions: change category, delete, merge, sort by date/category for detailreport
+	multi-selection display for category with actions: delete,merge
+
+
 next to implement:
     - PunchIn/OutTimeOffset
 

@@ -56,7 +56,7 @@ public abstract class FilterActivity extends Activity {
         public void onDateSet(final DateSlider view, final Calendar selectedDate) {
             FilterActivity.this.saveForm(FilterActivity.this.filter);
             FilterActivity.this.filter.setEndTime(FilterActivity.this
-                    .fixTime(selectedDate.getTimeInMillis(), SettingsImpl.getPunchInTimeOffsetInSecs()));
+                    .fixTime(selectedDate.getTimeInMillis(), SettingsImpl.getPunchOutTimeOffsetInSecs()));
             FilterActivity.this.loadForm(FilterActivity.this.filter);
         }
     };
@@ -191,7 +191,7 @@ public abstract class FilterActivity extends Activity {
      * Loads this from controls from filter.
      */
     private void loadForm(final TimeSliceFilterParameter filter) {
-        CategorySpinner.selectSpinner(this.categorySpinner,
+        SpinnerHelper.selectSpinner(this.categorySpinner,
                 filter.getCategoryId());
 
         boolean ignoreDates = filter.isIgnoreDates();
@@ -217,8 +217,8 @@ public abstract class FilterActivity extends Activity {
      * save content of this from controls to filter
      */
     private void saveForm(final TimeSliceFilterParameter filter) {
-        filter.setCategoryId(CategorySpinner.getCategoryId(this
-                .getCurrentCategory()));
+        filter.setCategoryId(SpinnerHelper.getCategoryId(this
+                .getCurrentCategory(), TimeSliceCategory.NOT_SAVED));
 
         filter.setIgnoreDates(this.allDatesCheckBox.isChecked());
 
@@ -265,7 +265,7 @@ public abstract class FilterActivity extends Activity {
                 return new DateTimeMinuteSlider(this,
                         this.listenerOnStartDateChanged, c);
             case GET_START_DATETIME_NOW:
-                c.setTimeInMillis(TimeTrackerManager.currentTimeMillis());
+                c.setTimeInMillis(TimeTrackerManager.currentTimeMillis()  + (1000 * SettingsImpl.getPunchInTimeOffsetInSecs()));
                 return new DateTimeMinuteSlider(this,
                         this.listenerOnStartDateChanged, c);
             case GET_END_DATETIME:
@@ -273,7 +273,7 @@ public abstract class FilterActivity extends Activity {
                 return new DateTimeMinuteSlider(this,
                         this.listenerOnEndDateChanged, c);
             case GET_END_DATETIME_NOW:
-                c.setTimeInMillis(TimeTrackerManager.currentTimeMillis());
+                c.setTimeInMillis(TimeTrackerManager.currentTimeMillis() + (1000 * SettingsImpl.getPunchOutTimeOffsetInSecs()));
                 return new DateTimeMinuteSlider(this,
                         this.listenerOnEndDateChanged, c);
         }

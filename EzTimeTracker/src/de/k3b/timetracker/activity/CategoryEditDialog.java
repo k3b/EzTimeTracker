@@ -29,6 +29,7 @@ public class CategoryEditDialog extends Dialog {
     protected static final int GET_START_DATETIME = 1;
     protected static final int GET_END_DATETIME_NOW = 2;
     protected static final int GET_START_DATETIME_NOW = 3;
+    protected static final int APPEND = 4;
 
     private final EditText catNameField;
     private final EditText catDescField;
@@ -54,6 +55,7 @@ public class CategoryEditDialog extends Dialog {
             CategoryEditDialog.this.setTimeTexts();
         }
     };
+    private Button mAppendButton;
     private Button mTimeInButton;
     private Button mTimeOutButton;
     private TextView usage;
@@ -71,6 +73,7 @@ public class CategoryEditDialog extends Dialog {
         this.cancelButton = (Button) this
                 .findViewById(R.id.edit_time_category_cancel_button);
 
+        this.mAppendButton = (Button) this.findViewById(R.id.edit_time_category_append_button);
         this.mTimeInButton = (Button) this.findViewById(R.id.EditTimeIn);
 
         this.usage = (TextView) this.findViewById(R.id.category_usage);
@@ -89,6 +92,14 @@ public class CategoryEditDialog extends Dialog {
                             .showActivity(context, filter, 0);
                 }
                 return true;
+            }
+        });
+
+        this.mAppendButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                CategoryEditDialog.this
+                        .showDialog(CategoryEditDialog.APPEND);
             }
         });
 
@@ -222,6 +233,9 @@ public class CategoryEditDialog extends Dialog {
         final Calendar c = Calendar.getInstance();
 
         switch (id) {
+            case APPEND:
+                //!!!
+                break;
             case GET_START_DATETIME:
                 final long startTime = this.mCategory.getStartTime();
                 c.setTimeInMillis((startTime == TimeSliceCategory.MIN_VALID_DATE) ? TimeTrackerManager

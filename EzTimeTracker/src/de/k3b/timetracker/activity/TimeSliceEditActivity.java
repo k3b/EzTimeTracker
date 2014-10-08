@@ -126,7 +126,7 @@ public class TimeSliceEditActivity extends Activity implements ICategorySetter {
                 currentCategory = (TimeSliceCategory) this.catSpinner
                         .getAdapter().getItem(0);
             }
-            CategorySpinner.selectSpinner(this.catSpinner, currentCategory);
+            SpinnerHelper.selectSpinner(this.catSpinner, currentCategory);
 
             this.catSpinner
                     .setOnItemSelectedListener(new OnItemSelectedListener() {
@@ -263,7 +263,7 @@ public class TimeSliceEditActivity extends Activity implements ICategorySetter {
                 return new DateTimeMinuteSlider(this,
                         this.mDateTimeSetListenerStart, c);
             case GET_START_DATETIME_NOW:
-                c.setTimeInMillis(TimeTrackerManager.currentTimeMillis() + SettingsImpl.getPunchInTimeOffsetInSecs());
+                c.setTimeInMillis(TimeTrackerManager.currentTimeMillis() + (1000 * SettingsImpl.getPunchInTimeOffsetInSecs()));
                 return new DateTimeMinuteSlider(this,
                         this.mDateTimeSetListenerStart, c);
             case GET_END_DATETIME:
@@ -271,7 +271,7 @@ public class TimeSliceEditActivity extends Activity implements ICategorySetter {
                 return new DateTimeMinuteSlider(this, this.mDateTimeSetListenerEnd,
                         c);
             case GET_END_DATETIME_NOW:
-                c.setTimeInMillis(TimeTrackerManager.currentTimeMillis() + SettingsImpl.getPunchOutTimeOffsetInSecs());
+                c.setTimeInMillis(TimeTrackerManager.currentTimeMillis() + (1000 * SettingsImpl.getPunchOutTimeOffsetInSecs()));
                 return new DateTimeMinuteSlider(this, this.mDateTimeSetListenerEnd,
                         c);
             case EDIT_CATEGORY_ID:

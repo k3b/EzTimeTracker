@@ -81,4 +81,14 @@
         android:layout_alignRight="@+id/EditTimeOut"	    	    
 		android:textSize="20sp"
 		android:layout_gravity="left"/>
+    <Button
+        android:id="@+id/edit_time_category_append_button"
+        android:visibility="invisible"
+        android:text="@string/cmd_append"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/EditTimeIn"
+        android:layout_toRightOf="@+id/edit_time_category_cancel_button"
+        android:textSize="20sp"
+        android:layout_gravity="left"/>
 </RelativeLayout>

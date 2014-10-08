@@ -10,7 +10,7 @@ import de.k3b.timetracker.TimeTrackerManager;
 import de.k3b.timetracker.database.TimeSliceCategoryRepsitory;
 import de.k3b.timetracker.model.TimeSliceCategory;
 
-public class CategoryListAdapterSimple {
+class CategoryListAdapterSimple {
     public static ArrayAdapter<TimeSliceCategory> createAdapter(
             final Context context, final TimeSliceCategory firstElement,
             final long currentDateTime, final String debugContext) {

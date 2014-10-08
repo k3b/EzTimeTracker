@@ -26,7 +26,7 @@ import de.k3b.timetracker.report.ReportItemWithStatistics;
  * <p/>
  * This class was inspired by http://stackoverflow.com/questions/3825377 .<br/>
  */
-public class TimeSheetReportAdapter extends ArrayAdapter<Object> {
+class TimeSheetReportAdapter extends ArrayAdapter<Object> {
 
     private final boolean showNotes;
     private final IReportItemFormatter formatter;

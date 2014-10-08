@@ -22,6 +22,7 @@
     <string name="cmd_delete_confirm">"Trotzdem löschen."</string>
     <string name="cmd_delete_cancel">"Nicht löschen."</string>
     <string name="cmd_cancel"> Abbrechen </string>
+    <string name="cmd_append"><![CDATA[>+<]]></string>
     <string name="cmd_report"> Details </string>
     <string name="cmd_export_sendto">Export</string>
     <string name="checkbox_filter_ignore_date">Datum egal</string>
